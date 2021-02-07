@@ -11,4 +11,7 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Bhasha.Common\Bhasha.Common.csproj" />
+  </ItemGroup>
 </Project>
