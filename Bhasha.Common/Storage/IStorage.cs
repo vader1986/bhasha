@@ -3,8 +3,9 @@ using System.Collections.Generic;
 
 namespace Bhasha.Common.Storage
 {
-    public interface IStorage<TEntity, TProp, TValue>
+    public interface IStorage
     {
-        IEnumerable<TEntity> Query(IDictionary<TProp, TValue> query);
+        IEnumerable<Translation> Query(QueryParams query);
+        IEnumerable<Translation> Query(string id);
     }
 }
