@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using Bhasha.Common.Extensions;
+using Bhasha.Common.MongoDB.Exceptions;
 
 namespace Bhasha.Common.MongoDB.Dto
 {
@@ -22,21 +24,28 @@ namespace Bhasha.Common.MongoDB.Dto
 
         public Translation ToTranslation(string fromId, string toId)
         {
-            var categories = Categories.Select(x => new Category(x)).ToArray();
-            var level = Enum.Parse<LanguageLevel>(Level);
-            var tokenType = Enum.Parse<TokenType>(TokenType);
-            var pictureId = ResourceId.Create(PictureId);
-            var token = new Token(Label, categories, level, tokenType, pictureId);
+            try
+            {
+                var categories = Categories.Select(x => new Category(x)).ToArray();
+                var level = Enum.Parse<LanguageLevel>(Level);
+                var tokenType = Enum.Parse<TokenType>(TokenType);
+                var pictureId = ResourceId.Create(PictureId);
+                var token = new Token(Label, categories, level, tokenType, pictureId);
 
-            var fromToken = Tokens.First(x => x.LanguageId == fromId);
-            var fromAudioId = ResourceId.Create(fromToken.AudioId);
-            var from = new LanguageToken(Language.Parse(fromId), fromToken.Native, fromToken.Spoken, fromAudioId);
+                var fromToken = Tokens.First(x => x.LanguageId == fromId);
+                var fromAudioId = ResourceId.Create(fromToken.AudioId);
+                var from = new LanguageToken(Language.Parse(fromId), fromToken.Native, fromToken.Spoken, fromAudioId);
 
-            var toToken = Tokens.First(x => x.LanguageId == toId);
-            var toAudioId = ResourceId.Create(toToken.AudioId);
-            var to = new LanguageToken(Language.Parse(toId), toToken.Native, toToken.Spoken, toAudioId);
+                var toToken = Tokens.First(x => x.LanguageId == toId);
+                var toAudioId = ResourceId.Create(toToken.AudioId);
+                var to = new LanguageToken(Language.Parse(toId), toToken.Native, toToken.Spoken, toAudioId);
 
-            return new Translation(token, from, to);
+                return new Translation(token, from, to);
+            }
+            catch (Exception e)
+            {
+                throw new InvalidTranslationException($"loaded invalid translation {this.Stringify()} from {fromId} to {toId}", e);
+            }
         }
     }
 }
