@@ -1,5 +1,4 @@
-﻿#nullable enable
-using System;
+﻿using System;
 
 namespace Bhasha.Common
 {
@@ -20,15 +19,30 @@ namespace Bhasha.Common
             return new Language(parts[0], parts.Length > 1 ? parts[1] : default);
         }
 
+        public override bool Equals(object obj)
+        {
+            if (obj == null) return false;
+            return obj is Language other && Id == other.Id && Region == other.Region;
+        }
+
         public bool Equals(Language other)
         {
-            if (other == null) return false;
-            return Id == other.Id && Region == other.Region;
+            return Equals((object)other);
         }
 
         public override int GetHashCode()
         {
             return HashCode.Combine(Id, Region);
+        }
+
+        public static bool operator !=(Language lhs, Language rhs)
+        {
+            return !lhs.Equals(rhs);
+        }
+
+        public static bool operator ==(Language lhs, Language rhs)
+        {
+            return lhs.Equals(rhs);
         }
     }
 }

@@ -6,7 +6,7 @@ namespace Bhasha.Common.Tests
     [TestFixture]
     public class TranslationTests
     {
-        private static Token AToken = new Token("cat", new string[0], LanguageLevel.A1, TokenType.Noun);
+        private static Token AToken = new Token("cat", new[] { new Category("Animal") }, LanguageLevel.A1, TokenType.Noun);
         private static LanguageToken ALanguageToken = new LanguageToken(Languages.English, "cat", "cat");
         private static LanguageToken AnotherLanguageToken = new LanguageToken(Languages.Bengoli, "বিড়াল", "Biṛāla");
 

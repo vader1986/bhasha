@@ -1,17 +1,16 @@
-﻿#nullable enable
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Bhasha.Common
 {
     public class LearningProcedure
     {
         public IEnumerable<Translation> Pool { get; }
-        public IEnumerable<ResourceId> Tutorial { get; }
+        public Procedure Procedure { get; }
 
-        public LearningProcedure(IEnumerable<Translation> pool, IEnumerable<ResourceId> tutorial)
+        public LearningProcedure(IEnumerable<Translation> pool, Procedure procedure)
         {
             Pool = pool;
-            Tutorial = tutorial;
+            Procedure = procedure;
         }
     }
 }
