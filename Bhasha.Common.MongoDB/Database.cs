@@ -1,10 +1,19 @@
-﻿using System.Threading.Tasks;
-using MongoDB.Bson;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using MongoDB.Driver;
 
 namespace Bhasha.Common.MongoDB
 {
-    public class Database
+    public interface IDatabase
+    {
+        ValueTask<IEnumerable<T>> Find<T>(string collectionName, Func<T, bool> predicate);
+        ValueTask<IEnumerable<V>> List<T, V>(string collectionName, Func<T, V> selector);
+        ValueTask<IEnumerable<V>> ListMany<T, V>(string collectionName, Func<T, V[]> selector);
+    }
+
+    public class Database : IDatabase
     {
         private readonly IMongoDatabase _database;
 
@@ -30,9 +39,25 @@ namespace Bhasha.Common.MongoDB
             return new Database(await GetDatabase(new MongoClient(connectionString)));
         }
 
-        public IMongoCollection<T> GetCollection<T>(string name)
+        public async ValueTask<IEnumerable<T>> Find<T>(string collectionName, Func<T, bool> predicate)
         {
-            return _database.GetCollection<T>(name);
+            var collection = _database.GetCollection<T>(collectionName);
+            var result = await collection.FindAsync(x => predicate(x));
+            return result.ToEnumerable();
+        }
+
+        public async ValueTask<IEnumerable<V>> List<T, V>(string collectionName, Func<T, V> selector)
+        {
+            var collection = _database.GetCollection<T>(collectionName);
+            var result = await collection.DistinctAsync(x => selector(x), x => true);
+            return result.ToEnumerable();
+        }
+
+        public ValueTask<IEnumerable<V>> ListMany<T, V>(string collectionName, Func<T, V[]> selector)
+        {
+            var collection = _database.GetCollection<T>(collectionName);
+            var result = collection.AsQueryable().SelectMany(x => selector(x)).Distinct();
+            return new ValueTask<IEnumerable<V>>(result.AsEnumerable());
         }
     }
 }

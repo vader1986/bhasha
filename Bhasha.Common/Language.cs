@@ -49,5 +49,10 @@ namespace Bhasha.Common
         {
             return Region != default ? $"{Id}_{Region}" : Id;
         }
+
+        public static implicit operator string(Language language)
+        {
+            return language.ToString();
+        }
     }
 }

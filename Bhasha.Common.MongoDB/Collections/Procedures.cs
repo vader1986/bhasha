@@ -9,21 +9,13 @@ using MongoDB.Driver;
 
 namespace Bhasha.Common.MongoDB.Collections
 {
-    public class Procedures : IQueryable<Procedure, ProcedureQuery>, IListable<ProcedureId>
+    public class Procedures : IQueryable<Procedure, ProcedureQuery>
     {
-        private readonly Database _database;
+        private readonly IDatabase _database;
 
-        public Procedures(Database database)
+        public Procedures(IDatabase database)
         {
             _database = database;
-        }
-
-        public async ValueTask<IEnumerable<ProcedureId>> List()
-        {
-            var collection = _database.GetCollection<ProcedureDto>(Names.Collections.Procedures);
-            var procedureIds = await collection.DistinctAsync(x => x.ProcedureId, x => true);
-
-            return procedureIds.ToEnumerable().Select(x => new ProcedureId(x));
         }
 
         public ValueTask<IEnumerable<Procedure>> Query(ProcedureQuery query)
@@ -45,19 +37,17 @@ namespace Bhasha.Common.MongoDB.Collections
 
         private async ValueTask<IEnumerable<Procedure>> ExecuteQuery(ProcedureIdQuery query)
         {
-            var collection = _database.GetCollection<ProcedureDto>(Names.Collections.Procedures);
-            var result = await collection.FindAsync(x => x.ProcedureId == query.Id.Id);
-
+            var result = await _database.Find<ProcedureDto>(Names.Collections.Procedures, x => x.ProcedureId == query.Id.Id);
             return result.Single().ToProcedure().ToEnumeration();
         }
 
         private async ValueTask<IEnumerable<Procedure>> ExecuteQuery(ProcedureSupportQuery query)
         {
-            var collection = _database.GetCollection<ProcedureDto>(Names.Collections.Procedures);
             var tokenType = query.SupportedType.ToString();
-            var result = await collection.FindAsync(x => x.Support.Length == 0 || x.Support.Contains(tokenType));
-
-            return result.ToEnumerable().Select(x => x.ToProcedure());
+            var result = await _database.Find<ProcedureDto>(Names.Collections.Procedures,
+                x => x.Support.Length == 0 ||
+                     x.Support.Contains(tokenType));
+            return result.Select(x => x.ToProcedure());
         }
     }
 }

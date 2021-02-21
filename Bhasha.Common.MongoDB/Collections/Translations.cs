@@ -8,21 +8,13 @@ using MongoDB.Driver;
 
 namespace Bhasha.Common.MongoDB.Collections
 {
-    public class Translations : IQueryable<Translation, TranslationsQuery>, IListable<Category>
+    public class Translations : IQueryable<Translation, TranslationsQuery>
     {
-        private readonly Database _database;
+        private readonly IDatabase _database;
 
-        public Translations(Database database)
+        public Translations(IDatabase database)
         {
             _database = database;
-        }
-
-        public ValueTask<IEnumerable<Category>> List()
-        {
-            var collection = _database.GetCollection<TranslationDto>(Names.Collections.Translations);
-            var categories = collection.AsQueryable().SelectMany(x => x.Categories).Distinct();
-
-            return new ValueTask<IEnumerable<Category>>(categories.Select(x => new Category(x)));
         }
 
         public ValueTask<IEnumerable<Translation>> Query(TranslationsQuery query)
@@ -58,35 +50,20 @@ namespace Bhasha.Common.MongoDB.Collections
 
         private async ValueTask<IEnumerable<Translation>> ExecuteQuery(TranslationsTokenTypeQuery query)
         {
-            var from = query.From.ToString();
-            var to = query.To.ToString();
-
-            var collection = _database.GetCollection<TranslationDto>(Names.Collections.Translations);
-            var result = await collection.FindAsync(x => MatchCategory(query, x) && x.TokenType == query.TokenType.ToString());
-
-            return result.ToEnumerable().Select(x => x.ToTranslation(from, to));
+            var result = await _database.Find<TranslationDto>(Names.Collections.Translations, x => MatchCategory(query, x) && x.TokenType == query.TokenType.ToString());
+            return result.Select(x => x.ToTranslation(query.From, query.To));
         }
 
         private async ValueTask<IEnumerable<Translation>> ExecuteQuery(TranslationsCategoryQuery query)
         {
-            var from = query.From.ToString();
-            var to = query.To.ToString();
-
-            var collection = _database.GetCollection<TranslationDto>(Names.Collections.Translations);
-            var result = await collection.FindAsync(x => MatchCategory(query, x));
-
-            return result.ToEnumerable().Select(x => x.ToTranslation(from, to));
+            var result = await _database.Find<TranslationDto>(Names.Collections.Translations, x => MatchCategory(query, x));
+            return result.Select(x => x.ToTranslation(query.From, query.To));
         }
 
         private async ValueTask<IEnumerable<Translation>> ExecuteQuery(TranslationsLabelQuery query)
         {
-            var from = query.From.ToString();
-            var to = query.To.ToString();
-
-            var collection = _database.GetCollection<TranslationDto>(Names.Collections.Translations);
-            var result = await collection.FindAsync(x => MatchLanguages(query, x) && x.Label == query.Label);
-
-            return result.ToEnumerable().Select(x => x.ToTranslation(from, to));
+            var result = await _database.Find<TranslationDto>(Names.Collections.Translations, x => MatchLanguages(query, x) && x.Label == query.Label);
+            return result.Select(x => x.ToTranslation(query.From, query.To));
         }
     }
 }
