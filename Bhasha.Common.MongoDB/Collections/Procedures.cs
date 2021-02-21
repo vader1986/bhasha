@@ -9,7 +9,7 @@ using MongoDB.Driver;
 
 namespace Bhasha.Common.MongoDB.Collections
 {
-    public class Procedures : IQueryable<Procedure, ProcedureQuery>
+    public class Procedures : IQueryable<Procedure, ProcedureQuery>, IListable<ProcedureId>
     {
         private readonly Database _database;
 
@@ -18,23 +18,32 @@ namespace Bhasha.Common.MongoDB.Collections
             _database = database;
         }
 
-        public Task<IEnumerable<Procedure>> Query(ProcedureQuery query)
+        public async ValueTask<IEnumerable<ProcedureId>> List()
         {
-            switch (query)
-            {
-                case ProcedureIdQuery iq:
-                    return ExecuteQuery(iq);
+            var collection = _database.GetCollection<ProcedureDto>(Names.Collections.Procedures);
+            var procedureIds = await collection.DistinctAsync(x => x.ProcedureId, x => true);
 
-                case ProcedureSupportQuery sq:
-                    return ExecuteQuery(sq);
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(query),
-                        $"Query type {query.GetType().FullName} not supported");
-            }
+            return procedureIds.ToEnumerable().Select(x => new ProcedureId(x));
         }
 
-        private async Task<IEnumerable<Procedure>> ExecuteQuery(ProcedureIdQuery query)
+        public ValueTask<IEnumerable<Procedure>> Query(ProcedureQuery query)
+        {
+            return query switch
+            {
+                ProcedureIdQuery iq => ExecuteQuery(iq),
+                ProcedureSupportQuery sq => ExecuteQuery(sq),
+                _ => OnDefault(query)
+            };
+        }
+
+        private static ValueTask<IEnumerable<Procedure>> OnDefault(ProcedureQuery query)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(query),
+                $"Query type {query.GetType().FullName} not supported");
+        }
+
+        private async ValueTask<IEnumerable<Procedure>> ExecuteQuery(ProcedureIdQuery query)
         {
             var collection = _database.GetCollection<ProcedureDto>(Names.Collections.Procedures);
             var result = await collection.FindAsync(x => x.ProcedureId == query.Id.Id);
@@ -42,13 +51,13 @@ namespace Bhasha.Common.MongoDB.Collections
             return result.Single().ToProcedure().ToEnumeration();
         }
 
-        private async Task<IEnumerable<Procedure>> ExecuteQuery(ProcedureSupportQuery query)
+        private async ValueTask<IEnumerable<Procedure>> ExecuteQuery(ProcedureSupportQuery query)
         {
             var collection = _database.GetCollection<ProcedureDto>(Names.Collections.Procedures);
             var tokenType = query.SupportedType.ToString();
             var result = await collection.FindAsync(x => x.Support.Length == 0 || x.Support.Contains(tokenType));
 
-            throw new Exception(); // TODO
+            return result.ToEnumerable().Select(x => x.ToProcedure());
         }
     }
 }

@@ -44,5 +44,10 @@ namespace Bhasha.Common
         {
             return lhs.Equals(rhs);
         }
+
+        public override string ToString()
+        {
+            return Region != default ? $"{Id}_{Region}" : Id;
+        }
     }
 }

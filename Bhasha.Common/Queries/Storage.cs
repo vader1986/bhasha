@@ -53,7 +53,7 @@ namespace Bhasha.Common.Queries
             return default;
         }
 
-        public async Task<LearningProcedure?> FetchFor(LanguageLevel level, IEnumerable<Category> finished)
+        public async Task<LearningProcedure?> FetchFor(Language from, Language to, LanguageLevel level, IEnumerable<Category> finished)
         {
             
             var category = ChooseCategory(finished);
@@ -69,7 +69,7 @@ namespace Bhasha.Common.Queries
                 return default;
             }
 
-            var query = new TranslationsCategoryQuery(level, chosenCategory);
+            var query = new TranslationsCategoryQuery(from, to, level, chosenCategory);
             var translations = await _translations.Query(query);
 
             return new LearningProcedure(translations, chosenProcedure);

@@ -4,7 +4,7 @@
     {
         public TokenType TokenType { get; }
 
-        public TranslationsTokenTypeQuery(LanguageLevel level, Category category, TokenType tokenType) : base(level, category)
+        public TranslationsTokenTypeQuery(Language from, Language to, LanguageLevel level, Category category, TokenType tokenType) : base(from, to, level, category)
         {
             TokenType = tokenType;
         }

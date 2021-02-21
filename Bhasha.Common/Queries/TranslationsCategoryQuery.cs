@@ -4,7 +4,7 @@
     {
         public Category Category { get; }
 
-        public TranslationsCategoryQuery(LanguageLevel level, Category category) : base(level)
+        public TranslationsCategoryQuery(Language from, Language to, LanguageLevel level, Category category) : base(from, to, level)
         {
             Category = category;
         }

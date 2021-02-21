@@ -5,6 +5,6 @@ namespace Bhasha.Common.Queries
 {
     public interface IQueryable<TProduct, TQuery>
     {
-        Task<IEnumerable<TProduct>> Query(TQuery query);
+        ValueTask<IEnumerable<TProduct>> Query(TQuery query);
     }
 }
