@@ -14,5 +14,6 @@
   <ItemGroup>
     <Folder Include="Collections\" />
     <Folder Include="Dto\" />
+    <Folder Include="Exceptions\" />
   </ItemGroup>
 </Project>
