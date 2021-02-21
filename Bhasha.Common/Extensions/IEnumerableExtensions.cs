@@ -35,5 +35,10 @@ namespace Bhasha.Common.Extensions
 
             return items[(int)index];
         }
+
+        public static bool IsEmpty<T>(this IEnumerable<T> source)
+        {
+            return !source.Any();
+        }
     }
 }
