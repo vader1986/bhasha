@@ -8,7 +8,7 @@ namespace Bhasha.Common.MongoDB
 {
     public interface IDatabase
     {
-        ValueTask<IEnumerable<T>> Find<T>(string collectionName, Func<T, bool> predicate);
+        ValueTask<IEnumerable<T>> Find<T>(string collectionName, Func<T, bool> predicate, int maxItems);
         ValueTask<IEnumerable<V>> List<T, V>(string collectionName, Func<T, V> selector);
         ValueTask<IEnumerable<V>> ListMany<T, V>(string collectionName, Func<T, V[]> selector);
     }
@@ -39,11 +39,13 @@ namespace Bhasha.Common.MongoDB
             return new Database(await GetDatabase(new MongoClient(connectionString)));
         }
 
-        public async ValueTask<IEnumerable<T>> Find<T>(string collectionName, Func<T, bool> predicate)
+        public async ValueTask<IEnumerable<T>> Find<T>(string collectionName, Func<T, bool> predicate, int maxItems)
         {
             var collection = _database.GetCollection<T>(collectionName);
-            var result = await collection.FindAsync(x => predicate(x));
-            return result.ToEnumerable();
+            var findOptions = new FindOptions<T> { BatchSize = maxItems };
+            var result = await collection.FindAsync(x => predicate(x), findOptions);
+
+            return result.Current;
         }
 
         public async ValueTask<IEnumerable<V>> List<T, V>(string collectionName, Func<T, V> selector)

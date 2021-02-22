@@ -4,7 +4,7 @@
     {
         public TokenType TokenType { get; }
 
-        public TranslationsTokenTypeQuery(Language from, Language to, LanguageLevel level, Category category, TokenType tokenType) : base(from, to, level, category)
+        public TranslationsTokenTypeQuery(int maxItems, Language from, Language to, LanguageLevel level, Category category, TokenType tokenType) : base(maxItems, from, to, level, category)
         {
             TokenType = tokenType;
         }

@@ -4,7 +4,7 @@
     {
         public ProcedureId Id { get; }
 
-        public ProcedureIdQuery(ProcedureId id)
+        public ProcedureIdQuery(int maxItems, ProcedureId id) : base(maxItems)
         {
             Id = id;
         }

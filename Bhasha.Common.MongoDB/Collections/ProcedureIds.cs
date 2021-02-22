@@ -8,9 +8,9 @@ namespace Bhasha.Common.MongoDB.Collections
 {
     public class ProcedureIds : IListable<ProcedureId>
     {
-        private readonly Database _database;
+        private readonly IDatabase _database;
 
-        public ProcedureIds(Database database)
+        public ProcedureIds(IDatabase database)
         {
             _database = database;
         }

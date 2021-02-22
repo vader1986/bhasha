@@ -17,5 +17,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Dto\" />
+    <Folder Include="Collections\" />
   </ItemGroup>
 </Project>

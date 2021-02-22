@@ -37,7 +37,7 @@ namespace Bhasha.Common.MongoDB.Collections
 
         private async ValueTask<IEnumerable<Procedure>> ExecuteQuery(ProcedureIdQuery query)
         {
-            var result = await _database.Find<ProcedureDto>(Names.Collections.Procedures, x => x.ProcedureId == query.Id.Id);
+            var result = await _database.Find<ProcedureDto>(Names.Collections.Procedures, x => x.ProcedureId == query.Id.Id, query.MaxItems);
             return result.Single().ToProcedure().ToEnumeration();
         }
 
@@ -46,7 +46,8 @@ namespace Bhasha.Common.MongoDB.Collections
             var tokenType = query.SupportedType.ToString();
             var result = await _database.Find<ProcedureDto>(Names.Collections.Procedures,
                 x => x.Support.Length == 0 ||
-                     x.Support.Contains(tokenType));
+                     x.Support.Contains(tokenType),
+                query.MaxItems);
             return result.Select(x => x.ToProcedure());
         }
     }

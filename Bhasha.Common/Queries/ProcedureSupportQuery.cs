@@ -4,7 +4,7 @@
     {
         public TokenType SupportedType { get; }
 
-        public ProcedureSupportQuery(TokenType supportedType)
+        public ProcedureSupportQuery(int maxItems, TokenType supportedType) : base(maxItems)
         {
             SupportedType = supportedType;
         }
