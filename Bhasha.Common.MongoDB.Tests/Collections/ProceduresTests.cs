@@ -15,7 +15,7 @@ namespace Bhasha.Common.MongoDB.Tests.Collections
     [TestFixture]
     public class ProceduresTests
     {
-        private IDatabase _database;
+        private IMongoDb _database;
         private Procedures _procedures;
 
         internal static IEnumerable Queries
@@ -30,7 +30,7 @@ namespace Bhasha.Common.MongoDB.Tests.Collections
         [SetUp]
         public void Before()
         {
-            _database = A.Fake<IDatabase>();
+            _database = A.Fake<IMongoDb>();
             _procedures = new Procedures(_database);
         }
 

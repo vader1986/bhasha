@@ -11,7 +11,7 @@ using NUnit.Framework;
 namespace Bhasha.Common.MongoDB.Tests
 {
     [TestFixture]
-    public class DatabaseTests
+    public class MongoDbTests
     {
         private MongoDbRunner _runner;
 
@@ -32,7 +32,7 @@ namespace Bhasha.Common.MongoDB.Tests
         {
             // setup
             var client = new MongoClient(_runner.ConnectionString);
-            var database = await Database.Create(client);
+            var database = await MongoDb.Create(client);
 
             var db = client.GetDatabase(Names.Database);
             var collection = db.GetCollection<TranslationDto>(Names.Collections.Translations);
@@ -62,7 +62,7 @@ namespace Bhasha.Common.MongoDB.Tests
         {
             // setup
             var client = new MongoClient(_runner.ConnectionString);
-            var database = await Database.Create(client);
+            var database = await MongoDb.Create(client);
 
             var db = client.GetDatabase(Names.Database);
             var collection = db.GetCollection<TranslationDto>(Names.Collections.Translations);
@@ -87,7 +87,7 @@ namespace Bhasha.Common.MongoDB.Tests
         {
             // setup
             var client = new MongoClient(_runner.ConnectionString);
-            var database = await Database.Create(client);
+            var database = await MongoDb.Create(client);
 
             var db = client.GetDatabase(Names.Database);
             var collection = db.GetCollection<TranslationDto>(Names.Collections.Translations);
@@ -103,6 +103,32 @@ namespace Bhasha.Common.MongoDB.Tests
 
             // assert
             Assert.That(result, Is.EquivalentTo(new[] { "tree", "cat" }));
+        }
+
+        [Test]
+        public async Task List_all_languages()
+        {
+            // setup
+            var client = new MongoClient(_runner.ConnectionString);
+            var database = await MongoDb.Create(client);
+
+            var db = client.GetDatabase(Names.Database);
+            var collection = db.GetCollection<TranslationDto>(Names.Collections.Translations);
+            var cat = TranslationDtoBuilder.Default.WithCategories("animal", "life").Build();
+            var tree = TranslationDtoBuilder.Default.WithLabel("tree").WithCategories("plant", "life").Build();
+
+            await collection.InsertRangeAsync(cat, tree);
+
+            // act
+            var result = await database.ListMany<TranslationDto, string>(
+                Names.Collections.Translations,
+                MongoDB.Collections.Languages.FieldKey);
+
+            // assert
+            Assert.That(result, Is.EquivalentTo(new[] {
+                Languages.English.ToString(),
+                Languages.Bengoli.ToString()
+            }));
         }
     }
 }

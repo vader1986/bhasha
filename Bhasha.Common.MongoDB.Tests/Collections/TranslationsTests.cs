@@ -15,7 +15,7 @@ namespace Bhasha.Common.MongoDB.Tests.Collections
     [TestFixture]
     public class TranslationsTests
     {
-        private IDatabase _database;
+        private IMongoDb _database;
         private Translations _translations;
 
         internal static IEnumerable Queries
@@ -31,7 +31,7 @@ namespace Bhasha.Common.MongoDB.Tests.Collections
         [SetUp]
         public void Before()
         {
-            _database = A.Fake<IDatabase>();
+            _database = A.Fake<IMongoDb>();
             _translations = new Translations(_database);
         }
 

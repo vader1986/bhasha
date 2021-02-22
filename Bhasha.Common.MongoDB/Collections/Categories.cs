@@ -8,9 +8,9 @@ namespace Bhasha.Common.MongoDB.Collections
 {
     public class Categories : IListable<Category>
     {
-        private readonly IDatabase _database;
+        private readonly IMongoDb _database;
 
-        public Categories(IDatabase database)
+        public Categories(IMongoDb database)
         {
             _database = database;
         }

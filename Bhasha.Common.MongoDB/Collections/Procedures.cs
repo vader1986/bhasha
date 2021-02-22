@@ -2,18 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Bhasha.Common.Extensions;
 using Bhasha.Common.MongoDB.Dto;
 using Bhasha.Common.Queries;
-using MongoDB.Driver;
 
 namespace Bhasha.Common.MongoDB.Collections
 {
     public class Procedures : IQueryable<Procedure, ProcedureQuery>
     {
-        private readonly IDatabase _database;
+        private readonly IMongoDb _database;
 
-        public Procedures(IDatabase database)
+        public Procedures(IMongoDb database)
         {
             _database = database;
         }
