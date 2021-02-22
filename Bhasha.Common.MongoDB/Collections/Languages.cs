@@ -8,7 +8,6 @@ namespace Bhasha.Common.MongoDB.Collections
 {
     public class Languages : IListable<Language>
     {
-        public static readonly string FieldKey = $"{nameof(TranslationDto.Tokens)}.{nameof(TokenDto.LanguageId)}";
         private readonly IMongoDb _database;
 
         public Languages(IMongoDb database)
@@ -19,7 +18,8 @@ namespace Bhasha.Common.MongoDB.Collections
         public async ValueTask<IEnumerable<Language>> List()
         {
             var languages = await _database.ListMany<TranslationDto, string>(
-                Names.Collections.Translations, FieldKey);
+                Names.Collections.Translations,
+                Names.Fields.LanguageId);
 
             return languages.Select(Language.Parse);
         }

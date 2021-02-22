@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Bhasha.Common.MongoDB.Collections;
 using Bhasha.Common.MongoDB.Dto;
+using Bhasha.Common.MongoDB.Tests.Support;
 using Bhasha.Common.Queries;
 using FakeItEasy;
 using NUnit.Framework;
@@ -45,50 +46,32 @@ namespace Bhasha.Common.MongoDB.Tests.Collections
         [TestCaseSource(nameof(Queries))]
         public async Task Query_existing_procedure(TranslationsQuery query)
         {
-            var translation = new TranslationDto
-            {
-                Categories = new[] { "cats", "pets" },
-                Label = "Cats are pets.",
-                Level = LanguageLevel.A1.ToString(),
-                TokenType = TokenType.Phrase.ToString(),
-                Tokens = new[] {
-                    new TokenDto
-                    {
-                        LanguageId = Languages.English,
-                        Native = "Cats are pets.",
-                        Spoken = "Cats are pets."
-                    },
-                    new TokenDto
-                    {
-                        LanguageId = Languages.Bengoli,
-                        Native = "???",
-                        Spoken = "???"
-                    }
-                }
-            };
+            var translations = new[] { TranslationDtoBuilder.Create() };
 
-            A.CallTo(() => _database.Find(Names.Collections.Translations, A<Expression<Func<TranslationDto, bool>>>._, 1))
-                .Returns(new ValueTask<IEnumerable<TranslationDto>>(new[] { translation }));
+            A.CallTo(() => _database.Find(
+                Names.Collections.Translations,
+                A<Expression<Func<TranslationDto, bool>>>._, 1)
+            ).Returns(
+                new ValueTask<IEnumerable<TranslationDto>>(translations));
 
             var result = await _translations.Query(query);
 
             var array = result.ToArray();
+            var expected = Converter.Convert(translations[0], Languages.English, Languages.Bengoli);
 
             Assert.That(array.Length == 1);
-            Assert.That(array[0].Reference.Label == translation.Label);
-            Assert.That(array[0].Reference.Level == LanguageLevel.A1);
-            Assert.That(array[0].Reference.TokenType == TokenType.Phrase);
-            Assert.That(array[0].Reference.Categories, Is.EquivalentTo(new[] {
-                new Category("cats"), new Category("pets")
-            }));
+            Assert.That(array[0].Reference.Label == expected.Reference.Label);
+            Assert.That(array[0].Reference.Level == expected.Reference.Level);
+            Assert.That(array[0].Reference.TokenType == expected.Reference.TokenType);
+            Assert.That(array[0].Reference.Categories, Is.EquivalentTo(expected.Reference.Categories));
 
-            Assert.That(array[0].From.Language == Languages.English);
-            Assert.That(array[0].From.Native == "Cats are pets.");
-            Assert.That(array[0].From.Spoken == "Cats are pets.");
+            Assert.That(array[0].From.Language == expected.From.Language);
+            Assert.That(array[0].From.Native == expected.From.Native);
+            Assert.That(array[0].From.Spoken == expected.From.Spoken);
 
-            Assert.That(array[0].To.Language == Languages.Bengoli);
-            Assert.That(array[0].To.Native == "???");
-            Assert.That(array[0].To.Spoken == "???");
+            Assert.That(array[0].To.Language == expected.To.Language);
+            Assert.That(array[0].To.Native == expected.To.Native);
+            Assert.That(array[0].To.Spoken == expected.To.Spoken);
         }
 
         private class UnsupportedTranslationsQuery : TranslationsQuery

@@ -23,11 +23,13 @@ namespace Bhasha.Common.MongoDB.Tests.Collections
         [Test]
         public async Task List_categories_from_database()
         {
-            var expectedName = Names.Collections.Translations;
-            var expectedField = nameof(TranslationDto.Categories);
+            var categories = new[] { "animals", "pets", "cats" };
 
-            A.CallTo(() => _database.ListMany<TranslationDto, string>(expectedName, expectedField))
-                .Returns(new ValueTask<IEnumerable<string>>(new[] { "animals", "pets", "cats" }));
+            A.CallTo(() => _database.ListMany<TranslationDto, string>(
+                Names.Collections.Translations,
+                Names.Fields.Categories)
+            ).Returns(
+                new ValueTask<IEnumerable<string>>(categories));
 
             var result = await _categories.List();
 

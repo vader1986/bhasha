@@ -21,7 +21,7 @@ namespace Bhasha.Common.MongoDB
                 x => x.Label,
                 x => x.TokenType);
 
-            await translations.CreateIndices("Tokens.LanguageId");
+            await translations.CreateIndices(Names.Fields.LanguageId);
             
             await db.CreateCollectionAsync(Names.Collections.Procedures);
 

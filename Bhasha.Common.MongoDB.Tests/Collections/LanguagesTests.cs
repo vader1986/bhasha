@@ -28,11 +28,12 @@ namespace Bhasha.Common.MongoDB.Tests.Collections
                 Languages.English.ToString(),
                 Languages.Bengoli.ToString()
             };
-            var expectedName = Names.Collections.Translations;
-            var expectedField = Langs.FieldKey;
-
-            A.CallTo(() => _database.ListMany<TranslationDto, string>(expectedName, expectedField))
-                .Returns(new ValueTask<IEnumerable<string>>(languages));
+            
+            A.CallTo(() => _database.ListMany<TranslationDto, string>(
+                Names.Collections.Translations,
+                Names.Fields.LanguageId)
+            ).Returns(
+                new ValueTask<IEnumerable<string>>(languages));
 
             var result = await _languages.List();
 

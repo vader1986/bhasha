@@ -25,8 +25,11 @@ namespace Bhasha.Common.MongoDB.Tests.Collections
         [Test]
         public async Task List_procedure_ids_from_database()
         {
-            A.CallTo(() => _database.List(Names.Collections.Procedures, A<Expression<Func<ProcedureDto, string>>>._))
-                .Returns(new ValueTask<IEnumerable<string>>(new[] { "P-123", "P-212", "P-222" }));
+            A.CallTo(() => _database.List(
+                Names.Collections.Procedures,
+                A<Expression<Func<ProcedureDto, string>>>._)
+            ).Returns(
+                new ValueTask<IEnumerable<string>>(new[] { "P-123", "P-212", "P-222" }));
 
             var result = await _procedureIds.List();
 

@@ -74,7 +74,7 @@ namespace Bhasha.Common.MongoDB.Tests
             // act
             var result = await database.ListMany<TranslationDto, string>(
                 Names.Collections.Translations,
-                nameof(TranslationDto.Categories));
+                Names.Fields.Categories);
 
             // assert
             Assert.That(result, Is.EquivalentTo(new[] {
@@ -122,7 +122,7 @@ namespace Bhasha.Common.MongoDB.Tests
             // act
             var result = await database.ListMany<TranslationDto, string>(
                 Names.Collections.Translations,
-                MongoDB.Collections.Languages.FieldKey);
+                Names.Fields.LanguageId);
 
             // assert
             Assert.That(result, Is.EquivalentTo(new[] {
