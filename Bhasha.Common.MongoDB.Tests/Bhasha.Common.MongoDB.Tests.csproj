@@ -20,5 +20,17 @@
     <Folder Include="Dto\" />
     <Folder Include="Collections\" />
     <Folder Include="Support\" />
+    <Folder Include="Import\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Import\Sample.csv" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Import\Sample.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Import\Sample.csv" />
   </ItemGroup>
 </Project>

@@ -16,5 +16,6 @@
     <Folder Include="Dto\" />
     <Folder Include="Exceptions\" />
     <Folder Include="Extensions\" />
+    <Folder Include="Import\" />
   </ItemGroup>
 </Project>

@@ -40,5 +40,18 @@ namespace Bhasha.Common.Extensions
         {
             return !source.Any();
         }
+
+        public static int IndexOf<T>(this IEnumerable<T> source, T obj) where T : class
+        {
+            var array = source.ToArray();
+            for (int i = 0; i < array.Length; i++)
+            {
+                if (Equals(array[i], obj))
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
     }
 }
