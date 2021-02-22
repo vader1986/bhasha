@@ -10,13 +10,13 @@ namespace Bhasha.Common.MongoDB.Tests.Collections
     [TestFixture]
     public class CategoriesTests
     {
-        private IDatabase _database;
+        private IMongoDb _database;
         private Categories _categories;
 
         [SetUp]
         public void Before()
         {
-            _database = A.Fake<IDatabase>();
+            _database = A.Fake<IMongoDb>();
             _categories = new Categories(_database);
         }
 

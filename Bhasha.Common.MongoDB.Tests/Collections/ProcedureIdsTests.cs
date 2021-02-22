@@ -12,13 +12,13 @@ namespace Bhasha.Common.MongoDB.Tests.Collections
     [TestFixture]
     public class ProcedureIdsTests
     {
-        private IDatabase _database;
+        private IMongoDb _database;
         private ProcedureIds _procedureIds;
 
         [SetUp]
         public void Before()
         {
-            _database = A.Fake<IDatabase>();
+            _database = A.Fake<IMongoDb>();
             _procedureIds = new ProcedureIds(_database);
         }
 

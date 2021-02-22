@@ -10,9 +10,9 @@ namespace Bhasha.Common.MongoDB.Collections
 {
     public class Translations : IQueryable<Translation, TranslationsQuery>
     {
-        private readonly IDatabase _database;
+        private readonly IMongoDb _database;
 
-        public Translations(IDatabase database)
+        public Translations(IMongoDb database)
         {
             _database = database;
         }

@@ -7,23 +7,23 @@ using MongoDB.Driver;
 
 namespace Bhasha.Common.MongoDB
 {
-    public interface IDatabase
+    public interface IMongoDb
     {
         ValueTask<IEnumerable<T>> Find<T>(string collectionName, Expression<Func<T, bool>> predicate, int maxItems);
         ValueTask<IEnumerable<V>> List<T, V>(string collectionName, Expression<Func<T, V>> selector);
         ValueTask<IEnumerable<V>> ListMany<T, V>(string collectionName, string fieldName);
     }
 
-    public class Database : IDatabase
+    public class MongoDb : IMongoDb
     {
         private readonly MongoClient _client;
 
-        private Database(MongoClient client)
+        private MongoDb(MongoClient client)
         {
             _client = client;
         }
 
-        public static async Task<Database> Create(MongoClient client)
+        public static async Task<MongoDb> Create(MongoClient client)
         {
             var dbNames = await client.ListDatabaseNames().ToListAsync();
 
@@ -32,10 +32,10 @@ namespace Bhasha.Common.MongoDB
                 await Setup.NewDatabase(client);
             }
 
-            return new Database(client);
+            return new MongoDb(client);
         }
 
-        public static async Task<Database> Create(string connectionString)
+        public static async Task<MongoDb> Create(string connectionString)
         {
             return await Create(new MongoClient(connectionString));
         }
