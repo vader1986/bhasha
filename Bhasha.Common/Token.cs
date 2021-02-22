@@ -1,15 +1,14 @@
-﻿#nullable enable
-namespace Bhasha.Common
+﻿namespace Bhasha.Common
 {
     public class Token
     {
         public string Label { get; }
-        public string[] Categories { get; set; }
-        public LanguageLevel Level { get; set; }
-        public TokenType TokenType { get; set; }
-        public ResourceId? PictureId { get; set; }
+        public Category[] Categories { get; }
+        public LanguageLevel Level { get; }
+        public TokenType TokenType { get; }
+        public ResourceId? PictureId { get; }
 
-        public Token(string label, string[] categories, LanguageLevel level, TokenType tokenType, ResourceId? pictureId = default)
+        public Token(string label, Category[] categories, LanguageLevel level, TokenType tokenType, ResourceId? pictureId = default)
         {
             Label = label;
             Categories = categories;

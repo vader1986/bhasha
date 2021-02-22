@@ -1,5 +1,4 @@
-﻿#nullable enable
-namespace Bhasha.Common
+﻿namespace Bhasha.Common
 {
     public class LanguageToken
     {

@@ -1,30 +1,14 @@
-﻿#nullable enable
-using System;
-namespace Bhasha.Common
+﻿namespace Bhasha.Common
 {
-    public class ResourceId : IEquatable<ResourceId>
+    public class ResourceId : EntityId
     {
-        public string Id { get; }
-
-        private ResourceId(string id)
+        public ResourceId(string id) : base(id)
         {
-            Id = id;
         }
 
-        public static ResourceId Create(string id)
+        public static ResourceId? Create(string? id)
         {
-            return new ResourceId(id);
-        }
-
-        public bool Equals(ResourceId other)
-        {
-            if (other == null) return false;
-            return Id == other.Id;
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(Id);
+            return id != default ? new ResourceId(id) : default;
         }
     }
 }

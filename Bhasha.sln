@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bhasha.Common.Tests", "Bhas
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bhasha.Web.Core", "Bhasha.Web.Core\Bhasha.Web.Core.csproj", "{0BEDF0AF-C0CF-4FA3-B3F1-D49FD099EAF2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bhasha.Common.MongoDB", "Bhasha.Common.MongoDB\Bhasha.Common.MongoDB.csproj", "{D78E5AAA-DFC4-4314-97B0-AA580BD84DCB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bhasha.Common.MongoDB.Tests", "Bhasha.Common.MongoDB.Tests\Bhasha.Common.MongoDB.Tests.csproj", "{64638C04-B60D-4833-84CC-9BE1B05CD098}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|anycpu = Debug|anycpu
@@ -27,6 +31,14 @@ Global
 		{0BEDF0AF-C0CF-4FA3-B3F1-D49FD099EAF2}.Debug|anycpu.Build.0 = Debug|Any CPU
 		{0BEDF0AF-C0CF-4FA3-B3F1-D49FD099EAF2}.Release|anycpu.ActiveCfg = Release|Any CPU
 		{0BEDF0AF-C0CF-4FA3-B3F1-D49FD099EAF2}.Release|anycpu.Build.0 = Release|Any CPU
+		{D78E5AAA-DFC4-4314-97B0-AA580BD84DCB}.Debug|anycpu.ActiveCfg = Debug|Any CPU
+		{D78E5AAA-DFC4-4314-97B0-AA580BD84DCB}.Debug|anycpu.Build.0 = Debug|Any CPU
+		{D78E5AAA-DFC4-4314-97B0-AA580BD84DCB}.Release|anycpu.ActiveCfg = Release|Any CPU
+		{D78E5AAA-DFC4-4314-97B0-AA580BD84DCB}.Release|anycpu.Build.0 = Release|Any CPU
+		{64638C04-B60D-4833-84CC-9BE1B05CD098}.Debug|anycpu.ActiveCfg = Debug|Any CPU
+		{64638C04-B60D-4833-84CC-9BE1B05CD098}.Debug|anycpu.Build.0 = Debug|Any CPU
+		{64638C04-B60D-4833-84CC-9BE1B05CD098}.Release|anycpu.ActiveCfg = Release|Any CPU
+		{64638C04-B60D-4833-84CC-9BE1B05CD098}.Release|anycpu.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
