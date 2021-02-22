@@ -51,13 +51,13 @@ namespace Bhasha.Common.MongoDB.Tests.Collections
                 Level = LanguageLevel.A1.ToString(),
                 TokenType = TokenType.Phrase.ToString(),
                 Tokens = new[] {
-                    new TranslationDto.TokenDto
+                    new TokenDto
                     {
                         LanguageId = Languages.English,
                         Native = "Cats are pets.",
                         Spoken = "Cats are pets."
                     },
-                    new TranslationDto.TokenDto
+                    new TokenDto
                     {
                         LanguageId = Languages.Bengoli,
                         Native = "???",

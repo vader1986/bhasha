@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Bhasha.Common.MongoDB.Dto;
 using MongoDB.Driver;
@@ -8,12 +9,22 @@ namespace Bhasha.Common.MongoDB
 {
     public static class Setup
     {
-        private static async Task CreateIndices<T>(this IMongoCollection<T> collection, params Func<T, object>[] selectors)
+        private static async Task CreateIndices<T>(this IMongoCollection<T> collection, params Expression<Func<T, object>>[] selectors)
         {
-            await collection.Indexes
-                .CreateManyAsync(selectors
-                    .Select(selector => new CreateIndexModel<T>(
-                        Builders<T>.IndexKeys.Ascending(x => selector(x)))));
+            var indices = selectors
+                .Select(Builders<T>.IndexKeys.Ascending)
+                .Select(x => new CreateIndexModel<T>(x));
+
+            await collection.Indexes.CreateManyAsync(indices);
+        }
+
+        private static async Task CreateIndices<T>(this IMongoCollection<T> collection, params string[] fields)
+        {
+            var indices = fields
+                .Select(x => Builders<T>.IndexKeys.Ascending(x))
+                .Select(x => new CreateIndexModel<T>(x));
+
+            await collection.Indexes.CreateManyAsync(indices);
         }
 
         public static async Task<IMongoDatabase> NewDatabase(MongoClient client)
@@ -26,11 +37,12 @@ namespace Bhasha.Common.MongoDB
 
             await translations.CreateIndices(
                 x => x.Categories,
-                x => x.Tokens.Select(t => t.LanguageId).ToArray(),
                 x => x.Level,
                 x => x.Label,
                 x => x.TokenType);
 
+            await translations.CreateIndices("Tokens.LanguageId");
+            
             await db.CreateCollectionAsync(Names.Collections.Procedures);
 
             var procedures = db.GetCollection<ProcedureDto>(Names.Collections.Procedures);

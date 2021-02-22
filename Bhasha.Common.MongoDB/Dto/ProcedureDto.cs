@@ -1,33 +1,24 @@
-﻿using System;
-using System.Linq;
-using Bhasha.Common.Extensions;
-using Bhasha.Common.MongoDB.Exceptions;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Bhasha.Common.MongoDB.Dto
 {
+    [BsonIgnoreExtraElements]
     public class ProcedureDto
     {
+        [BsonElement]
         public string ProcedureId { get; set; } = "";
+
+        [BsonElement]
         public string Description { get; set; } = "";
+
+        [BsonElement]
         public string[]? Tutorial { get; set; }
+
+        [BsonElement]
         public string? AudioId { get; set; }
+
+        [BsonElement]
         public string[] Support { get; set; } = new string[0];
-
-        public Procedure ToProcedure()
-        {
-            try
-            {
-                var id = new ProcedureId(ProcedureId);
-                var tutorial = Tutorial != default ? Tutorial.Select(x => new ResourceId(x)).ToArray() : default;
-                var support = Support.Select(Enum.Parse<TokenType>).ToArray();
-                var audio = ResourceId.Create(AudioId);
-
-                return new Procedure(id, Description, tutorial, audio, support);
-            }
-            catch (Exception e)
-            {
-                throw new InvalidProcedureException($"loaded invalid procedure {this.Stringify()}", e);
-            }
-        }
     }
 }

@@ -51,19 +51,19 @@ namespace Bhasha.Common.MongoDB.Collections
         private async ValueTask<IEnumerable<Translation>> ExecuteQuery(TranslationsTokenTypeQuery query)
         {
             var result = await _database.Find<TranslationDto>(Names.Collections.Translations, x => MatchCategory(query, x) && x.TokenType == query.TokenType.ToString(), query.MaxItems);
-            return result.Select(x => x.ToTranslation(query.From, query.To));
+            return result.Select(x => Converter.Convert(x, query.From, query.To));
         }
 
         private async ValueTask<IEnumerable<Translation>> ExecuteQuery(TranslationsCategoryQuery query)
         {
             var result = await _database.Find<TranslationDto>(Names.Collections.Translations, x => MatchCategory(query, x), query.MaxItems);
-            return result.Select(x => x.ToTranslation(query.From, query.To));
+            return result.Select(x => Converter.Convert(x, query.From, query.To));
         }
 
         private async ValueTask<IEnumerable<Translation>> ExecuteQuery(TranslationsLabelQuery query)
         {
             var result = await _database.Find<TranslationDto>(Names.Collections.Translations, x => MatchLanguages(query, x) && x.Label == query.Label, query.MaxItems);
-            return result.Select(x => x.ToTranslation(query.From, query.To));
+            return result.Select(x => Converter.Convert(x, query.From, query.To));
         }
     }
 }
