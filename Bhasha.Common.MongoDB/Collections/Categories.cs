@@ -19,7 +19,7 @@ namespace Bhasha.Common.MongoDB.Collections
         {
             var categories = await _database.ListMany<TranslationDto, string>(
                 Names.Collections.Translations,
-                x => x.Categories);
+                nameof(TranslationDto.Categories));
 
             return categories.Select(x => new Category(x));
         }

@@ -17,7 +17,7 @@
             return this;
         }
 
-        public TokenBuilder WithCategories(Category[] categories)
+        public TokenBuilder WithCategories(params Category[] categories)
         {
             _categories = categories;
             return this;

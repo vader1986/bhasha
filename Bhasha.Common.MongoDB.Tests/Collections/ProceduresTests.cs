@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Bhasha.Common.MongoDB.Collections;
 using Bhasha.Common.MongoDB.Dto;
@@ -50,7 +51,7 @@ namespace Bhasha.Common.MongoDB.Tests.Collections
                 Support = new string[0]
             };
 
-            A.CallTo(() => _database.Find(Names.Collections.Procedures, A<Func<ProcedureDto, bool>>._, 1))
+            A.CallTo(() => _database.Find(Names.Collections.Procedures, A<Expression<Func<ProcedureDto, bool>>>._, 1))
                 .Returns(new ValueTask<IEnumerable<ProcedureDto>>(new[] { procedure }));
 
             var result = await _procedures.Query(query);

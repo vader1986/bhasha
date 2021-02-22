@@ -35,7 +35,7 @@
             return this;
         }
 
-        public UserProgressBuilder WithFinished(Category[] finished)
+        public UserProgressBuilder WithFinished(params Category[] finished)
         {
             _finished = finished;
             return this;

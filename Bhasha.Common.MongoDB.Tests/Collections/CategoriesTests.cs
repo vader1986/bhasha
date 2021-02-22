@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Bhasha.Common.MongoDB.Collections;
 using Bhasha.Common.MongoDB.Dto;
@@ -24,7 +23,10 @@ namespace Bhasha.Common.MongoDB.Tests.Collections
         [Test]
         public async Task List_categories_from_database()
         {
-            A.CallTo(() => _database.ListMany(Names.Collections.Translations, A<Func<TranslationDto, string[]>>._))
+            var expectedName = Names.Collections.Translations;
+            var expectedField = nameof(TranslationDto.Categories);
+
+            A.CallTo(() => _database.ListMany<TranslationDto, string>(expectedName, expectedField))
                 .Returns(new ValueTask<IEnumerable<string>>(new[] { "animals", "pets", "cats" }));
 
             var result = await _categories.List();

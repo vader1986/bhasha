@@ -18,7 +18,7 @@ namespace Bhasha.Common.MongoDB.Tests.Dto
         }
 
         [Test]
-        public void Convert_ProcedureDto_without_tutorial()
+        public void Convert_ProcedureDto_without_audio_id()
         {
             var dto = new ProcedureDto {
                 ProcedureId = "ID-123",
@@ -29,7 +29,7 @@ namespace Bhasha.Common.MongoDB.Tests.Dto
 
             var procedure = Converter.Convert(dto);
 
-            Assert.That(procedure.Audio, Is.Null);
+            Assert.That(procedure.AudioId, Is.Null);
             Assert.That(procedure.Id, Is.EqualTo(new ProcedureId(dto.ProcedureId)));
             Assert.That(procedure.Description, Is.EqualTo(dto.Description));
             Assert.That(procedure.Support, Is.EquivalentTo(new string[0]));
@@ -37,7 +37,7 @@ namespace Bhasha.Common.MongoDB.Tests.Dto
         }
 
         [Test]
-        public void Convert_ProcedureDto_without_audio()
+        public void Convert_ProcedureDto_without_tutorial()
         {
             var dto = new ProcedureDto
             {
@@ -50,7 +50,7 @@ namespace Bhasha.Common.MongoDB.Tests.Dto
             var procedure = Converter.Convert(dto);
 
             Assert.That(procedure.Tutorial, Is.EquivalentTo(new ResourceId[0]));
-            Assert.That(procedure.Audio, Is.EqualTo(ResourceId.Create(dto.AudioId)));
+            Assert.That(procedure.AudioId, Is.EqualTo(ResourceId.Create(dto.AudioId)));
             Assert.That(procedure.Id, Is.EqualTo(new ProcedureId(dto.ProcedureId)));
             Assert.That(procedure.Description, Is.EqualTo(dto.Description));
             Assert.That(procedure.Support, Is.EquivalentTo(new string[0]));
@@ -70,7 +70,7 @@ namespace Bhasha.Common.MongoDB.Tests.Dto
 
             var procedure = Converter.Convert(dto);
 
-            Assert.That(procedure.Audio, Is.EqualTo(ResourceId.Create(dto.AudioId)));
+            Assert.That(procedure.AudioId, Is.EqualTo(ResourceId.Create(dto.AudioId)));
             Assert.That(procedure.Id, Is.EqualTo(new ProcedureId(dto.ProcedureId)));
             Assert.That(procedure.Description, Is.EqualTo(dto.Description));
             Assert.That(procedure.Support, Is.EquivalentTo(new[] { supportedToken }));
