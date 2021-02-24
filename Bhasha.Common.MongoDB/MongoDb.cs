@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 
 namespace Bhasha.Common.MongoDB
 {
@@ -54,10 +55,9 @@ namespace Bhasha.Common.MongoDB
 
         public async ValueTask<IEnumerable<T>> Find<T>(string collectionName, Expression<Func<T, bool>> predicate, int maxItems)
         {
-            var findOptions = new FindOptions<T> { BatchSize = maxItems };
-            var cursor = await GetCollection<T>(collectionName).FindAsync(predicate, findOptions);
+            var queryable = GetCollection<T>(collectionName).AsQueryable().Where(predicate).Sample(maxItems);
 
-            return await GetResult(cursor);
+            return await queryable.ToListAsync();
         }
 
         public async ValueTask<IEnumerable<V>> List<T, V>(string collectionName, Expression<Func<T, V>> selector)
