@@ -8,6 +8,7 @@
         {
             public const string Translations = "translations";
             public const string Procedures = "procedures";
+            public const string Users = "users";
         }
 
         public class Fields

@@ -10,16 +10,16 @@ using NUnit.Framework;
 namespace Bhasha.Common.MongoDB.Tests.Collections
 {
     [TestFixture]
-    public class ProcedureIdsTests
+    public class ProcedureIdCollectionTests
     {
         private IMongoDb _database;
-        private ProcedureIds _procedureIds;
+        private ProcedureIdCollection _procedureIds;
 
         [SetUp]
         public void Before()
         {
             _database = A.Fake<IMongoDb>();
-            _procedureIds = new ProcedureIds(_database);
+            _procedureIds = new ProcedureIdCollection(_database);
         }
 
         [Test]

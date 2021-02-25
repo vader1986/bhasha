@@ -32,6 +32,7 @@ namespace Bhasha.Common.MongoDB.Tests
 
             await AssertCollectionIndices(db, Names.Collections.Translations, 7);
             await AssertCollectionIndices(db, Names.Collections.Procedures, 3);
+            await AssertCollectionIndices(db, Names.Collections.Users, 2);
         }
 
         private async Task AssertCollectionIndices(IMongoDatabase db, string name, int expectedIndexCount)

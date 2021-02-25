@@ -8,13 +8,15 @@ namespace Bhasha.Common
         public int CompletedTokens { get; }
         public int CompletedChapters { get; }
         public ISet<int> CompletedSequenceNumbers { get; }
+        public LanguageLevel Level { get; }
 
-        public UserStats(int groupId, int completedTokens, int completedChapters, ISet<int> completedSequenceNumbers)
+        public UserStats(int groupId, int completedTokens, int completedChapters, ISet<int> completedSequenceNumbers, LanguageLevel level)
         {
             GroupId = groupId;
             CompletedTokens = completedTokens;
             CompletedChapters = completedChapters;
             CompletedSequenceNumbers = completedSequenceNumbers;
+            Level = level;
         }
     }
 }

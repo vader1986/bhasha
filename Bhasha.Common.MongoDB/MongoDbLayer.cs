@@ -5,13 +5,14 @@ using Bhasha.Common.Queries;
 
 namespace Bhasha.Common.MongoDB
 {
-    using Langs = Collections.Languages;
+    using Langs = Collections.LanguageCollection;
 
     public class MongoDbLayer : IDatabase
     {
-        private readonly ProcedureIds _procedureIds;
-        private readonly Procedures _procedures;
-        private readonly Translations _translations;
+        private readonly ProcedureIdCollection _procedureIds;
+        private readonly ProcedureCollection _procedures;
+        private readonly TranslationCollection _translations;
+        private readonly UserProgressCollection _users;
         private readonly Langs _languages;
 
         public MongoDbLayer(string connectionString)
@@ -21,9 +22,10 @@ namespace Bhasha.Common.MongoDB
                 .GetAwaiter()
                 .GetResult();
 
-            _procedureIds = new ProcedureIds(db);
-            _procedures = new Procedures(db);
-            _translations = new Translations(db);
+            _procedureIds = new ProcedureIdCollection(db);
+            _procedures = new ProcedureCollection(db);
+            _translations = new TranslationCollection(db);
+            _users = new UserProgressCollection(db);
             _languages = new Langs(db);
         }
 
@@ -35,6 +37,11 @@ namespace Bhasha.Common.MongoDB
         public ValueTask<IEnumerable<Procedure>> Query(ProcedureQuery query)
         {
             return _procedures.Query(query);
+        }
+
+        public ValueTask<IEnumerable<UserProgress>> Query(UserProgressQuery query)
+        {
+            return _users.Query(query);
         }
 
         ValueTask<IEnumerable<ProcedureId>> IListable<ProcedureId>.List()

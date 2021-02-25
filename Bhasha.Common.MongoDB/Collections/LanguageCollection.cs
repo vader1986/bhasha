@@ -6,11 +6,11 @@ using Bhasha.Common.Queries;
 
 namespace Bhasha.Common.MongoDB.Collections
 {
-    public class Languages : IListable<Language>
+    public class LanguageCollection : IListable<Language>
     {
         private readonly IMongoDb _database;
 
-        public Languages(IMongoDb database)
+        public LanguageCollection(IMongoDb database)
         {
             _database = database;
         }

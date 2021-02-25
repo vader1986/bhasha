@@ -1,5 +1,7 @@
+using System.Linq;
 using Bhasha.Common.MongoDB.Dto;
 using Bhasha.Common.MongoDB.Exceptions;
+using Bhasha.Common.MongoDB.Tests.Support;
 using NUnit.Framework;
 
 namespace Bhasha.Common.MongoDB.Tests.Dto
@@ -78,32 +80,24 @@ namespace Bhasha.Common.MongoDB.Tests.Dto
         }
 
         [Test]
-        public void Convert_TranslationDto_fully_populated_dto([Values] LanguageLevel level, [Values] TokenType tokenType)
+        public void Convert_TranslationDto([Values] LanguageLevel level, [Values] TokenType tokenType)
         {
-            var dto = new TranslationDto
-            {
-                Label = "cat",
-                SequenceNumber = 123,
-                GroupId = 3,
-                Level = level.ToString(),
-                Categories = new[] { "pet", "animal" },
-                PictureId = "PicID-123",
-                TokenType = tokenType.ToString(),
-                Tokens = new[] {
-                    new TokenDto {
-                        AudioId = "AudioID-123",
-                        LanguageId = Languages.English.ToString(),
-                        Native = "cat",
-                        Spoken = "cat"
-                    },
-                    new TokenDto {
-                        AudioId = "AudioID-321",
-                        LanguageId = Languages.Bengoli.ToString(),
-                        Native = "???",
-                        Spoken = "???"
-                    }
-                }
-            };
+            var from = TokenDtoBuilder
+                .Default
+                .WithLanguageId(Languages.English)
+                .Build();
+
+            var to = TokenDtoBuilder
+                .Default
+                .WithLanguageId(Languages.Bengoli)
+                .Build();
+
+            var dto = TranslationDtoBuilder
+                .Default
+                .WithTokens(from, to)
+                .WithLevel(level.ToString())
+                .WithTokenType(tokenType.ToString())
+                .Build();
 
             var translation = Converter.Convert(dto, Languages.English.ToString(), Languages.Bengoli.ToString());
 
@@ -112,47 +106,55 @@ namespace Bhasha.Common.MongoDB.Tests.Dto
             Assert.That(translation.Reference.Id.GroupId, Is.EqualTo(dto.GroupId));
             Assert.That(translation.Reference.Id.SequenceNumber, Is.EqualTo(dto.SequenceNumber));
             Assert.That(translation.Reference.Level, Is.EqualTo(level));
-            Assert.That(translation.Reference.Categories, Is.EquivalentTo(new[] {
-                new Category("pet"), new Category("animal")
-            }));
+            Assert.That(translation.Reference.Categories, Is.EquivalentTo(dto.Categories.Select(x => new Category(x))));
             Assert.That(translation.Reference.PictureId, Is.EqualTo(ResourceId.Create(dto.PictureId)));
             Assert.That(translation.Reference.TokenType, Is.EqualTo(tokenType));
 
             Assert.That(translation.From, Is.Not.Null);
-            Assert.That(translation.From.AudioId, Is.EqualTo(ResourceId.Create("AudioID-123")));
-            Assert.That(translation.From.Language, Is.EqualTo(Languages.English));
-            Assert.That(translation.From.Native, Is.EqualTo("cat"));
-            Assert.That(translation.From.Spoken, Is.EqualTo("cat"));
+            Assert.That(translation.From.Language, Is.EqualTo(Language.Parse(from.LanguageId)));
+            Assert.That(translation.From.Native, Is.EqualTo(from.Native));
+            Assert.That(translation.From.Spoken, Is.EqualTo(from.Spoken));
+            Assert.That(translation.From.AudioId, Is.EqualTo(ResourceId.Create(from.AudioId)));
 
             Assert.That(translation.To, Is.Not.Null);
-            Assert.That(translation.To.AudioId, Is.EqualTo(ResourceId.Create("AudioID-321")));
-            Assert.That(translation.To.Language, Is.EqualTo(Languages.Bengoli));
-            Assert.That(translation.To.Native, Is.EqualTo("???"));
-            Assert.That(translation.To.Spoken, Is.EqualTo("???"));
+            Assert.That(translation.To.Language, Is.EqualTo(Language.Parse(to.LanguageId)));
+            Assert.That(translation.To.Native, Is.EqualTo(to.Native));
+            Assert.That(translation.To.Spoken, Is.EqualTo(to.Spoken));
+            Assert.That(translation.To.AudioId, Is.EqualTo(ResourceId.Create(to.AudioId)));
         }
 
         [Test]
         public void Convert_TranslationDto_invalid_dto()
         {
-            var dto = new TranslationDto
-            {
-                Label = "cat",
-                Level = LanguageLevel.A1.ToString(),
-                Categories = new[] { "pet", "animal" },
-                PictureId = "PicID-123",
-                TokenType = TokenType.Noun.ToString(),
-                Tokens = new[] {
-                    new TokenDto {
-                        AudioId = "AudioID-123",
-                        LanguageId = Languages.English.ToString(),
-                        Native = "cat",
-                        Spoken = "cat"
-                    }
-                }
-            };
+            var dto = new TranslationDto();
 
             Assert.Throws<InvalidTranslationException>(()
                 => Converter.Convert(dto, Languages.English.ToString(), Languages.Bengoli.ToString()));
+        }
+
+        [Test]
+        public void Convert_UserProgressDto()
+        {
+            var dto = UserProgressDtoBuilder.Create();
+            var result = Converter.Convert(dto);
+
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.UserId, Is.EqualTo(new EntityId(dto.UserId)));
+            Assert.That(result.From, Is.EqualTo(Language.Parse(dto.From)));
+            Assert.That(result.To, Is.EqualTo(Language.Parse(dto.To)));
+            Assert.That(result.Stats.Level, Is.EqualTo(LanguageLevel.B2));
+            Assert.That(result.Stats.GroupId, Is.EqualTo(dto.GroupId));
+            Assert.That(result.Stats.CompletedChapters, Is.EqualTo(dto.CompletedChapters));
+            Assert.That(result.Stats.CompletedTokens, Is.EqualTo(dto.CompletedTokens));
+            Assert.That(result.Stats.CompletedSequenceNumbers, Is.EquivalentTo(dto.CompletedSequenceNumbers));
+        }
+
+        [Test]
+        public void Convert_UserProgressDto_invalid()
+        {
+            var dto = new UserProgressDto();
+
+            Assert.Throws<InvalidUserProgressException>(() => Converter.Convert(dto));
         }
     }
 }

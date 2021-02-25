@@ -8,6 +8,7 @@ namespace Bhasha.Common.Tests.Support
         private int _completedTokens = 99;
         private int _completedChapters = 17;
         private ISet<int> _completedSequenceNumbers = new HashSet<int> { 1, 2, 6 };
+        private LanguageLevel _level = LanguageLevel.B2;
 
         public static UserStatsBuilder Default = new UserStatsBuilder();
         public static UserStats Create() => Default.Build();
@@ -36,9 +37,15 @@ namespace Bhasha.Common.Tests.Support
             return this;
         }
 
+        public UserStatsBuilder WithLevel(LanguageLevel level)
+        {
+            _level = level;
+            return this;
+        }
+
         public UserStats Build()
         {
-            return new UserStats(_groupId, _completedTokens, _completedChapters, _completedSequenceNumbers);
+            return new UserStats(_groupId, _completedTokens, _completedChapters, _completedSequenceNumbers, _level);
         }
     }
 }

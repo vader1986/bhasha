@@ -20,7 +20,7 @@
     "Bhasha.Web.Api": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "weatherforecast",
+      "launchUrl": "bhasha",
       "applicationUrl": "https://localhost:43868;http://localhost:50530",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"

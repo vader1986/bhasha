@@ -6,10 +6,10 @@ using NUnit.Framework;
 
 namespace Bhasha.Common.MongoDB.Tests.Collections
 {
-    using Langs = MongoDB.Collections.Languages;
+    using Langs = MongoDB.Collections.LanguageCollection;
 
     [TestFixture]
-    public class LanguagesTests
+    public class LanguageCollectionTests
     {
         private IMongoDb _database;
         private Langs _languages;

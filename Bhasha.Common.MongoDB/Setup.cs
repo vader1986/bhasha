@@ -32,6 +32,13 @@ namespace Bhasha.Common.MongoDB
                 x => x.ProcedureId,
                 x => x.Support);
 
+            await db.CreateCollectionAsync(Names.Collections.Users);
+
+            var users = db.GetCollection<UserProgressDto>(Names.Collections.Users);
+
+            await users.CreateIndices(
+                x => x.UserId);
+
             return db;
         }
     }

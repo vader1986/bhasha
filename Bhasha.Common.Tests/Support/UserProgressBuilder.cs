@@ -5,7 +5,6 @@
         private EntityId _userId = new EntityId("user-123");
         private Language _from = Languages.English;
         private Language _to = Languages.Bengoli;
-        private LanguageLevel _level = LanguageLevel.B2;
         private UserStats _stats = UserStatsBuilder.Create();
 
         public static UserProgressBuilder Default => new UserProgressBuilder();
@@ -29,12 +28,6 @@
             return this;
         }
 
-        public UserProgressBuilder WithLevel(LanguageLevel level)
-        {
-            _level = level;
-            return this;
-        }
-
         public UserProgressBuilder WithStats(UserStats stats)
         {
             _stats = stats;
@@ -43,7 +36,7 @@
 
         public UserProgress Build()
         {
-            return new UserProgress(_userId, _from, _to, _level, _stats);
+            return new UserProgress(_userId, _from, _to, _stats);
         }
     }
 }

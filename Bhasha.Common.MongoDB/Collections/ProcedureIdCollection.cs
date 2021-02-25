@@ -6,11 +6,11 @@ using Bhasha.Common.Queries;
 
 namespace Bhasha.Common.MongoDB.Collections
 {
-    public class ProcedureIds : IListable<ProcedureId>
+    public class ProcedureIdCollection : IListable<ProcedureId>
     {
         private readonly IMongoDb _database;
 
-        public ProcedureIds(IMongoDb database)
+        public ProcedureIdCollection(IMongoDb database)
         {
             _database = database;
         }

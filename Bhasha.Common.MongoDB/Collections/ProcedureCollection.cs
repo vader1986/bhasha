@@ -7,11 +7,11 @@ using Bhasha.Common.Queries;
 
 namespace Bhasha.Common.MongoDB.Collections
 {
-    public class Procedures : IQueryable<Procedure, ProcedureQuery>
+    public class ProcedureCollection : IQueryable<Procedure, ProcedureQuery>
     {
         private readonly IMongoDb _database;
 
-        public Procedures(IMongoDb database)
+        public ProcedureCollection(IMongoDb database)
         {
             _database = database;
         }

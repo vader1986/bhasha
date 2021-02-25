@@ -8,11 +8,11 @@ using MongoDB.Driver;
 
 namespace Bhasha.Common.MongoDB.Collections
 {
-    public class Translations : IQueryable<Translation, TranslationQuery>
+    public class TranslationCollection : IQueryable<Translation, TranslationQuery>
     {
         private readonly IMongoDb _database;
 
-        public Translations(IMongoDb database)
+        public TranslationCollection(IMongoDb database)
         {
             _database = database;
         }

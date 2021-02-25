@@ -6,7 +6,8 @@ namespace Bhasha.Common
         IListable<ProcedureId>,
         IListable<Language>,
         IQueryable<Translation, TranslationQuery>,
-        IQueryable<Procedure, ProcedureQuery>
+        IQueryable<Procedure, ProcedureQuery>,
+        IQueryable<UserProgress, UserProgressQuery>
     {
     }
 }

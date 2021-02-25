@@ -52,5 +52,28 @@ namespace Bhasha.Common.MongoDB.Dto
                 throw new InvalidTranslationException($"loaded invalid translation {dto.Stringify()} from {fromId} to {toId}", e);
             }
         }
+
+        public static UserProgress Convert(UserProgressDto dto)
+        {
+            try
+            {
+                var userId = new EntityId(dto.UserId);
+                var from = Language.Parse(dto.From);
+                var to = Language.Parse(dto.To);
+
+                var stats = new UserStats(
+                    dto.GroupId,
+                    dto.CompletedTokens,
+                    dto.CompletedChapters,
+                    dto.CompletedSequenceNumbers.ToHashSet(),
+                    Enum.Parse<LanguageLevel>(dto.Level));
+
+                return new UserProgress(userId, from, to, stats);
+            }
+            catch (Exception e)
+            {
+                throw new InvalidUserProgressException($"loaded invalid user progress {dto.Stringify()}", e);
+            }
+        }
     }
 }

@@ -14,16 +14,16 @@ using NUnit.Framework;
 namespace Bhasha.Common.MongoDB.Tests.Collections
 {
     [TestFixture]
-    public class TranslationsTests
+    public class TranslationCollectionTests
     {
         private IMongoDb _database;
-        private Translations _translations;
+        private TranslationCollection _translations;
 
         [SetUp]
         public void Before()
         {
             _database = A.Fake<IMongoDb>();
-            _translations = new Translations(_database);
+            _translations = new TranslationCollection(_database);
         }
 
         [Test]
