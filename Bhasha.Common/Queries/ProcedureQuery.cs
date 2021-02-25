@@ -1,6 +1,6 @@
 ﻿namespace Bhasha.Common.Queries
 {
-    public abstract class ProcedureQuery : IQuery
+    public abstract class ProcedureQuery
     {
         public int MaxItems { get; }
 

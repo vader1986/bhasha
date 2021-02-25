@@ -10,6 +10,7 @@ namespace Bhasha.Common.MongoDB
 {
     public interface IMongoDb
     {
+        ValueTask<IEnumerable<T>> Find<T>(string collectionName, Expression<Func<T, bool>> predicate);
         ValueTask<IEnumerable<T>> Find<T>(string collectionName, Expression<Func<T, bool>> predicate, int maxItems);
         ValueTask<IEnumerable<V>> List<T, V>(string collectionName, Expression<Func<T, V>> selector);
         ValueTask<IEnumerable<V>> ListMany<T, V>(string collectionName, string fieldName);
@@ -53,9 +54,20 @@ namespace Bhasha.Common.MongoDB
             return await cursor.MoveNextAsync() ? cursor.Current : new T[0];
         }
 
+        public async ValueTask<IEnumerable<T>> Find<T>(string collectionName, Expression<Func<T, bool>> predicate)
+        {
+            return await GetCollection<T>(collectionName)
+                .AsQueryable()
+                .Where(predicate)
+                .ToListAsync();
+        }
+
         public async ValueTask<IEnumerable<T>> Find<T>(string collectionName, Expression<Func<T, bool>> predicate, int maxItems)
         {
-            var queryable = GetCollection<T>(collectionName).AsQueryable().Where(predicate).Sample(maxItems);
+            var queryable = GetCollection<T>(collectionName)
+                .AsQueryable()
+                .Where(predicate)
+                .Sample(maxItems);
 
             return await queryable.ToListAsync();
         }

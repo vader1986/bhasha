@@ -20,8 +20,8 @@ namespace Bhasha.Common.MongoDB.Collections
         {
             return query switch
             {
-                ProcedureIdQuery iq => ExecuteQuery(iq),
-                ProcedureSupportQuery sq => ExecuteQuery(sq),
+                ProcedureQueryById byId => ExecuteQuery(byId),
+                ProcedureQueryBySupportedType bySupportedType => ExecuteQuery(bySupportedType),
                 _ => OnDefault(query)
             };
         }
@@ -33,13 +33,13 @@ namespace Bhasha.Common.MongoDB.Collections
                 $"Query type {query.GetType().FullName} not supported");
         }
 
-        private async ValueTask<IEnumerable<Procedure>> ExecuteQuery(ProcedureIdQuery query)
+        private async ValueTask<IEnumerable<Procedure>> ExecuteQuery(ProcedureQueryById query)
         {
             var result = await _database.Find<ProcedureDto>(Names.Collections.Procedures, x => x.ProcedureId == query.Id.Id, query.MaxItems);
             return result.Select(Converter.Convert);
         }
 
-        private async ValueTask<IEnumerable<Procedure>> ExecuteQuery(ProcedureSupportQuery query)
+        private async ValueTask<IEnumerable<Procedure>> ExecuteQuery(ProcedureQueryBySupportedType query)
         {
             var tokenType = query.SupportedType.ToString();
             var result = await _database.Find<ProcedureDto>(Names.Collections.Procedures,

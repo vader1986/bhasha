@@ -19,16 +19,6 @@ namespace Bhasha.Common.MongoDB.Tests.Collections
         private IMongoDb _database;
         private Translations _translations;
 
-        internal static IEnumerable Queries
-        {
-            get
-            {
-                yield return new TestCaseData(new TranslationsCategoryQuery(1, Languages.English, Languages.Bengoli, LanguageLevel.A1, new Category("cats")));
-                yield return new TestCaseData(new TranslationsTokenTypeQuery(1, Languages.English, Languages.Bengoli, LanguageLevel.A2, new Category("pets"), TokenType.Adjective));
-                yield return new TestCaseData(new TranslationsLabelQuery(1, Languages.English, Languages.Bengoli, "cat"));
-            }
-        }
-
         [SetUp]
         public void Before()
         {
@@ -40,26 +30,27 @@ namespace Bhasha.Common.MongoDB.Tests.Collections
         public void Query_unsupported()
         {
             Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () =>
-                await _translations.Query(new UnsupportedTranslationsQuery(123)));
+                await _translations.Query(new UnsupportedTranslationQuery()));
         }
 
-        [TestCaseSource(nameof(Queries))]
-        public async Task Query_existing_procedure(TranslationsQuery query)
+        [Test]
+        public async Task Query_translation_by_group_id()
         {
-            var translations = new[] { TranslationDtoBuilder.Create() };
+            var query = new TranslationQueryByGroupId(Languages.English, Languages.Bengoli, 1, TokenType.Adjective);
+            var translation = TranslationDtoBuilder.Default.WithGroupId(query.GroupId).Build();
 
             A.CallTo(() => _database.Find(
                 Names.Collections.Translations,
-                A<Expression<Func<TranslationDto, bool>>>._, 1)
+                A<Expression<Func<TranslationDto, bool>>>._)
             ).Returns(
-                new ValueTask<IEnumerable<TranslationDto>>(translations));
+                new ValueTask<IEnumerable<TranslationDto>>(new[] { translation }));
 
             var result = await _translations.Query(query);
 
             var array = result.ToArray();
-            var expected = Converter.Convert(translations[0], Languages.English, Languages.Bengoli);
+            var expected = Converter.Convert(translation, Languages.English, Languages.Bengoli);
 
-            Assert.That(array.Length == 1);
+            Assert.That(array.Length, Is.EqualTo(1));
             Assert.That(array[0].Reference.Label == expected.Reference.Label);
             Assert.That(array[0].Reference.Level == expected.Reference.Level);
             Assert.That(array[0].Reference.TokenType == expected.Reference.TokenType);
@@ -74,9 +65,9 @@ namespace Bhasha.Common.MongoDB.Tests.Collections
             Assert.That(array[0].To.Spoken == expected.To.Spoken);
         }
 
-        private class UnsupportedTranslationsQuery : TranslationsQuery
+        private class UnsupportedTranslationQuery : TranslationQuery
         {
-            public UnsupportedTranslationsQuery(int maxItems) : base(maxItems, Languages.English, Languages.Bengoli)
+            public UnsupportedTranslationQuery() : base(Languages.English, Languages.Bengoli)
             {
             }
         }

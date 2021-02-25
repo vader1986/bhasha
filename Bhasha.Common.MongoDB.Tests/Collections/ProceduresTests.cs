@@ -22,8 +22,8 @@ namespace Bhasha.Common.MongoDB.Tests.Collections
         {
             get
             {
-                yield return new TestCaseData(new ProcedureIdQuery(1, new ProcedureId("P1")));
-                yield return new TestCaseData(new ProcedureSupportQuery(1, TokenType.Adjective));
+                yield return new TestCaseData(new ProcedureQueryById(1, new ProcedureId("P1")));
+                yield return new TestCaseData(new ProcedureQueryBySupportedType(1, TokenType.Adjective));
             }
         }
 

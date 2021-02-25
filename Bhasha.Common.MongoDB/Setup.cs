@@ -19,7 +19,8 @@ namespace Bhasha.Common.MongoDB
                 x => x.Categories,
                 x => x.Level,
                 x => x.Label,
-                x => x.TokenType);
+                x => x.TokenType,
+                x => x.GroupId);
 
             await translations.CreateIndices(Names.Fields.LanguageId);
             

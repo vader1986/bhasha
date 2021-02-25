@@ -32,17 +32,20 @@ namespace Bhasha.Common.MongoDB.Dto
                 var level = Enum.Parse<LanguageLevel>(dto.Level);
                 var tokenType = Enum.Parse<TokenType>(dto.TokenType);
                 var pictureId = ResourceId.Create(dto.PictureId);
-                var token = new Token(dto.Label, categories, level, tokenType, pictureId);
+                var reference = new Token(new TokenId(dto.GroupId, dto.SequenceNumber),
+                    dto.Label, level, tokenType, categories, pictureId);
 
                 var fromToken = dto.Tokens.First(x => x.LanguageId == fromId);
                 var fromAudioId = ResourceId.Create(fromToken.AudioId);
-                var from = new LanguageToken(Language.Parse(fromId), fromToken.Native, fromToken.Spoken, fromAudioId);
+                var from = new LanguageToken(Language.Parse(fromId),
+                    fromToken.Native, fromToken.Spoken, fromAudioId);
 
                 var toToken = dto.Tokens.First(x => x.LanguageId == toId);
                 var toAudioId = ResourceId.Create(toToken.AudioId);
-                var to = new LanguageToken(Language.Parse(toId), toToken.Native, toToken.Spoken, toAudioId);
+                var to = new LanguageToken(Language.Parse(toId),
+                    toToken.Native, toToken.Spoken, toAudioId);
 
-                return new Translation(token, from, to);
+                return new Translation(reference, from, to);
             }
             catch (Exception e)
             {

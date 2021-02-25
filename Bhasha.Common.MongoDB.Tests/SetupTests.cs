@@ -30,7 +30,7 @@ namespace Bhasha.Common.MongoDB.Tests
             var client = new MongoClient(_runner.ConnectionString);
             var db = await Setup.NewDatabase(client);
 
-            await AssertCollectionIndices(db, Names.Collections.Translations, 6);
+            await AssertCollectionIndices(db, Names.Collections.Translations, 7);
             await AssertCollectionIndices(db, Names.Collections.Procedures, 3);
         }
 

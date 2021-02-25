@@ -13,13 +13,13 @@ namespace Bhasha.Common.Tests.Aggregation
     [TestFixture]
     public class TranslationLoaderTests
     {
-        private IQueryable<Translation, TranslationsQuery> _translations;
+        private IQueryable<Translation, TranslationQuery> _translations;
         private TranslationLoader _loader;
 
         [SetUp]
         public void Before()
         {
-            _translations = A.Fake<IQueryable<Translation, TranslationsQuery>>();
+            _translations = A.Fake<IQueryable<Translation, TranslationQuery>>();
             _loader = new TranslationLoader(_translations);
         }
 
@@ -35,10 +35,10 @@ namespace Bhasha.Common.Tests.Aggregation
                 .ToEnumeration()
                 .ToArray();
 
-            A.CallTo(() => _translations.Query(A<TranslationsQuery>._))
+            A.CallTo(() => _translations.Query(A<TranslationQuery>._))
                 .Returns(new ValueTask<IEnumerable<Translation>>(translations));
 
-            var result = await _loader.NextTranslations(userProgress, new Category("pets"));
+            var result = await _loader.NextTranslations(userProgress);
 
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Contains.Item(translations[0]));

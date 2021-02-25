@@ -3,10 +3,9 @@
 namespace Bhasha.Common
 {
     public interface IDatabase :
-        IListable<Category>,
         IListable<ProcedureId>,
         IListable<Language>,
-        IQueryable<Translation, TranslationsQuery>,
+        IQueryable<Translation, TranslationQuery>,
         IQueryable<Procedure, ProcedureQuery>
     {
     }

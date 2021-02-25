@@ -2,6 +2,7 @@
 {
     public class TokenBuilder
     {
+        private TokenId _id = TokenIdBuilder.Create();
         private string _label = "cat";
         private Category[] _categories = new[] { new Category("pet"), new Category("animal") };
         private LanguageLevel _level = LanguageLevel.A1;
@@ -10,6 +11,12 @@
 
         public static TokenBuilder Default => new TokenBuilder();
         public static Token Create() => Default.Build();
+
+        public TokenBuilder WithId(TokenId id)
+        {
+            _id = id;
+            return this;
+        }
 
         public TokenBuilder WithLabel(string label)
         {
@@ -43,7 +50,7 @@
 
         public Token Build()
         {
-            return new Token(_label, _categories, _level, _tokenType, _pictureId);
+            return new Token(_id, _label, _level, _tokenType, _categories, _pictureId);
         }
     }
 }

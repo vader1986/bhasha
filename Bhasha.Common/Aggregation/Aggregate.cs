@@ -5,7 +5,6 @@
         public static ILoadChapter CreateLoader(IDatabase database)
         {
             return new ChapterLoader(
-                new CategoryLoader(database),
                 new TranslationLoader(database),
                 new ProcedureLoader(database));
         }
