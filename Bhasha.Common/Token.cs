@@ -2,18 +2,20 @@
 {
     public class Token
     {
+        public TokenId Id { get; }
         public string Label { get; }
-        public Category[] Categories { get; }
         public LanguageLevel Level { get; }
         public TokenType TokenType { get; }
+        public Category[] Categories { get; }
         public ResourceId? PictureId { get; }
 
-        public Token(string label, Category[] categories, LanguageLevel level, TokenType tokenType, ResourceId? pictureId = default)
+        public Token(TokenId id, string label, LanguageLevel level, TokenType tokenType, Category[] categories, ResourceId? pictureId = default)
         {
+            Id = id;
             Label = label;
-            Categories = categories;
             Level = level;
             TokenType = tokenType;
+            Categories = categories;
             PictureId = pictureId;
         }
     }

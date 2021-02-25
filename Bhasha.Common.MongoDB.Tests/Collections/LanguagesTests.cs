@@ -40,7 +40,6 @@ namespace Bhasha.Common.MongoDB.Tests.Collections
             Assert.That(result, Is.EquivalentTo(new[] {
                 Languages.English, Languages.Bengoli
             }));
-
         }
     }
 }

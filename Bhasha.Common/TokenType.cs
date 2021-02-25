@@ -4,11 +4,16 @@ namespace Bhasha.Common
 {
     public enum TokenType
     {
-        Phrase,
+        // multiple words
         Expression,
+        Phrase,
+        Text,
 
-        // part of speech (single words)
+        // single word
         Noun,
+        Pronoun,
+        Preposition,
+        Conjunction,
         Verb,
         Adjective,
         Adverb
@@ -18,6 +23,9 @@ namespace Bhasha.Common
     {
         public static TokenType[] Words = new[] {
             TokenType.Noun,
+            TokenType.Pronoun,
+            TokenType.Preposition,
+            TokenType.Conjunction,
             TokenType.Verb,
             TokenType.Adjective,
             TokenType.Adverb

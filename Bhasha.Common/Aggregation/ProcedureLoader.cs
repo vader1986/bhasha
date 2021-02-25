@@ -28,7 +28,7 @@ namespace Bhasha.Common.Aggregation
 
             foreach (var tokenType in tokenTypes)
             {
-                var query = new ProcedureSupportQuery(1, tokenType);
+                var query = new ProcedureQueryBySupportedType(1, tokenType);
                 var result = await _procedures.Query(query);
 
                 if (result.Any())

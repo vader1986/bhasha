@@ -5,6 +5,8 @@ namespace Bhasha.Common.MongoDB.Tests.Support
 {
     public class TranslationDtoBuilder
     {
+        private int _sequenceNumber;
+        private int _groupId;
         private string _label = "cat";
         private string _level = LanguageLevel.A1.ToString();
         private string _tokenType = TokenType.Noun.ToString();
@@ -24,6 +26,18 @@ namespace Bhasha.Common.MongoDB.Tests.Support
 
         public static TranslationDtoBuilder Default => new TranslationDtoBuilder();
         public static TranslationDto Create() => Default.Build();
+
+        public TranslationDtoBuilder WithSequenceNumber(int sequenceNumber)
+        {
+            _sequenceNumber = sequenceNumber;
+            return this;
+        }
+
+        public TranslationDtoBuilder WithGroupId(int groupId)
+        {
+            _groupId = groupId;
+            return this;
+        }
 
         public TranslationDtoBuilder WithLabel(string label)
         {
@@ -64,6 +78,8 @@ namespace Bhasha.Common.MongoDB.Tests.Support
         public TranslationDto Build()
         {
             return new TranslationDto {
+                SequenceNumber = _sequenceNumber,
+                GroupId = _groupId,
                 Label = _label,
                 Level = _level,
                 TokenType = _tokenType,

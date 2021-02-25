@@ -11,7 +11,6 @@ namespace Bhasha.Common.Tests.Aggregation
     [TestFixture]
     public class ChapterLoaderTests
     {
-        private ILoadCategory _categories;
         private ILoadTranslations _translations;
         private ILoadProcedures _procedures;
 
@@ -20,25 +19,10 @@ namespace Bhasha.Common.Tests.Aggregation
         [SetUp]
         public void Before()
         {
-            _categories = A.Fake<ILoadCategory>();
             _translations = A.Fake<ILoadTranslations>();
             _procedures = A.Fake<ILoadProcedures>();
 
-            _loader = new ChapterLoader(_categories, _translations, _procedures);
-        }
-
-        [Test]
-        public async Task NextChapter_no_category()
-        {
-            var userProgress = UserProgressBuilder
-                .Create();
-
-            A.CallTo(() => _categories.NextCategory(userProgress))
-                .Returns(new ValueTask<Category>(default(Category)));
-
-            var result = await _loader.NextChapter(userProgress);
-
-            Assert.That(result, Is.Null);
+            _loader = new ChapterLoader(_translations, _procedures);
         }
 
         [Test]
@@ -47,10 +31,7 @@ namespace Bhasha.Common.Tests.Aggregation
             var userProgress = UserProgressBuilder
                 .Create();
 
-            A.CallTo(() => _categories.NextCategory(userProgress))
-                .Returns(new ValueTask<Category>(new Category("pets")));
-
-            A.CallTo(() => _translations.NextTranslations(userProgress, new Category("pets")))
+            A.CallTo(() => _translations.NextTranslations(userProgress))
                 .Returns(new ValueTask<Translation[]>(new Translation[0]));
 
             var result = await _loader.NextChapter(userProgress);
@@ -71,10 +52,7 @@ namespace Bhasha.Common.Tests.Aggregation
 
             var procedures = new[] { new Procedure(new ProcedureId("p1"), "x", null, null, TokenTypeSupport.Words) };
 
-            A.CallTo(() => _categories.NextCategory(userProgress))
-                .Returns(new ValueTask<Category>(new Category("pets")));
-
-            A.CallTo(() => _translations.NextTranslations(userProgress, new Category("pets")))
+            A.CallTo(() => _translations.NextTranslations(userProgress))
                 .Returns(new ValueTask<Translation[]>(translations));
 
             A.CallTo(() => _procedures.NextProcedures(translations))
@@ -83,7 +61,6 @@ namespace Bhasha.Common.Tests.Aggregation
             var result = await _loader.NextChapter(userProgress);
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result.Category == new Category("pets"));
             Assert.That(result.Translations == translations);
             Assert.That(result.Procedures == procedures);
         }

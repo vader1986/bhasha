@@ -10,6 +10,12 @@ namespace Bhasha.Common.MongoDB.Dto
         public string Label { get; set; } = "";
 
         [BsonElement]
+        public int SequenceNumber { get; set; }
+
+        [BsonElement]
+        public int GroupId { get; set; }
+
+        [BsonElement]
         public string[] Categories { get; set; } = new string[0];
 
         [BsonElement]

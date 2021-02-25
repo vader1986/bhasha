@@ -83,6 +83,8 @@ namespace Bhasha.Common.MongoDB.Tests.Dto
             var dto = new TranslationDto
             {
                 Label = "cat",
+                SequenceNumber = 123,
+                GroupId = 3,
                 Level = level.ToString(),
                 Categories = new[] { "pet", "animal" },
                 PictureId = "PicID-123",
@@ -107,6 +109,8 @@ namespace Bhasha.Common.MongoDB.Tests.Dto
 
             Assert.That(translation.Reference, Is.Not.Null);
             Assert.That(translation.Reference.Label, Is.EqualTo(dto.Label));
+            Assert.That(translation.Reference.Id.GroupId, Is.EqualTo(dto.GroupId));
+            Assert.That(translation.Reference.Id.SequenceNumber, Is.EqualTo(dto.SequenceNumber));
             Assert.That(translation.Reference.Level, Is.EqualTo(level));
             Assert.That(translation.Reference.Categories, Is.EquivalentTo(new[] {
                 new Category("pet"), new Category("animal")

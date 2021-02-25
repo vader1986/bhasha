@@ -6,7 +6,7 @@
         private Language _from = Languages.English;
         private Language _to = Languages.Bengoli;
         private LanguageLevel _level = LanguageLevel.B2;
-        private Category[] _finished = new[] { new Category("vehicle") };
+        private UserStats _stats = UserStatsBuilder.Create();
 
         public static UserProgressBuilder Default => new UserProgressBuilder();
         public static UserProgress Create() => Default.Build();
@@ -35,15 +35,15 @@
             return this;
         }
 
-        public UserProgressBuilder WithFinished(params Category[] finished)
+        public UserProgressBuilder WithStats(UserStats stats)
         {
-            _finished = finished;
+            _stats = stats;
             return this;
         }
 
         public UserProgress Build()
         {
-            return new UserProgress(_userId, _from, _to, _level, _finished);
+            return new UserProgress(_userId, _from, _to, _level, _stats);
         }
     }
 }
