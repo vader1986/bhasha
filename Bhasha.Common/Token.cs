@@ -2,18 +2,48 @@
 {
     public class Token
     {
-        public TokenId Id { get; }
+        /// <summary>
+        /// Unqiue identifier of the token.
+        /// </summary>
+        public int Id { get; }
+
+        /// <summary>
+        /// Language level associated with the token. The level indicates the
+        /// complexity of the token. 
+        /// </summary>
+        public int Level { get; }
+
+        /// <summary>
+        /// English representation of the token.
+        /// </summary>
         public string Label { get; }
-        public LanguageLevel Level { get; }
+
+        /// <summary>
+        /// Common European Framework of Reference (CEFR) for this token.
+        /// </summary>
+        public CEFR Cefr { get; }
+
+        /// <summary>
+        /// Part of speech of this token.
+        /// </summary>
         public TokenType TokenType { get; }
+
+        /// <summary>
+        /// Categories associated with this token. 
+        /// </summary>
         public Category[] Categories { get; }
+
+        /// <summary>
+        /// Link to an image representation for this token (optional).
+        /// </summary>
         public ResourceId? PictureId { get; }
 
-        public Token(TokenId id, string label, LanguageLevel level, TokenType tokenType, Category[] categories, ResourceId? pictureId = default)
+        public Token(int id, int level, string label, CEFR cefr, TokenType tokenType, Category[] categories, ResourceId? pictureId = default)
         {
             Id = id;
-            Label = label;
             Level = level;
+            Label = label;
+            Cefr = cefr;
             TokenType = tokenType;
             Categories = categories;
             PictureId = pictureId;

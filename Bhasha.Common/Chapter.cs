@@ -2,13 +2,44 @@
 {
     public class Chapter
     {
-        public Translation[] Translations { get; }
-        public Procedure[] Procedures { get; }
+        /// <summary>
+        /// Unique identifier for this chapter.
+        /// </summary>
+        public int Id { get; }
 
-        public Chapter(Translation[] translations, Procedure[] procedures)
+        /// <summary>
+        /// Minimum user profile level required to go through this chapter.
+        /// </summary>
+        public int Level { get; }
+
+        /// <summary>
+        /// Name of the chapter.
+        /// </summary>
+        public string Name { get; }
+
+        /// <summary>
+        /// Short description about the content of the chapter.
+        /// </summary>
+        public string Description { get; }
+
+        /// <summary>
+        /// Actual content of the chapter.
+        /// </summary>
+        public Page[] Pages { get; }
+
+        /// <summary>
+        /// Link to an image representing the content of the chapter (optional).
+        /// </summary>
+        public ResourceId? PictureId { get; }
+
+        public Chapter(int id, int level, string name, string description, Page[] pages, ResourceId? pictureId)
         {
-            Translations = translations;
-            Procedures = procedures;
+            Id = id;
+            Level = level;
+            Name = name;
+            Description = description;
+            Pages = pages;
+            PictureId = pictureId;
         }
     }
 }

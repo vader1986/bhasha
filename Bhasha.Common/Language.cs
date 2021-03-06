@@ -1,22 +1,44 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Bhasha.Common
 {
+    using LanguageSet = Dictionary<string, Language>;
+
     public class Language : IEquatable<Language>
     {
+
+        public readonly static Language English = new Language("en", "English", "UK");
+        public readonly static Language Bengoli = new Language("bn", "Bengoli");
+
+        public readonly static LanguageSet Supported = new LanguageSet
+        {
+            { English, English }, { Bengoli, Bengoli }
+        };
+
         public string Id { get; }
+        public string Name { get; }
         public string? Region { get; }
 
-        private Language(string id, string? region = default)
+        public Language(string id, string name, string? region = default)
         {
             Id = id;
+            Name = name;
             Region = region;
         }
 
         public static Language Parse(string tag)
         {
+            if (Supported.TryGetValue(tag, out var language))
+            {
+                return language;
+            }
+
             var parts = tag.Split("_");
-            return new Language(parts[0], parts.Length > 1 ? parts[1] : default);
+            var id = parts[0];
+            var region = parts.Length > 1 ? parts[1] : default;
+
+            return new Language(id, tag, region);
         }
 
         public override bool Equals(object obj)
