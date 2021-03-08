@@ -30,14 +30,17 @@ namespace Bhasha.Common.MongoDB.Tests
             var client = new MongoClient(_runner.ConnectionString);
             var db = await Setup.NewDatabase(client);
 
-            await AssertCollectionIndices(db, Names.Collections.Translations, 7);
-            await AssertCollectionIndices(db, Names.Collections.Procedures, 3);
-            await AssertCollectionIndices(db, Names.Collections.Users, 2);
+            await AssertIndices<UserDto>(db, Names.Collections.Users, 1);
+            await AssertIndices<ProfileDto>(db, Names.Collections.Profiles, 2);
+            await AssertIndices<ChapterDto>(db, Names.Collections.Chapters, 2);
+            await AssertIndices<TokenDto>(db, Names.Collections.Tokens, 1);
+            await AssertIndices<TipDto>(db, Names.Collections.Tips, 3);
+            await AssertIndices<ChapterStatsDto>(db, Names.Collections.Stats, 3);
         }
 
-        private async Task AssertCollectionIndices(IMongoDatabase db, string name, int expectedIndexCount)
+        private async Task AssertIndices<T>(IMongoDatabase db, string name, int expectedIndexCount)
         {
-            var collection = db.GetCollection<TranslationDto>(name);
+            var collection = db.GetCollection<T>(name);
             var indices = await collection.Indexes.ListAsync();
             var indexCount = indices.ToEnumerable().Count();
 

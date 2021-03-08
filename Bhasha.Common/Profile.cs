@@ -1,16 +1,18 @@
-﻿namespace Bhasha.Common
+﻿using System;
+
+namespace Bhasha.Common
 {
     public class Profile
     {
         /// <summary>
         /// Unique identifier of this user profile.
         /// </summary>
-        public int Id { get; }
+        public Guid Id { get; }
 
         /// <summary>
         /// Reference to the user the profile is linked to.
         /// </summary>
-        public int UserId { get; }
+        public Guid UserId { get; }
 
         /// <summary>
         /// Native language for this profile.
@@ -27,7 +29,7 @@
         /// </summary>
         public int Level { get; }
 
-        public Profile(int id, int userId, Language from, Language to, int level)
+        public Profile(Guid id, Guid userId, Language from, Language to, int level)
         {
             Id = id;
             UserId = userId;

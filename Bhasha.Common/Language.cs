@@ -29,16 +29,7 @@ namespace Bhasha.Common
 
         public static Language Parse(string tag)
         {
-            if (Supported.TryGetValue(tag, out var language))
-            {
-                return language;
-            }
-
-            var parts = tag.Split("_");
-            var id = parts[0];
-            var region = parts.Length > 1 ? parts[1] : default;
-
-            return new Language(id, tag, region);
+            return Supported[tag];
         }
 
         public override bool Equals(object obj)

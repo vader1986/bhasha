@@ -17,10 +17,11 @@ namespace Bhasha.Common.MongoDB.Import
             "bn_spoken",
             "categories",
             "level",
+            "cefr",
             "type"
         };
-
-        public static TranslationDto[] EnglishBengli(string file)
+        
+        public static TokenDto[] EnglishBengli(string file)
         {
             var lines = File.ReadAllLines(file);
             var columns = lines[0].Split(',');
@@ -38,21 +39,26 @@ namespace Bhasha.Common.MongoDB.Import
             var dtos = lines
                 .Skip(1)
                 .Select(x => x.Split(','))
-                .Select(x => new TranslationDto {
+                .Select(x => new TokenDto {
                     Label = x[columnIndex["eng_native"]],
-                    Level = x[columnIndex["level"]],
+                    Level = int.Parse(x[columnIndex["level"]]),
+                    Cefr = x[columnIndex["cefr"]],
                     TokenType = x[columnIndex["type"]],
                     Categories = x[columnIndex["categories"]].Split(';'),
-                    Tokens = new[] {
-                        new TokenDto {
-                            LanguageId = Languages.English,
-                            Native = x[columnIndex["eng_native"]],
-                            Spoken = x[columnIndex["eng_spoken"]]
+                    Translations = new Dictionary<string, LanguageTokenDto> {
+                        {
+                            Language.English, new LanguageTokenDto
+                            {
+                                Native = x[columnIndex["eng_native"]],
+                                Spoken = x[columnIndex["eng_spoken"]]
+                            }
                         },
-                        new TokenDto {
-                            LanguageId = Languages.Bengoli,
-                            Native = x[columnIndex["bn_native"]],
-                            Spoken = x[columnIndex["bn_spoken"]]
+                        {
+                            Language.Bengoli, new LanguageTokenDto
+                            {
+                                Native = x[columnIndex["bn_native"]],
+                                Spoken = x[columnIndex["bn_spoken"]]
+                            }
                         }
                     }
                 });

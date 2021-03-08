@@ -15,10 +15,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Bhasha.Common.MongoDB\Bhasha.Common.MongoDB.csproj" />
+    <ProjectReference Include="..\Bhasha.Common\Bhasha.Common.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Dto\" />
-    <Folder Include="Collections\" />
     <Folder Include="Support\" />
     <Folder Include="Import\" />
   </ItemGroup>

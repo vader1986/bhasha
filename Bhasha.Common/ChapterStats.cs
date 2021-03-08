@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System;
 
 namespace Bhasha.Common
 {
@@ -7,12 +7,12 @@ namespace Bhasha.Common
         /// <summary>
         /// Reference to the profile these stats are linked to.
         /// </summary>
-        public int ProfileId { get; }
+        public Guid ProfileId { get; }
 
         /// <summary>
         /// Reference to the chapter these stats are linked to.
         /// </summary>
-        public int ChapterId { get; }
+        public Guid ChapterId { get; }
 
         /// <summary>
         /// Whether or not the chapter has been completed.
@@ -34,7 +34,7 @@ namespace Bhasha.Common
         /// </summary>
         public byte[] Failures { get; }
 
-        public ChapterStats(int profileId, int chapterId, bool completed, byte[] tips, byte[] submits, byte[] failures)
+        public ChapterStats(Guid profileId, Guid chapterId, bool completed, byte[] tips, byte[] submits, byte[] failures)
         {
             ProfileId = profileId;
             ChapterId = chapterId;

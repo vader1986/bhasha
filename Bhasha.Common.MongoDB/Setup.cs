@@ -11,33 +11,24 @@ namespace Bhasha.Common.MongoDB
         {
             var db = client.GetDatabase(Names.Database);
 
-            await db.CreateCollectionAsync(Names.Collections.Translations);
-
-            var translations = db.GetCollection<TranslationDto>(Names.Collections.Translations);
-
-            await translations.CreateIndices(
-                x => x.Categories,
-                x => x.Level,
-                x => x.Label,
-                x => x.TokenType,
-                x => x.GroupId);
-
-            await translations.CreateIndices(Names.Fields.LanguageId);
-            
-            await db.CreateCollectionAsync(Names.Collections.Procedures);
-
-            var procedures = db.GetCollection<ProcedureDto>(Names.Collections.Procedures);
-
-            await procedures.CreateIndices(
-                x => x.ProcedureId,
-                x => x.Support);
-
             await db.CreateCollectionAsync(Names.Collections.Users);
+            await db.CreateCollectionAsync(Names.Collections.Profiles);
+            await db.CreateCollectionAsync(Names.Collections.Chapters);
+            await db.CreateCollectionAsync(Names.Collections.Tokens);
+            await db.CreateCollectionAsync(Names.Collections.Tips);
+            await db.CreateCollectionAsync(Names.Collections.Stats);
 
-            var users = db.GetCollection<UserProgressDto>(Names.Collections.Users);
+            var profiles = db.GetCollection<ProfileDto>(Names.Collections.Profiles);
+            await profiles.CreateIndices(x => x.UserId);
 
-            await users.CreateIndices(
-                x => x.UserId);
+            var chapters = db.GetCollection<ChapterDto>(Names.Collections.Chapters);
+            await chapters.CreateIndices(x => x.Level);
+
+            var tips = db.GetCollection<TipDto>(Names.Collections.Tips);
+            await tips.CreateIndices(x => x.ChapterId, x => x.PageIndex);
+
+            var stats = db.GetCollection<ChapterStatsDto>(Names.Collections.Stats);
+            await stats.CreateIndices(x => x.ProfileId, x => x.ChapterId);
 
             return db;
         }

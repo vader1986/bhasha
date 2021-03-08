@@ -36,32 +36,32 @@ namespace Bhasha.Common.MongoDB.Tests.Import
             Assert.That(dtos.Length == 2);
 
             Assert.That(dtos[0].Label == "cat");
-            Assert.That(dtos[0].Level == "A1");
+            Assert.That(dtos[0].Level == 1);
+            Assert.That(dtos[0].Cefr == "A1");
             Assert.That(dtos[0].TokenType == "Noun");
             Assert.That(dtos[0].Categories.Length == 2);
             Assert.That(dtos[0].Categories[0] == "animal");
             Assert.That(dtos[0].Categories[1] == "pet");
-            Assert.That(dtos[0].Tokens.Length == 2);
-            Assert.That(dtos[0].Tokens[0].LanguageId == Languages.English);
-            Assert.That(dtos[0].Tokens[0].Native == "cat");
-            Assert.That(dtos[0].Tokens[0].Spoken == "kat");
-            Assert.That(dtos[0].Tokens[1].LanguageId == Languages.Bengoli);
-            Assert.That(dtos[0].Tokens[1].Native == "বিড়াল");
-            Assert.That(dtos[0].Tokens[1].Spoken == "Biṛāla");
+            Assert.That(dtos[0].Translations.ContainsKey(Language.English));
+            Assert.That(dtos[0].Translations[Language.English].Native == "cat");
+            Assert.That(dtos[0].Translations[Language.English].Spoken == "kat");
+            Assert.That(dtos[0].Translations.ContainsKey(Language.Bengoli));
+            Assert.That(dtos[0].Translations[Language.Bengoli].Native == "বিড়াল");
+            Assert.That(dtos[0].Translations[Language.Bengoli].Spoken == "Biṛāla");
 
             Assert.That(dtos[1].Label == "dog");
-            Assert.That(dtos[1].Level == "A1");
+            Assert.That(dtos[1].Level == 1);
+            Assert.That(dtos[1].Cefr == "A1");
             Assert.That(dtos[1].TokenType == "Noun");
             Assert.That(dtos[1].Categories.Length == 2);
             Assert.That(dtos[1].Categories[0] == "animal");
             Assert.That(dtos[1].Categories[1] == "pet");
-            Assert.That(dtos[1].Tokens.Length == 2);
-            Assert.That(dtos[1].Tokens[0].LanguageId == Languages.English);
-            Assert.That(dtos[1].Tokens[0].Native == "dog");
-            Assert.That(dtos[1].Tokens[0].Spoken == "dog");
-            Assert.That(dtos[1].Tokens[1].LanguageId == Languages.Bengoli);
-            Assert.That(dtos[1].Tokens[1].Native == "কুকুর");
-            Assert.That(dtos[1].Tokens[1].Spoken == "Kukura");
+            Assert.That(dtos[1].Translations.ContainsKey(Language.English));
+            Assert.That(dtos[1].Translations[Language.English].Native == "dog");
+            Assert.That(dtos[1].Translations[Language.English].Spoken == "dog");
+            Assert.That(dtos[1].Translations.ContainsKey(Language.Bengoli));
+            Assert.That(dtos[1].Translations[Language.Bengoli].Native == "কুকুর");
+            Assert.That(dtos[1].Translations[Language.Bengoli].Spoken == "Kukura");
         }
     }
 }

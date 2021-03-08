@@ -1,11 +1,13 @@
-﻿namespace Bhasha.Common
+﻿using System;
+
+namespace Bhasha.Common
 {
     public class Chapter
     {
         /// <summary>
         /// Unique identifier for this chapter.
         /// </summary>
-        public int Id { get; }
+        public Guid Id { get; }
 
         /// <summary>
         /// Minimum user profile level required to go through this chapter.
@@ -32,7 +34,7 @@
         /// </summary>
         public ResourceId? PictureId { get; }
 
-        public Chapter(int id, int level, string name, string description, Page[] pages, ResourceId? pictureId)
+        public Chapter(Guid id, int level, string name, string description, Page[] pages, ResourceId? pictureId)
         {
             Id = id;
             Level = level;

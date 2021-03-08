@@ -12,7 +12,6 @@
     <PackageReference Include="MongoDB.Driver" Version="2.11.6" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Collections\" />
     <Folder Include="Dto\" />
     <Folder Include="Exceptions\" />
     <Folder Include="Extensions\" />

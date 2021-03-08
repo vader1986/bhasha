@@ -1,16 +1,18 @@
-﻿namespace Bhasha.Common
+﻿using System;
+
+namespace Bhasha.Common
 {
     public class Tip
     {
         /// <summary>
         /// Unique identifier of the tip.
         /// </summary>
-        public int Id { get; }
+        public Guid Id { get; }
 
         /// <summary>
         /// Reference to the chapter.
         /// </summary>
-        public int ChapterId { get; }
+        public Guid ChapterId { get; }
 
         /// <summary>
         /// Index of the page within the chapter this tip is created for.
@@ -22,7 +24,7 @@
         /// </summary>
         public string Text { get; }
 
-        public Tip(int id, int chapterId, int pageIndex, string text)
+        public Tip(Guid id, Guid chapterId, int pageIndex, string text)
         {
             Id = id;
             ChapterId = chapterId;

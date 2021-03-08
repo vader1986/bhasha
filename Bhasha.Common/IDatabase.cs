@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Bhasha.Common
@@ -6,30 +7,30 @@ namespace Bhasha.Common
     public interface IDatabase
     {
         ValueTask<User> CreateUser(User user);
-        ValueTask<User> UpdateUser(User user);
-        ValueTask<User> GetUser(int userId);
-        ValueTask<User> DeleteUser(int userId);
+        ValueTask<User> GetUser(Guid userId);
+        ValueTask UpdateUser(User user);
+        ValueTask<int> DeleteUser(Guid userId);
 
-        ValueTask<IEnumerable<Profile>> GetProfiles(int userId);
+        ValueTask<IEnumerable<Profile>> GetProfiles(Guid userId);
         ValueTask<Profile> CreateProfile(Profile profile);
-        ValueTask<Profile> UpdateProfile(Profile profile);
-        ValueTask<Profile> DeleteProfile(int profileId);
-        ValueTask<int> DeleteProfiles(int userId);
+        ValueTask UpdateProfile(Profile profile);
+        ValueTask<int> DeleteProfile(Guid profileId);
+        ValueTask<int> DeleteProfiles(Guid userId);
 
         ValueTask<IEnumerable<Chapter>> GetChapters(int level);
         ValueTask<Chapter> CreateChapter(Chapter chapter);
-        ValueTask<Chapter> UpdateChapter(Chapter chapter);
-        ValueTask<Chapter> DeleteChapter(int chapterId);
+        ValueTask UpdateChapter(Chapter chapter);
+        ValueTask<int> DeleteChapter(Guid chapterId);
 
-        ValueTask<IEnumerable<Tip>> GetTips(int chapterId, int pageIndex);
+        ValueTask<IEnumerable<Tip>> GetTips(Guid chapterId, int pageIndex);
         ValueTask<Tip> CreateTip(Tip tip);
-        ValueTask<Tip> UpdateTip(Tip tip);
-        ValueTask<Tip> DeleteTip(int tipId);
-        ValueTask<int> DeleteTips(int chapterId, int pageIndex);
+        ValueTask UpdateTip(Tip tip);
+        ValueTask<int> DeleteTip(Guid tipId);
+        ValueTask<int> DeleteTips(Guid chapterId, int pageIndex);
 
         ValueTask<ChapterStats> CreateChapterStats(ChapterStats chapterStats);
-        ValueTask<ChapterStats> UpdateChapterStats(ChapterStats chapterStats);
-        ValueTask<ChapterStats> GetChapterStats(int userId, int chapterId);
-        ValueTask<int> DeleteChapterStats(int profileId);
+        ValueTask<ChapterStats> GetChapterStats(Guid profileId, Guid chapterId);
+        ValueTask UpdateChapterStats(ChapterStats chapterStats);
+        ValueTask<int> DeleteChapterStats(Guid profileId);
     }
 }
