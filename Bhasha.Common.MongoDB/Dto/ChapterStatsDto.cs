@@ -5,6 +5,9 @@ namespace Bhasha.Common.MongoDB.Dto
 {
     public class ChapterStatsDto
     {
+        [BsonId]
+        public Guid Id { get; set; }
+
         [BsonElement]
         public Guid ProfileId { get; set; }
 

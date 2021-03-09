@@ -9,14 +9,14 @@ namespace Bhasha.Common.MongoDB.Tests.Support
     {
         private static string[] Languages = Language.Supported.Keys.ToArray();
 
-        public static ProfileDto Build()
+        public static ProfileDto Build(Guid? userId = default)
         {
             return new ProfileDto {
                 Id = Guid.NewGuid(),
                 From = Rnd.Create.Choose(Languages),
                 To = Rnd.Create.Choose(Languages),
                 Level = Rnd.Create.Next(1, 10),
-                UserId = Guid.NewGuid()                
+                UserId = userId ?? Guid.NewGuid()                
             };
         }
     }

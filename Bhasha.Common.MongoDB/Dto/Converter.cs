@@ -35,7 +35,7 @@ namespace Bhasha.Common.MongoDB.Dto
             };
         }
 
-        public static Token Convert(TokenDto dto)
+        private static Token Convert(TokenDto dto)
         {
             try
             {
@@ -111,12 +111,12 @@ namespace Bhasha.Common.MongoDB.Dto
             };
         }
 
-        public static byte[] Convert(string value)
+        private static byte[] Convert(string value)
         {
             return Encoding.UTF8.GetBytes(value);
         }
 
-        public static string Convert(byte[] value)
+        private static string Convert(byte[] value)
         {
             return Encoding.UTF8.GetString(value);
         }
