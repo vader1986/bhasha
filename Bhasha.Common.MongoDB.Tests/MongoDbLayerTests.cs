@@ -319,7 +319,7 @@ namespace Bhasha.Common.MongoDB.Tests
                 .GetCollection<UserDto>(Names.Collections.Users)
                 .InsertOneAsync(dto);
 
-            var deleted = await layer.DeleteTip(dto.Id);
+            var deleted = await layer.DeleteUser(dto.Id);
 
             Assert.That(deleted, Is.EqualTo(1));
 
