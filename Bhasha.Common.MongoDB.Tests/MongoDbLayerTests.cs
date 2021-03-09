@@ -302,5 +302,33 @@ namespace Bhasha.Common.MongoDB.Tests
 
             Assert.That(found, Is.False);
         }
+
+        [Test]
+        public async Task DeleteUser()
+        {
+            var db = await MongoDb.Create(_runner.ConnectionString);
+            var layer = new MongoDbLayer(db);
+
+            var dto = new UserDto {
+                Id = Guid.NewGuid(),
+                UserName = "Hello",
+                Email = "hello@bhasha.com"
+            };
+
+            await db
+                .GetCollection<UserDto>(Names.Collections.Users)
+                .InsertOneAsync(dto);
+
+            var deleted = await layer.DeleteTip(dto.Id);
+
+            Assert.That(deleted, Is.EqualTo(1));
+
+            var found = db
+                .GetCollection<UserDto>(Names.Collections.Users)
+                .AsQueryable()
+                .Any(x => x.Id == dto.Id);
+
+            Assert.That(found, Is.False);
+        }
     }
 }
