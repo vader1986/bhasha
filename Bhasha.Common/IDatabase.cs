@@ -13,7 +13,7 @@ namespace Bhasha.Common
 
         ValueTask<IEnumerable<Profile>> GetProfiles(Guid userId);
         ValueTask<Profile> CreateProfile(Profile profile);
-        ValueTask UpdateProfile(Profile profile);
+        ValueTask UpdateProfile(Guid profileId, int level);
         ValueTask<int> DeleteProfile(Guid profileId);
         ValueTask<int> DeleteProfiles(Guid userId);
 

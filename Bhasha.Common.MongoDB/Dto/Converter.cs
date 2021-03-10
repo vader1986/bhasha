@@ -143,6 +143,7 @@ namespace Bhasha.Common.MongoDB.Dto
         {
             return new ChapterStatsDto
             {
+                Id = default,
                 ProfileId = stats.ProfileId,
                 ChapterId = stats.ChapterId,
                 Completed = stats.Completed,

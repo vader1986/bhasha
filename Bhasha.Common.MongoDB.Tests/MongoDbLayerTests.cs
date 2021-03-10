@@ -6,7 +6,9 @@ using Bhasha.Common.Extensions;
 using Bhasha.Common.MongoDB.Tests.Support;
 using Mongo2Go;
 using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 using NUnit.Framework;
+using System.Text;
 
 namespace Bhasha.Common.MongoDB.Tests
 {
@@ -149,7 +151,7 @@ namespace Bhasha.Common.MongoDB.Tests
             var layer = new MongoDbLayer(db);
 
             var dto = ChapterDtoBuilder.Build();
-            
+
             await db
                 .GetCollection<ChapterDto>(Names.Collections.Chapters)
                 .InsertOneAsync(dto);
@@ -361,6 +363,26 @@ namespace Bhasha.Common.MongoDB.Tests
         }
 
         [Test]
+        public async Task GetChapterStats()
+        {
+            var db = await MongoDb.Create(_runner.ConnectionString);
+            var layer = new MongoDbLayer(db);
+
+            var dto = ChapterStatsDtoBuilder.Build();
+
+            await db
+                .GetCollection<ChapterStatsDto>(Names.Collections.Stats)
+                .InsertOneAsync(dto);
+
+            var result = await layer.GetChapterStats(dto.ProfileId, dto.ChapterId);
+
+            Assert.That(result.Completed, Is.EqualTo(dto.Completed));
+            Assert.That(result.Tips, Is.EqualTo(Encoding.UTF8.GetBytes(dto.Tips)));
+            Assert.That(result.Submits, Is.EqualTo(Encoding.UTF8.GetBytes(dto.Submits)));
+            Assert.That(result.Failures, Is.EqualTo(Encoding.UTF8.GetBytes(dto.Failures)));
+        }
+
+        [Test]
         public async Task GetProfiles()
         {
             var db = await MongoDb.Create(_runner.ConnectionString);
@@ -395,12 +417,12 @@ namespace Bhasha.Common.MongoDB.Tests
             var dtos = Enumerable
                 .Range(1, 10)
                 .Select(x => new TipDto
-                    {
-                        Id = Guid.NewGuid(),
-                        ChapterId = x <= 5 ? chapterId : Guid.NewGuid(),
-                        PageIndex = x <= 5 ? pageIndex : x,
-                        Text = Rnd.Create.NextString()
-                    })
+                {
+                    Id = Guid.NewGuid(),
+                    ChapterId = x <= 5 ? chapterId : Guid.NewGuid(),
+                    PageIndex = x <= 5 ? pageIndex : x,
+                    Text = Rnd.Create.NextString()
+                })
                 .ToArray();
 
             await db
@@ -432,6 +454,153 @@ namespace Bhasha.Common.MongoDB.Tests
             Assert.That(user.Id == userId);
             Assert.That(user.EmailAddress == "x@y.com");
             Assert.That(user.UserName == "user");
+        }
+
+        [Test]
+        public async Task UpdateChapter()
+        {
+            var db = await MongoDb.Create(_runner.ConnectionString);
+            var layer = new MongoDbLayer(db);
+
+            var dto = ChapterDtoBuilder.Build();
+
+            await db
+                .GetCollection<ChapterDto>(Names.Collections.Chapters)
+                .InsertOneAsync(dto);
+
+            var chapter = new Chapter(dto.Id, 1, "Updated Name", "Updated Description", new Page[0], default);
+
+            await layer.UpdateChapter(chapter);
+
+            var chapters = await db
+                .GetCollection<ChapterDto>(Names.Collections.Chapters)
+                .AsQueryable()
+                .Where(x => x.Id == dto.Id)
+                .ToListAsync();
+
+            var result = chapters.ToArray();
+
+            Assert.That(result.Length == 1);
+            Assert.That(result[0].Level, Is.EqualTo(chapter.Level));
+            Assert.That(result[0].Name, Is.EqualTo(chapter.Name));
+            Assert.That(result[0].Description, Is.EqualTo(chapter.Description));
+        }
+
+        [Test]
+        public async Task UpdateChapterStats()
+        {
+            var db = await MongoDb.Create(_runner.ConnectionString);
+            var layer = new MongoDbLayer(db);
+
+            var dto = ChapterStatsDtoBuilder.Build();
+
+            await db
+                .GetCollection<ChapterStatsDto>(Names.Collections.Stats)
+                .InsertOneAsync(dto);
+
+            var stats = new ChapterStats(
+                dto.ProfileId,
+                dto.ChapterId,
+                true,
+                Encoding.UTF8.GetBytes("123456"),
+                Encoding.UTF8.GetBytes("654332"),
+                Encoding.UTF8.GetBytes("324626"));
+
+            await layer.UpdateChapterStats(stats);
+
+            var updatedStats = await db
+                .GetCollection<ChapterStatsDto>(Names.Collections.Stats)
+                .AsQueryable()
+                .SingleAsync(x => x.ProfileId == dto.ProfileId &&
+                            x.ChapterId == dto.ChapterId);
+
+            Assert.That(updatedStats.Completed, Is.EqualTo(stats.Completed));
+            Assert.That(updatedStats.Tips, Is.EqualTo("123456"));
+            Assert.That(updatedStats.Submits, Is.EqualTo("654332"));
+            Assert.That(updatedStats.Failures, Is.EqualTo("324626"));
+        }
+
+        [Test]
+        public async Task UpdateProfile()
+        {
+            var db = await MongoDb.Create(_runner.ConnectionString);
+            var layer = new MongoDbLayer(db);
+
+            var dto = ProfileDtoBuilder.Build();
+
+            await db
+                .GetCollection<ProfileDto>(Names.Collections.Profiles)
+                .InsertOneAsync(dto);
+
+            await layer.UpdateProfile(dto.Id, dto.Level + 1);
+
+            var profile = await db
+                .GetCollection<ProfileDto>(Names.Collections.Profiles)
+                .AsQueryable()
+                .SingleAsync(x => x.Id == dto.Id);
+
+            Assert.That(profile.Level == dto.Level + 1);
+        }
+
+        [Test]
+        public async Task UpdateTip()
+        {
+            var db = await MongoDb.Create(_runner.ConnectionString);
+            var layer = new MongoDbLayer(db);
+
+            var dto = new TipDto {
+                Id = Guid.NewGuid(),
+                ChapterId = Guid.NewGuid(),
+                PageIndex = 5,
+                Text = "Hello World"
+            };
+
+            await db
+                .GetCollection<TipDto>(Names.Collections.Tips)
+                .InsertOneAsync(dto);
+
+            var updatedTip = new Tip(dto.Id, Guid.NewGuid(), 3, "New Text");
+
+            await layer.UpdateTip(updatedTip);
+
+            var result = await db
+                .GetCollection<TipDto>(Names.Collections.Tips)
+                .AsQueryable()
+                .SingleAsync(x => x.Id == dto.Id);
+
+            Assert.That(result.ChapterId == updatedTip.ChapterId);
+            Assert.That(result.PageIndex == updatedTip.PageIndex);
+            Assert.That(result.Text == updatedTip.Text);
+        }
+
+        [Test]
+        public async Task UpdateUser()
+        {
+            var db = await MongoDb.Create(_runner.ConnectionString);
+            var layer = new MongoDbLayer(db);
+
+            var dto = new UserDto
+            {
+                Id = Guid.NewGuid(),
+                UserName = "old_username",
+                Email = "old@email.com"
+            };
+
+            await db
+                .GetCollection<UserDto>(Names.Collections.Users)
+                .InsertOneAsync(dto);
+
+            var updatedUser = new User(dto.Id, "new_username", "new@email.com");
+
+            await layer.UpdateUser(updatedUser);
+
+            var result = await db
+                .GetCollection<UserDto>(Names.Collections.Users)
+                .AsQueryable()
+                .SingleAsync(x => x.Id == dto.Id);
+
+            Assert.That(result.UserName == updatedUser.UserName);
+            Assert.That(result.Email == updatedUser.EmailAddress);
         }
     }
 }

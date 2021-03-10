@@ -212,17 +212,18 @@ namespace Bhasha.Common.MongoDB
             var collection = _db.GetCollection<ChapterStatsDto>(Names.Collections.Stats);
             var dto = Converter.Convert(chapterStats);
 
-            await collection.ReplaceOneAsync(
+            await collection.FindOneAndReplaceAsync(
                 x => x.ChapterId == dto.ChapterId &&
                      x.ProfileId == dto.ProfileId, dto);
         }
 
-        public async ValueTask UpdateProfile(Profile profile)
+        public async ValueTask UpdateProfile(Guid profileId, int level)
         {
             var collection = _db.GetCollection<ProfileDto>(Names.Collections.Profiles);
-            var dto = Converter.Convert(profile);
 
-            await collection.ReplaceOneAsync(x => x.Id == profile.Id, dto);
+            await collection.UpdateOneAsync(
+                x => x.Id == profileId,
+                Builders<ProfileDto>.Update.Set(p => p.Level, level));
         }
 
         public async ValueTask UpdateTip(Tip tip)
