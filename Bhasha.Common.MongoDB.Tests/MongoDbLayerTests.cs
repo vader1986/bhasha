@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Bhasha.Common.MongoDB.Dto;
-using Bhasha.Common.MongoDB.Extensions;
+using Bhasha.Common.Extensions;
 using Bhasha.Common.MongoDB.Tests.Support;
 using Mongo2Go;
 using MongoDB.Driver;
@@ -382,6 +382,56 @@ namespace Bhasha.Common.MongoDB.Tests
             {
                 Assert.That(profile.UserId == userId);
             }
+        }
+
+        [Test]
+        public async Task GetTips()
+        {
+            var db = await MongoDb.Create(_runner.ConnectionString);
+            var layer = new MongoDbLayer(db);
+            var chapterId = Guid.NewGuid();
+            var pageIndex = 3;
+
+            var dtos = Enumerable
+                .Range(1, 10)
+                .Select(x => new TipDto
+                    {
+                        Id = Guid.NewGuid(),
+                        ChapterId = x <= 5 ? chapterId : Guid.NewGuid(),
+                        PageIndex = x <= 5 ? pageIndex : x,
+                        Text = Rnd.Create.NextString()
+                    })
+                .ToArray();
+
+            await db
+                .GetCollection<TipDto>(Names.Collections.Tips)
+                .InsertManyAsync(dtos);
+
+            var tips = await layer.GetTips(chapterId, pageIndex);
+
+            foreach (var tip in tips)
+            {
+                Assert.That(tip.ChapterId == chapterId);
+                Assert.That(tip.PageIndex == pageIndex);
+            }
+        }
+
+        [Test]
+        public async Task GetUser()
+        {
+            var db = await MongoDb.Create(_runner.ConnectionString);
+            var layer = new MongoDbLayer(db);
+            var userId = Guid.NewGuid();
+
+            await db
+                .GetCollection<UserDto>(Names.Collections.Users)
+                .InsertOneAsync(new UserDto { Id = userId, Email = "x@y.com", UserName = "user" });
+
+            var user = await layer.GetUser(userId);
+
+            Assert.That(user.Id == userId);
+            Assert.That(user.EmailAddress == "x@y.com");
+            Assert.That(user.UserName == "user");
         }
     }
 }
