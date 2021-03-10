@@ -336,6 +336,7 @@ namespace Bhasha.Common.MongoDB.Tests
         {
             var db = await MongoDb.Create(_runner.ConnectionString);
             var layer = new MongoDbLayer(db);
+
             var dtos = Enumerable
                 .Range(1, 10)
                 .Select(x => ChapterDtoBuilder.Build(x))
@@ -356,6 +357,30 @@ namespace Bhasha.Common.MongoDB.Tests
             foreach (var chapter in chapters)
             {
                 Assert.That(chapter.Level <= 5);
+            }
+        }
+
+        [Test]
+        public async Task GetProfiles()
+        {
+            var db = await MongoDb.Create(_runner.ConnectionString);
+            var layer = new MongoDbLayer(db);
+            var userId = Guid.NewGuid();
+
+            var dtos = Enumerable
+                .Range(1, 10)
+                .Select(x => ProfileDtoBuilder.Build(x <= 5 ? userId : Guid.NewGuid()))
+                .ToArray();
+
+            await db
+                .GetCollection<ProfileDto>(Names.Collections.Profiles)
+                .InsertManyAsync(dtos);
+
+            var profiles = await layer.GetProfiles(userId);
+
+            foreach (var profile in profiles)
+            {
+                Assert.That(profile.UserId == userId);
             }
         }
     }
