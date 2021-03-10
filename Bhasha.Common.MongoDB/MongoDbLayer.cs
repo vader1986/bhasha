@@ -146,12 +146,11 @@ namespace Bhasha.Common.MongoDB
                 .GetCollection<TokenDto>(Names.Collections.Tokens)
                 .FindAsync(Builders<TokenDto>.Filter.In(x => x.Id, tokenIds));
 
-            return chapters.Select(chapter =>
-                Converter.Convert(
-                    chapter,
-                    tokens
-                        .ToEnumerable()
-                        .ToDictionary(x => x.Id, x => x)));
+            var tokenMap = tokens
+                .ToEnumerable()
+                .ToDictionary(x => x.Id, x => x);
+
+            return chapters.Select(chapter => Converter.Convert(chapter, tokenMap));
         }
 
         public async ValueTask<ChapterStats> GetChapterStats(Guid profileId, Guid chapterId)

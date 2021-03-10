@@ -330,5 +330,33 @@ namespace Bhasha.Common.MongoDB.Tests
 
             Assert.That(found, Is.False);
         }
+
+        [Test]
+        public async Task GetChapters()
+        {
+            var db = await MongoDb.Create(_runner.ConnectionString);
+            var layer = new MongoDbLayer(db);
+            var dtos = Enumerable
+                .Range(1, 10)
+                .Select(x => ChapterDtoBuilder.Build(x))
+                .ToArray();
+
+            await db
+                .GetCollection<ChapterDto>(Names.Collections.Chapters)
+                .InsertManyAsync(dtos);
+
+            await db
+                .GetCollection<TokenDto>(Names.Collections.Tokens)
+                .InsertManyAsync(dtos
+                    .SelectMany(x => x.Pages)
+                    .Select(x => TokenDtoBuilder.Build(x.TokenId)));
+
+            var chapters = await layer.GetChapters(5);
+
+            foreach (var chapter in chapters)
+            {
+                Assert.That(chapter.Level <= 5);
+            }
+        }
     }
 }

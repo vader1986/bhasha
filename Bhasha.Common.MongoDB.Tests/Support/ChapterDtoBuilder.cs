@@ -7,11 +7,11 @@ namespace Bhasha.Common.MongoDB.Tests.Support
 {
     public class ChapterDtoBuilder
     {
-        public static ChapterDto Build()
+        public static ChapterDto Build(int? level = default)
         {
             return new ChapterDto {
                 Id = Guid.NewGuid(),
-                Level = Rnd.Create.Next(1, 10),
+                Level = level ?? Rnd.Create.Next(1, 10),
                 Name = Rnd.Create.NextString(),
                 Description = Rnd.Create.NextPhrase(),
                 Pages = Enumerable
