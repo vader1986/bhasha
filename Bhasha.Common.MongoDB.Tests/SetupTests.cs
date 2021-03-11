@@ -30,6 +30,10 @@ namespace Bhasha.Common.MongoDB.Tests
             var client = new MongoClient(_runner.ConnectionString);
             var db = await Setup.NewDatabase(client);
 
+            var dbNames = await client.ListDatabaseNames().ToListAsync();
+
+            Assert.That(dbNames.Contains(Names.Database));
+
             await AssertIndices<UserDto>(db, Names.Collections.Users, 1);
             await AssertIndices<ProfileDto>(db, Names.Collections.Profiles, 2);
             await AssertIndices<ChapterDto>(db, Names.Collections.Chapters, 2);

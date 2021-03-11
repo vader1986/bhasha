@@ -17,7 +17,7 @@ namespace Bhasha.Common.MongoDB
             _db = db;
         }
 
-        public async ValueTask<Chapter> CreateChapter(Chapter chapter)
+        public async Task<Chapter> CreateChapter(Chapter chapter)
         {
             var collection = _db.GetCollection<ChapterDto>(Names.Collections.Chapters);
             var dto = Converter.Convert(chapter);
@@ -33,7 +33,7 @@ namespace Bhasha.Common.MongoDB
                 chapter.PictureId);
         }
 
-        public async ValueTask<ChapterStats> CreateChapterStats(ChapterStats chapterStats)
+        public async Task<ChapterStats> CreateChapterStats(ChapterStats chapterStats)
         {
             var collection = _db.GetCollection<ChapterStatsDto>(Names.Collections.Stats);
             var dto = Converter.Convert(chapterStats);
@@ -43,7 +43,7 @@ namespace Bhasha.Common.MongoDB
             return Converter.Convert(dto);
         }
 
-        public async ValueTask<Profile> CreateProfile(Profile profile)
+        public async Task<Profile> CreateProfile(Profile profile)
         {
             var collection = _db.GetCollection<ProfileDto>(Names.Collections.Profiles);
             var dto = Converter.Convert(profile);
@@ -53,7 +53,7 @@ namespace Bhasha.Common.MongoDB
             return Converter.Convert(dto);
         }
 
-        public async ValueTask<Tip> CreateTip(Tip tip)
+        public async Task<Tip> CreateTip(Tip tip)
         {
             var collection = _db.GetCollection<TipDto>(Names.Collections.Tips);
             var dto = Converter.Convert(tip);
@@ -63,7 +63,7 @@ namespace Bhasha.Common.MongoDB
             return Converter.Convert(dto);
         }
 
-        public async ValueTask<User> CreateUser(User user)
+        public async Task<User> CreateUser(User user)
         {
             var collection = _db.GetCollection<UserDto>(Names.Collections.Users);
             var dto = Converter.Convert(user);
@@ -73,7 +73,7 @@ namespace Bhasha.Common.MongoDB
             return Converter.Convert(dto);
         }
 
-        public async ValueTask<int> DeleteChapter(Guid chapterId)
+        public async Task<int> DeleteChapter(Guid chapterId)
         {
             var collection = _db.GetCollection<ChapterDto>(Names.Collections.Chapters);
             var result = await collection.DeleteOneAsync(x => x.Id == chapterId);
@@ -81,7 +81,7 @@ namespace Bhasha.Common.MongoDB
             return (int)result.DeletedCount;
         }
 
-        public async ValueTask<int> DeleteChapterStats(Guid profileId)
+        public async Task<int> DeleteChapterStatsForProfile(Guid profileId)
         {
             var collection = _db.GetCollection<ChapterStatsDto>(Names.Collections.Stats);
             var result = await collection.DeleteManyAsync(x => x.ProfileId == profileId);
@@ -89,7 +89,15 @@ namespace Bhasha.Common.MongoDB
             return (int)result.DeletedCount;
         }
 
-        public async ValueTask<int> DeleteProfile(Guid profileId)
+        public async Task<int> DeleteChapterStatsForChapter(Guid chapterId)
+        {
+            var collection = _db.GetCollection<ChapterStatsDto>(Names.Collections.Stats);
+            var result = await collection.DeleteManyAsync(x => x.ChapterId == chapterId);
+
+            return (int)result.DeletedCount;
+        }
+
+        public async Task<int> DeleteProfile(Guid profileId)
         {
             var collection = _db.GetCollection<ProfileDto>(Names.Collections.Profiles);
             var result = await collection.DeleteOneAsync(x => x.Id == profileId);
@@ -97,7 +105,7 @@ namespace Bhasha.Common.MongoDB
             return (int)result.DeletedCount;
         }
 
-        public async ValueTask<int> DeleteProfiles(Guid userId)
+        public async Task<int> DeleteProfiles(Guid userId)
         {
             var collection = _db.GetCollection<ProfileDto>(Names.Collections.Profiles);
             var result = await collection.DeleteManyAsync(x => x.UserId == userId);
@@ -105,7 +113,7 @@ namespace Bhasha.Common.MongoDB
             return (int)result.DeletedCount;
         }
 
-        public async ValueTask<int> DeleteTip(Guid tipId)
+        public async Task<int> DeleteTip(Guid tipId)
         {
             var collection = _db.GetCollection<TipDto>(Names.Collections.Tips);
             var result = await collection.DeleteOneAsync(x => x.Id == tipId);
@@ -113,7 +121,7 @@ namespace Bhasha.Common.MongoDB
             return (int)result.DeletedCount;
         }
 
-        public async ValueTask<int> DeleteTips(Guid chapterId, int pageIndex)
+        public async Task<int> DeleteTips(Guid chapterId, int pageIndex)
         {
             var collection = _db.GetCollection<TipDto>(Names.Collections.Tips);
             var result = await collection.DeleteManyAsync(
@@ -123,7 +131,7 @@ namespace Bhasha.Common.MongoDB
             return (int)result.DeletedCount;
         }
 
-        public async ValueTask<int> DeleteUser(Guid userId)
+        public async Task<int> DeleteUser(Guid userId)
         {
             var collection = _db.GetCollection<UserDto>(Names.Collections.Users);
             var result = await collection.DeleteOneAsync(x => x.Id == userId);
@@ -131,7 +139,7 @@ namespace Bhasha.Common.MongoDB
             return (int)result.DeletedCount;
         }
 
-        public async ValueTask<IEnumerable<Chapter>> GetChapters(int level)
+        public async Task<IEnumerable<Chapter>> GetChapters(int level)
         {
             var collection = _db.GetCollection<ChapterDto>(Names.Collections.Chapters);
             var chapters = await collection
@@ -153,7 +161,7 @@ namespace Bhasha.Common.MongoDB
             return chapters.Select(chapter => Converter.Convert(chapter, tokenMap));
         }
 
-        public async ValueTask<ChapterStats> GetChapterStats(Guid profileId, Guid chapterId)
+        public async Task<ChapterStats> GetChapterStats(Guid profileId, Guid chapterId)
         {
             var collection = _db.GetCollection<ChapterStatsDto>(Names.Collections.Stats);
             var result = await collection
@@ -165,7 +173,7 @@ namespace Bhasha.Common.MongoDB
             return result.Select(Converter.Convert).Single();
         }
 
-        public async ValueTask<IEnumerable<Profile>> GetProfiles(Guid userId)
+        public async Task<IEnumerable<Profile>> GetProfiles(Guid userId)
         {
             var collection = _db.GetCollection<ProfileDto>(Names.Collections.Profiles);
             var result = await collection
@@ -176,7 +184,15 @@ namespace Bhasha.Common.MongoDB
             return result.Select(Converter.Convert);
         }
 
-        public async ValueTask<IEnumerable<Tip>> GetTips(Guid chapterId, int pageIndex)
+        public async Task<Profile> GetProfile(Guid profileId)
+        {
+            var collection = _db.GetCollection<ProfileDto>(Names.Collections.Profiles);
+            var profile = await collection.AsQueryable().SingleAsync(x => x.Id == profileId);
+
+            return Converter.Convert(profile);
+        }
+
+        public async Task<IEnumerable<Tip>> GetTips(Guid chapterId, int pageIndex)
         {
             var collection = _db.GetCollection<TipDto>(Names.Collections.Tips);
             var result = await collection
@@ -188,7 +204,7 @@ namespace Bhasha.Common.MongoDB
             return result.Select(Converter.Convert);
         }
 
-        public async ValueTask<User> GetUser(Guid userId)
+        public async Task<User> GetUser(Guid userId)
         {
             var collection = _db.GetCollection<UserDto>(Names.Collections.Users);
             var result = await collection
@@ -199,7 +215,7 @@ namespace Bhasha.Common.MongoDB
             return Converter.Convert(result);
         }
 
-        public async ValueTask UpdateChapter(Chapter chapter)
+        public async Task UpdateChapter(Chapter chapter)
         {
             var collection = _db.GetCollection<ChapterDto>(Names.Collections.Chapters);
             var dto = Converter.Convert(chapter);
@@ -207,7 +223,7 @@ namespace Bhasha.Common.MongoDB
             await collection.ReplaceOneAsync(x => x.Id == dto.Id, dto);
         }
 
-        public async ValueTask UpdateChapterStats(ChapterStats chapterStats)
+        public async Task UpdateChapterStats(ChapterStats chapterStats)
         {
             var collection = _db.GetCollection<ChapterStatsDto>(Names.Collections.Stats);
             var dto = Converter.Convert(chapterStats);
@@ -217,7 +233,7 @@ namespace Bhasha.Common.MongoDB
                      x.ProfileId == dto.ProfileId, dto);
         }
 
-        public async ValueTask UpdateProfile(Guid profileId, int level)
+        public async Task UpdateProfile(Guid profileId, int level)
         {
             var collection = _db.GetCollection<ProfileDto>(Names.Collections.Profiles);
 
@@ -226,7 +242,7 @@ namespace Bhasha.Common.MongoDB
                 Builders<ProfileDto>.Update.Set(p => p.Level, level));
         }
 
-        public async ValueTask UpdateTip(Tip tip)
+        public async Task UpdateTip(Tip tip)
         {
             var collection = _db.GetCollection<TipDto>(Names.Collections.Tips);
             var dto = Converter.Convert(tip);
@@ -234,7 +250,7 @@ namespace Bhasha.Common.MongoDB
             await collection.ReplaceOneAsync(x => x.Id == tip.Id, dto);
         }
 
-        public async ValueTask UpdateUser(User user)
+        public async Task UpdateUser(User user)
         {
             var collection = _db.GetCollection<UserDto>(Names.Collections.Users);
             var dto = Converter.Convert(user);

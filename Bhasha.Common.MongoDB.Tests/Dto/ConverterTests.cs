@@ -149,7 +149,7 @@ namespace Bhasha.Common.MongoDB.Tests.Dto
 
             Assert.That(result.Id, Is.EqualTo(dto.Id));
             Assert.That(result.UserName, Is.EqualTo(dto.UserName));
-            Assert.That(result.EmailAddress, Is.EqualTo(dto.Email));
+            Assert.That(result.Email, Is.EqualTo(dto.Email));
         }
 
         [Test]
@@ -160,7 +160,7 @@ namespace Bhasha.Common.MongoDB.Tests.Dto
 
             Assert.That(result.Id, Is.EqualTo(user.Id));
             Assert.That(result.UserName, Is.EqualTo(user.UserName));
-            Assert.That(result.Email, Is.EqualTo(user.EmailAddress));
+            Assert.That(result.Email, Is.EqualTo(user.Email));
         }
 
         [Test]

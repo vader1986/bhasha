@@ -67,5 +67,10 @@ namespace Bhasha.Common
         {
             return language.ToString();
         }
+
+        public static implicit operator Language(string language)
+        {
+            return Parse(language);
+        }
     }
 }

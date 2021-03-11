@@ -169,7 +169,7 @@ namespace Bhasha.Common.MongoDB.Tests
         }
 
         [Test]
-        public async Task DeleteChapterStats()
+        public async Task DeleteChapterStatsForProfile()
         {
             var db = await MongoDb.Create(_runner.ConnectionString);
             var layer = new MongoDbLayer(db);
@@ -180,7 +180,33 @@ namespace Bhasha.Common.MongoDB.Tests
                 .GetCollection<ChapterStatsDto>(Names.Collections.Stats)
                 .InsertOneAsync(dto);
 
-            var deleted = await layer.DeleteChapterStats(dto.ProfileId);
+            var deleted = await layer.DeleteChapterStatsForProfile(dto.ProfileId);
+
+            Assert.That(deleted, Is.EqualTo(1));
+
+            var found = db
+                .GetCollection<ChapterStatsDto>(Names.Collections.Stats)
+                .AsQueryable()
+                .Any(
+                    x => x.ChapterId == dto.ChapterId &&
+                         x.ProfileId == dto.ProfileId);
+
+            Assert.That(found, Is.False);
+        }
+
+        [Test]
+        public async Task DeleteChapterStatsForChapter()
+        {
+            var db = await MongoDb.Create(_runner.ConnectionString);
+            var layer = new MongoDbLayer(db);
+
+            var dto = ChapterStatsDtoBuilder.Build();
+
+            await db
+                .GetCollection<ChapterStatsDto>(Names.Collections.Stats)
+                .InsertOneAsync(dto);
+
+            var deleted = await layer.DeleteChapterStatsForChapter(dto.ChapterId);
 
             Assert.That(deleted, Is.EqualTo(1));
 
@@ -407,6 +433,31 @@ namespace Bhasha.Common.MongoDB.Tests
         }
 
         [Test]
+        public async Task GetProfile()
+        {
+            var db = await MongoDb.Create(_runner.ConnectionString);
+            var layer = new MongoDbLayer(db);
+
+            var dtos = Enumerable
+                .Range(1, 10)
+                .Select(x => ProfileDtoBuilder.Build())
+                .ToArray();
+
+            await db
+                .GetCollection<ProfileDto>(Names.Collections.Profiles)
+                .InsertManyAsync(dtos);
+
+            var expectedProfile = dtos[0];
+            var result = await layer.GetProfile(expectedProfile.Id);
+
+
+            Assert.That(result.Level == expectedProfile.Level);
+            Assert.That(result.From == expectedProfile.From);
+            Assert.That(result.To == expectedProfile.To);
+            Assert.That(result.UserId == expectedProfile.UserId);
+        }
+
+        [Test]
         public async Task GetTips()
         {
             var db = await MongoDb.Create(_runner.ConnectionString);
@@ -452,7 +503,7 @@ namespace Bhasha.Common.MongoDB.Tests
             var user = await layer.GetUser(userId);
 
             Assert.That(user.Id == userId);
-            Assert.That(user.EmailAddress == "x@y.com");
+            Assert.That(user.Email == "x@y.com");
             Assert.That(user.UserName == "user");
         }
 
@@ -600,7 +651,7 @@ namespace Bhasha.Common.MongoDB.Tests
                 .SingleAsync(x => x.Id == dto.Id);
 
             Assert.That(result.UserName == updatedUser.UserName);
-            Assert.That(result.Email == updatedUser.EmailAddress);
+            Assert.That(result.Email == updatedUser.Email);
         }
     }
 }

@@ -17,13 +17,13 @@ namespace Bhasha.Common
         /// <summary>
         /// E-Mail address associated with this user.
         /// </summary>
-        public string EmailAddress { get; }
+        public string Email { get; }
 
-        public User(Guid id, string userName, string emailAddress)
+        public User(Guid id, string userName, string email)
         {
             Id = id;
             UserName = userName;
-            EmailAddress = emailAddress;
+            Email = email;
         }
     }
 }

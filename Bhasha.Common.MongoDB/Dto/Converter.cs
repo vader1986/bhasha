@@ -13,9 +13,10 @@ namespace Bhasha.Common.MongoDB.Dto
             try
             {
                 return new Profile(
-                    dto.Id, dto.UserId,
-                    Language.Parse(dto.From),
-                    Language.Parse(dto.To),
+                    dto.Id,
+                    dto.UserId,
+                    dto.From,
+                    dto.To,
                     dto.Level);
             }
             catch (Exception e)
@@ -68,7 +69,7 @@ namespace Bhasha.Common.MongoDB.Dto
                         Convert(token),
                         Enum.Parse<PageType>(page.PageType),
                         new LanguageToken(
-                            Language.Parse(page.Language),
+                            page.Language,
                             translation.Native,
                             translation.Spoken,
                             audioId),
@@ -171,7 +172,7 @@ namespace Bhasha.Common.MongoDB.Dto
             {
                 Id = user.Id,
                 UserName = user.UserName,
-                Email = user.EmailAddress
+                Email = user.Email
             };
         }
 

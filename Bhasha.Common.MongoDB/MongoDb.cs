@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
-using MongoDB.Driver;
+﻿using MongoDB.Driver;
 
 namespace Bhasha.Common.MongoDB
 {
@@ -20,42 +16,33 @@ namespace Bhasha.Common.MongoDB
             _client = client;
         }
 
-        public static async Task<MongoDb> Create(MongoClient client)
+        public static MongoDb Create(string connectionString)
         {
-            var dbNames = await client.ListDatabaseNames().ToListAsync();
+            var client = new MongoClient(connectionString);
 
-            if (!dbNames.Contains(Names.Database))
-            {
-                await Setup.NewDatabase(client);
-            }
+            CheckOrSetupDatabase(client);
 
             return new MongoDb(client);
         }
 
-        public static async Task<MongoDb> Create(string connectionString)
+        private static void CheckOrSetupDatabase(MongoClient client)
         {
-            return await Create(new MongoClient(connectionString));
-        }
+            var dbNames = client.ListDatabaseNames().ToList();
 
-        private IMongoCollection<T> Collection<T>(string name)
-        {
-            return _client.GetDatabase(Names.Database).GetCollection<T>(name);
-        }
-
-        public async ValueTask<IEnumerable<T>> Find<T>(
-            string collectionName,
-            Expression<Func<T, Guid>> selector,
-            IEnumerable<Guid> ids)
-        {
-            var filter = Builders<T>.Filter.In(selector, ids);
-            var result = await Collection<T>(collectionName).FindAsync(filter);
-
-            return result.ToEnumerable();
+            if (!dbNames.Contains(Names.Database))
+            {
+                Setup
+                    .NewDatabase(client)
+                    .GetAwaiter()
+                    .GetResult();
+            }
         }
 
         public IMongoCollection<T> GetCollection<T>(string name)
         {
-            return _client.GetDatabase(Names.Database).GetCollection<T>(name);
+            return _client
+                .GetDatabase(Names.Database)
+                .GetCollection<T>(name);
         }
     }
 }
