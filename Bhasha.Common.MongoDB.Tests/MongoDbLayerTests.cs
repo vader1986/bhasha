@@ -16,11 +16,15 @@ namespace Bhasha.Common.MongoDB.Tests
     public class MongoDbLayerTests
     {
         private MongoDbRunner _runner;
+        private MongoDb _db;
+        private MongoDbLayer _layer;
 
         [SetUp]
         public void Before()
         {
             _runner = MongoDbRunner.Start();
+            _db = MongoDb.Create(_runner.ConnectionString);
+            _layer = new MongoDbLayer(_db);
         }
 
         [TearDown]
@@ -32,9 +36,6 @@ namespace Bhasha.Common.MongoDB.Tests
         [Test]
         public async Task CreateChapter()
         {
-            var db = await MongoDb.Create(_runner.ConnectionString);
-            var layer = new MongoDbLayer(db);
-
             var dto = ChapterDtoBuilder.Build();
             var tokens = dto
                 .Pages
@@ -42,9 +43,9 @@ namespace Bhasha.Common.MongoDB.Tests
                 .ToDictionary(x => x, x => TokenDtoBuilder.Build(x));
             dto.Id = default;
 
-            var chapter = await layer.CreateChapter(Converter.Convert(dto, tokens));
+            var chapter = await _layer.CreateChapter(Converter.Convert(dto, tokens));
 
-            var result = db
+            var result = _db
                 .GetCollection<ChapterDto>(Names.Collections.Chapters)
                 .AsQueryable()
                 .Where(x => x.Id == chapter.Id)
@@ -61,13 +62,10 @@ namespace Bhasha.Common.MongoDB.Tests
         [Test]
         public async Task CreateChapterStats()
         {
-            var db = await MongoDb.Create(_runner.ConnectionString);
-            var layer = new MongoDbLayer(db);
-
             var dto = ChapterStatsDtoBuilder.Build();
-            var stats = await layer.CreateChapterStats(Converter.Convert(dto));
+            var stats = await _layer.CreateChapterStats(Converter.Convert(dto));
 
-            var result = db
+            var result = _db
                 .GetCollection<ChapterStatsDto>(Names.Collections.Stats)
                 .AsQueryable()
                 .Where(
@@ -86,13 +84,10 @@ namespace Bhasha.Common.MongoDB.Tests
         [Test]
         public async Task CreateProfile()
         {
-            var db = await MongoDb.Create(_runner.ConnectionString);
-            var layer = new MongoDbLayer(db);
-
             var dto = ProfileDtoBuilder.Build();
-            var profile = await layer.CreateProfile(Converter.Convert(dto));
+            var profile = await _layer.CreateProfile(Converter.Convert(dto));
 
-            var result = db
+            var result = _db
                 .GetCollection<ProfileDto>(Names.Collections.Profiles)
                 .AsQueryable()
                 .Where(x => x.Id == profile.Id)
@@ -108,12 +103,9 @@ namespace Bhasha.Common.MongoDB.Tests
         [Test]
         public async Task CreateTip()
         {
-            var db = await MongoDb.Create(_runner.ConnectionString);
-            var layer = new MongoDbLayer(db);
+            var tip = await _layer.CreateTip(new Tip(default, Guid.NewGuid(), 3, "hello"));
 
-            var tip = await layer.CreateTip(new Tip(default, Guid.NewGuid(), 3, "hello"));
-
-            var result = db
+            var result = _db
                 .GetCollection<TipDto>(Names.Collections.Tips)
                 .AsQueryable()
                 .Where(x => x.Id == tip.Id)
@@ -128,12 +120,9 @@ namespace Bhasha.Common.MongoDB.Tests
         [Test]
         public async Task CreateUser()
         {
-            var db = await MongoDb.Create(_runner.ConnectionString);
-            var layer = new MongoDbLayer(db);
+            var user = await _layer.CreateUser(new User(default, "Hello", "asdf@bhasha.com"));
 
-            var user = await layer.CreateUser(new User(default, "Hello", "asdf@bhasha.com"));
-
-            var result = db
+            var result = _db
                 .GetCollection<UserDto>(Names.Collections.Users)
                 .AsQueryable()
                 .Where(x => x.Id == user.Id)
@@ -147,20 +136,17 @@ namespace Bhasha.Common.MongoDB.Tests
         [Test]
         public async Task DeleteChapter()
         {
-            var db = await MongoDb.Create(_runner.ConnectionString);
-            var layer = new MongoDbLayer(db);
-
             var dto = ChapterDtoBuilder.Build();
 
-            await db
+            await _db
                 .GetCollection<ChapterDto>(Names.Collections.Chapters)
                 .InsertOneAsync(dto);
 
-            var deleted = await layer.DeleteChapter(dto.Id);
+            var deleted = await _layer.DeleteChapter(dto.Id);
 
             Assert.That(deleted, Is.EqualTo(1));
 
-            var found = db
+            var found = _db
                 .GetCollection<ChapterDto>(Names.Collections.Chapters)
                 .AsQueryable()
                 .Any(x => x.Id == dto.Id);
@@ -171,20 +157,17 @@ namespace Bhasha.Common.MongoDB.Tests
         [Test]
         public async Task DeleteChapterStatsForProfile()
         {
-            var db = await MongoDb.Create(_runner.ConnectionString);
-            var layer = new MongoDbLayer(db);
-
             var dto = ChapterStatsDtoBuilder.Build();
 
-            await db
+            await _db
                 .GetCollection<ChapterStatsDto>(Names.Collections.Stats)
                 .InsertOneAsync(dto);
 
-            var deleted = await layer.DeleteChapterStatsForProfile(dto.ProfileId);
+            var deleted = await _layer.DeleteChapterStatsForProfile(dto.ProfileId);
 
             Assert.That(deleted, Is.EqualTo(1));
 
-            var found = db
+            var found = _db
                 .GetCollection<ChapterStatsDto>(Names.Collections.Stats)
                 .AsQueryable()
                 .Any(
@@ -197,20 +180,17 @@ namespace Bhasha.Common.MongoDB.Tests
         [Test]
         public async Task DeleteChapterStatsForChapter()
         {
-            var db = await MongoDb.Create(_runner.ConnectionString);
-            var layer = new MongoDbLayer(db);
-
             var dto = ChapterStatsDtoBuilder.Build();
 
-            await db
+            await _db
                 .GetCollection<ChapterStatsDto>(Names.Collections.Stats)
                 .InsertOneAsync(dto);
 
-            var deleted = await layer.DeleteChapterStatsForChapter(dto.ChapterId);
+            var deleted = await _layer.DeleteChapterStatsForChapter(dto.ChapterId);
 
             Assert.That(deleted, Is.EqualTo(1));
 
-            var found = db
+            var found = _db
                 .GetCollection<ChapterStatsDto>(Names.Collections.Stats)
                 .AsQueryable()
                 .Any(
@@ -223,20 +203,17 @@ namespace Bhasha.Common.MongoDB.Tests
         [Test]
         public async Task DeleteProfile()
         {
-            var db = await MongoDb.Create(_runner.ConnectionString);
-            var layer = new MongoDbLayer(db);
-
             var dto = ProfileDtoBuilder.Build();
 
-            await db
+            await _db
                 .GetCollection<ProfileDto>(Names.Collections.Profiles)
                 .InsertOneAsync(dto);
 
-            var deleted = await layer.DeleteProfile(dto.Id);
+            var deleted = await _layer.DeleteProfile(dto.Id);
 
             Assert.That(deleted, Is.EqualTo(1));
 
-            var found = db
+            var found = _db
                 .GetCollection<ProfileDto>(Names.Collections.Profiles)
                 .AsQueryable()
                 .Any(x => x.Id == dto.Id);
@@ -247,11 +224,9 @@ namespace Bhasha.Common.MongoDB.Tests
         [Test]
         public async Task DeleteProfiles()
         {
-            var db = await MongoDb.Create(_runner.ConnectionString);
-            var layer = new MongoDbLayer(db);
             var userId = Guid.NewGuid();
 
-            await db
+            await _db
                 .GetCollection<ProfileDto>(Names.Collections.Profiles)
                 .InsertManyAsync(new[] {
                     ProfileDtoBuilder.Build(userId),
@@ -260,11 +235,11 @@ namespace Bhasha.Common.MongoDB.Tests
                     ProfileDtoBuilder.Build(Guid.NewGuid()),
                 });
 
-            var deleted = await layer.DeleteProfiles(userId);
+            var deleted = await _layer.DeleteProfiles(userId);
 
             Assert.That(deleted, Is.EqualTo(3));
 
-            var found = db
+            var found = _db
                 .GetCollection<ProfileDto>(Names.Collections.Profiles)
                 .AsQueryable()
                 .Any(x => x.UserId == userId);
@@ -275,9 +250,6 @@ namespace Bhasha.Common.MongoDB.Tests
         [Test]
         public async Task DeleteTip()
         {
-            var db = await MongoDb.Create(_runner.ConnectionString);
-            var layer = new MongoDbLayer(db);
-
             var dto = new TipDto {
                 Id = Guid.NewGuid(),
                 ChapterId = Guid.NewGuid(),
@@ -285,15 +257,15 @@ namespace Bhasha.Common.MongoDB.Tests
                 Text = "hello"
             };
 
-            await db
+            await _db
                 .GetCollection<TipDto>(Names.Collections.Tips)
                 .InsertOneAsync(dto);
 
-            var deleted = await layer.DeleteTip(dto.Id);
+            var deleted = await _layer.DeleteTip(dto.Id);
 
             Assert.That(deleted, Is.EqualTo(1));
 
-            var found = db
+            var found = _db
                 .GetCollection<TipDto>(Names.Collections.Tips)
                 .AsQueryable()
                 .Any(x => x.Id == dto.Id);
@@ -304,12 +276,10 @@ namespace Bhasha.Common.MongoDB.Tests
         [Test]
         public async Task DeleteTips()
         {
-            var db = await MongoDb.Create(_runner.ConnectionString);
-            var layer = new MongoDbLayer(db);
             var chapterId = Guid.NewGuid();
             var pageIndex = 5;
 
-            await db
+            await _db
                 .GetCollection<TipDto>(Names.Collections.Tips)
                 .InsertManyAsync(new[] {
                     new TipDto { Id = Guid.NewGuid(), ChapterId = chapterId, PageIndex = pageIndex, Text = "1" },
@@ -318,11 +288,11 @@ namespace Bhasha.Common.MongoDB.Tests
                     new TipDto { Id = Guid.NewGuid(), ChapterId = chapterId, PageIndex = pageIndex + 1, Text = "4" }
                 });
 
-            var deleted = await layer.DeleteTips(chapterId, pageIndex);
+            var deleted = await _layer.DeleteTips(chapterId, pageIndex);
 
             Assert.That(deleted, Is.EqualTo(3));
 
-            var found = db
+            var found = _db
                 .GetCollection<TipDto>(Names.Collections.Tips)
                 .AsQueryable()
                 .Any(x => x.ChapterId == chapterId &&
@@ -334,24 +304,21 @@ namespace Bhasha.Common.MongoDB.Tests
         [Test]
         public async Task DeleteUser()
         {
-            var db = await MongoDb.Create(_runner.ConnectionString);
-            var layer = new MongoDbLayer(db);
-
             var dto = new UserDto {
                 Id = Guid.NewGuid(),
                 UserName = "Hello",
                 Email = "hello@bhasha.com"
             };
 
-            await db
+            await _db
                 .GetCollection<UserDto>(Names.Collections.Users)
                 .InsertOneAsync(dto);
 
-            var deleted = await layer.DeleteUser(dto.Id);
+            var deleted = await _layer.DeleteUser(dto.Id);
 
             Assert.That(deleted, Is.EqualTo(1));
 
-            var found = db
+            var found = _db
                 .GetCollection<UserDto>(Names.Collections.Users)
                 .AsQueryable()
                 .Any(x => x.Id == dto.Id);
@@ -362,25 +329,22 @@ namespace Bhasha.Common.MongoDB.Tests
         [Test]
         public async Task GetChapters()
         {
-            var db = await MongoDb.Create(_runner.ConnectionString);
-            var layer = new MongoDbLayer(db);
-
             var dtos = Enumerable
                 .Range(1, 10)
                 .Select(x => ChapterDtoBuilder.Build(x))
                 .ToArray();
 
-            await db
+            await _db
                 .GetCollection<ChapterDto>(Names.Collections.Chapters)
                 .InsertManyAsync(dtos);
 
-            await db
+            await _db
                 .GetCollection<TokenDto>(Names.Collections.Tokens)
                 .InsertManyAsync(dtos
                     .SelectMany(x => x.Pages)
                     .Select(x => TokenDtoBuilder.Build(x.TokenId)));
 
-            var chapters = await layer.GetChapters(5);
+            var chapters = await _layer.GetChapters(5);
 
             foreach (var chapter in chapters)
             {
@@ -391,16 +355,13 @@ namespace Bhasha.Common.MongoDB.Tests
         [Test]
         public async Task GetChapterStats()
         {
-            var db = await MongoDb.Create(_runner.ConnectionString);
-            var layer = new MongoDbLayer(db);
-
             var dto = ChapterStatsDtoBuilder.Build();
 
-            await db
+            await _db
                 .GetCollection<ChapterStatsDto>(Names.Collections.Stats)
                 .InsertOneAsync(dto);
 
-            var result = await layer.GetChapterStats(dto.ProfileId, dto.ChapterId);
+            var result = await _layer.GetChapterStats(dto.ProfileId, dto.ChapterId);
 
             Assert.That(result.Completed, Is.EqualTo(dto.Completed));
             Assert.That(result.Tips, Is.EqualTo(Encoding.UTF8.GetBytes(dto.Tips)));
@@ -411,8 +372,6 @@ namespace Bhasha.Common.MongoDB.Tests
         [Test]
         public async Task GetProfiles()
         {
-            var db = await MongoDb.Create(_runner.ConnectionString);
-            var layer = new MongoDbLayer(db);
             var userId = Guid.NewGuid();
 
             var dtos = Enumerable
@@ -420,11 +379,11 @@ namespace Bhasha.Common.MongoDB.Tests
                 .Select(x => ProfileDtoBuilder.Build(x <= 5 ? userId : Guid.NewGuid()))
                 .ToArray();
 
-            await db
+            await _db
                 .GetCollection<ProfileDto>(Names.Collections.Profiles)
                 .InsertManyAsync(dtos);
 
-            var profiles = await layer.GetProfiles(userId);
+            var profiles = await _layer.GetProfiles(userId);
 
             foreach (var profile in profiles)
             {
@@ -435,20 +394,17 @@ namespace Bhasha.Common.MongoDB.Tests
         [Test]
         public async Task GetProfile()
         {
-            var db = await MongoDb.Create(_runner.ConnectionString);
-            var layer = new MongoDbLayer(db);
-
             var dtos = Enumerable
                 .Range(1, 10)
                 .Select(x => ProfileDtoBuilder.Build())
                 .ToArray();
 
-            await db
+            await _db
                 .GetCollection<ProfileDto>(Names.Collections.Profiles)
                 .InsertManyAsync(dtos);
 
             var expectedProfile = dtos[0];
-            var result = await layer.GetProfile(expectedProfile.Id);
+            var result = await _layer.GetProfile(expectedProfile.Id);
 
 
             Assert.That(result.Level == expectedProfile.Level);
@@ -460,8 +416,6 @@ namespace Bhasha.Common.MongoDB.Tests
         [Test]
         public async Task GetTips()
         {
-            var db = await MongoDb.Create(_runner.ConnectionString);
-            var layer = new MongoDbLayer(db);
             var chapterId = Guid.NewGuid();
             var pageIndex = 3;
 
@@ -476,11 +430,11 @@ namespace Bhasha.Common.MongoDB.Tests
                 })
                 .ToArray();
 
-            await db
+            await _db
                 .GetCollection<TipDto>(Names.Collections.Tips)
                 .InsertManyAsync(dtos);
 
-            var tips = await layer.GetTips(chapterId, pageIndex);
+            var tips = await _layer.GetTips(chapterId, pageIndex);
 
             foreach (var tip in tips)
             {
@@ -492,15 +446,13 @@ namespace Bhasha.Common.MongoDB.Tests
         [Test]
         public async Task GetUser()
         {
-            var db = await MongoDb.Create(_runner.ConnectionString);
-            var layer = new MongoDbLayer(db);
             var userId = Guid.NewGuid();
 
-            await db
+            await _db
                 .GetCollection<UserDto>(Names.Collections.Users)
                 .InsertOneAsync(new UserDto { Id = userId, Email = "x@y.com", UserName = "user" });
 
-            var user = await layer.GetUser(userId);
+            var user = await _layer.GetUser(userId);
 
             Assert.That(user.Id == userId);
             Assert.That(user.Email == "x@y.com");
@@ -510,20 +462,17 @@ namespace Bhasha.Common.MongoDB.Tests
         [Test]
         public async Task UpdateChapter()
         {
-            var db = await MongoDb.Create(_runner.ConnectionString);
-            var layer = new MongoDbLayer(db);
-
             var dto = ChapterDtoBuilder.Build();
 
-            await db
+            await _db
                 .GetCollection<ChapterDto>(Names.Collections.Chapters)
                 .InsertOneAsync(dto);
 
             var chapter = new Chapter(dto.Id, 1, "Updated Name", "Updated Description", new Page[0], default);
 
-            await layer.UpdateChapter(chapter);
+            await _layer.UpdateChapter(chapter);
 
-            var chapters = await db
+            var chapters = await _db
                 .GetCollection<ChapterDto>(Names.Collections.Chapters)
                 .AsQueryable()
                 .Where(x => x.Id == dto.Id)
@@ -540,12 +489,9 @@ namespace Bhasha.Common.MongoDB.Tests
         [Test]
         public async Task UpdateChapterStats()
         {
-            var db = await MongoDb.Create(_runner.ConnectionString);
-            var layer = new MongoDbLayer(db);
-
             var dto = ChapterStatsDtoBuilder.Build();
 
-            await db
+            await _db
                 .GetCollection<ChapterStatsDto>(Names.Collections.Stats)
                 .InsertOneAsync(dto);
 
@@ -557,9 +503,9 @@ namespace Bhasha.Common.MongoDB.Tests
                 Encoding.UTF8.GetBytes("654332"),
                 Encoding.UTF8.GetBytes("324626"));
 
-            await layer.UpdateChapterStats(stats);
+            await _layer.UpdateChapterStats(stats);
 
-            var updatedStats = await db
+            var updatedStats = await _db
                 .GetCollection<ChapterStatsDto>(Names.Collections.Stats)
                 .AsQueryable()
                 .SingleAsync(x => x.ProfileId == dto.ProfileId &&
@@ -574,18 +520,15 @@ namespace Bhasha.Common.MongoDB.Tests
         [Test]
         public async Task UpdateProfile()
         {
-            var db = await MongoDb.Create(_runner.ConnectionString);
-            var layer = new MongoDbLayer(db);
-
             var dto = ProfileDtoBuilder.Build();
 
-            await db
+            await _db
                 .GetCollection<ProfileDto>(Names.Collections.Profiles)
                 .InsertOneAsync(dto);
 
-            await layer.UpdateProfile(dto.Id, dto.Level + 1);
+            await _layer.UpdateProfile(dto.Id, dto.Level + 1);
 
-            var profile = await db
+            var profile = await _db
                 .GetCollection<ProfileDto>(Names.Collections.Profiles)
                 .AsQueryable()
                 .SingleAsync(x => x.Id == dto.Id);
@@ -596,9 +539,6 @@ namespace Bhasha.Common.MongoDB.Tests
         [Test]
         public async Task UpdateTip()
         {
-            var db = await MongoDb.Create(_runner.ConnectionString);
-            var layer = new MongoDbLayer(db);
-
             var dto = new TipDto {
                 Id = Guid.NewGuid(),
                 ChapterId = Guid.NewGuid(),
@@ -606,15 +546,15 @@ namespace Bhasha.Common.MongoDB.Tests
                 Text = "Hello World"
             };
 
-            await db
+            await _db
                 .GetCollection<TipDto>(Names.Collections.Tips)
                 .InsertOneAsync(dto);
 
             var updatedTip = new Tip(dto.Id, Guid.NewGuid(), 3, "New Text");
 
-            await layer.UpdateTip(updatedTip);
+            await _layer.UpdateTip(updatedTip);
 
-            var result = await db
+            var result = await _db
                 .GetCollection<TipDto>(Names.Collections.Tips)
                 .AsQueryable()
                 .SingleAsync(x => x.Id == dto.Id);
@@ -627,9 +567,6 @@ namespace Bhasha.Common.MongoDB.Tests
         [Test]
         public async Task UpdateUser()
         {
-            var db = await MongoDb.Create(_runner.ConnectionString);
-            var layer = new MongoDbLayer(db);
-
             var dto = new UserDto
             {
                 Id = Guid.NewGuid(),
@@ -637,15 +574,15 @@ namespace Bhasha.Common.MongoDB.Tests
                 Email = "old@email.com"
             };
 
-            await db
+            await _db
                 .GetCollection<UserDto>(Names.Collections.Users)
                 .InsertOneAsync(dto);
 
             var updatedUser = new User(dto.Id, "new_username", "new@email.com");
 
-            await layer.UpdateUser(updatedUser);
+            await _layer.UpdateUser(updatedUser);
 
-            var result = await db
+            var result = await _db
                 .GetCollection<UserDto>(Names.Collections.Users)
                 .AsQueryable()
                 .SingleAsync(x => x.Id == dto.Id);
