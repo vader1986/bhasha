@@ -6,15 +6,12 @@
 
         public class Collections
         {
-            public const string Translations = "translations";
-            public const string Procedures = "procedures";
-            public const string Users = "users";
-        }
-
-        public class Fields
-        {
-            public static string Categories = nameof(Dto.TranslationDto.Categories);
-            public static string LanguageId = nameof(Dto.TranslationDto.Tokens) + "." + nameof(Dto.TokenDto.LanguageId);
+            public const string Users = nameof(Users);
+            public const string Profiles = nameof(Profiles);
+            public const string Chapters = nameof(Chapters);
+            public const string Tokens = nameof(Tokens);
+            public const string Tips = nameof(Tips);
+            public const string Stats = nameof(Stats);
         }
     }
 }

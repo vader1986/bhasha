@@ -1,20 +1,35 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using System;
+using System.Collections.Generic;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Bhasha.Common.MongoDB.Dto
 {
-    [BsonIgnoreExtraElements]
+    using Translations = Dictionary<string, LanguageTokenDto>;
+
     public class TokenDto
     {
-        [BsonElement]
-        public string LanguageId { get; set; } = "";
+        [BsonId]
+        public Guid Id { get; set; }
 
         [BsonElement]
-        public string Native { get; set; } = "";
+        public string Label { get; set; }
 
         [BsonElement]
-        public string Spoken { get; set; } = "";
+        public int Level { get; set; }
 
         [BsonElement]
-        public string? AudioId { get; set; }
+        public string Cefr { get; set; }
+
+        [BsonElement]
+        public string TokenType { get; set; }
+
+        [BsonElement]
+        public string[] Categories { get; set; }
+
+        [BsonElement]
+        public string? PictureId { get; set; }
+
+        [BsonElement]
+        public Translations Translations { get; set; }
     }
 }

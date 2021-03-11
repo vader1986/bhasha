@@ -1,48 +1,23 @@
-﻿using Bhasha.Common.MongoDB.Dto;
+﻿using System;
+using System.Linq;
+using Bhasha.Common.Extensions;
+using Bhasha.Common.MongoDB.Dto;
 
 namespace Bhasha.Common.MongoDB.Tests.Support
 {
     public class TokenDtoBuilder
     {
-        private string _languageId = Languages.English;
-        private string _native = "cat";
-        private string _spoken = "cat";
-        private string _audioId;
-
-        public static TokenDtoBuilder Default => new TokenDtoBuilder();
-        public static TokenDto Create() => Default.Build();
-
-        public TokenDtoBuilder WithLanguageId(string languageId)
-        {
-            _languageId = languageId;
-            return this;
-        }
-
-        public TokenDtoBuilder WithNative(string native)
-        {
-            _native = native;
-            return this;
-        }
-
-        public TokenDtoBuilder WithSpoken(string spoken)
-        {
-            _spoken = spoken;
-            return this;
-        }
-
-        public TokenDtoBuilder WithAudioId(string audioId)
-        {
-            _audioId = audioId;
-            return this;
-        }
-
-        public TokenDto Build()
+        public static TokenDto Build(Guid? id = default)
         {
             return new TokenDto {
-                LanguageId = _languageId,
-                Native = _native,
-                Spoken = _spoken,
-                AudioId = _audioId
+                Id = id ?? Guid.NewGuid(),
+                Label = Rnd.Create.NextString(),
+                Level = Rnd.Create.Next(1, 10),
+                Cefr = Rnd.Create.Choose(Enum.GetNames(typeof(CEFR))),
+                TokenType = Rnd.Create.Choose(Enum.GetNames(typeof(TokenType))),
+                Categories = Rnd.Create.NextStrings().ToArray(),
+                PictureId = Rnd.Create.NextString(),
+                Translations = Language.Supported.Keys.ToDictionary(x => x, _ => LanguageTokenDtoBuilder.Build())
             };
         }
     }

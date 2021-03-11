@@ -4,6 +4,9 @@ namespace Bhasha.Common
 {
     public class EntityId : IEquatable<EntityId>
     {
+        /// <summary>
+        /// Unique identifier of the entity.
+        /// </summary>
         public string Id { get; }
 
         public EntityId(string id)
