@@ -118,7 +118,10 @@ namespace Bhasha.Common.MongoDB.Tests.Dto
         [Test]
         public void Convert_ChapterStatsDto_with_invalid_properties()
         {
-            var dto = new ChapterStatsDto();
+            var dto = new ChapterStatsDto
+            {
+                Submits = null
+            };
             
             Assert.Throws<InvalidDtoException>(() => Converter.Convert(dto));
         }
