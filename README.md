@@ -7,9 +7,8 @@ There's no reason for this project to limit itself for a specific language, it's
 ## Project Structure
 
 The VS solution contains multiple folders:
-`Bhasha.Common` - general collection of model classes used across the entire project
-`Bhasha.Common.MongoDb` - MongoDB layer to access, add, update and delete user and language data
-`Bhasha.Web` - .NET backend hosting the client app and web api to access data
+* `Bhasha.Common` - general collection of model classes used across the entire project
+* `Bhasha.Common.MongoDb` - MongoDB layer to access, add, update and delete user and language data
+* `Bhasha.Web` - .NET backend hosting the client app and web api to access data
 
 There's also a _react-app_ named `Bhasha.Web.Client`. 
-
