@@ -2,10 +2,10 @@
 using System.Threading.Tasks;
 using Bhasha.Common;
 using Bhasha.Common.Extensions;
-using Bhasha.Web.Api.Services;
+using Bhasha.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Bhasha.Web.Api.Controllers
+namespace Bhasha.Web.Controllers
 {
     [ApiController]
     [Route("api/page")]

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace Bhasha.Web.Api
+namespace Bhasha.Web
 {
     public class Program
     {
