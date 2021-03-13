@@ -9,9 +9,9 @@ namespace Bhasha.Common.MongoDB.Dto
         public Guid Id { get; set; }
 
         [BsonElement]
-        public string UserName { get; set; }
+        public string UserName { get; set; } = string.Empty;
 
         [BsonElement]
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
     }
 }

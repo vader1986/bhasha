@@ -12,13 +12,13 @@ namespace Bhasha.Common.MongoDB.Dto
         public int Level { get; set; }
 
         [BsonElement]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [BsonElement]
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
         [BsonElement]
-        public PageDto[] Pages { get; set; }
+        public PageDto[] Pages { get; set; } = new PageDto[0];
 
         [BsonElement]
         public string? PictureId { get; set; }

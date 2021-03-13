@@ -9,12 +9,12 @@ namespace Bhasha.Common.MongoDB.Dto
         public Guid TokenId { get; set; }
 
         [BsonElement]
-        public string Language { get; set; }
+        public string Language { get; set; } = string.Empty;
 
         [BsonElement]
-        public string PageType { get; set; }
+        public string PageType { get; set; } = string.Empty;
 
         [BsonElement]
-        public string[] Arguments { get; set; }
+        public string[] Arguments { get; set; } = new string[0];
     }
 }

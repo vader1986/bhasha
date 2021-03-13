@@ -15,6 +15,6 @@ namespace Bhasha.Common.MongoDB.Dto
         public int PageIndex { get; set; }
 
         [BsonElement]
-        public string Text { get; set; }
+        public string Text { get; set; } = string.Empty;
     }
 }

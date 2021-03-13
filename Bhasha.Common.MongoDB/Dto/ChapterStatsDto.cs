@@ -18,12 +18,12 @@ namespace Bhasha.Common.MongoDB.Dto
         public bool Completed { get; set; }
 
         [BsonElement]
-        public string Tips { get; set; }
+        public string Tips { get; set; } = string.Empty;
 
         [BsonElement]
-        public string Submits { get; set; }
+        public string Submits { get; set; } = string.Empty;
 
         [BsonElement]
-        public string Failures { get; set; }
+        public string Failures { get; set; } = string.Empty;
     }
 }

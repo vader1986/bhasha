@@ -12,24 +12,24 @@ namespace Bhasha.Common.MongoDB.Dto
         public Guid Id { get; set; }
 
         [BsonElement]
-        public string Label { get; set; }
+        public string Label { get; set; } = string.Empty;
 
         [BsonElement]
         public int Level { get; set; }
 
         [BsonElement]
-        public string Cefr { get; set; }
+        public string Cefr { get; set; } = string.Empty;
 
         [BsonElement]
-        public string TokenType { get; set; }
+        public string TokenType { get; set; } = string.Empty;
 
         [BsonElement]
-        public string[] Categories { get; set; }
+        public string[] Categories { get; set; } = new string[0];
 
         [BsonElement]
         public string? PictureId { get; set; }
 
         [BsonElement]
-        public Translations Translations { get; set; }
+        public Translations Translations { get; set; } = new Translations();
     }
 }
