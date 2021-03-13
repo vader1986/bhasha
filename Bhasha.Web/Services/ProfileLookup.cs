@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Bhasha.Common;
 
-namespace Bhasha.Web.Api.Services
+namespace Bhasha.Web.Services
 {
     public interface IProfileLookup
     {

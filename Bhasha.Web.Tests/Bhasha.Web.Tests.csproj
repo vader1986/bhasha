@@ -13,9 +13,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Bhasha.Common\Bhasha.Common.csproj" />
+    <Folder Include="Services\" />
+    <Folder Include="Controllers\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Extensions\" />
+    <ProjectReference Include="..\Bhasha.Web\Bhasha.Web.csproj" />
   </ItemGroup>
 </Project>

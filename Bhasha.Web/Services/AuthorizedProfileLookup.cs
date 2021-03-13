@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Bhasha.Common;
-using Bhasha.Web.Api.Exceptions;
+using Bhasha.Web.Exceptions;
 
-namespace Bhasha.Web.Api.Services
+namespace Bhasha.Web.Services
 {
     public interface IAuthorizedProfileLookup
     {

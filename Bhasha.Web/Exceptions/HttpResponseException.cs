@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Bhasha.Web.Api.Exceptions
+namespace Bhasha.Web.Exceptions
 {
     public class HttpResponseException : Exception
     {

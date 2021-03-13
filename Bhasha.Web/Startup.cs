@@ -1,13 +1,13 @@
 using Bhasha.Common;
 using Bhasha.Common.MongoDB;
-using Bhasha.Web.Api.Services;
+using Bhasha.Web.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace Bhasha.Web.Api
+namespace Bhasha.Web
 {
     public class Startup
     {

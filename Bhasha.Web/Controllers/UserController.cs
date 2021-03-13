@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Bhasha.Common;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Bhasha.Web.Api.Controllers
+namespace Bhasha.Web.Controllers
 {
     [ApiController]
     [Route("api/user")]
