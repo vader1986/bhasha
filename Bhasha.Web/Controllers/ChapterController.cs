@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Bhasha.Common;
+using Bhasha.Common.Services;
 using Bhasha.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,20 +13,22 @@ namespace Bhasha.Web.Controllers
     public class ChapterController : BhashaController
     {
         private readonly IDatabase _database;
+        private readonly IAssembleChapters _chapters;
         private readonly IAuthorizedProfileLookup _profiles;
 
-        public ChapterController(IDatabase database, IAuthorizedProfileLookup profiles)
+        public ChapterController(IDatabase database, IAssembleChapters chapters, IAuthorizedProfileLookup profiles)
         {
             _database = database;
+            _chapters = chapters;
             _profiles = profiles;
         }
 
         // Authorize User
         [HttpGet("list")]
-        public async Task<ActionResult<Chapter[]>> List(Guid profileId)
+        public async Task<ActionResult<GenericChapter[]>> List(Guid profileId)
         {
             var profile = await _profiles.Get(profileId, UserId);
-            var chapters = await _database.GetChapters(profile.Level);
+            var chapters = await _database.QueryChaptersByLevel(profile.Level);
 
             return chapters.ToArray();
         }
@@ -35,27 +38,19 @@ namespace Bhasha.Web.Controllers
         public async Task<ActionResult<ChapterStats>> Stats(Guid profileId, Guid chapterId)
         {
             var profile = await _profiles.Get(profileId, UserId);
-            var stats = await _database.GetChapterStats(profile.Id, chapterId);
+            var stats = await _database.QueryStatsByChapterAndProfileId(chapterId, profile.Id);
 
             return stats;
         }
 
         // Authorize Author
-        [HttpPost("create")]
-        public async Task<ActionResult<Chapter>> Create([FromBody] Chapter chapter)
+        [HttpPost("get")]
+        public async Task<ActionResult<Chapter>> Get(Guid profileId, Guid chapterId)
         {
-            return await _database.CreateChapter(chapter);
-        }
+            var profile = await _profiles.Get(profileId, UserId);
+            var chapter = await _chapters.Assemble(chapterId, profile);
 
-        // Authorize Author
-        [HttpDelete("delete")]
-        public async Task<IActionResult> Delete(Guid chapterId)
-        {
-            await Task.WhenAll(
-                _database.DeleteChapter(chapterId),
-                _database.DeleteChapterStatsForChapter(chapterId));
-
-            return Ok();
+            return chapter;
         }
     }
 }

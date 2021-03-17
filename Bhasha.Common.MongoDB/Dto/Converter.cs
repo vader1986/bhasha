@@ -1,14 +1,107 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Bhasha.Common.MongoDB.Exceptions;
 
 namespace Bhasha.Common.MongoDB.Dto
 {
-    public static class Converter
+    public class Converter :
+        IConvert<GenericPageDto, GenericPage>,
+        IConvert<GenericChapterDto, GenericChapter>,
+        IConvert<ChapterStatsDto, ChapterStats>,
+        IConvert<ProfileDto, Profile>,
+        IConvert<TipDto, Tip>,
+        IConvert<TokenDto, Token>,
+        IConvert<TranslationDto, Translation>,
+        IConvert<UserDto, User>
     {
-        public static Profile Convert(ProfileDto dto)
+        public GenericPage Convert(GenericPageDto dto)
+        {
+            try
+            {
+                return new GenericPage(
+                    dto.TokenId,
+                    Enum.Parse<PageType>(dto.PageType));
+            }
+            catch (Exception e)
+            {
+                throw new InvalidDtoException(e, dto);
+            }
+        }
+
+        public GenericPageDto Convert(GenericPage product)
+        {
+            return new GenericPageDto
+            {
+                TokenId = product.TokenId,
+                PageType = product.PageType.ToString()
+            };
+        }
+
+        public GenericChapter Convert(GenericChapterDto dto)
+        {
+            try
+            {
+                return new GenericChapter(
+                    dto.Id,
+                    dto.Level,
+                    dto.Name,
+                    dto.Description,
+                    dto.Pages.Select(Convert).ToArray(),
+                    dto.PictureId);
+            }
+            catch (Exception e)
+            {
+                throw new InvalidDtoException(e, dto);
+            }
+        }
+
+        public GenericChapterDto Convert(GenericChapter product)
+        {
+            return new GenericChapterDto
+            {
+                Id = product.Id,
+                Level = product.Level,
+                Name = product.Name,
+                Description = product.Description,
+                Pages = product.Pages.Select(Convert).ToArray(),
+                PictureId = product.PictureId
+            };
+        }
+
+        public ChapterStats Convert(ChapterStatsDto dto)
+        {
+            try
+            {
+                return new ChapterStats(
+                    dto.ProfileId,
+                    dto.ChapterId,
+                    dto.Completed,
+                    Encoding.UTF8.GetBytes(dto.Tips),
+                    Encoding.UTF8.GetBytes(dto.Submits),
+                    Encoding.UTF8.GetBytes(dto.Failures));
+            }
+            catch (Exception e)
+            {
+                throw new InvalidDtoException(e, dto);
+            }
+        }
+
+        public ChapterStatsDto Convert(ChapterStats product)
+        {
+            return new ChapterStatsDto
+            {
+                Id = default,
+                ChapterId = product.ChapterId,
+                ProfileId = product.ProfileId,
+                Completed = product.Completed,
+                Tips = Encoding.UTF8.GetString(product.Tips),
+                Submits = Encoding.UTF8.GetString(product.Submits),
+                Failures = Encoding.UTF8.GetString(product.Failures)
+            };
+        }
+
+        public Profile Convert(ProfileDto dto)
         {
             try
             {
@@ -25,18 +118,46 @@ namespace Bhasha.Common.MongoDB.Dto
             }
         }
 
-        public static ProfileDto Convert(Profile profile)
+        public ProfileDto Convert(Profile product)
         {
-            return new ProfileDto {
-                Id = profile.Id,
-                UserId = profile.UserId,
-                From = profile.From,
-                To = profile.To,
-                Level = profile.Level
+            return new ProfileDto
+            {
+                Id = product.Id,
+                UserId = product.UserId,
+                From = product.From,
+                To = product.To,
+                Level = product.Level
             };
         }
 
-        private static Token Convert(TokenDto dto)
+        public Tip Convert(TipDto dto)
+        {
+            try
+            {
+                return new Tip(
+                    dto.Id,
+                    dto.ChapterId,
+                    dto.PageIndex,
+                    dto.Text);
+            }
+            catch (Exception e)
+            {
+                throw new InvalidDtoException(e, dto);
+            }
+        }
+
+        public TipDto Convert(Tip product)
+        {
+            return new TipDto
+            {
+                Id = product.Id,
+                ChapterId = product.ChapterId,
+                PageIndex = product.PageIndex,
+                Text = product.Text
+            };
+        }
+
+        public Token Convert(TokenDto dto)
         {
             try
             {
@@ -47,7 +168,7 @@ namespace Bhasha.Common.MongoDB.Dto
                     Enum.Parse<CEFR>(dto.Cefr),
                     Enum.Parse<TokenType>(dto.TokenType),
                     dto.Categories,
-                    ResourceId.Create(dto.PictureId));
+                    dto.PictureId);
             }
             catch (Exception e)
             {
@@ -55,84 +176,30 @@ namespace Bhasha.Common.MongoDB.Dto
             }
         }
 
-        public static Chapter Convert(ChapterDto dto, IDictionary<Guid, TokenDto> tokens)
+        public TokenDto Convert(Token product)
         {
-            try
+            return new TokenDto
             {
-                Page ConvertPage(PageDto page)
-                {
-                    var token = tokens[page.TokenId];
-                    var translation = token.Translations[page.Language];
-                    var audioId = ResourceId.Create(translation.AudioId);
-
-                    return new Page(
-                        Convert(token),
-                        Enum.Parse<PageType>(page.PageType),
-                        new LanguageToken(
-                            page.Language,
-                            translation.Native,
-                            translation.Spoken,
-                            audioId),
-                        page.Arguments);
-                }
-
-                var pages = dto
-                    .Pages
-                    .Select(ConvertPage)
-                    .ToArray();
-
-                return new Chapter(
-                    dto.Id,
-                    dto.Level,
-                    dto.Name,
-                    dto.Description,
-                    pages,
-                    ResourceId.Create(dto.PictureId));
-            }
-            catch (Exception e)
-            {
-                throw new InvalidDtoException(e, dto, tokens);
-            }
-        }
-
-        public static ChapterDto Convert(Chapter chapter)
-        {
-            return new ChapterDto {
-                Id = chapter.Id,
-                Level = chapter.Level,
-                Name = chapter.Name,
-                Description = chapter.Description,
-                Pages = chapter.Pages.Select(x => new PageDto {
-                    TokenId = x.Token.Id,
-                    PageType = x.PageType.ToString(),
-                    Language = x.Word.Language,
-                    Arguments = x.Arguments
-                }).ToArray(),
-                PictureId = chapter.PictureId?.Id
+                Id = product.Id,
+                Label = product.Label,
+                Level = product.Level,
+                Cefr = product.Cefr.ToString(),
+                TokenType = product.TokenType.ToString(),
+                Categories = product.Categories,
+                PictureId = product.PictureId
             };
         }
 
-        private static byte[] Convert(string value)
-        {
-            return Encoding.UTF8.GetBytes(value);
-        }
-
-        private static string Convert(byte[] value)
-        {
-            return Encoding.UTF8.GetString(value);
-        }
-
-        public static ChapterStats Convert(ChapterStatsDto dto)
+        public Translation Convert(TranslationDto dto)
         {
             try
             {
-                return new ChapterStats(
-                    dto.ProfileId,
-                    dto.ChapterId,
-                    dto.Completed,
-                    Convert(dto.Tips),
-                    Convert(dto.Submits),
-                    Convert(dto.Failures));
+                return new Translation(
+                    dto.TokenId,
+                    dto.Language,
+                    dto.Native,
+                    dto.Spoken,
+                    dto.AudioId);
             }
             catch (Exception e)
             {
@@ -140,25 +207,27 @@ namespace Bhasha.Common.MongoDB.Dto
             }
         }
 
-        public static ChapterStatsDto Convert(ChapterStats stats)
+        public TranslationDto Convert(Translation product)
         {
-            return new ChapterStatsDto
+            return new TranslationDto
             {
                 Id = default,
-                ProfileId = stats.ProfileId,
-                ChapterId = stats.ChapterId,
-                Completed = stats.Completed,
-                Tips = Convert(stats.Tips),
-                Submits = Convert(stats.Submits),
-                Failures = Convert(stats.Failures)
+                TokenId = product.TokenId,
+                Language = product.Language,
+                Native = product.Native,
+                Spoken = product.Spoken,
+                AudioId = product.AudioId
             };
         }
 
-        public static User Convert(UserDto dto)
+        public User Convert(UserDto dto)
         {
             try
             {
-                return new User(dto.Id, dto.UserName, dto.Email);
+                return new User(
+                    dto.Id,
+                    dto.UserName,
+                    dto.Email);
             }
             catch (Exception e)
             {
@@ -166,36 +235,13 @@ namespace Bhasha.Common.MongoDB.Dto
             }
         }
 
-        public static UserDto Convert(User user)
+        public UserDto Convert(User product)
         {
             return new UserDto
             {
-                Id = user.Id,
-                UserName = user.UserName,
-                Email = user.Email
-            };
-        }
-
-        public static Tip Convert(TipDto dto)
-        {
-            try
-            {
-                return new Tip(dto.Id, dto.ChapterId, dto.PageIndex, dto.Text);
-            }
-            catch (Exception e)
-            {
-                throw new InvalidDtoException(e, dto);
-            }
-        }
-
-        public static TipDto Convert(Tip tip)
-        {
-            return new TipDto
-            {
-                Id = tip.Id,
-                ChapterId = tip.ChapterId,
-                PageIndex = tip.PageIndex,
-                Text = tip.Text
+                Id = product.Id,
+                UserName = product.UserName,
+                Email = product.Email
             };
         }
     }

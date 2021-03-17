@@ -3,32 +3,30 @@
     public class Page
     {
         /// <summary>
-        /// Metadata of the word to learn inside of this page. 
-        /// </summary>
-        public Token Token { get; }
-
-        /// <summary>
         /// Type of page used to learn a new part of speech. 
         /// </summary>
         public PageType PageType { get; }
 
         /// <summary>
+        /// Language-idependent description of the new part of speech.
+        /// </summary>
+        public Token Token { get; }
+
+        /// <summary>
         /// The part of speech in the original language.
         /// </summary>
-        public LanguageToken Word { get; }
+        public Translation Translation { get; }
 
         /// <summary>
         /// Arguments for the page used to help the user learn the part of speech.
-        /// Those arguments could contain parts of the solution or multiple solutions
-        /// the user has to choose from. 
         /// </summary>
-        public string[] Arguments { get; }
+        public object Arguments { get; }
 
-        public Page(Token token, PageType pageType, LanguageToken word, string[] arguments)
+        public Page(PageType pageType, Token token, Translation translation, object arguments)
         {
-            Token = token;
             PageType = pageType;
-            Word = word;
+            Token = token;
+            Translation = translation;
             Arguments = arguments;
         }
     }

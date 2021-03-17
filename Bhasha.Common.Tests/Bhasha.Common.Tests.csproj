@@ -17,5 +17,14 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Extensions\" />
+    <Folder Include="Importers\" />
+    <Folder Include="Arguments\" />
+    <Folder Include="Support\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Importers\Sample.csv" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="**/*" />
   </ItemGroup>
 </Project>

@@ -6,6 +6,8 @@ namespace Bhasha.Common.Extensions
 {
     public static class RandomExtensions
     {
+        public const string Chars = "AaBbCcDdEeFfGgHhIuJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz";
+
         /// <summary>
         /// Creates a random string of upper- and lower-case letters.
         /// </summary>
@@ -20,11 +22,9 @@ namespace Bhasha.Common.Extensions
         {
             length = length != -1 ? length : random.Next(1, 10);
 
-            const string chars = "AaBbCcDdEeFfGgHhIuJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz";
-
             return new string(
                 Enumerable
-                    .Repeat(chars, length)
+                    .Repeat(Chars, length)
                     .Select(s => s[random.Next(s.Length)])
                     .ToArray());
         }

@@ -1,13 +1,10 @@
-﻿using System;
-using MongoDB.Bson.Serialization.Attributes;
+﻿using MongoDB.Bson.Serialization.Attributes;
 
 namespace Bhasha.Common.MongoDB.Dto
 {
-    public class ChapterDto
+    [MongoCollection(Names.Collections.Chapters)]
+    public class GenericChapterDto : Dto
     {
-        [BsonId]
-        public Guid Id { get; set; }
-
         [BsonElement]
         public int Level { get; set; }
 
@@ -18,7 +15,7 @@ namespace Bhasha.Common.MongoDB.Dto
         public string Description { get; set; } = string.Empty;
 
         [BsonElement]
-        public PageDto[] Pages { get; set; } = new PageDto[0];
+        public GenericPageDto[] Pages { get; set; } = new GenericPageDto[0];
 
         [BsonElement]
         public string? PictureId { get; set; }

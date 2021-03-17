@@ -1,7 +1,14 @@
-﻿namespace Bhasha.Common
+﻿using System;
+
+namespace Bhasha.Common
 {
-    public class LanguageToken
+    public class Translation
     {
+        /// <summary>
+        /// Reference to language-independent token description.
+        /// </summary>
+        public Guid TokenId { get; }
+
         /// <summary>
         /// Language of the translation.
         /// </summary>
@@ -22,8 +29,9 @@
         /// </summary>
         public ResourceId? AudioId { get; }
 
-        public LanguageToken(Language language, string native, string spoken, ResourceId? audioId = default)
+        public Translation(Guid tokenId, Language language, string native, string spoken, ResourceId? audioId = default)
         {
+            TokenId = tokenId;
             Language = language;
             Native = native;
             Spoken = spoken;

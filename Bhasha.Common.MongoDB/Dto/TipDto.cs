@@ -3,11 +3,9 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace Bhasha.Common.MongoDB.Dto
 {
-    public class TipDto
+    [MongoCollection(Names.Collections.Tips)]
+    public class TipDto : Dto
     {
-        [BsonId]
-        public Guid Id { get; set; }
-
         [BsonElement]
         public Guid ChapterId { get; set; }
 

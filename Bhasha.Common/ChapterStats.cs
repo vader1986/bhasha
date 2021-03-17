@@ -43,5 +43,10 @@ namespace Bhasha.Common
             Submits = submits;
             Failures = failures;
         }
+
+        public static ChapterStats Empty(Guid profileId, Guid chapterId, int pages)
+        {
+            return new ChapterStats(profileId, chapterId, false, new byte[pages], new byte[pages], new byte[pages]);
+        }
     }
 }

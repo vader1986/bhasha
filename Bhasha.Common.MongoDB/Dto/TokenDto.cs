@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using MongoDB.Bson.Serialization.Attributes;
+﻿using MongoDB.Bson.Serialization.Attributes;
 
 namespace Bhasha.Common.MongoDB.Dto
 {
-    using Translations = Dictionary<string, LanguageTokenDto>;
-
-    public class TokenDto
+    [MongoCollection(Names.Collections.Tokens)]
+    public class TokenDto : Dto
     {
-        [BsonId]
-        public Guid Id { get; set; }
-
         [BsonElement]
         public string Label { get; set; } = string.Empty;
 
@@ -28,8 +22,5 @@ namespace Bhasha.Common.MongoDB.Dto
 
         [BsonElement]
         public string? PictureId { get; set; }
-
-        [BsonElement]
-        public Translations Translations { get; set; } = new Translations();
     }
 }

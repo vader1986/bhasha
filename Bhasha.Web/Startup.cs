@@ -1,5 +1,6 @@
-using Bhasha.Common;
 using Bhasha.Common.MongoDB;
+using Bhasha.Common.MongoDB.Dto;
+using Bhasha.Common.Services;
 using Bhasha.Web.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -24,10 +25,14 @@ namespace Bhasha.Web
             var db = MongoDb.Create(dbConnectionString);
 
             services
-                .AddSingleton<IDatabase>(_ => new MongoDbLayer(db))
+                .AddSingleton<IDatabase>(_ => new MongoDbLayer(db, new Converter()))
                 .AddSingleton<IProfileLookup, ProfileLookup>()
                 .AddSingleton<IAuthorizedProfileLookup, AuthorizedProfileLookup>()
                 .AddControllers();
+
+            services
+                .AddTransient<IEvaluateSolution, SolutionEvaluator>()
+                .AddTransient<IEvaluateSubmit, SubmitEvaluator>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

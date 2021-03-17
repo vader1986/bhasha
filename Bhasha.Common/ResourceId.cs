@@ -10,5 +10,15 @@
         {
             return id != default ? new ResourceId(id) : default;
         }
+
+        public static implicit operator string?(ResourceId? resourceId)
+        {
+            return resourceId?.ToString();
+        }
+
+        public static implicit operator ResourceId?(string? resourceId)
+        {
+            return Create(resourceId);
+        }
     }
 }

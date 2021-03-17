@@ -1,13 +1,10 @@
-﻿using System;
-using MongoDB.Bson.Serialization.Attributes;
+﻿using MongoDB.Bson.Serialization.Attributes;
 
 namespace Bhasha.Common.MongoDB.Dto
 {
-    public class UserDto
+    [MongoCollection(Names.Collections.Users)]
+    public class UserDto : Dto
     {
-        [BsonId]
-        public Guid Id { get; set; }
-
         [BsonElement]
         public string UserName { get; set; } = string.Empty;
 

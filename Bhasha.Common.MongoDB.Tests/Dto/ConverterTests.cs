@@ -80,10 +80,25 @@ namespace Bhasha.Common.MongoDB.Tests.Dto
         [Test]
         public void Convert_Chapter()
         {
+            var tokenId = Guid.NewGuid();
             var pages = new[] {
                 new Page(
-                    new Token(Guid.NewGuid(), Rnd.Create.NextString(), Rnd.Create.Next(), CEFR.A1, TokenType.Adjective, Rnd.Create.NextStrings().ToArray(), ResourceId.Create(Rnd.Create.NextString())), PageType.ChooseSolution,
-                    new LanguageToken(Language.Bengoli, Rnd.Create.NextString(), Rnd.Create.NextString(), ResourceId.Create(Rnd.Create.NextString())), Rnd.Create.NextStrings().ToArray())
+                    PageType.OneOutOfFour,
+                    new Token(
+                            tokenId,
+                            Rnd.Create.NextString(),
+                            Rnd.Create.Next(),
+                            CEFR.A1,
+                            TokenType.Adjective,
+                            Rnd.Create.NextStrings().ToArray(),
+                            ResourceId.Create(Rnd.Create.NextString())),
+                    new Translation(
+                        tokenId,
+                        Language.Bengoli,
+                        Rnd.Create.NextString(),
+                        Rnd.Create.NextString(),
+                        ResourceId.Create(Rnd.Create.NextString())),
+                    Rnd.Create.NextString())
             };
             var chapter = new Chapter(Guid.NewGuid(), Rnd.Create.Next(), Rnd.Create.NextString(), Rnd.Create.NextPhrase(), pages, ResourceId.Create(Rnd.Create.NextString()));
 
@@ -95,7 +110,7 @@ namespace Bhasha.Common.MongoDB.Tests.Dto
             Assert.That(result.Description, Is.EqualTo(chapter.Description));
             Assert.That(result.PictureId, Is.EqualTo(chapter.PictureId.Id));
             Assert.That(result.Pages.Length, Is.EqualTo(chapter.Pages.Length));
-            Assert.That(result.Pages[0].Language, Is.EqualTo(chapter.Pages[0].Word.Language.ToString()));
+            Assert.That(result.Pages[0].Language, Is.EqualTo(chapter.Pages[0].Translation.Language.ToString()));
             Assert.That(result.Pages[0].PageType, Is.EqualTo(chapter.Pages[0].PageType.ToString()));
             Assert.That(result.Pages[0].TokenId, Is.EqualTo(chapter.Pages[0].Token.Id));
             Assert.That(result.Pages[0].Arguments, Is.EquivalentTo(chapter.Pages[0].Arguments));

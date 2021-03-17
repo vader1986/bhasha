@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Bhasha.Common;
+using Bhasha.Common.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bhasha.Web.Controllers
@@ -10,41 +11,50 @@ namespace Bhasha.Web.Controllers
     public class UserController : BhashaController
     {
         private readonly IDatabase _database;
+        private readonly IStore<User> _users;
+        private readonly IStore<ChapterStats> _stats;
+        private readonly IStore<Profile> _profiles;
 
-        public UserController(IDatabase database)
+        public UserController(IDatabase database, IStore<User> users, IStore<ChapterStats> stats, IStore<Profile> profiles)
         {
             _database = database;
+            _users = users;
+            _stats = stats;
+            _profiles = profiles;
         }
 
         // Authorize User (?)
         [HttpPost("create")]
         public async Task<ActionResult<User>> Create(string userName, string email)
         {
-            return await _database.CreateUser(new User(default, userName, email));
+            return await _users.Add(new User(default, userName, email));
         }
 
         // Authorize User
         [HttpPatch("update")]
         public async Task<IActionResult> Update(string userName, string email)
         {
-            await _database.UpdateUser(new User(UserId, userName, email));
+            await _users.Update(new User(UserId, userName, email));
+
             return Ok();
         }
 
         [HttpDelete("delete")]
         public async Task<IActionResult> Delete()
         {
-            var profiles = await _database.GetProfiles(UserId);
+            var profiles = await _database
+                .QueryProfilesByUserId(UserId);
 
-            var deleteChapterStats =
-                Task.WhenAll(profiles
-                    .Select(x => x.Id)
-                    .Select(_database.DeleteChapterStatsForProfile));
+            var chapterStats = await Task.WhenAll(profiles
+                .Select(x => x.Id)
+                .Select(_database.QueryStatsByProfileId));
 
-            var deleteProfiles = (Task)_database.DeleteProfiles(UserId);
-            var deleteUser = (Task)_database.DeleteUser(UserId);
-
-            await Task.WhenAll(deleteProfiles, deleteChapterStats, deleteUser);
+            await Task.WhenAll(chapterStats
+                .SelectMany(x => x)
+                .Select(_stats.Remove)
+                .Concat(profiles
+                .Select(_profiles.Remove))
+                .Append(_users.Remove(await _users.Get(UserId))));
 
             return Ok();
         }

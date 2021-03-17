@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Bhasha.Common;
 using Bhasha.Common.Extensions;
+using Bhasha.Common.Services;
 using Bhasha.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,24 +13,26 @@ namespace Bhasha.Web.Controllers
     public class PageController : BhashaController
     {
         private readonly IDatabase _database;
+        private readonly IStore<ChapterStats> _stats;
         private readonly IAuthorizedProfileLookup _profiles;
+        private readonly IEvaluateSubmit _evaluator;
 
-        public PageController(IDatabase database, IAuthorizedProfileLookup profiles)
+        public PageController(IDatabase database, IStore<ChapterStats> stats, IAuthorizedProfileLookup profiles, IEvaluateSubmit evaluator)
         {
             _database = database;
+            _stats = stats;
             _profiles = profiles;
+            _evaluator = evaluator;
         }
 
         // Authorize User
         [HttpPost("submit")]
-        public async Task<IActionResult> Submit()
+        public async Task<ActionResult<Evaluation>> Submit(Guid profileId, Guid chapterId, int pageIndex, string solution)
         {
-            // TODO
-            // * define submit content
-            // * validation
-            // * update stats
-            // * return validation result
-            return Ok();
+            var submit = new Submit(UserId, profileId, chapterId, pageIndex, solution);
+            var evaluation = await _evaluator.Evaluate(submit);
+
+            return Ok(evaluation);
         }
 
         // Authorize User
@@ -37,12 +40,10 @@ namespace Bhasha.Web.Controllers
         public async Task<ActionResult<Tip>> Tip(Guid profileId, Guid chapterId, int pageIndex)
         {
             var profile = await _profiles.Get(profileId, UserId);
-            var tips = await _database.GetTips(chapterId, pageIndex);
+            var tips = await _database.QueryTips(chapterId, pageIndex);
 
-            var chapterStats = await _database.GetChapterStats(profile.Id, chapterId);
-            chapterStats.Tips[pageIndex]++;
-
-            await _database.UpdateChapterStats(chapterStats);
+            var stats = await _database.QueryStatsByChapterAndProfileId(profile.Id, chapterId);
+            await _stats.Update(stats.WithTip(pageIndex));
 
             return tips.Random(); 
         }

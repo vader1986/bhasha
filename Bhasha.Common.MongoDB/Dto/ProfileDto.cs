@@ -3,11 +3,9 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace Bhasha.Common.MongoDB.Dto
 {
-    public class ProfileDto
+    [MongoCollection(Names.Collections.Profiles)]
+    public class ProfileDto : Dto
     {
-        [BsonId]
-        public Guid Id { get; set; }
-
         [BsonElement]
         public Guid UserId { get; set; }
 
