@@ -23,9 +23,6 @@
     <Folder Include="Services\" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove="Importers\Sample.csv" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="**/*" />
+    <EmbeddedResource Include="Importers\Sample.csv" />
   </ItemGroup>
 </Project>
