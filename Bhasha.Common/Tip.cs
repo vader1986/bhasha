@@ -26,6 +26,11 @@ namespace Bhasha.Common
 
         public Tip(Guid id, Guid chapterId, int pageIndex, string text)
         {
+            if (pageIndex < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(pageIndex));
+            }
+
             Id = id;
             ChapterId = chapterId;
             PageIndex = pageIndex;

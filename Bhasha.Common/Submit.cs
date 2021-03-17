@@ -21,6 +21,11 @@ namespace Bhasha.Common
 
         public Submit(Guid chapterId, int pageIndex, string solution)
         {
+            if (pageIndex < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(pageIndex));
+            }
+
             ChapterId = chapterId;
             PageIndex = pageIndex;
             Solution = solution;
