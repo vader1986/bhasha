@@ -29,8 +29,9 @@ namespace Bhasha.Web.Controllers
         [HttpPost("submit")]
         public async Task<ActionResult<Evaluation>> Submit(Guid profileId, Guid chapterId, int pageIndex, string solution)
         {
-            var submit = new Submit(UserId, profileId, chapterId, pageIndex, solution);
-            var evaluation = await _evaluator.Evaluate(submit);
+            var profile = await _profiles.Get(profileId, UserId);
+            var submit = new Submit(chapterId, pageIndex, solution);
+            var evaluation = await _evaluator.Evaluate(profile, submit);
 
             return Ok(evaluation);
         }

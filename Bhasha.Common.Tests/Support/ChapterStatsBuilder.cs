@@ -12,7 +12,7 @@ namespace Bhasha.Common.Tests.Support
         private byte[] _submits = Enumerable.Range(0, 5).Select(x => (byte)x).ToArray();
         private byte[] _failures = Enumerable.Range(0, 5).Select(x => (byte)x).ToArray();
 
-        public static ChapterStatsBuilder Default => new ChapterStatsBuilder();
+        public static ChapterStatsBuilder Default => new();
 
         public ChapterStatsBuilder WithCompleted(bool completed)
         {

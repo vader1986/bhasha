@@ -40,12 +40,59 @@ namespace Bhasha.Common.Tests.Importers
         }
 
         [Test]
-        public async Task ImportEnBn_sample_()
+        public async Task ImportEnBn_sample_file()
         {
             await _importer.ImportEnBn(SampleFile);
 
-            A.CallTo(() => _tokens.Add(A<Token>._)).MustHaveHappened(2, Times.Exactly);
-            A.CallTo(() => _translations.Add(A<Translation>._)).MustHaveHappened(4, Times.Exactly);
+            A.CallTo(() => _tokens.Add(A<Token>._))
+                .MustHaveHappened(2, Times.Exactly);
+
+            A.CallTo(() => _tokens.Add(A<Token>
+                .That.Matches(
+                    x => x.Cefr == CEFR.A1 &&
+                         x.Label == "cat" &&
+                         x.Level == 1 &&
+                         x.TokenType == TokenType.Noun)))
+                .MustHaveHappenedOnceExactly();
+
+            A.CallTo(() => _tokens.Add(A<Token>
+                .That.Matches(
+                    x => x.Cefr == CEFR.A1 &&
+                         x.Label == "dog" &&
+                         x.Level == 1 &&
+                         x.TokenType == TokenType.Noun)))
+                .MustHaveHappenedOnceExactly();
+
+            A.CallTo(() => _translations.Add(A<Translation>._))
+                .MustHaveHappened(4, Times.Exactly);
+
+            A.CallTo(() => _translations.Add(A<Translation>
+                .That.Matches(
+                    x => x.Language == Language.English &&
+                         x.Native == "dog" &&
+                         x.Spoken == "dog")))
+                .MustHaveHappenedOnceExactly();
+
+            A.CallTo(() => _translations.Add(A<Translation>
+                .That.Matches(
+                    x => x.Language == Language.English &&
+                         x.Native == "cat" &&
+                         x.Spoken == "kat")))
+                .MustHaveHappenedOnceExactly();
+
+            A.CallTo(() => _translations.Add(A<Translation>
+                .That.Matches(
+                    x => x.Language == Language.Bengoli &&
+                         x.Native == "বিড়াল" &&
+                         x.Spoken == "Biṛāla")))
+                .MustHaveHappenedOnceExactly();
+
+            A.CallTo(() => _translations.Add(A<Translation>
+                .That.Matches(
+                    x => x.Language == Language.Bengoli &&
+                         x.Native == "কুকুর" &&
+                         x.Spoken == "Kukura")))
+                .MustHaveHappenedOnceExactly();
         }
     }
 }

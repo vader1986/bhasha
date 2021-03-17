@@ -33,8 +33,8 @@ namespace Bhasha.Common.Services
                 var token = await _tokens
                     .Get(genericPage.TokenId);
 
-                var translation = await _database
-                    .QueryTranslationByTokenId(token.Id, profile.From);
+                var translation = translations
+                    .First(x => x.TokenId == genericPage.TokenId);
 
                 var arguments = _arguments
                     .First(x => x.Supports(genericPage.PageType))

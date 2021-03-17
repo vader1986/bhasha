@@ -37,5 +37,10 @@ namespace Bhasha.Common
             Spoken = spoken;
             AudioId = audioId;
         }
+
+        public override string ToString()
+        {
+            return $"{nameof(TokenId)}: {TokenId}, {nameof(Language)}: {Language}, {nameof(Native)}: {Native}, {nameof(Spoken)}: {Spoken}, {nameof(AudioId)}: {AudioId}";
+        }
     }
 }

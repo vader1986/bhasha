@@ -48,5 +48,10 @@ namespace Bhasha.Common
         {
             return new ChapterStats(profileId, chapterId, false, new byte[pages], new byte[pages], new byte[pages]);
         }
+
+        public override string ToString()
+        {
+            return $"{nameof(ProfileId)}: {ProfileId}, {nameof(ChapterId)}: {ChapterId}, {nameof(Completed)}: {Completed}, {nameof(Tips)}: {string.Join("/", Tips)}, {nameof(Submits)}: {string.Join("/", Submits)}, {nameof(Failures)}: {string.Join("/", Failures)}";
+        }
     }
 }

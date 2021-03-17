@@ -4,6 +4,6 @@ namespace Bhasha.Common.Services
 {
     public interface IEvaluateSubmit
     {
-        Task<Evaluation> Evaluate(Submit submit);
+        Task<Evaluation> Evaluate(Profile profile, Submit submit);
     }
 }

@@ -68,7 +68,7 @@ namespace Bhasha.Common.Importers
 
                 var bengoli = new Translation(
                     token.Id,
-                    Language.English,
+                    Language.Bengoli,
                     row[columnIndex["bn_native"]],
                     row[columnIndex["bn_spoken"]]);
 

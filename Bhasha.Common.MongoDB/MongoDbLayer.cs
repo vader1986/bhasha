@@ -42,15 +42,15 @@ namespace Bhasha.Common.MongoDB
             return profiles.Select(_converter.Convert);
         }
 
-        public async Task<ChapterStats> QueryStatsByChapterAndProfileId(Guid chapterId, Guid profileId)
+        public async Task<ChapterStats?> QueryStatsByChapterAndProfileId(Guid chapterId, Guid profileId)
         {
             var stats = await _db
                 .GetCollection<ChapterStatsDto>()
                 .AsQueryable()
-                .FirstAsync(x => x.ChapterId == chapterId &&
-                                 x.ProfileId == profileId);
+                .FirstOrDefaultAsync(x => x.ChapterId == chapterId &&
+                                          x.ProfileId == profileId);
 
-            return _converter.Convert(stats);
+            return stats == default ? default : _converter.Convert(stats);
         }
 
         public async Task<IEnumerable<ChapterStats>> QueryStatsByProfileId(Guid profileId)

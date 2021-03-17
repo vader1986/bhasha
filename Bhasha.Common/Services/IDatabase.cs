@@ -8,7 +8,7 @@ namespace Bhasha.Common.Services
     {
         Task<Translation> QueryTranslationByTokenId(Guid tokenId, Language language);
 
-        Task<ChapterStats> QueryStatsByChapterAndProfileId(Guid chapterId, Guid profileId);
+        Task<ChapterStats?> QueryStatsByChapterAndProfileId(Guid chapterId, Guid profileId);
 
         Task<IEnumerable<GenericChapter>> QueryChaptersByLevel(int level);
 

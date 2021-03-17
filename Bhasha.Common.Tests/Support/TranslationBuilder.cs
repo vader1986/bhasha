@@ -11,7 +11,19 @@ namespace Bhasha.Common.Tests.Support
         private string _spoken = Rnd.Create.NextString();
         private ResourceId _audioId = Rnd.Create.NextString();
 
-        public static TranslationBuilder Default => new TranslationBuilder();
+        public TranslationBuilder WithTokenId(Guid tokenId)
+        {
+            _tokenId = tokenId;
+            return this;
+        }
+
+        public TranslationBuilder WithLanguage(Language language)
+        {
+            _language = language;
+            return this;
+        }
+
+        public static TranslationBuilder Default => new();
 
         public Translation Build()
         {
