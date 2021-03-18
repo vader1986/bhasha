@@ -10,6 +10,12 @@ namespace Bhasha.Common.Tests.Support
         private int _pageIndex = Rnd.Create.Next();
         private string _text = Rnd.Create.NextString();
 
+        public TipBuilder WithId(Guid id)
+        {
+            _id = id;
+            return this;
+        }
+
         public static TipBuilder Default => new();
 
         public Tip Build()

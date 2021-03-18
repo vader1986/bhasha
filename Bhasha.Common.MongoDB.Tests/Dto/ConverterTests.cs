@@ -75,6 +75,7 @@ namespace Bhasha.Common.MongoDB.Tests.Dto
             var dto = ChapterStatsDtoBuilder.Build();
             var result = _converter.Convert(dto);
 
+            Assert.That(result.Id == dto.Id);
             Assert.That(result.ChapterId == dto.ChapterId);
             Assert.That(result.ProfileId == dto.ProfileId);
             Assert.That(result.Completed == dto.Completed);
@@ -98,6 +99,7 @@ namespace Bhasha.Common.MongoDB.Tests.Dto
             var stats = ChapterStatsBuilder.Default.Build();
             var result = _converter.Convert(stats);
 
+            Assert.That(result.Id == stats.Id);
             Assert.That(result.ChapterId == stats.ChapterId);
             Assert.That(result.ProfileId == stats.ProfileId);
             Assert.That(result.Completed == stats.Completed);

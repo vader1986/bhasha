@@ -16,7 +16,6 @@ namespace Bhasha.Common.MongoDB
     {
         private readonly MongoClient _client;
         private readonly IDictionary<Type, string> _collections;
-        private bool _initialized;
         
         private MongoDb(MongoClient client)
         {

@@ -5,6 +5,7 @@ namespace Bhasha.Common.Tests.Support
 {
     public class ChapterStatsBuilder
     {
+        private Guid _id = Guid.NewGuid();
         private Guid _profileId = Guid.NewGuid();
         private Guid _chapterId = Guid.NewGuid();
         private bool _completed = true;
@@ -13,6 +14,12 @@ namespace Bhasha.Common.Tests.Support
         private byte[] _failures = Enumerable.Range(0, 5).Select(x => (byte)x).ToArray();
 
         public static ChapterStatsBuilder Default => new();
+
+        public ChapterStatsBuilder WithId(Guid id)
+        {
+            _id = id;
+            return this;
+        }
 
         public ChapterStatsBuilder WithCompleted(bool completed)
         {
@@ -41,6 +48,7 @@ namespace Bhasha.Common.Tests.Support
         public ChapterStats Build()
         {
             return new ChapterStats(
+                _id,
                 _profileId,
                 _chapterId,
                 _completed,

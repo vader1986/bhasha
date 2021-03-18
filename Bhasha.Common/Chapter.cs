@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace Bhasha.Common
 {
@@ -42,6 +43,11 @@ namespace Bhasha.Common
             Description = description;
             Pages = pages;
             PictureId = pictureId;
+        }
+
+        public override string ToString()
+        {
+            return $"{nameof(Id)}: {Id}, {nameof(Level)}: {Level}, {nameof(Name)}: {Name}, {nameof(Description)}: {Description}, {nameof(Pages)}: {string.Join('/', Pages?.Select(x => x.ToString()))}, {nameof(PictureId)}: {PictureId}";
         }
     }
 }

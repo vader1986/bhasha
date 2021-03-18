@@ -1,4 +1,6 @@
-﻿namespace Bhasha.Common
+﻿using Bhasha.Common.Extensions;
+
+namespace Bhasha.Common
 {
     public class Page
     {
@@ -28,6 +30,11 @@
             Token = token;
             Translation = translation;
             Arguments = arguments;
+        }
+
+        public override string ToString()
+        {
+            return $"{nameof(PageType)}: {PageType}, {nameof(Token)}: {Token}, {nameof(Translation)}: {Translation}, {nameof(Arguments)}: {Arguments?.Stringify()}";
         }
     }
 }

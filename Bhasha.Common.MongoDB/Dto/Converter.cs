@@ -74,6 +74,7 @@ namespace Bhasha.Common.MongoDB.Dto
             try
             {
                 return new ChapterStats(
+                    dto.Id,
                     dto.ProfileId,
                     dto.ChapterId,
                     dto.Completed,
@@ -91,7 +92,7 @@ namespace Bhasha.Common.MongoDB.Dto
         {
             return new ChapterStatsDto
             {
-                Id = default,
+                Id = product.Id,
                 ChapterId = product.ChapterId,
                 ProfileId = product.ProfileId,
                 Completed = product.Completed,
@@ -195,6 +196,7 @@ namespace Bhasha.Common.MongoDB.Dto
             try
             {
                 return new Translation(
+                    dto.Id,
                     dto.TokenId,
                     dto.Language,
                     dto.Native,
@@ -211,7 +213,7 @@ namespace Bhasha.Common.MongoDB.Dto
         {
             return new TranslationDto
             {
-                Id = default,
+                Id = product.Id,
                 TokenId = product.TokenId,
                 Language = product.Language,
                 Native = product.Native,

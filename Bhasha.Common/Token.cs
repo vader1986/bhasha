@@ -2,7 +2,7 @@
 
 namespace Bhasha.Common
 {
-    public class Token
+    public class Token : IEntity
     {
         /// <summary>
         /// Unqiue identifier of the token.
@@ -49,6 +49,11 @@ namespace Bhasha.Common
             TokenType = tokenType;
             Categories = categories;
             PictureId = pictureId;
+        }
+
+        public override string ToString()
+        {
+            return $"{nameof(Id)}: {Id}, {nameof(Label)}: {Label}, {nameof(Level)}: {Level}, {nameof(Cefr)}: {Cefr}, {nameof(TokenType)}: {TokenType}, {nameof(Categories)}: {string.Join("/", Categories)}, {nameof(PictureId)}: {PictureId}";
         }
     }
 }

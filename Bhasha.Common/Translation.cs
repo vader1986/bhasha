@@ -2,8 +2,13 @@
 
 namespace Bhasha.Common
 {
-    public class Translation
+    public class Translation : IEntity
     {
+        /// <summary>
+        /// Unique identifier of the translation.
+        /// </summary>
+        public Guid Id { get; }
+
         /// <summary>
         /// Reference to language-independent token description.
         /// </summary>
@@ -29,8 +34,9 @@ namespace Bhasha.Common
         /// </summary>
         public ResourceId? AudioId { get; }
 
-        public Translation(Guid tokenId, Language language, string native, string spoken, ResourceId? audioId = default)
+        public Translation(Guid id, Guid tokenId, Language language, string native, string spoken, ResourceId? audioId = default)
         {
+            Id = id;
             TokenId = tokenId;
             Language = language;
             Native = native;
@@ -40,7 +46,7 @@ namespace Bhasha.Common
 
         public override string ToString()
         {
-            return $"{nameof(TokenId)}: {TokenId}, {nameof(Language)}: {Language}, {nameof(Native)}: {Native}, {nameof(Spoken)}: {Spoken}, {nameof(AudioId)}: {AudioId}";
+            return $"{nameof(Id)}: {Id}, {nameof(TokenId)}: {TokenId}, {nameof(Language)}: {Language}, {nameof(Native)}: {Native}, {nameof(Spoken)}: {Spoken}, {nameof(AudioId)}: {AudioId}";
         }
     }
 }

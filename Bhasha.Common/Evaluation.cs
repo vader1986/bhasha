@@ -11,5 +11,10 @@
         {
             Result = result;
         }
+
+        public override string ToString()
+        {
+            return $"{nameof(Result)}: {Result}";
+        }
     }
 }

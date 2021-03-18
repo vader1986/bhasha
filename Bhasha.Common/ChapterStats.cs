@@ -2,8 +2,13 @@
 
 namespace Bhasha.Common
 {
-    public class ChapterStats
+    public class ChapterStats : IEntity
     {
+        /// <summary>
+        /// Unique identifier for the stats.
+        /// </summary>
+        public Guid Id { get; }
+
         /// <summary>
         /// Reference to the profile these stats are linked to.
         /// </summary>
@@ -34,8 +39,9 @@ namespace Bhasha.Common
         /// </summary>
         public byte[] Failures { get; }
 
-        public ChapterStats(Guid profileId, Guid chapterId, bool completed, byte[] tips, byte[] submits, byte[] failures)
+        public ChapterStats(Guid id, Guid profileId, Guid chapterId, bool completed, byte[] tips, byte[] submits, byte[] failures)
         {
+            Id = id;
             ProfileId = profileId;
             ChapterId = chapterId;
             Completed = completed;
@@ -46,12 +52,12 @@ namespace Bhasha.Common
 
         public static ChapterStats Empty(Guid profileId, Guid chapterId, int pages)
         {
-            return new ChapterStats(profileId, chapterId, false, new byte[pages], new byte[pages], new byte[pages]);
+            return new ChapterStats(default, profileId, chapterId, false, new byte[pages], new byte[pages], new byte[pages]);
         }
 
         public override string ToString()
         {
-            return $"{nameof(ProfileId)}: {ProfileId}, {nameof(ChapterId)}: {ChapterId}, {nameof(Completed)}: {Completed}, {nameof(Tips)}: {string.Join("/", Tips)}, {nameof(Submits)}: {string.Join("/", Submits)}, {nameof(Failures)}: {string.Join("/", Failures)}";
+            return $"{nameof(Id)}: {Id}, {nameof(ProfileId)}: {ProfileId}, {nameof(ChapterId)}: {ChapterId}, {nameof(Completed)}: {Completed}, {nameof(Tips)}: {string.Join("/", Tips)}, {nameof(Submits)}: {string.Join("/", Submits)}, {nameof(Failures)}: {string.Join("/", Failures)}";
         }
     }
 }

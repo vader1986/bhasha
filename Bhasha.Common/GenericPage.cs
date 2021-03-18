@@ -19,5 +19,10 @@ namespace Bhasha.Common
             TokenId = tokenId;
             PageType = pageType;
         }
+
+        public override string ToString()
+        {
+            return $"{nameof(TokenId)}: {TokenId}, {nameof(PageType)}: {PageType}";
+        }
     }
 }

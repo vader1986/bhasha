@@ -12,6 +12,12 @@ namespace Bhasha.Common.Tests.Support
         private Language _to = Rnd.Create.Choose(Language.Supported.Values.ToArray());
         private int _level = Rnd.Create.Next();
 
+        public ProfileBuilder WithId(Guid id)
+        {
+            _id = id;
+            return this;
+        }
+
         public ProfileBuilder WithFrom(Language from)
         {
             _from = from;

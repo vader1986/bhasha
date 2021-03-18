@@ -4,11 +4,7 @@
     {
         public ResourceId(string id) : base(id)
         {
-        }
 
-        public static ResourceId? Create(string? id)
-        {
-            return id != default ? new ResourceId(id) : default;
         }
 
         public static implicit operator string?(ResourceId? resourceId)
@@ -18,7 +14,12 @@
 
         public static implicit operator ResourceId?(string? resourceId)
         {
-            return Create(resourceId);
+            return resourceId != default ? new ResourceId(resourceId) : default;
+        }
+
+        public override string ToString()
+        {
+            return Id;
         }
     }
 }

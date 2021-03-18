@@ -2,7 +2,7 @@
 
 namespace Bhasha.Common
 {
-    public class Tip
+    public class Tip : IEntity
     {
         /// <summary>
         /// Unique identifier of the tip.
@@ -35,6 +35,11 @@ namespace Bhasha.Common
             ChapterId = chapterId;
             PageIndex = pageIndex;
             Text = text;
+        }
+
+        public override string ToString()
+        {
+            return $"{nameof(Id)}: {Id}, {nameof(ChapterId)}: {ChapterId}, {nameof(PageIndex)}: {PageIndex}, {nameof(Text)}: {Text}";
         }
     }
 }

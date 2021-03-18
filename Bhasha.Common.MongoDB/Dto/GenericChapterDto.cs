@@ -1,9 +1,11 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using System;
+using System.Linq;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Bhasha.Common.MongoDB.Dto
 {
     [MongoCollection(Names.Collections.Chapters)]
-    public class GenericChapterDto : Dto
+    public class GenericChapterDto : Dto, IEquatable<GenericChapter>
     {
         [BsonElement]
         public int Level { get; set; }
@@ -19,5 +21,10 @@ namespace Bhasha.Common.MongoDB.Dto
 
         [BsonElement]
         public string? PictureId { get; set; }
+
+        public bool Equals(GenericChapter other)
+        {
+            return other != null && other.Id == Id && other.Level == Level && other.Name == Name && other.Description == Description && other.PictureId == PictureId && other.Pages.Length == Pages.Length && other.Pages.Select((x, i) => Pages[i].Equals(x)).All(x => x);
+        }
     }
 }

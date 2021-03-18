@@ -30,5 +30,10 @@ namespace Bhasha.Common
             PageIndex = pageIndex;
             Solution = solution;
         }
+
+        public override string ToString()
+        {
+            return $"{nameof(ChapterId)}: {ChapterId}, {nameof(PageIndex)}: {PageIndex}, {nameof(Solution)}: {Solution}";
+        }
     }
 }

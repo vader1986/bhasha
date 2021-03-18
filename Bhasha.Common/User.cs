@@ -2,7 +2,7 @@
 
 namespace Bhasha.Common
 {
-    public class User
+    public class User : IEntity
     {
         /// <summary>
         /// Unqiue identifier for the user.
@@ -24,6 +24,11 @@ namespace Bhasha.Common
             Id = id;
             UserName = userName;
             Email = email;
+        }
+
+        public override string ToString()
+        {
+            return $"{nameof(Id)}: {Id}, {nameof(UserName)}: {UserName}, {nameof(Email)}: {Email}";
         }
     }
 }

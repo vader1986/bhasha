@@ -7,6 +7,7 @@ namespace Bhasha.Common.Extensions
         public static ChapterStats WithCompleted(this ChapterStats stats)
         {
             return new ChapterStats(
+                stats.Id,
                 stats.ProfileId,
                 stats.ChapterId,
                 stats

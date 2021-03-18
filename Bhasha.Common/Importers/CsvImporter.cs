@@ -59,6 +59,7 @@ namespace Bhasha.Common.Importers
                 token = await _tokens.Add(token);
 
                 var english = new Translation(
+                    default,
                     token.Id,
                     Language.English,
                     row[columnIndex["eng_native"]],
@@ -67,6 +68,7 @@ namespace Bhasha.Common.Importers
                 await _translations.Add(english);
 
                 var bengoli = new Translation(
+                    default,
                     token.Id,
                     Language.Bengoli,
                     row[columnIndex["bn_native"]],
