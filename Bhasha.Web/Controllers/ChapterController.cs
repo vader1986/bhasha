@@ -25,7 +25,7 @@ namespace Bhasha.Web.Controllers
 
         // Authorize User
         [HttpGet("list")]
-        public async Task<ActionResult<GenericChapter[]>> List(Guid profileId)
+        public async Task<GenericChapter[]> List(Guid profileId)
         {
             var profile = await _profiles.Get(profileId, UserId);
             var chapters = await _database.QueryChaptersByLevel(profile.Level);
@@ -35,7 +35,7 @@ namespace Bhasha.Web.Controllers
 
         // Authorize User
         [HttpGet("stats")]
-        public async Task<ActionResult<ChapterStats>> Stats(Guid profileId, Guid chapterId)
+        public async Task<ChapterStats> Stats(Guid profileId, Guid chapterId)
         {
             var profile = await _profiles.Get(profileId, UserId);
             var stats = await _database.QueryStatsByChapterAndProfileId(chapterId, profile.Id);
@@ -45,7 +45,7 @@ namespace Bhasha.Web.Controllers
 
         // Authorize Author
         [HttpPost("get")]
-        public async Task<ActionResult<Chapter>> Get(Guid profileId, Guid chapterId)
+        public async Task<Chapter> Get(Guid profileId, Guid chapterId)
         {
             var profile = await _profiles.Get(profileId, UserId);
             var chapter = await _chapters.Assemble(chapterId, profile);

@@ -2,7 +2,7 @@
 
 namespace Bhasha.Common
 {
-    public class Submit
+    public class Submit : IEquatable<Submit>
     {
         /// <summary>
         /// Reference to the chapter the solution is submitted for. 
@@ -34,6 +34,11 @@ namespace Bhasha.Common
         public override string ToString()
         {
             return $"{nameof(ChapterId)}: {ChapterId}, {nameof(PageIndex)}: {PageIndex}, {nameof(Solution)}: {Solution}";
+        }
+
+        public bool Equals(Submit other)
+        {
+            return other != null && other.ChapterId == ChapterId && other.PageIndex == PageIndex && other.Solution == Solution;
         }
     }
 }

@@ -13,40 +13,40 @@ namespace Bhasha.Web.Controllers
     public class PageController : BhashaController
     {
         private readonly IDatabase _database;
-        private readonly IStore<ChapterStats> _stats;
         private readonly IAuthorizedProfileLookup _profiles;
         private readonly IEvaluateSubmit _evaluator;
+        private readonly IUpdateStats _updateStats;
 
-        public PageController(IDatabase database, IStore<ChapterStats> stats, IAuthorizedProfileLookup profiles, IEvaluateSubmit evaluator)
+        public PageController(IDatabase database, IAuthorizedProfileLookup profiles, IEvaluateSubmit evaluator, IUpdateStats updateStats)
         {
             _database = database;
-            _stats = stats;
             _profiles = profiles;
             _evaluator = evaluator;
+            _updateStats = updateStats;
         }
 
         // Authorize User
         [HttpPost("submit")]
-        public async Task<ActionResult<Evaluation>> Submit(Guid profileId, Guid chapterId, int pageIndex, string solution)
+        public async Task<Evaluation> Submit(Guid profileId, Guid chapterId, int pageIndex, string solution)
         {
             var profile = await _profiles.Get(profileId, UserId);
             var submit = new Submit(chapterId, pageIndex, solution);
             var evaluation = await _evaluator.Evaluate(profile, submit);
 
-            return Ok(evaluation);
+            return evaluation;
         }
 
         // Authorize User
         [HttpPost("tip")]
-        public async Task<ActionResult<Tip>> Tip(Guid profileId, Guid chapterId, int pageIndex)
+        public async Task<Tip> Tip(Guid profileId, Guid chapterId, int pageIndex)
         {
             var profile = await _profiles.Get(profileId, UserId);
             var tips = await _database.QueryTips(chapterId, pageIndex);
+            var tip = tips.Random();
 
-            var stats = await _database.QueryStatsByChapterAndProfileId(profile.Id, chapterId);
-            await _stats.Replace(stats.WithTip(pageIndex));
+            await _updateStats.FromTip(tip, profile);
 
-            return tips.Random(); 
+            return tip; 
         }
     }
 }

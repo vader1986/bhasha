@@ -1,6 +1,8 @@
-﻿namespace Bhasha.Common
+﻿using System;
+
+namespace Bhasha.Common
 {
-    public class Evaluation
+    public class Evaluation : IEquatable<Evaluation>
     {
         /// <summary>
         /// Evaluation <see cref="Common.Result"/> for a <see cref="Submit"/>.
@@ -21,6 +23,11 @@
         public override string ToString()
         {
             return $"{nameof(Result)}: {Result}, {nameof(Submit)}: {Submit}";
+        }
+
+        public bool Equals(Evaluation other)
+        {
+            return other != null && other.Result == Result && other.Submit.Equals(Submit);
         }
     }
 }

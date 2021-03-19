@@ -25,22 +25,20 @@ namespace Bhasha.Web.Controllers
 
         // Authorize User (?)
         [HttpPost("create")]
-        public async Task<ActionResult<User>> Create(string userName, string email)
+        public async Task<User> Create(string userName, string email)
         {
             return await _users.Add(new User(default, userName, email));
         }
 
         // Authorize User
         [HttpPatch("update")]
-        public async Task<IActionResult> Update(string userName, string email)
+        public async Task Update(string userName, string email)
         {
             await _users.Replace(new User(UserId, userName, email));
-
-            return Ok();
         }
 
         [HttpDelete("delete")]
-        public async Task<IActionResult> Delete()
+        public async Task Delete()
         {
             var profiles = await _database
                 .QueryProfilesByUserId(UserId);
@@ -55,8 +53,6 @@ namespace Bhasha.Web.Controllers
                 .Concat(profiles
                 .Select(_profiles.Remove))
                 .Append(_users.Remove(await _users.Get(UserId))));
-
-            return Ok();
         }
     }
 }

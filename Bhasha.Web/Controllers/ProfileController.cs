@@ -27,14 +27,14 @@ namespace Bhasha.Web.Controllers
 
         // Authorize User
         [HttpPost("create")]
-        public async Task<ActionResult<Profile>> Create(string from, string to)
+        public async Task<Profile> Create(string from, string to)
         {
             return await _store.Add(new Profile(default, UserId, from, to, 1, 0));
         }
 
         // Authorize User
         [HttpGet("list")]
-        public async Task<ActionResult<Profile[]>> List()
+        public async Task<Profile[]> List()
         {
             var profiles = await _database.QueryProfilesByUserId(UserId);
             return profiles.ToArray();
@@ -42,7 +42,7 @@ namespace Bhasha.Web.Controllers
 
         // Authorize User
         [HttpDelete("delete")]
-        public async Task<IActionResult> Delete(Guid profileId)
+        public async Task Delete(Guid profileId)
         {
             var profile = await _profiles.Get(profileId, UserId);
             var stats = await _database.QueryStatsByProfileId(profileId);
@@ -52,8 +52,6 @@ namespace Bhasha.Web.Controllers
                 .Append(_store.Remove(profile));
 
             await Task.WhenAll(deletions);
-
-            return Ok();
         }
     }
 }

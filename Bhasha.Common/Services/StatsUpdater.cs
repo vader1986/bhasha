@@ -7,6 +7,7 @@ namespace Bhasha.Common.Services
     public interface IUpdateStats
     {
         Task FromEvaluation(Evaluation evaluation, Profile profile, GenericChapter chapter);
+        Task FromTip(Tip tip, Profile profile);
     }
 
     public class StatsUpdater : IUpdateStats
@@ -14,12 +15,14 @@ namespace Bhasha.Common.Services
         private readonly IDatabase _database;
         private readonly IStore<ChapterStats> _stats;
         private readonly IStore<Profile> _profiles;
+        private readonly IStore<GenericChapter> _chapters;
 
-        public StatsUpdater(IDatabase database, IStore<ChapterStats> stats, IStore<Profile> profiles)
+        public StatsUpdater(IDatabase database, IStore<ChapterStats> stats, IStore<Profile> profiles, IStore<GenericChapter> chapters)
         {
             _database = database;
             _stats = stats;
             _profiles = profiles;
+            _chapters = chapters;
         }
 
         private async Task UpdateProfile(Profile profile)
@@ -79,6 +82,20 @@ namespace Bhasha.Common.Services
             {
                 await _stats.Replace(stats.WithFailure(pageIndex));
             }
+        }
+
+        public async Task FromTip(Tip tip, Profile profile)
+        {
+            var stats =
+                await _database.QueryStatsByChapterAndProfileId(tip.ChapterId, profile.Id);
+
+            if (stats == default)
+            {
+                var chapter = await _chapters.Get(tip.ChapterId);
+                stats = await _stats.Add(ChapterStats.Create(profile.Id, chapter));
+            }
+
+            await _stats.Replace(stats.WithTip(tip.PageIndex));
         }
     }
 }
