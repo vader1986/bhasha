@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Bhasha.Common.Arguments;
 using Bhasha.Common.Services;
 using Bhasha.Common.Tests.Support;
 using FakeItEasy;

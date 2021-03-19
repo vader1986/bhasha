@@ -50,9 +50,10 @@ namespace Bhasha.Common
             Failures = failures;
         }
 
-        public static ChapterStats Empty(Guid profileId, Guid chapterId, int pages)
+        public static ChapterStats Create(Guid profileId, GenericChapter genericChapter)
         {
-            return new ChapterStats(default, profileId, chapterId, false, new byte[pages], new byte[pages], new byte[pages]);
+            var pages = genericChapter.Pages.Length;
+            return new ChapterStats(default, profileId, genericChapter.Id, false, new byte[pages], new byte[pages], new byte[pages]);
         }
 
         public override string ToString()

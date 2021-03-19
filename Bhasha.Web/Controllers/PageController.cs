@@ -44,7 +44,7 @@ namespace Bhasha.Web.Controllers
             var tips = await _database.QueryTips(chapterId, pageIndex);
 
             var stats = await _database.QueryStatsByChapterAndProfileId(profile.Id, chapterId);
-            await _stats.Update(stats.WithTip(pageIndex));
+            await _stats.Replace(stats.WithTip(pageIndex));
 
             return tips.Random(); 
         }

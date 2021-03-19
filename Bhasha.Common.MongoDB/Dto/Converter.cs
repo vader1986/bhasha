@@ -111,7 +111,8 @@ namespace Bhasha.Common.MongoDB.Dto
                     dto.UserId,
                     dto.From,
                     dto.To,
-                    dto.Level);
+                    dto.Level,
+                    dto.CompletedChapters);
             }
             catch (Exception e)
             {
@@ -127,7 +128,8 @@ namespace Bhasha.Common.MongoDB.Dto
                 UserId = product.UserId,
                 From = product.From,
                 To = product.To,
-                Level = product.Level
+                Level = product.Level,
+                CompletedChapters = product.CompletedChapters
             };
         }
 

@@ -1,9 +1,15 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Bhasha.Common.Arguments;
 
 namespace Bhasha.Common.Services
 {
+    public interface IAssembleChapters
+    {
+        Task<Chapter> Assemble(Guid chapterId, Profile profile);
+    }
+
     public class ChapterAssembly : IAssembleChapters
     {
         private readonly IDatabase _database;

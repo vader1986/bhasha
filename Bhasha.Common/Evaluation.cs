@@ -7,14 +7,20 @@
         /// </summary>
         public Result Result { get; }
 
-        public Evaluation(Result result)
+        /// <summary>
+        /// Original submit of the evaluation.
+        /// </summary>
+        public Submit Submit { get; }
+
+        public Evaluation(Result result, Submit submit)
         {
             Result = result;
+            Submit = submit;
         }
 
         public override string ToString()
         {
-            return $"{nameof(Result)}: {Result}";
+            return $"{nameof(Result)}: {Result}, {nameof(Submit)}: {Submit}";
         }
     }
 }

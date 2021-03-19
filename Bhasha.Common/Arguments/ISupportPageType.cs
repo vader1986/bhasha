@@ -1,4 +1,4 @@
-﻿namespace Bhasha.Common.Services
+﻿namespace Bhasha.Common.Arguments
 {
     public interface ISupportPageType
     {

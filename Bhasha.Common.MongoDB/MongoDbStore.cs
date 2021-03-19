@@ -46,7 +46,7 @@ namespace Bhasha.Common.MongoDB
             return (int)result.DeletedCount;
         }
 
-        public async Task Update(TProduct product)
+        public async Task Replace(TProduct product)
         {
             var dto = _converter.Convert(product);
             await _db

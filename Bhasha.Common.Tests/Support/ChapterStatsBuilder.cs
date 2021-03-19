@@ -21,6 +21,12 @@ namespace Bhasha.Common.Tests.Support
             return this;
         }
 
+        public ChapterStatsBuilder WithChapterId(Guid chapterId)
+        {
+            _chapterId = chapterId;
+            return this;
+        }
+
         public ChapterStatsBuilder WithCompleted(bool completed)
         {
             _completed = completed;

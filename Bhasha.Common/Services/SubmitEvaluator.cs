@@ -1,21 +1,25 @@
 ﻿using System.Threading.Tasks;
-using Bhasha.Common.Extensions;
 
 namespace Bhasha.Common.Services
 {
+    public interface IEvaluateSubmit
+    {
+        Task<Evaluation> Evaluate(Profile profile, Submit submit);
+    }
+
     public class SubmitEvaluator : IEvaluateSubmit
     {
-        private readonly IEvaluateSolution _evaluator;
+        private readonly ICheckResult _checker;
         private readonly IDatabase _database;
+        private readonly IUpdateStats _updateStats;
         private readonly IStore<GenericChapter> _chapters;
-        private readonly IStore<ChapterStats> _stats;
-
-        public SubmitEvaluator(IEvaluateSolution evaluator, IDatabase database, IStore<GenericChapter> chapters, IStore<ChapterStats> stats)
+        
+        public SubmitEvaluator(ICheckResult checker, IUpdateStats updateStats, IDatabase database, IStore<GenericChapter> chapters)
         {
-            _evaluator = evaluator;
+            _checker = checker;
+            _updateStats = updateStats;
             _database = database;
             _chapters = chapters;
-            _stats = stats;
         }
 
         public async Task<Evaluation> Evaluate(Profile profile, Submit submit)
@@ -24,29 +28,12 @@ namespace Bhasha.Common.Services
             var page = chapter.Pages[submit.PageIndex];
 
             var expected = await _database.QueryTranslationByTokenId(page.TokenId, profile.To);
-            var evaluation = _evaluator.Evaluate(expected.Native, submit.Solution);
+            var result = _checker.Evaluate(expected.Native, submit.Solution);
 
-            var stats = await _database.QueryStatsByChapterAndProfileId(chapter.Id, profile.Id);
+            var evaluation = new Evaluation(result, submit);
 
-            if (stats == default)
-            {
-                stats = await _stats.Add(ChapterStats.Empty(profile.Id, submit.ChapterId, chapter.Pages.Length));
-            }
+            await _updateStats.FromEvaluation(evaluation, profile, chapter);
 
-            if (evaluation.Result == Result.Correct)
-            {
-                await _stats
-                    .Update(stats
-                    .WithSuccess(submit.PageIndex)
-                    .WithCompleted());
-            }
-            else
-            {
-                await _stats
-                    .Update(stats
-                    .WithFailure(submit.PageIndex));
-            }
-            
             return evaluation;
         }
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using Bhasha.Common.MongoDB.Attributes;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace Bhasha.Common.MongoDB.Dto

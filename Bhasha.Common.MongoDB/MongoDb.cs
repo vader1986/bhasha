@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Bhasha.Common.Extensions;
+using Bhasha.Common.MongoDB.Attributes;
 using MongoDB.Driver;
 
 namespace Bhasha.Common.MongoDB

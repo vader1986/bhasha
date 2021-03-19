@@ -11,10 +11,17 @@ namespace Bhasha.Common.Tests.Support
         private Language _from = Rnd.Create.Choose(Language.Supported.Values.ToArray());
         private Language _to = Rnd.Create.Choose(Language.Supported.Values.ToArray());
         private int _level = Rnd.Create.Next();
+        private int _completedChapters = Rnd.Create.Next();
 
         public ProfileBuilder WithId(Guid id)
         {
             _id = id;
+            return this;
+        }
+
+        public ProfileBuilder WithUserId(Guid userId)
+        {
+            _userId = userId;
             return this;
         }
 
@@ -39,7 +46,8 @@ namespace Bhasha.Common.Tests.Support
                 _userId,
                 _from,
                 _to,
-                _level);
+                _level,
+                _completedChapters);
         }
     }
 }

@@ -34,7 +34,7 @@ namespace Bhasha.Web.Controllers
         [HttpPatch("update")]
         public async Task<IActionResult> Update(string userName, string email)
         {
-            await _users.Update(new User(UserId, userName, email));
+            await _users.Replace(new User(UserId, userName, email));
 
             return Ok();
         }

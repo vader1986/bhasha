@@ -126,7 +126,7 @@ namespace Bhasha.Common.MongoDB.Tests
             await Test_Get<UserDto, User>();
         }
 
-        private async Task Test_Update<TDto, TProduct>()
+        private async Task Test_Replace<TDto, TProduct>()
             where TDto : MongoDB.Dto.Dto
             where TProduct : class, IEntity
         {
@@ -140,7 +140,7 @@ namespace Bhasha.Common.MongoDB.Tests
 
             var updatedProduct = EntityFactory.Build<TProduct>(dto.Id);
 
-            await store.Update(updatedProduct);
+            await store.Replace(updatedProduct);
 
             var result = await _db
                 .GetCollection<TDto>()
@@ -151,15 +151,15 @@ namespace Bhasha.Common.MongoDB.Tests
         }
 
         [Test]
-        public async Task Update_Products()
+        public async Task Replace_Products()
         {
-            await Test_Get<ChapterStatsDto, ChapterStats>();
-            await Test_Get<GenericChapterDto, GenericChapter>();
-            await Test_Get<ProfileDto, Profile>();
-            await Test_Get<TipDto, Tip>();
-            await Test_Get<TokenDto, Token>();
-            await Test_Get<TranslationDto, Translation>();
-            await Test_Get<UserDto, User>();
+            await Test_Replace<ChapterStatsDto, ChapterStats>();
+            await Test_Replace<GenericChapterDto, GenericChapter>();
+            await Test_Replace<ProfileDto, Profile>();
+            await Test_Replace<TipDto, Tip>();
+            await Test_Replace<TokenDto, Token>();
+            await Test_Replace<TranslationDto, Translation>();
+            await Test_Replace<UserDto, User>();
         }
     }
 }

@@ -29,7 +29,7 @@ namespace Bhasha.Web.Controllers
         [HttpPost("create")]
         public async Task<ActionResult<Profile>> Create(string from, string to)
         {
-            return await _store.Add(new Profile(default, UserId, from, to, 1));
+            return await _store.Add(new Profile(default, UserId, from, to, 1, 0));
         }
 
         // Authorize User

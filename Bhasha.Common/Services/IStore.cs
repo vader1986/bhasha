@@ -8,6 +8,6 @@ namespace Bhasha.Common.Services
         Task<TProduct> Add(TProduct product);
         Task<TProduct> Get(Guid id);
         Task<int> Remove(TProduct product);
-        Task Update(TProduct product);
+        Task Replace(TProduct product);
     }
 }

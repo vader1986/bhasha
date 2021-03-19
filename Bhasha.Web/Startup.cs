@@ -1,3 +1,5 @@
+using Bhasha.Common;
+using Bhasha.Common.Arguments;
 using Bhasha.Common.MongoDB;
 using Bhasha.Common.MongoDB.Dto;
 using Bhasha.Common.Services;
@@ -31,7 +33,18 @@ namespace Bhasha.Web
                 .AddControllers();
 
             services
-                .AddTransient<IEvaluateSolution, SolutionEvaluator>()
+                .AddTransient<IStore<GenericChapter>, MongoDbStore<GenericChapterDto, GenericChapter>>()
+                .AddTransient<IStore<Profile>, MongoDbStore<ProfileDto, Profile>>()
+                .AddTransient<IStore<Tip>, MongoDbStore<TipDto, Tip>>()
+                .AddTransient<IStore<Token>, MongoDbStore<TokenDto, Token>>()
+                .AddTransient<IStore<Translation>, MongoDbStore<TranslationDto, Translation>>()
+                .AddTransient<IStore<User>, MongoDbStore<UserDto, User>>();
+
+            services
+                .AddTransient<IAssembleArguments, OneOutOfFourArgumentsAssembly>()
+                .AddTransient<IAssembleChapters, ChapterAssembly>()
+                .AddTransient<ICheckResult, ResultChecker>()
+                .AddTransient<IUpdateStats, StatsUpdater>()
                 .AddTransient<IEvaluateSubmit, SubmitEvaluator>();
         }
 

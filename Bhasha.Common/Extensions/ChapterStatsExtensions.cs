@@ -10,11 +10,7 @@ namespace Bhasha.Common.Extensions
                 stats.Id,
                 stats.ProfileId,
                 stats.ChapterId,
-                stats
-                    .Submits
-                    .Select((submits, i) => submits > stats.Failures[i] ||
-                                            submits == byte.MaxValue)
-                    .All(x => x),
+                true,
                 stats.Tips,
                 stats.Submits,
                 stats.Failures);
