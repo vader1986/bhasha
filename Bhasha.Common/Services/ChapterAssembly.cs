@@ -15,9 +15,9 @@ namespace Bhasha.Common.Services
         private readonly IDatabase _database;
         private readonly IStore<Token> _tokens;
         private readonly IStore<GenericChapter> _chapters;
-        private readonly IAssembleArguments[] _arguments;
+        private readonly ArgumentAssemblyProvider _arguments;
 
-        public ChapterAssembly(IDatabase database, IStore<Token> tokens, IStore<GenericChapter> chapters, IAssembleArguments[] arguments)
+        public ChapterAssembly(IDatabase database, IStore<Token> tokens, IStore<GenericChapter> chapters, ArgumentAssemblyProvider arguments)
         {
             _database = database;
             _tokens = tokens;
@@ -43,7 +43,7 @@ namespace Bhasha.Common.Services
                     .First(x => x.TokenId == genericPage.TokenId);
 
                 var arguments = _arguments
-                    .First(x => x.Supports(genericPage.PageType))
+                    .Invoke(genericPage.PageType)
                     .Assemble(translations, genericPage.TokenId);
 
                 return new Page(genericPage.PageType, token, translation, arguments);

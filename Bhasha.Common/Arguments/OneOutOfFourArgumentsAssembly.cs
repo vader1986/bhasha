@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Bhasha.Common.Extensions;
-using Bhasha.Common.Services;
 
 namespace Bhasha.Common.Arguments
 {
@@ -20,11 +19,6 @@ namespace Bhasha.Common.Arguments
             options.Shuffle();
 
             return new OneOutOfFourArguments(options);
-        }
-
-        public bool Supports(PageType pageType)
-        {
-            return pageType == PageType.OneOutOfFour;
         }
     }
 }

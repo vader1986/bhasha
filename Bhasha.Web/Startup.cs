@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Bhasha.Common;
 using Bhasha.Common.Arguments;
 using Bhasha.Common.MongoDB;
@@ -29,12 +30,24 @@ namespace Bhasha.Web
 
             services
                 .AddSingleton<IDatabase>(_ => new MongoDbLayer(db, new Converter()))
+                .AddSingleton<IMongoDb>(db)
                 .AddSingleton<IAuthorizedProfileLookup, AuthorizedProfileLookup>()
                 .AddSingleton<IAppCache, CachingService>()
+                .AddSwaggerDocument()
                 .AddControllers();
 
             services
+                .AddTransient<IConvert<ChapterStatsDto, ChapterStats>, Converter>()
+                .AddTransient<IConvert<GenericChapterDto, GenericChapter>, Converter>()
+                .AddTransient<IConvert<ProfileDto, Profile>, Converter>()
+                .AddTransient<IConvert<TipDto, Tip>, Converter>()
+                .AddTransient<IConvert<TokenDto, Token>, Converter>()
+                .AddTransient<IConvert<TranslationDto, Translation>, Converter>()
+                .AddTransient<IConvert<UserDto, User>, Converter>();
+
+            services
                 .AddTransient<IStore<GenericChapter>, MongoDbStore<GenericChapterDto, GenericChapter>>()
+                .AddTransient<IStore<ChapterStats>, MongoDbStore<ChapterStatsDto, ChapterStats>>()
                 .AddTransient<IStore<Profile>, MongoDbStore<ProfileDto, Profile>>()
                 .AddTransient<IStore<Tip>, MongoDbStore<TipDto, Tip>>()
                 .AddTransient<IStore<Token>, MongoDbStore<TokenDto, Token>>()
@@ -42,7 +55,13 @@ namespace Bhasha.Web
                 .AddTransient<IStore<User>, MongoDbStore<UserDto, User>>();
 
             services
-                .AddTransient<IAssembleArguments, OneOutOfFourArgumentsAssembly>()
+                .AddTransient<ArgumentAssemblyProvider>(sp => key => {
+                    return key switch
+                    {
+                        PageType.OneOutOfFour => sp.GetService<OneOutOfFourArgumentsAssembly>(),
+                        _ => throw new KeyNotFoundException($"No {nameof(IAssembleArguments)} found for {key}"),
+                    };
+                })
                 .AddTransient<IAssembleChapters, ChapterAssembly>()
                 .AddTransient<ICheckResult, ResultChecker>()
                 .AddTransient<IUpdateStatsForEvaluation, EvaluationStatsUpdater>()
@@ -52,6 +71,7 @@ namespace Bhasha.Web
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            /*
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -64,6 +84,10 @@ namespace Bhasha.Web
             {
                 endpoints.MapControllers();
             });
+            */
+
+            app.UseOpenApi();
+            app.UseSwaggerUi3();
         }
     }
 }

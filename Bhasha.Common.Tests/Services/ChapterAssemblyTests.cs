@@ -26,7 +26,7 @@ namespace Bhasha.Common.Tests.Services
             _tokens = A.Fake<IStore<Token>>();
             _chapters = A.Fake<IStore<GenericChapter>>();
             _argument = A.Fake<IAssembleArguments>();
-            _assembly = new ChapterAssembly(_database, _tokens, _chapters, new[] { _argument });
+            _assembly = new ChapterAssembly(_database, _tokens, _chapters, _ => _argument);
         }
 
         [Test]
@@ -89,7 +89,6 @@ namespace Bhasha.Common.Tests.Services
 
             A.CallTo(() => _tokens.Get(A<Guid>._)).Returns(Task.FromResult(token));
             A.CallTo(() => _database.QueryTranslationByTokenId(A<Guid>._, from)).Returns(Task.FromResult(translation));
-            A.CallTo(() => _argument.Supports(PageType.OneOutOfFour)).Returns(true);
             A.CallTo(() => _argument.Assemble(A<IEnumerable<Translation>>._, A<Guid>._)).Returns(arguments);
         }
     }
