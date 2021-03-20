@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Bhasha.Common;
+using Bhasha.Common.Services;
 
 namespace Bhasha.Web.Services
 {
@@ -11,17 +12,17 @@ namespace Bhasha.Web.Services
 
     public class ProfileLookup : IProfileLookup
     {
-        private readonly IDatabase _database;
+        private readonly IStore<Profile> _profiles;
 
-        public ProfileLookup(IDatabase database)
+        public ProfileLookup(IStore<Profile> profiles)
         {
-            _database = database;
+            _profiles = profiles;
         }
 
         public async Task<Profile> GetProfile(Guid profileId)
         {
             // TODO caching
-            return await _database.GetProfile(profileId);
+            return await _profiles.Get(profileId);
         }
     }
 }

@@ -1,5 +1,8 @@
 using Bhasha.Common;
+using Bhasha.Common.Arguments;
 using Bhasha.Common.MongoDB;
+using Bhasha.Common.MongoDB.Dto;
+using Bhasha.Common.Services;
 using Bhasha.Web.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -24,10 +27,26 @@ namespace Bhasha.Web
             var db = MongoDb.Create(dbConnectionString);
 
             services
-                .AddSingleton<IDatabase>(_ => new MongoDbLayer(db))
+                .AddSingleton<IDatabase>(_ => new MongoDbLayer(db, new Converter()))
                 .AddSingleton<IProfileLookup, ProfileLookup>()
                 .AddSingleton<IAuthorizedProfileLookup, AuthorizedProfileLookup>()
                 .AddControllers();
+
+            services
+                .AddTransient<IStore<GenericChapter>, MongoDbStore<GenericChapterDto, GenericChapter>>()
+                .AddTransient<IStore<Profile>, MongoDbStore<ProfileDto, Profile>>()
+                .AddTransient<IStore<Tip>, MongoDbStore<TipDto, Tip>>()
+                .AddTransient<IStore<Token>, MongoDbStore<TokenDto, Token>>()
+                .AddTransient<IStore<Translation>, MongoDbStore<TranslationDto, Translation>>()
+                .AddTransient<IStore<User>, MongoDbStore<UserDto, User>>();
+
+            services
+                .AddTransient<IAssembleArguments, OneOutOfFourArgumentsAssembly>()
+                .AddTransient<IAssembleChapters, ChapterAssembly>()
+                .AddTransient<ICheckResult, ResultChecker>()
+                .AddTransient<IUpdateStatsForEvaluation, EvaluationStatsUpdater>()
+                .AddTransient<IUpdateStatsForTip, TipStatsUpdater>()
+                .AddTransient<IEvaluateSubmit, SubmitEvaluator>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

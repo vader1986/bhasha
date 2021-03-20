@@ -1,19 +1,30 @@
-﻿using MongoDB.Driver;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using Bhasha.Common.Extensions;
+using Bhasha.Common.MongoDB.Attributes;
+using MongoDB.Driver;
 
 namespace Bhasha.Common.MongoDB
 {
     public interface IMongoDb
     {
-        IMongoCollection<T> GetCollection<T>(string name);
+        IMongoCollection<T> GetCollection<T>();
     }
 
     public class MongoDb : IMongoDb
     {
         private readonly MongoClient _client;
-
+        private readonly IDictionary<Type, string> _collections;
+        
         private MongoDb(MongoClient client)
         {
             _client = client;
+            _collections = Assembly
+                .GetExecutingAssembly()
+                .GetTypesWithAttribute<MongoCollectionAttribute>()
+                .ToDictionary(x => x.Key, x => x.Value.CollectionName);
         }
 
         public static MongoDb Create(string connectionString)
@@ -37,12 +48,11 @@ namespace Bhasha.Common.MongoDB
                     .GetResult();
             }
         }
-
-        public IMongoCollection<T> GetCollection<T>(string name)
+        public IMongoCollection<T> GetCollection<T>()
         {
             return _client
                 .GetDatabase(Names.Database)
-                .GetCollection<T>(name);
+                .GetCollection<T>(_collections[typeof(T)]);
         }
     }
 }

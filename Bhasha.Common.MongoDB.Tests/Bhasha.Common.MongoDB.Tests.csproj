@@ -16,21 +16,15 @@
   <ItemGroup>
     <ProjectReference Include="..\Bhasha.Common.MongoDB\Bhasha.Common.MongoDB.csproj" />
     <ProjectReference Include="..\Bhasha.Common\Bhasha.Common.csproj" />
+    <ProjectReference Include="..\Bhasha.Common.Tests\Bhasha.Common.Tests.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Dto\" />
     <Folder Include="Support\" />
-    <Folder Include="Import\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="Import\Sample.csv" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Import\Sample.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Import\Sample.csv" />
   </ItemGroup>
 </Project>

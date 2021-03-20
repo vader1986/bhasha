@@ -1,6 +1,7 @@
 ﻿using System;
 using Bhasha.Common.Extensions;
 using Bhasha.Common.MongoDB.Dto;
+using Bhasha.Common.Tests.Support;
 
 namespace Bhasha.Common.MongoDB.Tests.Support
 {

@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
+using Bhasha.Common.MongoDB.Attributes;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace Bhasha.Common.MongoDB.Dto
 {
-    using Translations = Dictionary<string, LanguageTokenDto>;
-
-    public class TokenDto
+    [MongoCollection(Names.Collections.Tokens)]
+    public class TokenDto : Dto, IEquatable<Token>
     {
-        [BsonId]
-        public Guid Id { get; set; }
-
         [BsonElement]
         public string Label { get; set; } = string.Empty;
 
@@ -29,7 +26,9 @@ namespace Bhasha.Common.MongoDB.Dto
         [BsonElement]
         public string? PictureId { get; set; }
 
-        [BsonElement]
-        public Translations Translations { get; set; } = new Translations();
+        public bool Equals(Token other)
+        {
+            return other != null && other.Label == Label && other.Level == Level && other.Cefr.ToString() == Cefr && other.TokenType.ToString() == TokenType && other.Categories.Length == Categories.Length && other.Categories.Select((x, i) => x == Categories[i]).All(x => x) && other.PictureId == PictureId;
+        }
     }
 }

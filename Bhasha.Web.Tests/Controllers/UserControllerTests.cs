@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Bhasha.Common;
+using Bhasha.Common.Services;
+using Bhasha.Common.Tests.Support;
 using Bhasha.Web.Controllers;
 using FakeItEasy;
 using NUnit.Framework;
@@ -12,37 +14,71 @@ namespace Bhasha.Web.Tests.Controllers
     public class UserControllerTests
     {
         private IDatabase _database;
+        private IStore<User> _users;
+        private IStore<ChapterStats> _stats;
+        private IStore<Profile> _profiles;
         private UserController _controller;
 
         [SetUp]
         public void Before()
         {
             _database = A.Fake<IDatabase>();
-            _controller = new UserController(_database);
+            _users = A.Fake<IStore<User>>();
+            _stats = A.Fake<IStore<ChapterStats>>();
+            _profiles = A.Fake<IStore<Profile>>();
+            _controller = new UserController(_database, _users, _stats, _profiles);
         }
 
         [Test]
-        public async Task Delete_removes_profiles_user_and_stats()
+        public async Task Create()
         {
-            var userId = _controller.UserId;
+            await _controller.Create("user", "email");
+
+            A.CallTo(() => _users.Add(A<User>.That
+                .Matches(x => x.UserName == "user" &&
+                              x.Email == "email")))
+                .MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public async Task Update()
+        {
+            await _controller.Update("user", "email");
+
+            A.CallTo(() => _users.Replace(A<User>.That
+                .Matches(x => x.Id == _controller.UserId &&
+                              x.UserName == "user" &&
+                              x.Email == "email")))
+                .MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public async Task Delete()
+        {
             var profiles = new[] {
-                new Profile(Guid.NewGuid(), userId, Language.Bengoli, Language.English, 1),
-                new Profile(Guid.NewGuid(), userId, Language.English, Language.Bengoli, 3),
+                ProfileBuilder.Default.Build()
             };
 
-            A.CallTo(() => _database.GetProfiles(userId))
+            A.CallTo(() => _database.QueryProfilesByUserId(_controller.UserId))
                 .Returns(Task.FromResult<IEnumerable<Profile>>(profiles));
+
+            var stats = new[] {
+                ChapterStatsBuilder.Default.Build()
+            };
+
+            A.CallTo(() => _database.QueryStatsByProfileId(profiles[0].Id))
+                .Returns(Task.FromResult<IEnumerable<ChapterStats>>(stats));
+
+            var user = UserBuilder.Default.Build();
+
+            A.CallTo(() => _users.Get(user.Id))
+                .Returns(Task.FromResult(user));
 
             await _controller.Delete();
 
-
-            A.CallTo(() => _database.DeleteUser(userId)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => _database.DeleteProfiles(userId)).MustHaveHappenedOnceExactly();
-
-            foreach (var profile in profiles)
-            {
-                A.CallTo(() => _database.DeleteChapterStatsForProfile(profile.Id));
-            }
+            A.CallTo(() => _profiles.Remove(profiles[0])).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _stats.Remove(stats[0])).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _users.Remove(user)).MustHaveHappenedOnceExactly();
         }
     }
 }

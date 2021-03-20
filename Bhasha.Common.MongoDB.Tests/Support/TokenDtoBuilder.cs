@@ -2,6 +2,7 @@
 using System.Linq;
 using Bhasha.Common.Extensions;
 using Bhasha.Common.MongoDB.Dto;
+using Bhasha.Common.Tests.Support;
 
 namespace Bhasha.Common.MongoDB.Tests.Support
 {
@@ -16,8 +17,7 @@ namespace Bhasha.Common.MongoDB.Tests.Support
                 Cefr = Rnd.Create.Choose(Enum.GetNames(typeof(CEFR))),
                 TokenType = Rnd.Create.Choose(Enum.GetNames(typeof(TokenType))),
                 Categories = Rnd.Create.NextStrings().ToArray(),
-                PictureId = Rnd.Create.NextString(),
-                Translations = Language.Supported.Keys.ToDictionary(x => x, _ => LanguageTokenDtoBuilder.Build())
+                PictureId = Rnd.Create.NextString()
             };
         }
     }

@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Bhasha.Common;
+using Bhasha.Common.Tests.Support;
 using Bhasha.Web.Exceptions;
 using Bhasha.Web.Services;
 using FakeItEasy;
@@ -26,7 +27,12 @@ namespace Bhasha.Web.Tests.Services
         {
             var profileId = Guid.NewGuid();
             var userId = Guid.NewGuid();
-            var profile = new Profile(profileId, userId, Language.Bengoli, Language.English, 123);
+
+            var profile = ProfileBuilder
+                .Default
+                .WithId(profileId)
+                .WithUserId(userId)
+                .Build();
 
             A.CallTo(() => _lookup.GetProfile(profileId)).Returns(Task.FromResult(profile));
 
@@ -40,7 +46,12 @@ namespace Bhasha.Web.Tests.Services
         {
             var profileId = Guid.NewGuid();
             var userId = Guid.NewGuid();
-            var profile = new Profile(profileId, userId, Language.Bengoli, Language.English, 123);
+
+            var profile = ProfileBuilder
+                .Default
+                .WithId(profileId)
+                .WithUserId(userId)
+                .Build();
 
             A.CallTo(() => _lookup.GetProfile(profileId)).Returns(Task.FromResult(profile));
 

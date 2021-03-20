@@ -36,8 +36,9 @@ namespace Bhasha.Common.MongoDB.Tests
 
             await AssertIndices<UserDto>(db, Names.Collections.Users, 1);
             await AssertIndices<ProfileDto>(db, Names.Collections.Profiles, 2);
-            await AssertIndices<ChapterDto>(db, Names.Collections.Chapters, 2);
+            await AssertIndices<GenericChapterDto>(db, Names.Collections.Chapters, 2);
             await AssertIndices<TokenDto>(db, Names.Collections.Tokens, 1);
+            await AssertIndices<TipDto>(db, Names.Collections.Translations, 3);
             await AssertIndices<TipDto>(db, Names.Collections.Tips, 3);
             await AssertIndices<ChapterStatsDto>(db, Names.Collections.Stats, 3);
         }

@@ -2,7 +2,7 @@
 
 namespace Bhasha.Common
 {
-    public class Profile
+    public class Profile : IEntity
     {
         /// <summary>
         /// Unique identifier of this user profile.
@@ -29,13 +29,24 @@ namespace Bhasha.Common
         /// </summary>
         public int Level { get; }
 
-        public Profile(Guid id, Guid userId, Language from, Language to, int level)
+        /// <summary>
+        /// Total number of completed chapters.
+        /// </summary>
+        public int CompletedChapters { get; }
+
+        public Profile(Guid id, Guid userId, Language from, Language to, int level, int completedChapters)
         {
             Id = id;
             UserId = userId;
             From = from;
             To = to;
             Level = level;
+            CompletedChapters = completedChapters;
+        }
+
+        public override string ToString()
+        {
+            return $"{nameof(Id)}: {Id}, {nameof(UserId)}: {UserId}, {nameof(From)}: {From}, {nameof(To)}: {To}, {nameof(Level)}: {Level}, {nameof(CompletedChapters)}: {CompletedChapters}";
         }
     }
 }

@@ -1,13 +1,12 @@
 ﻿using System;
+using Bhasha.Common.MongoDB.Attributes;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace Bhasha.Common.MongoDB.Dto
 {
-    public class TipDto
+    [MongoCollection(Names.Collections.Tips)]
+    public class TipDto : Dto, IEquatable<Tip>
     {
-        [BsonId]
-        public Guid Id { get; set; }
-
         [BsonElement]
         public Guid ChapterId { get; set; }
 
@@ -16,5 +15,10 @@ namespace Bhasha.Common.MongoDB.Dto
 
         [BsonElement]
         public string Text { get; set; } = string.Empty;
+
+        public bool Equals(Tip other)
+        {
+            return other != null && other.Id == Id && other.ChapterId == ChapterId && other.PageIndex == PageIndex && other.Text == Text;
+        }
     }
 }
