@@ -4,25 +4,22 @@ using Bhasha.Common.Extensions;
 
 namespace Bhasha.Common.Services
 {
-    public interface IUpdateStats
+    public interface IUpdateStatsForEvaluation
     {
-        Task FromEvaluation(Evaluation evaluation, Profile profile, GenericChapter chapter);
-        Task FromTip(Tip tip, Profile profile);
+        Task UpdateStats(Evaluation evaluation, Profile profile, GenericChapter chapter);
     }
 
-    public class StatsUpdater : IUpdateStats
+    public class EvaluationStatsUpdater : IUpdateStatsForEvaluation
     {
         private readonly IDatabase _database;
         private readonly IStore<ChapterStats> _stats;
         private readonly IStore<Profile> _profiles;
-        private readonly IStore<GenericChapter> _chapters;
 
-        public StatsUpdater(IDatabase database, IStore<ChapterStats> stats, IStore<Profile> profiles, IStore<GenericChapter> chapters)
+        public EvaluationStatsUpdater(IDatabase database, IStore<ChapterStats> stats, IStore<Profile> profiles)
         {
             _database = database;
             _stats = stats;
             _profiles = profiles;
-            _chapters = chapters;
         }
 
         private async Task UpdateProfile(Profile profile)
@@ -56,7 +53,7 @@ namespace Bhasha.Common.Services
                     .All(x => x);
         }
 
-        public async Task FromEvaluation(Evaluation evaluation, Profile profile, GenericChapter chapter)
+        public async Task UpdateStats(Evaluation evaluation, Profile profile, GenericChapter chapter)
         {
             var stats =
                 await _database.QueryStatsByChapterAndProfileId(chapter.Id, profile.Id) ??
@@ -82,20 +79,6 @@ namespace Bhasha.Common.Services
             {
                 await _stats.Replace(stats.WithFailure(pageIndex));
             }
-        }
-
-        public async Task FromTip(Tip tip, Profile profile)
-        {
-            var stats =
-                await _database.QueryStatsByChapterAndProfileId(tip.ChapterId, profile.Id);
-
-            if (stats == default)
-            {
-                var chapter = await _chapters.Get(tip.ChapterId);
-                stats = await _stats.Add(ChapterStats.Create(profile.Id, chapter));
-            }
-
-            await _stats.Replace(stats.WithTip(tip.PageIndex));
         }
     }
 }

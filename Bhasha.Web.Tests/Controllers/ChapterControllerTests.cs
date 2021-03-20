@@ -25,7 +25,6 @@ namespace Bhasha.Web.Tests.Controllers
             _database = A.Fake<IDatabase>();
             _chapters = A.Fake<IAssembleChapters>();
             _profiles = A.Fake<IAuthorizedProfileLookup>();
-
             _controller = new ChapterController(_database, _chapters, _profiles);
         }
 

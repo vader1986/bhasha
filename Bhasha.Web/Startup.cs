@@ -44,7 +44,8 @@ namespace Bhasha.Web
                 .AddTransient<IAssembleArguments, OneOutOfFourArgumentsAssembly>()
                 .AddTransient<IAssembleChapters, ChapterAssembly>()
                 .AddTransient<ICheckResult, ResultChecker>()
-                .AddTransient<IUpdateStats, StatsUpdater>()
+                .AddTransient<IUpdateStatsForEvaluation, EvaluationStatsUpdater>()
+                .AddTransient<IUpdateStatsForTip, TipStatsUpdater>()
                 .AddTransient<IEvaluateSubmit, SubmitEvaluator>();
         }
 

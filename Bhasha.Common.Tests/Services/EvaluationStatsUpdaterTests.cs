@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Bhasha.Common.Services;
 using Bhasha.Common.Tests.Support;
@@ -9,12 +8,12 @@ using NUnit.Framework;
 namespace Bhasha.Common.Tests.Services
 {
     [TestFixture]
-    public class StatsUpdaterTests
+    public class EvaluationStatsUpdaterTests
     {
         private IDatabase _database;
         private IStore<ChapterStats> _stats;
         private IStore<Profile> _profiles;
-        private StatsUpdater _statsUpdater;
+        private EvaluationStatsUpdater _statsUpdater;
 
         [SetUp]
         public void Before()
@@ -22,7 +21,8 @@ namespace Bhasha.Common.Tests.Services
             _database = A.Fake<IDatabase>();
             _stats = A.Fake<IStore<ChapterStats>>();
             _profiles = A.Fake<IStore<Profile>>();
-            _statsUpdater = new StatsUpdater(_database, _stats, _profiles);
+
+            _statsUpdater = new EvaluationStatsUpdater(_database, _stats, _profiles);
         }
 
         private static bool IsInitialized(byte[] bytes, GenericChapter chapter)
@@ -34,7 +34,7 @@ namespace Bhasha.Common.Tests.Services
         }
 
         [Test]
-        public async Task FromEvaluation_creates_chapter_stats()
+        public async Task UpdateStats_creates_chapter_stats()
         {
             var genericChapter = GenericChapterBuilder.Default.Build();
             var submit = new Submit(genericChapter.Id, 1, "test");
@@ -47,7 +47,7 @@ namespace Bhasha.Common.Tests.Services
             A.CallTo(() => _stats.Add(A<ChapterStats>.Ignored))
                 .Returns(ChapterStats.Create(profile.Id, genericChapter));
 
-            await _statsUpdater.FromEvaluation(evaluation, profile, genericChapter);
+            await _statsUpdater.UpdateStats(evaluation, profile, genericChapter);
 
             A.CallTo(() => _stats.Add(A<ChapterStats>.That
                 .Matches(x => x.Completed == false &&
@@ -59,7 +59,7 @@ namespace Bhasha.Common.Tests.Services
         }
 
         [Test]
-        public async Task FromEvaluation_with_wrong_result()
+        public async Task UpdateStats_with_wrong_result()
         {
             var genericChapter = GenericChapterBuilder
                 .Default
@@ -82,7 +82,7 @@ namespace Bhasha.Common.Tests.Services
             A.CallTo(() => _database.QueryStatsByChapterAndProfileId(genericChapter.Id, profile.Id))
                 .Returns(Task.FromResult(stats));
 
-            await _statsUpdater.FromEvaluation(evaluation, profile, genericChapter);
+            await _statsUpdater.UpdateStats(evaluation, profile, genericChapter);
 
             A.CallTo(() => _stats.Replace(A<ChapterStats>.That
                 .Matches(x => x.ChapterId == genericChapter.Id &&
@@ -92,7 +92,7 @@ namespace Bhasha.Common.Tests.Services
         }
 
         [Test]
-        public async Task FromEvaluation_with_correct_result()
+        public async Task UpdateStats_with_correct_result()
         {
             var genericChapter = GenericChapterBuilder
                 .Default
@@ -116,7 +116,7 @@ namespace Bhasha.Common.Tests.Services
             A.CallTo(() => _database.QueryStatsByChapterAndProfileId(genericChapter.Id, profile.Id))
                 .Returns(Task.FromResult(stats));
 
-            await _statsUpdater.FromEvaluation(evaluation, profile, genericChapter);
+            await _statsUpdater.UpdateStats(evaluation, profile, genericChapter);
 
             A.CallTo(() => _stats.Replace(A<ChapterStats>.That
                 .Matches(x => x.ChapterId == genericChapter.Id &&
@@ -127,7 +127,7 @@ namespace Bhasha.Common.Tests.Services
         }
 
         [Test]
-        public async Task FromEvaluation_with_correct_result_and_completed_chapter()
+        public async Task UpdateStats_with_correct_result_and_completed_chapter()
         {
             var genericChapter = GenericChapterBuilder
                 .Default
@@ -151,7 +151,7 @@ namespace Bhasha.Common.Tests.Services
             A.CallTo(() => _database.QueryStatsByChapterAndProfileId(genericChapter.Id, profile.Id))
                 .Returns(Task.FromResult(stats));
 
-            await _statsUpdater.FromEvaluation(evaluation, profile, genericChapter);
+            await _statsUpdater.UpdateStats(evaluation, profile, genericChapter);
 
             A.CallTo(() => _stats.Replace(A<ChapterStats>.That
                 .Matches(x => x.ChapterId == genericChapter.Id &&

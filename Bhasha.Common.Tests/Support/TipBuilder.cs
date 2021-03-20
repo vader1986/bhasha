@@ -16,6 +16,18 @@ namespace Bhasha.Common.Tests.Support
             return this;
         }
 
+        public TipBuilder WithChapterId(Guid chapterId)
+        {
+            _chapterId = chapterId;
+            return this;
+        }
+
+        public TipBuilder WithPageIndex(int pageIndex)
+        {
+            _pageIndex = pageIndex;
+            return this;
+        }
+
         public static TipBuilder Default => new();
 
         public Tip Build()

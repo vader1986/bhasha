@@ -26,7 +26,6 @@ namespace Bhasha.Web.Tests.Controllers
             _users = A.Fake<IStore<User>>();
             _stats = A.Fake<IStore<ChapterStats>>();
             _profiles = A.Fake<IStore<Profile>>();
-
             _controller = new UserController(_database, _users, _stats, _profiles);
         }
 

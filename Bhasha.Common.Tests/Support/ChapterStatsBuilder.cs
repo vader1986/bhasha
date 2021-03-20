@@ -21,6 +21,12 @@ namespace Bhasha.Common.Tests.Support
             return this;
         }
 
+        public ChapterStatsBuilder WithProfileId(Guid profileId)
+        {
+            _profileId = profileId;
+            return this;
+        }
+
         public ChapterStatsBuilder WithChapterId(Guid chapterId)
         {
             _chapterId = chapterId;

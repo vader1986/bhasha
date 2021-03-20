@@ -11,7 +11,7 @@ namespace Bhasha.Common.Tests.Services
     public class SubmitEvaluatorTests
     {
         private ICheckResult _checker;
-        private IUpdateStats _updateStats;
+        private IUpdateStatsForEvaluation _updateStats;
         private IDatabase _database;
         private IStore<GenericChapter> _chapters;
         private SubmitEvaluator _submitEvaluator;
@@ -20,7 +20,7 @@ namespace Bhasha.Common.Tests.Services
         public void Before()
         {
             _checker = A.Fake<ICheckResult>();
-            _updateStats = A.Fake<IUpdateStats>();
+            _updateStats = A.Fake<IUpdateStatsForEvaluation>();
             _database = A.Fake<IDatabase>();
             _chapters = A.Fake<IStore<GenericChapter>>();
             _submitEvaluator = new SubmitEvaluator(_checker, _updateStats, _database, _chapters);
@@ -35,6 +35,9 @@ namespace Bhasha.Common.Tests.Services
             AssumeResult(profile, submit, result);
 
             var evaluation = await _submitEvaluator.Evaluate(profile, submit);
+
+            A.CallTo(() => _updateStats.UpdateStats(evaluation, profile, A<GenericChapter>._))
+                .MustHaveHappenedOnceExactly();
 
             Assert.That(evaluation.Result == result);
         }

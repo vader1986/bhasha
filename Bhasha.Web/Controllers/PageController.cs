@@ -15,14 +15,14 @@ namespace Bhasha.Web.Controllers
         private readonly IDatabase _database;
         private readonly IAuthorizedProfileLookup _profiles;
         private readonly IEvaluateSubmit _evaluator;
-        private readonly IUpdateStats _updateStats;
+        private readonly IUpdateStatsForTip _tipStatsUpdater;
 
-        public PageController(IDatabase database, IAuthorizedProfileLookup profiles, IEvaluateSubmit evaluator, IUpdateStats updateStats)
+        public PageController(IDatabase database, IAuthorizedProfileLookup profiles, IEvaluateSubmit evaluator, IUpdateStatsForTip tipStatsUpdater)
         {
             _database = database;
             _profiles = profiles;
             _evaluator = evaluator;
-            _updateStats = updateStats;
+            _tipStatsUpdater = tipStatsUpdater;
         }
 
         // Authorize User
@@ -44,7 +44,7 @@ namespace Bhasha.Web.Controllers
             var tips = await _database.QueryTips(chapterId, pageIndex);
             var tip = tips.Random();
 
-            await _updateStats.FromTip(tip, profile);
+            await _tipStatsUpdater.UpdateStats(tip, profile);
 
             return tip; 
         }
