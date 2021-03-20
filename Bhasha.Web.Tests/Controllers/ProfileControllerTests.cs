@@ -38,12 +38,12 @@ namespace Bhasha.Web.Tests.Controllers
 
             A.CallTo(() => _store.Add(A<Profile>._)).Returns(profile);
 
-            var result = await _controller.Create(Language.English, Language.Bengoli);
+            var result = await _controller.Create(Language.English, Language.Bengali);
 
             A.CallTo(() => _store.Add(A<Profile>.That
                 .Matches(x => x.Id == default &&
                               x.From == Language.English &&
-                              x.To == Language.Bengoli &&
+                              x.To == Language.Bengali &&
                               x.Level == 1)))
                 .MustHaveHappenedOnceExactly();
 

@@ -9,11 +9,11 @@ namespace Bhasha.Common
     {
 
         public readonly static Language English = new Language("en", "English", "UK");
-        public readonly static Language Bengoli = new Language("bn", "Bengoli");
+        public readonly static Language Bengali = new Language("bn", "Bengali");
 
         public readonly static LanguageSet Supported = new LanguageSet
         {
-            { English, English }, { Bengoli, Bengoli }
+            { English, English }, { Bengali, Bengali }
         };
 
         public string Id { get; }

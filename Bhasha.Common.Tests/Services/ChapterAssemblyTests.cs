@@ -34,7 +34,7 @@ namespace Bhasha.Common.Tests.Services
         {
             var profile = ProfileBuilder
                 .Default
-                .WithFrom(Language.Bengoli)
+                .WithFrom(Language.Bengali)
                 .WithTo(Language.English)
                 .Build();
 

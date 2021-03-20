@@ -82,14 +82,14 @@ namespace Bhasha.Common.Tests.Importers
 
             A.CallTo(() => _translations.Add(A<Translation>
                 .That.Matches(
-                    x => x.Language == Language.Bengoli &&
+                    x => x.Language == Language.Bengali &&
                          x.Native == "বিড়াল" &&
                          x.Spoken == "Biṛāla")))
                 .MustHaveHappenedOnceExactly();
 
             A.CallTo(() => _translations.Add(A<Translation>
                 .That.Matches(
-                    x => x.Language == Language.Bengoli &&
+                    x => x.Language == Language.Bengali &&
                          x.Native == "কুকুর" &&
                          x.Spoken == "Kukura")))
                 .MustHaveHappenedOnceExactly();

@@ -162,7 +162,7 @@ namespace Bhasha.Common.MongoDB.Tests
                 .Select(i => {
                     var dto = TranslationDtoBuilder.Build();
                     dto.TokenId = i < 3 ? tokenId : Guid.NewGuid();
-                    dto.Language = i < 2 ? language : Language.Bengoli;
+                    dto.Language = i < 2 ? language : Language.Bengali;
                     return dto;
                 })
                 .ToArray();
