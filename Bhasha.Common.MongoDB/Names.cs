@@ -6,7 +6,6 @@
 
         public class Collections
         {
-            public const string Users = nameof(Users);
             public const string Profiles = nameof(Profiles);
             public const string Chapters = nameof(Chapters);
             public const string Tokens = nameof(Tokens);

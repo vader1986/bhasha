@@ -34,7 +34,6 @@ namespace Bhasha.Common.MongoDB.Tests
 
             Assert.That(dbNames.Contains(Names.Database));
 
-            await AssertIndices<UserDto>(db, Names.Collections.Users, 1);
             await AssertIndices<ProfileDto>(db, Names.Collections.Profiles, 2);
             await AssertIndices<GenericChapterDto>(db, Names.Collections.Chapters, 2);
             await AssertIndices<TokenDto>(db, Names.Collections.Tokens, 1);

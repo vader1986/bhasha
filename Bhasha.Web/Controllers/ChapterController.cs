@@ -10,7 +10,7 @@ namespace Bhasha.Web.Controllers
 {
     [ApiController]
     [Route("api/chapter")]
-    public class ChapterController : BhashaController
+    public class ChapterController : BaseController
     {
         private readonly IDatabase _database;
         private readonly IAssembleChapters _chapters;

@@ -42,8 +42,7 @@ namespace Bhasha.Web
                 .AddTransient<IConvert<ProfileDto, Profile>, Converter>()
                 .AddTransient<IConvert<TipDto, Tip>, Converter>()
                 .AddTransient<IConvert<TokenDto, Token>, Converter>()
-                .AddTransient<IConvert<TranslationDto, Translation>, Converter>()
-                .AddTransient<IConvert<UserDto, User>, Converter>();
+                .AddTransient<IConvert<TranslationDto, Translation>, Converter>();
 
             services
                 .AddTransient<IStore<GenericChapter>, MongoDbStore<GenericChapterDto, GenericChapter>>()
@@ -51,8 +50,7 @@ namespace Bhasha.Web
                 .AddTransient<IStore<Profile>, MongoDbStore<ProfileDto, Profile>>()
                 .AddTransient<IStore<Tip>, MongoDbStore<TipDto, Tip>>()
                 .AddTransient<IStore<Token>, MongoDbStore<TokenDto, Token>>()
-                .AddTransient<IStore<Translation>, MongoDbStore<TranslationDto, Translation>>()
-                .AddTransient<IStore<User>, MongoDbStore<UserDto, User>>();
+                .AddTransient<IStore<Translation>, MongoDbStore<TranslationDto, Translation>>();
 
             services
                 .AddTransient<ArgumentAssemblyProvider>(sp => key => {

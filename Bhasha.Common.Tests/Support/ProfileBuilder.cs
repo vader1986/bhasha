@@ -7,7 +7,7 @@ namespace Bhasha.Common.Tests.Support
     public class ProfileBuilder
     {
         private Guid _id = Guid.NewGuid();
-        private Guid _userId = Guid.NewGuid();
+        private string _userId = Rnd.Create.NextString();
         private Language _from = Rnd.Create.Choose(Language.Supported.Values.ToArray());
         private Language _to = Rnd.Create.Choose(Language.Supported.Values.ToArray());
         private int _level = Rnd.Create.Next();
@@ -19,7 +19,7 @@ namespace Bhasha.Common.Tests.Support
             return this;
         }
 
-        public ProfileBuilder WithUserId(Guid userId)
+        public ProfileBuilder WithUserId(string userId)
         {
             _userId = userId;
             return this;

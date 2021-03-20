@@ -247,27 +247,5 @@ namespace Bhasha.Common.MongoDB.Tests.Dto
             Assert.That(result.Spoken == translation.Spoken);
             Assert.That(result.AudioId == translation.AudioId);
         }
-
-        [Test]
-        public void Convert_UserDto()
-        {
-            var dto = new UserDto { Id = Guid.NewGuid(), UserName = "user", Email = "x@y.com" };
-            var result = _converter.Convert(dto);
-
-            Assert.That(result.Id == dto.Id);
-            Assert.That(result.UserName == dto.UserName);
-            Assert.That(result.Email == dto.Email);
-        }
-
-        [Test]
-        public void Convert_User()
-        {
-            var user = new User(Guid.NewGuid(), "user", "x@y.com");
-            var result = _converter.Convert(user);
-
-            Assert.That(result.Id == user.Id);
-            Assert.That(result.UserName == user.UserName);
-            Assert.That(result.Email == user.Email);
-        }
     }
 }

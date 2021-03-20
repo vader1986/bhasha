@@ -12,7 +12,7 @@ namespace Bhasha.Common
         /// <summary>
         /// Reference to the user the profile is linked to.
         /// </summary>
-        public Guid UserId { get; }
+        public string UserId { get; }
 
         /// <summary>
         /// Native language for this profile.
@@ -34,7 +34,7 @@ namespace Bhasha.Common
         /// </summary>
         public int CompletedChapters { get; }
 
-        public Profile(Guid id, Guid userId, Language from, Language to, int level, int completedChapters)
+        public Profile(Guid id, string userId, Language from, Language to, int level, int completedChapters)
         {
             Id = id;
             UserId = userId;

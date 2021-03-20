@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Bhasha.Common;
+using Bhasha.Common.Extensions;
 using Bhasha.Common.Services;
 using Bhasha.Common.Tests.Support;
 using Bhasha.Web.Exceptions;
@@ -35,7 +36,7 @@ namespace Bhasha.Web.Tests.Services
         public async Task Get_profile_by_profile_id_for_user_id()
         {
             var profileId = Guid.NewGuid();
-            var userId = Guid.NewGuid();
+            var userId = Rnd.Create.NextString();
 
             var profile = ProfileBuilder
                 .Default
@@ -55,7 +56,7 @@ namespace Bhasha.Web.Tests.Services
         public void Get_profile_for_different_user()
         {
             var profileId = Guid.NewGuid();
-            var userId = Guid.NewGuid();
+            var userId = Rnd.Create.NextString();
 
             var profile = ProfileBuilder
                 .Default
@@ -66,7 +67,7 @@ namespace Bhasha.Web.Tests.Services
             A.CallTo(() => _cache.GetOrAddAsync(AString._, AFactory._, ACacheOption._))
                 .Returns(Task.FromResult(profile));
 
-            var otherUserId = Guid.NewGuid();
+            var otherUserId = Rnd.Create.NextString();
 
             Assert.ThrowsAsync<UnauthorizedException>(async () =>
                 await _authorizedLookup.Get(profileId, otherUserId));
@@ -76,7 +77,7 @@ namespace Bhasha.Web.Tests.Services
         public void Get_none_existing_profile()
         {
             var profileId = Guid.NewGuid();
-            var userId = Guid.NewGuid();
+            var userId = Rnd.Create.NextString();
 
             A.CallTo(() => _cache.GetOrAddAsync(AString._, AFactory._, ACacheOption._))
                 .Returns(Task.FromResult<Profile>(null));

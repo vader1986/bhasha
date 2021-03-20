@@ -8,33 +8,17 @@ namespace Bhasha.Web.Controllers
 {
     [ApiController]
     [Route("api/user")]
-    public class UserController : BhashaController
+    public class UserController : BaseController
     {
         private readonly IDatabase _database;
-        private readonly IStore<User> _users;
         private readonly IStore<ChapterStats> _stats;
         private readonly IStore<Profile> _profiles;
 
-        public UserController(IDatabase database, IStore<User> users, IStore<ChapterStats> stats, IStore<Profile> profiles)
+        public UserController(IDatabase database, IStore<ChapterStats> stats, IStore<Profile> profiles)
         {
             _database = database;
-            _users = users;
             _stats = stats;
             _profiles = profiles;
-        }
-
-        // Authorize User (?)
-        [HttpPost("create")]
-        public async Task<User> Create(string userName, string email)
-        {
-            return await _users.Add(new User(default, userName, email));
-        }
-
-        // Authorize User
-        [HttpPatch("update")]
-        public async Task Update(string userName, string email)
-        {
-            await _users.Replace(new User(UserId, userName, email));
         }
 
         [HttpDelete("delete")]
@@ -51,8 +35,7 @@ namespace Bhasha.Web.Controllers
                 .SelectMany(x => x)
                 .Select(_stats.Remove)
                 .Concat(profiles
-                .Select(_profiles.Remove))
-                .Append(_users.Remove(await _users.Get(UserId))));
+                .Select(_profiles.Remove)));
         }
     }
 }

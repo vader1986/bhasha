@@ -14,7 +14,7 @@ namespace Bhasha.Common.Services
 
         Task<IEnumerable<Tip>> QueryTips(Guid chapterId, int pageIndex);
 
-        Task<IEnumerable<Profile>> QueryProfilesByUserId(Guid userId);
+        Task<IEnumerable<Profile>> QueryProfilesByUserId(string userId);
 
         Task<IEnumerable<ChapterStats>> QueryStatsByProfileId(Guid profileId);
     }

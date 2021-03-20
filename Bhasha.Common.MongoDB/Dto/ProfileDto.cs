@@ -8,7 +8,7 @@ namespace Bhasha.Common.MongoDB.Dto
     public class ProfileDto : Dto, IEquatable<Profile>
     {
         [BsonElement]
-        public Guid UserId { get; set; }
+        public string UserId { get; set; } = string.Empty;
 
         [BsonElement]
         public string From { get; set; } = string.Empty;

@@ -37,11 +37,6 @@ namespace Bhasha.Common.MongoDB.Tests.Support
                 return TranslationDtoBuilder.Build() as TDto;
             }
 
-            if (typeof(TDto) == typeof(UserDto))
-            {
-                return UserDtoBuilder.Build() as TDto;
-            }
-
             throw new InvalidOperationException(
                 $"found no builder for {typeof(TDto).Name}");
         }

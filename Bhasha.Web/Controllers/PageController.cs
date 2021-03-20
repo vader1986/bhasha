@@ -10,7 +10,7 @@ namespace Bhasha.Web.Controllers
 {
     [ApiController]
     [Route("api/page")]
-    public class PageController : BhashaController
+    public class PageController : BaseController
     {
         private readonly IDatabase _database;
         private readonly IAuthorizedProfileLookup _profiles;

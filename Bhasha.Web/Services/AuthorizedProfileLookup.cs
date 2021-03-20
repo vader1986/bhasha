@@ -9,7 +9,7 @@ namespace Bhasha.Web.Services
 {
     public interface IAuthorizedProfileLookup
     {
-        Task<Profile> Get(Guid profileId, Guid userId);
+        Task<Profile> Get(Guid profileId, string userId);
     }
 
     public class AuthorizedProfileLookup : IAuthorizedProfileLookup
@@ -23,7 +23,7 @@ namespace Bhasha.Web.Services
             _profiles = profiles;
         }
 
-        public async Task<Profile> Get(Guid profileId, Guid userId)
+        public async Task<Profile> Get(Guid profileId, string userId)
         {
             var profile = await _cache.GetOrAddAsync(profileId.ToString(), () => _profiles.Get(profileId));
 

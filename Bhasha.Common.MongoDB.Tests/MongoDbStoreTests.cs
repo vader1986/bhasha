@@ -1,6 +1,4 @@
-﻿using System;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Bhasha.Common.MongoDB.Dto;
 using Bhasha.Common.MongoDB.Tests.Support;
 using Bhasha.Common.Tests.Support;
@@ -60,7 +58,6 @@ namespace Bhasha.Common.MongoDB.Tests
             await Test_Add<TipDto, Tip>();
             await Test_Add<TokenDto, Token>();
             await Test_Add<TranslationDto, Translation>();
-            await Test_Add<UserDto, User>();
         }
 
         private async Task Test_Remove<TDto, TProduct>() where TDto : MongoDB.Dto.Dto
@@ -95,7 +92,6 @@ namespace Bhasha.Common.MongoDB.Tests
             await Test_Remove<TipDto, Tip>();
             await Test_Remove<TokenDto, Token>();
             await Test_Remove<TranslationDto, Translation>();
-            await Test_Remove<UserDto, User>();
         }
 
         private async Task Test_Get<TDto, TProduct>() where TDto : MongoDB.Dto.Dto
@@ -123,7 +119,6 @@ namespace Bhasha.Common.MongoDB.Tests
             await Test_Get<TipDto, Tip>();
             await Test_Get<TokenDto, Token>();
             await Test_Get<TranslationDto, Translation>();
-            await Test_Get<UserDto, User>();
         }
 
         private async Task Test_Replace<TDto, TProduct>()
@@ -159,7 +154,6 @@ namespace Bhasha.Common.MongoDB.Tests
             await Test_Replace<TipDto, Tip>();
             await Test_Replace<TokenDto, Token>();
             await Test_Replace<TranslationDto, Translation>();
-            await Test_Replace<UserDto, User>();
         }
     }
 }

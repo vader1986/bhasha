@@ -11,7 +11,6 @@ namespace Bhasha.Common.MongoDB
         {
             var db = client.GetDatabase(Names.Database);
 
-            await db.CreateCollectionAsync(Names.Collections.Users);
             await db.CreateCollectionAsync(Names.Collections.Profiles);
             await db.CreateCollectionAsync(Names.Collections.Chapters);
             await db.CreateCollectionAsync(Names.Collections.Tokens);

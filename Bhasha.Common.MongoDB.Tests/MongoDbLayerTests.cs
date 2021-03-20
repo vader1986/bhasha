@@ -9,6 +9,7 @@ using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using NUnit.Framework;
 using System.Text;
+using Bhasha.Common.Tests.Support;
 
 namespace Bhasha.Common.MongoDB.Tests
 {
@@ -57,12 +58,12 @@ namespace Bhasha.Common.MongoDB.Tests
         [Test]
         public async Task QueryProfilesByUserId()
         {
-            var userId = Guid.NewGuid();
+            var userId = Rnd.Create.NextString();
             var profiles = Enumerable
                 .Range(1, 10)
                 .Select(i => {
                     var dto = ProfileDtoBuilder.Build();
-                    dto.UserId = i <= 5 ? userId : Guid.NewGuid();
+                    dto.UserId = i <= 5 ? userId : Rnd.Create.NextString();
                     return dto;
                 });
 

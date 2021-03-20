@@ -12,8 +12,7 @@ namespace Bhasha.Common.MongoDB.Dto
         IConvert<ProfileDto, Profile>,
         IConvert<TipDto, Tip>,
         IConvert<TokenDto, Token>,
-        IConvert<TranslationDto, Translation>,
-        IConvert<UserDto, User>
+        IConvert<TranslationDto, Translation>
     {
         public GenericPage Convert(GenericPageDto dto)
         {
@@ -221,31 +220,6 @@ namespace Bhasha.Common.MongoDB.Dto
                 Native = product.Native,
                 Spoken = product.Spoken,
                 AudioId = product.AudioId
-            };
-        }
-
-        public User Convert(UserDto dto)
-        {
-            try
-            {
-                return new User(
-                    dto.Id,
-                    dto.UserName,
-                    dto.Email);
-            }
-            catch (Exception e)
-            {
-                throw new InvalidDtoException(e, dto);
-            }
-        }
-
-        public UserDto Convert(User product)
-        {
-            return new UserDto
-            {
-                Id = product.Id,
-                UserName = product.UserName,
-                Email = product.Email
             };
         }
     }

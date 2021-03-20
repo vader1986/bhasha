@@ -55,14 +55,6 @@ namespace Bhasha.Common.Tests.Support
                     .Build() as TProduct;
             }
 
-            if (typeof(TProduct) == typeof(User))
-            {
-                return UserBuilder
-                    .Default
-                    .WithId(id ?? Guid.NewGuid())
-                    .Build() as TProduct;
-            }
-
             throw new InvalidOperationException(
                 $"found no builder for {typeof(TProduct).Name}");
         }

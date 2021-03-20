@@ -31,7 +31,7 @@ namespace Bhasha.Common.MongoDB
             return chapters.Select(_converter.Convert);
         }
 
-        public async Task<IEnumerable<Profile>> QueryProfilesByUserId(Guid userId)
+        public async Task<IEnumerable<Profile>> QueryProfilesByUserId(string userId)
         {
             var profiles = await _db
                 .GetCollection<ProfileDto>()

@@ -1,14 +1,7 @@
-﻿using System;
-
-namespace Bhasha.Common
+﻿namespace Bhasha.Common
 {
-    public class User : IEntity
+    public class User
     {
-        /// <summary>
-        /// Unqiue identifier for the user.
-        /// </summary>
-        public Guid Id { get; }
-
         /// <summary>
         /// Username choosen by the user.
         /// </summary>
@@ -19,16 +12,15 @@ namespace Bhasha.Common
         /// </summary>
         public string Email { get; }
 
-        public User(Guid id, string userName, string email)
+        public User(string userName, string email)
         {
-            Id = id;
             UserName = userName;
             Email = email;
         }
 
         public override string ToString()
         {
-            return $"{nameof(Id)}: {Id}, {nameof(UserName)}: {UserName}, {nameof(Email)}: {Email}";
+            return $"{nameof(UserName)}: {UserName}, {nameof(Email)}: {Email}";
         }
     }
 }
