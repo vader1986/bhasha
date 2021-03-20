@@ -8,8 +8,8 @@ namespace Bhasha.Common.Tests.Support
     {
         private Guid _id = Guid.NewGuid();
         private string _userId = Rnd.Create.NextString();
-        private Language _from = Rnd.Create.Choose(Language.Supported.Values.ToArray());
-        private Language _to = Rnd.Create.Choose(Language.Supported.Values.ToArray());
+        private Language _from = Language.English;
+        private Language _to = Language.Bengali;
         private int _level = Rnd.Create.Next();
         private int _completedChapters = Rnd.Create.Next();
 

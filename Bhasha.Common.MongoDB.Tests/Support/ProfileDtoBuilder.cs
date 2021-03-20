@@ -8,14 +8,12 @@ namespace Bhasha.Common.MongoDB.Tests.Support
 {
     public class ProfileDtoBuilder
     {
-        private static readonly string[] Languages = Language.Supported.Keys.ToArray();
-
         public static ProfileDto Build(string userId = default)
         {
             return new ProfileDto {
                 Id = Guid.NewGuid(),
-                From = Rnd.Create.Choose(Languages),
-                To = Rnd.Create.Choose(Languages),
+                From = Language.English,
+                To = Language.Bengali,
                 Level = Rnd.Create.Next(1, 10),
                 UserId = userId ?? Rnd.Create.NextString()
             };

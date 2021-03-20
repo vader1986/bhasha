@@ -36,6 +36,11 @@ namespace Bhasha.Common
 
         public Profile(Guid id, string userId, Language from, Language to, int level, int completedChapters)
         {
+            if (from == to)
+            {
+                throw new ArgumentException(nameof(to));
+            }
+
             Id = id;
             UserId = userId;
             From = from;

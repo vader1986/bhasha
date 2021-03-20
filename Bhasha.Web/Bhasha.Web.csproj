@@ -4,7 +4,6 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
   
-  <PropertyGroup Condition=" '$(RunConfiguration)' == 'Bhasha.Web.Api' " />
   <ItemGroup>
     <ProjectReference Include="..\Bhasha.Common\Bhasha.Common.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>

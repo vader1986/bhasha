@@ -35,7 +35,7 @@ namespace Bhasha.Web
                 .AddSingleton<IAppCache, CachingService>()
                 .AddSwaggerDocument()
                 .AddControllers();
-
+            
             services
                 .AddTransient<IConvert<ChapterStatsDto, ChapterStats>, Converter>()
                 .AddTransient<IConvert<GenericChapterDto, GenericChapter>, Converter>()
@@ -69,20 +69,13 @@ namespace Bhasha.Web
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            /*
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
-            app.UseHttpsRedirection();
+//            app.UseHttpsRedirection();
             app.UseRouting();
-            app.UseAuthorization();
+//            app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
-            */
 
             app.UseOpenApi();
             app.UseSwaggerUi3();

@@ -9,19 +9,11 @@
     }
   },
   "profiles": {
-    "IIS Express": {
-      "commandName": "IISExpress",
-      "launchBrowser": true,
-      "launchUrl": "weatherforecast",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
-    },
-    "Bhasha.Web.Api": {
+    "Bhasha.Web": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "bhasha",
-      "applicationUrl": "https://localhost:43868;http://localhost:50530",
+      "applicationUrl": "http://localhost:43868",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
