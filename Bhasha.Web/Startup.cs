@@ -4,6 +4,7 @@ using Bhasha.Common.MongoDB;
 using Bhasha.Common.MongoDB.Dto;
 using Bhasha.Common.Services;
 using Bhasha.Web.Services;
+using LazyCache;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -28,8 +29,8 @@ namespace Bhasha.Web
 
             services
                 .AddSingleton<IDatabase>(_ => new MongoDbLayer(db, new Converter()))
-                .AddSingleton<IProfileLookup, ProfileLookup>()
                 .AddSingleton<IAuthorizedProfileLookup, AuthorizedProfileLookup>()
+                .AddSingleton<IAppCache, CachingService>()
                 .AddControllers();
 
             services

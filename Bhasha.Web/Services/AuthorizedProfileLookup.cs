@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Bhasha.Common;
+using Bhasha.Common.Services;
 using Bhasha.Web.Exceptions;
+using LazyCache;
 
 namespace Bhasha.Web.Services
 {
@@ -12,16 +14,18 @@ namespace Bhasha.Web.Services
 
     public class AuthorizedProfileLookup : IAuthorizedProfileLookup
     {
-        private readonly IProfileLookup _lookup;
+        private readonly IStore<Profile> _profiles;
+        private readonly IAppCache _cache;
 
-        public AuthorizedProfileLookup(IProfileLookup lookup)
+        public AuthorizedProfileLookup(IAppCache cache, IStore<Profile> profiles)
         {
-            _lookup = lookup;
+            _cache = cache;
+            _profiles = profiles;
         }
 
         public async Task<Profile> Get(Guid profileId, Guid userId)
         {
-            var profile = await _lookup.GetProfile(profileId);
+            var profile = await _cache.GetOrAddAsync(profileId.ToString(), () => _profiles.Get(profileId));
 
             if (profile == null)
             {

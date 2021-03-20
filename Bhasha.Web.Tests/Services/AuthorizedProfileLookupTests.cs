@@ -1,25 +1,34 @@
 using System;
 using System.Threading.Tasks;
 using Bhasha.Common;
+using Bhasha.Common.Services;
 using Bhasha.Common.Tests.Support;
 using Bhasha.Web.Exceptions;
 using Bhasha.Web.Services;
 using FakeItEasy;
+using LazyCache;
+using Microsoft.Extensions.Caching.Memory;
 using NUnit.Framework;
 
 namespace Bhasha.Web.Tests.Services
 {
+    using AFactory = A<Func<ICacheEntry, Task<Profile>>>;
+    using AString = A<string>;
+    using ACacheOption = A<MemoryCacheEntryOptions>;
+
     [TestFixture]
     public class AuthorizedProfileLookupTests
     {
-        private IProfileLookup _lookup;
+        private IAppCache _cache;
+        private IStore<Profile> _profiles;
         private AuthorizedProfileLookup _authorizedLookup;
 
         [SetUp]
         public void Before()
         {
-            _lookup = A.Fake<IProfileLookup>();
-            _authorizedLookup = new AuthorizedProfileLookup(_lookup);
+            _cache = A.Fake<IAppCache>();
+            _profiles = A.Fake<IStore<Profile>>();
+            _authorizedLookup = new AuthorizedProfileLookup(_cache, _profiles);
         }
 
         [Test]
@@ -34,7 +43,8 @@ namespace Bhasha.Web.Tests.Services
                 .WithUserId(userId)
                 .Build();
 
-            A.CallTo(() => _lookup.GetProfile(profileId)).Returns(Task.FromResult(profile));
+            A.CallTo(() => _cache.GetOrAddAsync(AString._, AFactory._, ACacheOption._))
+                .Returns(Task.FromResult(profile));
 
             var result = await _authorizedLookup.Get(profileId, userId);
 
@@ -53,7 +63,8 @@ namespace Bhasha.Web.Tests.Services
                 .WithUserId(userId)
                 .Build();
 
-            A.CallTo(() => _lookup.GetProfile(profileId)).Returns(Task.FromResult(profile));
+            A.CallTo(() => _cache.GetOrAddAsync(AString._, AFactory._, ACacheOption._))
+                .Returns(Task.FromResult(profile));
 
             var otherUserId = Guid.NewGuid();
 
@@ -67,7 +78,8 @@ namespace Bhasha.Web.Tests.Services
             var profileId = Guid.NewGuid();
             var userId = Guid.NewGuid();
 
-            A.CallTo(() => _lookup.GetProfile(profileId)).Returns(Task.FromResult<Profile>(default));
+            A.CallTo(() => _cache.GetOrAddAsync(AString._, AFactory._, ACacheOption._))
+                .Returns(Task.FromResult<Profile>(null));
 
             Assert.ThrowsAsync<NotFoundException>(async () =>
                 await _authorizedLookup.Get(profileId, userId));
