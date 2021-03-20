@@ -7,7 +7,6 @@ namespace Bhasha.Common
 
     public class Language : IEquatable<Language>
     {
-
         public readonly static Language English = new Language("en", "English", "UK");
         public readonly static Language Bengali = new Language("bn", "Bengali");
 
