@@ -41,6 +41,13 @@ namespace Bhasha.Web.Controllers
         }
 
         // Authorize User
+        [HttpGet("languages")]
+        public Language[] Languages()
+        {
+            return Language.Supported.Values.ToArray();
+        }
+
+        // Authorize User
         [HttpDelete("delete")]
         public async Task Delete(Guid profileId)
         {
