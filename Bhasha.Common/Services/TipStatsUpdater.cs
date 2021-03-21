@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Bhasha.Common.Exceptions;
 using Bhasha.Common.Extensions;
 
 namespace Bhasha.Common.Services
@@ -29,7 +30,15 @@ namespace Bhasha.Common.Services
             if (stats == default)
             {
                 var chapter = await _chapters.Get(tip.ChapterId);
-                stats = await _stats.Add(ChapterStats.Create(profile.Id, chapter));
+
+                if (chapter != null)
+                {
+                    stats = await _stats.Add(ChapterStats.Create(profile.Id, chapter));
+                }
+                else
+                {
+                    throw new ObjectNotFoundException(typeof(GenericChapter), tip.ChapterId);
+                }
             }
 
             await _stats.Replace(stats.WithTip(tip.PageIndex));

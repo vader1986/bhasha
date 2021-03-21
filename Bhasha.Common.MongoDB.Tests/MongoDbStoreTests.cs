@@ -60,7 +60,9 @@ namespace Bhasha.Common.MongoDB.Tests
             await Test_Add<TranslationDto, Translation>();
         }
 
-        private async Task Test_Remove<TDto, TProduct>() where TDto : MongoDB.Dto.Dto
+        private async Task Test_Remove<TDto, TProduct>()
+            where TProduct : class
+            where TDto : MongoDB.Dto.Dto
         {
             var converter = _converter as IConvert<TDto, TProduct>;
             var store = new MongoDbStore<TDto, TProduct>(_db, converter);
@@ -94,7 +96,9 @@ namespace Bhasha.Common.MongoDB.Tests
             await Test_Remove<TranslationDto, Translation>();
         }
 
-        private async Task Test_Get<TDto, TProduct>() where TDto : MongoDB.Dto.Dto
+        private async Task Test_Get<TDto, TProduct>()
+            where TProduct : class
+            where TDto : MongoDB.Dto.Dto
         {
             var converter = _converter as IConvert<TDto, TProduct>;
             var store = new MongoDbStore<TDto, TProduct>(_db, converter);

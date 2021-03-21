@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Bhasha.Common.Exceptions;
 
 namespace Bhasha.Common.Services
 {
@@ -25,6 +26,12 @@ namespace Bhasha.Common.Services
         public async Task<Evaluation> Evaluate(Profile profile, Submit submit)
         {
             var chapter = await _chapters.Get(submit.ChapterId);
+
+            if (chapter == null)
+            {
+                throw new ObjectNotFoundException(typeof(GenericChapter), submit.ChapterId);
+            }
+
             var page = chapter.Pages[submit.PageIndex];
 
             var expected = await _database.QueryTranslationByTokenId(page.TokenId, profile.To);

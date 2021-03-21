@@ -12,5 +12,6 @@
     <Folder Include="Importers\" />
     <Folder Include="Services\" />
     <Folder Include="Arguments\" />
+    <Folder Include="Exceptions\" />
   </ItemGroup>
 </Project>

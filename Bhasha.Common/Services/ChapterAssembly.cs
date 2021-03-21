@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Bhasha.Common.Arguments;
+using Bhasha.Common.Exceptions;
 
 namespace Bhasha.Common.Services
 {
@@ -27,9 +28,15 @@ namespace Bhasha.Common.Services
 
         public async Task<Chapter> Assemble(Guid chapterId, Profile profile)
         {
-            var genericChapter = await _chapters.Get(chapterId);
+            var chapter = await _chapters.Get(chapterId);
+
+            if (chapter == null)
+            {
+                throw new ObjectNotFoundException(typeof(GenericChapter), chapterId);
+            }
+
             var translations = await Task
-                .WhenAll(genericChapter
+                .WhenAll(chapter
                 .Pages
                 .Select(p => _database
                 .QueryTranslationByTokenId(p.TokenId, profile.From)));
@@ -38,6 +45,11 @@ namespace Bhasha.Common.Services
             {
                 var token = await _tokens
                     .Get(genericPage.TokenId);
+
+                if (token == null)
+                {
+                    throw new ObjectNotFoundException(typeof(Token), genericPage.TokenId);
+                }
 
                 var translation = translations
                     .First(x => x.TokenId == genericPage.TokenId);
@@ -49,15 +61,15 @@ namespace Bhasha.Common.Services
                 return new Page(genericPage.PageType, token, translation, arguments);
             }
 
-            var pages = await Task.WhenAll(genericChapter.Pages.Select(PageFor));
+            var pages = await Task.WhenAll(chapter.Pages.Select(PageFor));
 
             return new Chapter(
-                genericChapter.Id,
-                genericChapter.Level,
-                genericChapter.Name,
-                genericChapter.Description,
+                chapter.Id,
+                chapter.Level,
+                chapter.Name,
+                chapter.Description,
                 pages,
-                genericChapter.PictureId);
+                chapter.PictureId);
         }
     }
 }

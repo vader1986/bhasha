@@ -7,7 +7,9 @@ using MongoDB.Driver.Linq;
 
 namespace Bhasha.Common.MongoDB
 {
-    public class MongoDbStore<TDto, TProduct> : IStore<TProduct> where TDto : Dto.Dto
+    public class MongoDbStore<TDto, TProduct> : IStore<TProduct>
+        where TProduct : class
+        where TDto : Dto.Dto
     {
         private readonly IMongoDb _db;
         private readonly IConvert<TDto, TProduct> _converter;
@@ -26,14 +28,14 @@ namespace Bhasha.Common.MongoDB
             return _converter.Convert(dto);
         }
 
-        public async Task<TProduct> Get(Guid id)
+        public async Task<TProduct?> Get(Guid id)
         {
             var dto = await _db
                 .GetCollection<TDto>()
                 .AsQueryable()
                 .FirstOrDefaultAsync(x => x.Id == id);
 
-            return _converter.Convert(dto);
+            return dto != null ? _converter.Convert(dto) : default;
         }
 
         public async Task<int> Remove(TProduct product)

@@ -4,7 +4,6 @@
     "Bhasha.Web": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "bhasha",
       "applicationUrl": "http://localhost:43868",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
