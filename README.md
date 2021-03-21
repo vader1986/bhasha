@@ -12,3 +12,25 @@ The VS solution contains multiple folders:
 * `Bhasha.Web` - .NET backend hosting the client app and web api to access data
 
 There's also a _react-app_ named `Bhasha.Web.Client`. 
+
+## Build & Deployment
+
+### Prerequisites
+* NPM
+* Docker
+* Kubernetes (incl. kubectl)
+
+### Build
+```bash
+cd Bhasha.Web.Client
+npm install
+npm run build
+cd ..
+docker-compose build
+```
+
+### Deployment
+```bash
+cd deploy
+kubectl apply -f deploy.yaml
+```
