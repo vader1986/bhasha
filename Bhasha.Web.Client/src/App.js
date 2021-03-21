@@ -1,24 +1,31 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 import Container from '@material-ui/core/Container';
-import Typography from '@material-ui/core/Typography';
-import { Button, Paper } from '@material-ui/core';
+import { Paper } from '@material-ui/core';
+import ProfileList from './features/ProfileList';
+
+const fakeProfile = {
+  id: "d494e433-ee72-48e8-a45a-3f0eed6a0d34",
+  userId: "test",
+  from: {
+    id: "en",
+    name: "English",
+    region: "UK"
+  },
+  to: {
+    id: "bn",
+    name: "Bengali",
+    region: null
+  },
+  level: 1,
+  completedChapters: 0
+};
 
 function App() {
   return (
     <Container maxWidth="sm" className="App">
       <Paper>
-        <img src={logo} className="App-logo" alt="logo" />
-        <Typography variant="h4" component="h1" gutterBottom>
-          Create React App + Material-UI
-        </Typography>
-        <Button variant="contained" color="primary">
-          Primary Button
-        </Button>
-        <Button variant="contained" color="secondary">
-          Secondary Button
-        </Button>
+        <ProfileList profiles={[fakeProfile]} />
       </Paper>
     </Container>
   );
