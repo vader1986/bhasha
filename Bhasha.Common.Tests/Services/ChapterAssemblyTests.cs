@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Bhasha.Common.Arguments;
+using Bhasha.Common.Exceptions;
 using Bhasha.Common.Services;
 using Bhasha.Common.Tests.Support;
 using FakeItEasy;
@@ -19,6 +20,13 @@ namespace Bhasha.Common.Tests.Services
         private IAssembleArguments _argument;
         private ChapterAssembly _assembly;
 
+        private Profile _testProfile;
+        private GenericPage[] _testPages;
+        private GenericChapter _testChapter;
+        private Token _testToken;
+        private Translation _testTranslation;
+        private object _testArguments;
+
         [SetUp]
         public void Before()
         {
@@ -32,7 +40,56 @@ namespace Bhasha.Common.Tests.Services
         [Test]
         public async Task Assemble_chapter_from_chapter_id_and_profile()
         {
+            AssumeAllData();
+
+            var chapter = await _assembly.Assemble(_testChapter.Id, _testProfile);
+
+            Assert.That(chapter.Id == _testChapter.Id);
+            Assert.That(chapter.Level == _testChapter.Level);
+            Assert.That(chapter.Name == _testChapter.Name);
+            Assert.That(chapter.Description == _testChapter.Description);
+            Assert.That(chapter.Pages.Length == _testChapter.Pages.Length);
+
+            for (int i = 0; i < chapter.Pages.Length; i++)
+            {
+                Assert.That(chapter.Pages[i].PageType == _testChapter.Pages[i].PageType);
+                Assert.That(chapter.Pages[i].Token == _testToken);
+                Assert.That(chapter.Pages[i].Translation == _testTranslation);
+                Assert.That(chapter.Pages[i].Arguments == _testArguments);
+            }
+        }
+
+        [Test]
+        public void Assembly_missing_chapter_throws()
+        {
             var profile = ProfileBuilder
+                .Default
+                .WithFrom(Language.Bengali)
+                .WithTo(Language.English)
+                .Build();
+
+            var chapterId = Guid.NewGuid();
+            
+            A.CallTo(() => _chapters.Get(chapterId))
+                .Returns(Task.FromResult<GenericChapter>(null));
+
+            Assert.ThrowsAsync<ObjectNotFoundException>(async () => await _assembly.Assemble(chapterId, profile));
+        }
+
+        [Test]
+        public void Assembly_missing_token_throws()
+        {
+            AssumeAllData();
+
+            A.CallTo(() => _tokens.Get(A<Guid>._))
+                .Returns(Task.FromResult<Token>(null));
+
+            Assert.ThrowsAsync<ObjectNotFoundException>(async () => await _assembly.Assemble(_testChapter.Id, _testProfile));
+        }
+
+        private void AssumeAllData()
+        {
+            _testProfile = ProfileBuilder
                 .Default
                 .WithFrom(Language.Bengali)
                 .WithTo(Language.English)
@@ -42,54 +99,38 @@ namespace Bhasha.Common.Tests.Services
                 .Default
                 .Build();
 
-            var genericPages = Enumerable
+            _testPages = Enumerable
                 .Range(0, 5)
                 .Select(_ => page).ToArray();
 
-            var genericChapter = GenericChapterBuilder
+            _testChapter = GenericChapterBuilder
                 .Default
-                .WithPages(genericPages)
+                .WithPages(_testPages)
                 .Build();
 
-            var token = TokenBuilder
+            _testToken = TokenBuilder
                 .Default
                 .WithId(page.TokenId)
                 .Build();
 
-            var translation = TranslationBuilder
+            _testTranslation = TranslationBuilder
                 .Default
                 .WithTokenId(page.TokenId)
                 .Build();
 
-            var arguments = new object();
+            _testArguments = new object();
 
-            AssumeAllDataForChapter(genericChapter, profile.From, token, translation, arguments);
+            A.CallTo(() => _chapters.Get(_testChapter.Id))
+                .Returns(Task.FromResult(_testChapter));
 
-            var chapter = await _assembly.Assemble(genericChapter.Id, profile);
+            A.CallTo(() => _tokens.Get(A<Guid>._))
+                .Returns(Task.FromResult(_testToken));
 
-            Assert.That(chapter.Id == genericChapter.Id);
-            Assert.That(chapter.Level == genericChapter.Level);
-            Assert.That(chapter.Name == genericChapter.Name);
-            Assert.That(chapter.Description == genericChapter.Description);
-            Assert.That(chapter.Pages.Length == genericChapter.Pages.Length);
+            A.CallTo(() => _database.QueryTranslationByTokenId(A<Guid>._, _testProfile.From))
+                .Returns(Task.FromResult(_testTranslation));
 
-            for (int i = 0; i < chapter.Pages.Length; i++)
-            {
-                Assert.That(chapter.Pages[i].PageType == genericChapter.Pages[i].PageType);
-                Assert.That(chapter.Pages[i].Token == token);
-                Assert.That(chapter.Pages[i].Translation == translation);
-                Assert.That(chapter.Pages[i].Arguments == arguments);
-            }
-        }
-
-        private void AssumeAllDataForChapter(GenericChapter genericChapter, Language from, Token token, Translation translation, object arguments)
-        {
-            A.CallTo(() => _chapters.Get(genericChapter.Id))
-                .Returns(Task.FromResult(genericChapter));
-
-            A.CallTo(() => _tokens.Get(A<Guid>._)).Returns(Task.FromResult(token));
-            A.CallTo(() => _database.QueryTranslationByTokenId(A<Guid>._, from)).Returns(Task.FromResult(translation));
-            A.CallTo(() => _argument.Assemble(A<IEnumerable<Translation>>._, A<Guid>._)).Returns(arguments);
+            A.CallTo(() => _argument.Assemble(A<IEnumerable<Translation>>._, A<Guid>._))
+                .Returns(_testArguments);
         }
     }
 }

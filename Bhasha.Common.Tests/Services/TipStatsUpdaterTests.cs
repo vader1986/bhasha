@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Bhasha.Common.Exceptions;
 using Bhasha.Common.Services;
 using Bhasha.Common.Tests.Support;
 using FakeItEasy;
@@ -49,7 +50,7 @@ namespace Bhasha.Common.Tests.Services
             A.CallTo(() => _database.QueryStatsByChapterAndProfileId(
                 stats.ChapterId,
                 stats.ProfileId))
-                .Returns(Task.FromResult<ChapterStats>(stats));
+                .Returns(Task.FromResult(stats));
         }
 
         [Test]
@@ -121,6 +122,32 @@ namespace Bhasha.Common.Tests.Services
                 .Matches(x => x.Completed == stats.Completed &&
                               x.Tips[tip.PageIndex] == expectedTips)))
                 .MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void UpdateStats_missing_chapter_throws()
+        {
+            var chapterId = Guid
+                .NewGuid();
+
+            var profile = ProfileBuilder
+                .Default
+                .Build();
+
+            var tip = TipBuilder
+                .Default
+                .WithChapterId(chapterId)
+                .WithPageIndex(1)
+                .Build();
+
+            A.CallTo(() => _database.QueryStatsByChapterAndProfileId(chapterId, profile.Id))
+                .Returns(Task.FromResult<ChapterStats>(null));
+
+            A.CallTo(() => _chapters.Get(tip.ChapterId))
+                .Returns(Task.FromResult<GenericChapter>(null));
+
+            Assert.ThrowsAsync<ObjectNotFoundException>(
+                async () => await _statsUpdater.UpdateStats(tip, profile));
         }
     }
 }
