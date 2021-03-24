@@ -1,7 +1,18 @@
-import { Button, Chip, Paper } from '@material-ui/core';
+import { Button, Chip, makeStyles, Paper } from '@material-ui/core';
 import axios from 'axios';
 import React, { useEffect } from 'react';
 import { getLanguageKey } from '../utils';
+
+const useStyles = makeStyles((theme) => ({
+    container: {
+      display: 'flex',
+      justifyContent: 'center',
+      flexWrap: 'wrap',
+      '& > *': {
+        margin: theme.spacing(0.5),
+      },
+    },
+  }));
 
 const isReady = (from, to, profiles) => {
     return from !== undefined && to !== undefined && from !== to &&
@@ -11,7 +22,7 @@ const isReady = (from, to, profiles) => {
 };
 
 function ProfileCreateDialog(props) {
-
+    const classes = useStyles();
     const [languages, setLanguages] = React.useState([]);
     const [selectedFrom, setSelectedFrom] = React.useState(undefined);
     const [selectedTo, setSelectedTo] = React.useState(undefined);
@@ -47,31 +58,33 @@ function ProfileCreateDialog(props) {
     return (
         <div>
             <Paper>
-                {languages.map(language => 
-                <li key={getLanguageKey(language)}>
-                    <Chip
-                        label={language.name}
-                        onClick={onSelect(undefined, language)}
-                    />
-                </li>
-                )}
-                { selectedFrom !== undefined && 
-                    <div>
-                        FROM
+                <div className={classes.container}>
+                    {languages.map(language => 
+                    <li key={getLanguageKey(language)}>
                         <Chip
-                            label={selectedFrom.name}
+                            label={language.name}
+                            onClick={onSelect(undefined, language)}
+                        />
+                    </li>
+                    )}
+                </div>
+                <div className={classes.container}>
+                    { selectedFrom !== undefined && 
+                        <Chip
+                            label={`From ${selectedFrom.name}`}
                             onDelete={onSelect(selectedFrom, undefined)} />
-                    </div> }
-                { selectedTo !== undefined && 
-                    <div>TO 
+                    }
+                    { selectedTo !== undefined && 
                         <Chip
-                            label={selectedTo.name}
-                            onDelete={onSelect(selectedTo, undefined)} />
-                    </div> }
-                { isReady(selectedFrom, selectedTo, props.profiles) && 
-                    <Button
-                        variant="contained" 
-                        onClick={onClick}>Create</Button>}
+                            label={`From ${selectedTo.name}`}
+                            onDelete={onSelect(selectedTo, undefined)} /> 
+                    }
+                </div>
+                <div className={classes.container}>
+                    { isReady(selectedFrom, selectedTo, props.profiles) && 
+                        <Button variant="contained" onClick={onClick}>Create</Button>
+                    }
+                </div>
             </Paper>            
         </div>
     );
