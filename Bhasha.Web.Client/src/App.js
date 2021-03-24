@@ -2,13 +2,13 @@ import React from 'react';
 import './App.css';
 import Container from '@material-ui/core/Container';
 import { Paper } from '@material-ui/core';
-import ProfileList from './features/ProfileList';
+import ProfileSelection from './features/ProfileSelection';
 
 function App() {
   return (
     <Container maxWidth="sm" className="App">
       <Paper>
-        <ProfileList />
+        <ProfileSelection />
       </Paper>
     </Container>
   );
