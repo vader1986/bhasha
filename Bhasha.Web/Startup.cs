@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using Bhasha.Common;
 using Bhasha.Common.Arguments;
 using Bhasha.Common.MongoDB.Extensions;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Bhasha.Web
 {
@@ -47,16 +49,27 @@ namespace Bhasha.Web
                 .AddTransient<IEvaluateSubmit, SubmitEvaluator>();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
         {
-//            app.UseHttpsRedirection();
+            var dir = Directory.GetCurrentDirectory();
+
+            if (Directory.Exists("wwwroot"))
+            {
+                logger.LogInformation($"Web app: {string.Join(", ", Directory.GetFiles("/app/wwwroot"))}");
+            }
+            else
+            {
+                logger.LogError($"Missing root directory for web app: {dir}/wwwroot");
+            }
+
+            //app.UseHttpsRedirection();
             app.UseRouting();
-//            app.UseAuthorization();
+            //app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
-
+            
             app.UseDefaultFiles();
             app.UseStaticFiles();
             app.UseOpenApi();
