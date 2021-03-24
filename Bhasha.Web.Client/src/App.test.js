@@ -1,8 +1,6 @@
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import App from './App';
 
-test('renders learn react link', () => {
+test('renders the whole application', () => {
   render(<App />);
-  const linkElement = screen.getByText(/Create Profile/i);
-  expect(linkElement).toBeInTheDocument();
 });

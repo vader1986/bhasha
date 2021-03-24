@@ -31,6 +31,5 @@ docker-compose build
 
 ### Deployment
 ```bash
-cd deploy
-kubectl apply -f deploy.yaml
+kubectl apply -f deploy
 ```

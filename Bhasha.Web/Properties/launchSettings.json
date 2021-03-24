@@ -6,7 +6,8 @@
       "launchBrowser": true,
       "applicationUrl": "http://localhost:43868",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_MongoDB": "mongodb://admin:password@localhost:32463"
       }
     }
   }

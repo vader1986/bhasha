@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Bhasha.Common.Exceptions;
 using Bhasha.Common.Services;
 using Bhasha.Common.Tests.Support;
 using FakeItEasy;
@@ -40,6 +41,18 @@ namespace Bhasha.Common.Tests.Services
                 .MustHaveHappenedOnceExactly();
 
             Assert.That(evaluation.Result == result);
+        }
+
+        [Test]
+        public void Evaluate_missing_chapter_throws()
+        {
+            var profile = ProfileBuilder.Default.Build();
+            var submit = new Submit(Guid.NewGuid(), 0, "test");
+
+            A.CallTo(() => _chapters.Get(submit.ChapterId))
+                .Returns(Task.FromResult<GenericChapter>(null));
+
+            Assert.ThrowsAsync<ObjectNotFoundException>(async () => await _submitEvaluator.Evaluate(profile, submit));
         }
 
         private void AssumeResult(Profile profile, Submit submit, Result result)
