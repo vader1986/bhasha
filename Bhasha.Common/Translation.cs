@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 
 namespace Bhasha.Common
 {
@@ -7,6 +8,7 @@ namespace Bhasha.Common
         /// <summary>
         /// Unique identifier of the translation.
         /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public Guid Id { get; }
 
         /// <summary>
@@ -32,7 +34,11 @@ namespace Bhasha.Common
         /// <summary>
         /// Optional link to an audio file.
         /// </summary>
+        [JsonIgnore]
         public ResourceId? AudioId { get; }
+
+        [JsonConstructor]
+        public Translation(Guid tokenId, Language language, string native, string spoken) : this(default, tokenId, language, native, spoken) { }
 
         public Translation(Guid id, Guid tokenId, Language language, string native, string spoken, ResourceId? audioId = default)
         {

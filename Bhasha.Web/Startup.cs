@@ -1,6 +1,4 @@
-using System.Collections.Generic;
 using System.IO;
-using Bhasha.Common;
 using Bhasha.Common.Arguments;
 using Bhasha.Common.MongoDB.Extensions;
 using Bhasha.Common.Services;
@@ -35,18 +33,15 @@ namespace Bhasha.Web
                 .AddControllers();
 
             services
-                .AddTransient<ArgumentAssemblyProvider>(sp => key => {
-                    return key switch
-                    {
-                        PageType.OneOutOfFour => sp.GetService<OneOutOfFourArgumentsAssembly>(),
-                        _ => throw new KeyNotFoundException($"No {nameof(IAssembleArguments)} found for {key}"),
-                    };
-                })
+                .AddTransient<IArgumentAssemblyProvider, ArgumentAssemblyProvider>()
                 .AddTransient<IAssembleChapters, ChapterAssembly>()
                 .AddTransient<ICheckResult, ResultChecker>()
                 .AddTransient<IUpdateStatsForEvaluation, EvaluationStatsUpdater>()
                 .AddTransient<IUpdateStatsForTip, TipStatsUpdater>()
                 .AddTransient<IEvaluateSubmit, SubmitEvaluator>();
+
+            services
+                .AddTransient<OneOutOfFourArgumentsAssembly>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
@@ -55,7 +50,7 @@ namespace Bhasha.Web
 
             if (Directory.Exists("wwwroot"))
             {
-                logger.LogInformation($"Web app: {string.Join(", ", Directory.GetFiles("/app/wwwroot"))}");
+                logger.LogInformation($"Web app: {string.Join(", ", Directory.GetFiles("wwwroot"))}");
             }
             else
             {

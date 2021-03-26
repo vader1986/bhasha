@@ -15,10 +15,14 @@ const ProfileList = (props) => {
           .then(_ => props.onDelete(profile));
     };
 
+    const onSelect = (profile) => () => {
+        props.onSelect(profile);
+    };
+
     return (
         <div>
             {props.profiles.map(profile => 
-                <ListItem button key={profile.id}>
+                <ListItem button key={profile.id} onClick={onSelect(profile)}>
                     <ListItemText>{displayName(profile)}</ListItemText>
                     <ListItemSecondaryAction>
                     <IconButton

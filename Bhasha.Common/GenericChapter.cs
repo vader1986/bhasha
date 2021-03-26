@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace Bhasha.Common
 {
@@ -8,6 +9,7 @@ namespace Bhasha.Common
         /// <summary>
         /// Unique identifier of the chapter.
         /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public Guid Id { get; }
 
         /// <summary>
@@ -33,9 +35,13 @@ namespace Bhasha.Common
         /// <summary>
         /// Link to an image representing the content of the chapter (optional).
         /// </summary>
+        [JsonIgnore]
         public ResourceId? PictureId { get; }
 
-        public GenericChapter(Guid id, int level, string name, string description, GenericPage[] pages, ResourceId? pictureId)
+        [JsonConstructor]
+        public GenericChapter(int level, string name, string description, GenericPage[] pages) : this(default, level, name, description, pages) { }
+
+        public GenericChapter(Guid id, int level, string name, string description, GenericPage[] pages, ResourceId? pictureId = default)
         {
             Id = id;
             Level = level;

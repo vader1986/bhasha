@@ -20,6 +20,10 @@ function ProfileSelection(props) {
         setProfiles(prev => prev.concat([profile]));
     };
 
+    const onSelect = (profile) => {
+        props.onSelect(profile);
+    };
+
     const onDelete = (profile) => {
         setProfiles(prev => prev.filter(x => x !== profile));
     };
@@ -39,7 +43,7 @@ function ProfileSelection(props) {
                 <Collapse in={open} timeout="auto" unmountOnExit>
                     <ProfileCreateDialog profiles={profiles} onCreate={onCreate} />
                 </Collapse>
-                <ProfileList profiles={profiles} onDelete={onDelete} />
+                <ProfileList profiles={profiles} onDelete={onDelete} onSelect={onSelect} />
             </List>
         </div>
     );

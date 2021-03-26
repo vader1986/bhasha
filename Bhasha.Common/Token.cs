@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 
 namespace Bhasha.Common
 {
@@ -7,6 +8,7 @@ namespace Bhasha.Common
         /// <summary>
         /// Unqiue identifier of the token.
         /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public Guid Id { get; }
 
         /// <summary>
@@ -38,9 +40,15 @@ namespace Bhasha.Common
         /// <summary>
         /// Link to an image representation for this token (optional).
         /// </summary>
+        [JsonIgnore]
         public ResourceId? PictureId { get; }
 
-        public Token(Guid id, string label, int level, CEFR cefr, TokenType tokenType, string[] categories, ResourceId? pictureId = default)
+        [JsonConstructor]
+        public Token(string label, int level, CEFR cefr, TokenType tokenType, string[] categories) : this(default, label, level, cefr, tokenType, categories, default) { }
+
+        public Token(Guid id, string label, int level, CEFR cefr, TokenType tokenType, string[] categories) : this(id, label, level, cefr, tokenType, categories, default) { }
+
+        public Token(Guid id, string label, int level, CEFR cefr, TokenType tokenType, string[] categories, ResourceId? pictureId)
         {
             Id = id;
             Label = label;

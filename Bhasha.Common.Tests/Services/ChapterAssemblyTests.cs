@@ -25,7 +25,7 @@ namespace Bhasha.Common.Tests.Services
         private GenericChapter _testChapter;
         private Token _testToken;
         private Translation _testTranslation;
-        private object _testArguments;
+        private IArgumentAssemblyProvider _testArguments;
 
         [SetUp]
         public void Before()
@@ -33,8 +33,12 @@ namespace Bhasha.Common.Tests.Services
             _database = A.Fake<IDatabase>();
             _tokens = A.Fake<IStore<Token>>();
             _chapters = A.Fake<IStore<GenericChapter>>();
+            _testArguments = A.Fake<IArgumentAssemblyProvider>();
             _argument = A.Fake<IAssembleArguments>();
-            _assembly = new ChapterAssembly(_database, _tokens, _chapters, _ => _argument);
+
+            A.CallTo(() => _testArguments.GetAssembly(A<PageType>._)).Returns(_argument);
+
+            _assembly = new ChapterAssembly(_database, _tokens, _chapters, _testArguments);
         }
 
         [Test]
@@ -117,8 +121,6 @@ namespace Bhasha.Common.Tests.Services
                 .Default
                 .WithTokenId(page.TokenId)
                 .Build();
-
-            _testArguments = new object();
 
             A.CallTo(() => _chapters.Get(_testChapter.Id))
                 .Returns(Task.FromResult(_testChapter));
