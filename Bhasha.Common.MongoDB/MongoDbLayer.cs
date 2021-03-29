@@ -35,7 +35,7 @@ namespace Bhasha.Common.MongoDB
             var chapters = await _db
                 .GetCollection<GenericChapterDto>()
                 .AsQueryable()
-                .Where(x => x.Level <= level)
+                .Where(x => x.Level == level)
                 .ToListAsync();
 
             return chapters.Select(_converter.Convert);

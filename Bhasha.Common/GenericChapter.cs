@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace Bhasha.Common
 {
-    public class GenericChapter : IEntity
+    public class GenericChapter : IEntity, IEquatable<GenericChapter>
     {
         /// <summary>
         /// Unique identifier of the chapter.
@@ -47,6 +47,11 @@ namespace Bhasha.Common
         public override string ToString()
         {
             return $"{nameof(Id)}: {Id}, {nameof(Level)}: {Level}, {nameof(NameId)}: {NameId}, {nameof(DescriptionId)}: {DescriptionId}, {nameof(Pages)}: {string.Join('/', Pages?.Select(x => x.ToString()))}";
+        }
+
+        public bool Equals(GenericChapter other)
+        {
+            return other != null && other.Level == Level && other.NameId == NameId && other.DescriptionId == DescriptionId && other.Pages.SequenceEqual(Pages);
         }
     }
 }

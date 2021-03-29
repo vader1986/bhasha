@@ -2,7 +2,7 @@
 
 namespace Bhasha.Common
 {
-    public class GenericPage
+    public class GenericPage : IEquatable<GenericPage>
     {
         /// <summary>
         /// Reference to the generic token this page is designed for. 
@@ -23,6 +23,11 @@ namespace Bhasha.Common
         public override string ToString()
         {
             return $"{nameof(TokenId)}: {TokenId}, {nameof(PageType)}: {PageType}";
+        }
+
+        public bool Equals(GenericPage other)
+        {
+            return other != null && other.TokenId == TokenId && other.PageType == PageType;
         }
     }
 }

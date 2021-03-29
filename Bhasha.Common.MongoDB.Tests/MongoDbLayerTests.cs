@@ -51,8 +51,8 @@ namespace Bhasha.Common.MongoDB.Tests
 
             var result = await _layer.QueryChaptersByLevel(5);
 
-            Assert.That(result.Count() == 5);
-            Assert.That(result.All(x => x.Level <= 5));
+            Assert.That(result.Count() == 1);
+            Assert.That(result.All(x => x.Level == 5));
         }
 
         [Test]
