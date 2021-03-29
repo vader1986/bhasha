@@ -16,9 +16,9 @@ There's also a _react-app_ named `Bhasha.Web.Client`.
 ## Build & Deployment
 
 ### Prerequisites
-* NPM
-* Docker
-* Kubernetes (incl. kubectl)
+* [NPM](https://www.npmjs.com/get-npm)
+* [Docker](https://docs.docker.com/engine/install/)
+* Kubernetes (incl. `kubectl`, can be [enabled in docker](https://docs.docker.com/desktop/kubernetes/))
 
 ### Build
 ```bash
