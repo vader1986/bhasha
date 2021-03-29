@@ -86,15 +86,15 @@ namespace Bhasha.Common.MongoDB
             return tips.Select(_converter.Convert);
         }
 
-        public async Task<Translation> QueryTranslationByTokenId(Guid tokenId, Language language)
+        public async Task<Translation?> QueryTranslationByTokenId(Guid tokenId, Language language)
         {
             var translation = await _db
                 .GetCollection<TranslationDto>()
                 .AsQueryable()
-                .FirstAsync(x => x.TokenId == tokenId &&
+                .FirstOrDefaultAsync(x => x.TokenId == tokenId &&
                                  x.Language == language);
 
-            return _converter.Convert(translation);
+            return translation != null ? _converter.Convert(translation) : default;
         }
     }
 }
