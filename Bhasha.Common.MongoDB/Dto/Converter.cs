@@ -44,10 +44,9 @@ namespace Bhasha.Common.MongoDB.Dto
                 return new GenericChapter(
                     dto.Id,
                     dto.Level,
-                    dto.Name,
-                    dto.Description,
-                    dto.Pages.Select(Convert).ToArray(),
-                    dto.PictureId);
+                    dto.NameId,
+                    dto.DescriptionId,
+                    dto.Pages.Select(Convert).ToArray());
             }
             catch (Exception e)
             {
@@ -61,10 +60,9 @@ namespace Bhasha.Common.MongoDB.Dto
             {
                 Id = product.Id,
                 Level = product.Level,
-                Name = product.Name,
-                Description = product.Description,
-                Pages = product.Pages.Select(Convert).ToArray(),
-                PictureId = product.PictureId
+                NameId = product.NameId,
+                DescriptionId = product.DescriptionId,
+                Pages = product.Pages.Select(Convert).ToArray()
             };
         }
 

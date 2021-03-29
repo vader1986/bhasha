@@ -12,20 +12,17 @@ namespace Bhasha.Common.MongoDB.Dto
         public int Level { get; set; }
 
         [BsonElement]
-        public string Name { get; set; } = string.Empty;
+        public Guid NameId { get; set; }
 
         [BsonElement]
-        public string Description { get; set; } = string.Empty;
+        public Guid DescriptionId { get; set; }
 
         [BsonElement]
         public GenericPageDto[] Pages { get; set; } = new GenericPageDto[0];
 
-        [BsonElement]
-        public string? PictureId { get; set; }
-
         public bool Equals(GenericChapter other)
         {
-            return other != null && other.Id == Id && other.Level == Level && other.Name == Name && other.Description == Description && other.PictureId == PictureId && other.Pages.Length == Pages.Length && other.Pages.Select((x, i) => Pages[i].Equals(x)).All(x => x);
+            return other != null && other.Id == Id && other.Level == Level && other.NameId == NameId && other.DescriptionId == DescriptionId && other.Pages.Length == Pages.Length && other.Pages.Select((x, i) => Pages[i].Equals(x)).All(x => x);
         }
     }
 }

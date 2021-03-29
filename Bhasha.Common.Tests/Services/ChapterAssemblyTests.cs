@@ -50,8 +50,8 @@ namespace Bhasha.Common.Tests.Services
 
             Assert.That(chapter.Id == _testChapter.Id);
             Assert.That(chapter.Level == _testChapter.Level);
-            Assert.That(chapter.Name == _testChapter.Name);
-            Assert.That(chapter.Description == _testChapter.Description);
+            Assert.That(chapter.Name == _testTranslation.Native);
+            Assert.That(chapter.Description == _testTranslation.Native);
             Assert.That(chapter.Pages.Length == _testChapter.Pages.Length);
 
             for (int i = 0; i < chapter.Pages.Length; i++)

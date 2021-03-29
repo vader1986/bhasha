@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using Bhasha.Common.Extensions;
 
 namespace Bhasha.Common.Tests.Support
 {
@@ -8,16 +7,9 @@ namespace Bhasha.Common.Tests.Support
     {
         private Guid _id = Guid.NewGuid();
         private int _level = Rnd.Create.Next();
-        private string _name = Rnd.Create.NextString();
-        private string _description = Rnd.Create.NextPhrase();
+        private Guid _nameId = Guid.NewGuid();
+        private Guid _descriptionId = Guid.NewGuid();
         private GenericPage[] _pages = Enumerable.Range(1, 5).Select(_ => GenericPageBuilder.Default.Build()).ToArray();
-        private ResourceId _pictureId = Rnd.Create.NextString();
-
-        public GenericChapterBuilder WithPictureId(ResourceId pictureId)
-        {
-            _pictureId = pictureId;
-            return this;
-        }
 
         public GenericChapterBuilder WithId(Guid id)
         {
@@ -38,10 +30,9 @@ namespace Bhasha.Common.Tests.Support
             return new GenericChapter(
                 _id,
                 _level,
-                _name,
-                _description,
-                _pages,
-                _pictureId);
+                _nameId,
+                _descriptionId,
+                _pages);
         }
     }
 }

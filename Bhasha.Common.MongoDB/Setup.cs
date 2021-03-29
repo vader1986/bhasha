@@ -24,6 +24,9 @@ namespace Bhasha.Common.MongoDB
             var chapters = db.GetCollection<GenericChapterDto>(Names.Collections.Chapters);
             await chapters.CreateIndices(x => x.Level);
 
+            var tokens = db.GetCollection<TokenDto>(Names.Collections.Tokens);
+            await tokens.CreateIndices(x => x.Label);
+
             var translations = db.GetCollection<TranslationDto>(Names.Collections.Translations);
             await translations.CreateIndices(x => x.Language, x => x.TokenId);
 

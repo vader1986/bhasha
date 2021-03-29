@@ -16,9 +16,9 @@ function ChapterSelection(props) {
     return (
         <div>
             <List component="nav">
-                { chapters.map(x => 
+                { chapters.map(chapter => 
                 <ListItem button>
-                    <ListItemText>123123</ListItemText>
+                    <ListItemText>{chapter.name}</ListItemText>
                 </ListItem>)
                 }
             </List>

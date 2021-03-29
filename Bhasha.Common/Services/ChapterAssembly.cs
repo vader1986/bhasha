@@ -35,6 +35,10 @@ namespace Bhasha.Common.Services
                 throw new ObjectNotFoundException(typeof(GenericChapter), chapterId);
             }
 
+            var token = await _tokens.Get(chapter.NameId);
+            var name = await _database.QueryTranslationByTokenId(chapter.NameId, profile.From);
+            var description = await _database.QueryTranslationByTokenId(chapter.DescriptionId, profile.From);
+
             var translations = await Task
                 .WhenAll(chapter
                 .Pages
@@ -66,10 +70,10 @@ namespace Bhasha.Common.Services
             return new Chapter(
                 chapter.Id,
                 chapter.Level,
-                chapter.Name,
-                chapter.Description,
+                name.Native,
+                description.Native,
                 pages,
-                chapter.PictureId);
+                token?.PictureId);
         }
     }
 }

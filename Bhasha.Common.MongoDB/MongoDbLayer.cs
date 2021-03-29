@@ -20,6 +20,16 @@ namespace Bhasha.Common.MongoDB
             _converter = converter;
         }
 
+        public async Task<Token?> QueryTokenByLabel(string label)
+        {
+            var token = await _db
+                .GetCollection<TokenDto>()
+                .AsQueryable()
+                .FirstOrDefaultAsync(x => x.Label == label);
+
+            return token != null ? _converter.Convert(token) : default;
+        }
+
         public async Task<IEnumerable<GenericChapter>> QueryChaptersByLevel(int level)
         {
             var chapters = await _db

@@ -20,40 +20,33 @@ namespace Bhasha.Common
         /// <summary>
         /// Name of the chapter.
         /// </summary>
-        public string Name { get; }
+        public Guid NameId { get; }
 
         /// <summary>
         /// Description of the chapter.
         /// </summary>
-        public string Description { get; }
+        public Guid DescriptionId { get; }
 
         /// <summary>
         /// Sequence of pages of the chapter.
         /// </summary>
         public GenericPage[] Pages { get; }
 
-        /// <summary>
-        /// Link to an image representing the content of the chapter (optional).
-        /// </summary>
-        [JsonIgnore]
-        public ResourceId? PictureId { get; }
-
         [JsonConstructor]
-        public GenericChapter(int level, string name, string description, GenericPage[] pages) : this(default, level, name, description, pages) { }
+        public GenericChapter(int level, Guid nameId, Guid descriptionId, GenericPage[] pages) : this(default, level, nameId, descriptionId, pages) { }
 
-        public GenericChapter(Guid id, int level, string name, string description, GenericPage[] pages, ResourceId? pictureId = default)
+        public GenericChapter(Guid id, int level, Guid nameId, Guid descriptionId, GenericPage[] pages)
         {
             Id = id;
             Level = level;
-            Name = name;
-            Description = description;
+            NameId = nameId;
+            DescriptionId = descriptionId;
             Pages = pages;
-            PictureId = pictureId;
         }
 
         public override string ToString()
         {
-            return $"{nameof(Id)}: {Id}, {nameof(Level)}: {Level}, {nameof(Name)}: {Name}, {nameof(Description)}: {Description}, {nameof(Pages)}: {string.Join('/', Pages?.Select(x => x.ToString()))}, {nameof(PictureId)}: {PictureId}";
+            return $"{nameof(Id)}: {Id}, {nameof(Level)}: {Level}, {nameof(NameId)}: {NameId}, {nameof(DescriptionId)}: {DescriptionId}, {nameof(Pages)}: {string.Join('/', Pages?.Select(x => x.ToString()))}";
         }
     }
 }

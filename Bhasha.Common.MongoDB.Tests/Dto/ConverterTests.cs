@@ -28,9 +28,8 @@ namespace Bhasha.Common.MongoDB.Tests.Dto
 
             Assert.That(result.Id == dto.Id);
             Assert.That(result.Level == dto.Level);
-            Assert.That(result.Name == dto.Name);
-            Assert.That(result.Description == dto.Description);
-            Assert.That(result.PictureId == dto.PictureId);
+            Assert.That(result.NameId == dto.NameId);
+            Assert.That(result.DescriptionId == dto.DescriptionId);
             Assert.That(result.Pages.Length == dto.Pages.Length);
 
             for (int i = 0; i < result.Pages.Length; i++)
@@ -57,9 +56,8 @@ namespace Bhasha.Common.MongoDB.Tests.Dto
 
             Assert.That(result.Id == genericChapter.Id);
             Assert.That(result.Level == genericChapter.Level);
-            Assert.That(result.Name == genericChapter.Name);
-            Assert.That(result.Description == genericChapter.Description);
-            Assert.That(result.PictureId == genericChapter.PictureId);
+            Assert.That(result.NameId == genericChapter.NameId);
+            Assert.That(result.DescriptionId == genericChapter.DescriptionId);
             Assert.That(result.Pages.Length == genericChapter.Pages.Length);
 
             for (int i = 0; i < result.Pages.Length; i++)

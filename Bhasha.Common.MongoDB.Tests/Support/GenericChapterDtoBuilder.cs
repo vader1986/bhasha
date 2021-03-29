@@ -14,9 +14,8 @@ namespace Bhasha.Common.MongoDB.Tests.Support
             {
                 Id = Guid.NewGuid(),
                 Level = Rnd.Create.Next(),
-                Name = Rnd.Create.NextString(),
-                Description = Rnd.Create.NextPhrase(),
-                PictureId = Rnd.Create.NextString(),
+                NameId = Guid.NewGuid(),
+                DescriptionId = Guid.NewGuid(),
                 Pages = tokenIds
                     .Select(x => GenericPageDtoBuilder.Build(x))
                     .ToArray()

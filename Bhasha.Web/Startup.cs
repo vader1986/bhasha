@@ -1,5 +1,6 @@
 using System.IO;
 using Bhasha.Common.Arguments;
+using Bhasha.Common.Importers;
 using Bhasha.Common.MongoDB.Extensions;
 using Bhasha.Common.Services;
 using Bhasha.Web.Services;
@@ -33,6 +34,7 @@ namespace Bhasha.Web
                 .AddControllers();
 
             services
+                .AddTransient<ChapterDtoImporter>()
                 .AddTransient<IArgumentAssemblyProvider, ArgumentAssemblyProvider>()
                 .AddTransient<IAssembleChapters, ChapterAssembly>()
                 .AddTransient<ICheckResult, ResultChecker>()

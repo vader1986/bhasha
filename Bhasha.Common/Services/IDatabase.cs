@@ -6,6 +6,8 @@ namespace Bhasha.Common.Services
 {
     public interface IDatabase
     {
+        Task<Token?> QueryTokenByLabel(string label);
+
         Task<Translation> QueryTranslationByTokenId(Guid tokenId, Language language);
 
         Task<ChapterStats?> QueryStatsByChapterAndProfileId(Guid chapterId, Guid profileId);
