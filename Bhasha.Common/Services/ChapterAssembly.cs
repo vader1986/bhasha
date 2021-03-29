@@ -1,43 +1,46 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Bhasha.Common.Arguments;
-using Bhasha.Common.Exceptions;
 
 namespace Bhasha.Common.Services
 {
     public interface IAssembleChapters
     {
-        Task<Chapter> Assemble(Guid chapterId, Profile profile);
+        Task<Chapter?> Assemble(GenericChapter chapter, Profile profile);
     }
 
     public class ChapterAssembly : IAssembleChapters
     {
         private readonly IDatabase _database;
         private readonly IStore<Token> _tokens;
-        private readonly IStore<GenericChapter> _chapters;
         private readonly IArgumentAssemblyProvider _arguments;
 
-        public ChapterAssembly(IDatabase database, IStore<Token> tokens, IStore<GenericChapter> chapters, IArgumentAssemblyProvider arguments)
+        public ChapterAssembly(IDatabase database, IStore<Token> tokens, IArgumentAssemblyProvider arguments)
         {
             _database = database;
             _tokens = tokens;
-            _chapters = chapters;
             _arguments = arguments;
         }
 
-        public async Task<Chapter> Assemble(Guid chapterId, Profile profile)
+        public async Task<Chapter?> Assemble(GenericChapter chapter, Profile profile)
         {
-            var chapter = await _chapters.Get(chapterId);
-
-            if (chapter == null)
+            var token = await _tokens.Get(chapter.NameId);
+            if (token == null)
             {
-                throw new ObjectNotFoundException(typeof(GenericChapter), chapterId);
+                return null;
             }
 
-            var token = await _tokens.Get(chapter.NameId);
             var name = await _database.QueryTranslationByTokenId(chapter.NameId, profile.From);
+            if (name == null)
+            {
+                return null;
+            }
+
             var description = await _database.QueryTranslationByTokenId(chapter.DescriptionId, profile.From);
+            if (description == null)
+            {
+                return null;
+            }
 
             var translations = await Task
                 .WhenAll(chapter
@@ -45,18 +48,29 @@ namespace Bhasha.Common.Services
                 .Select(p => _database
                 .QueryTranslationByTokenId(p.TokenId, profile.From)));
 
-            async Task<Page> PageFor(GenericPage genericPage)
+            if (translations == null)
+            {
+                return null;
+            }
+
+            async Task<Page?> PageFor(GenericPage genericPage)
             {
                 var token = await _tokens
                     .Get(genericPage.TokenId);
 
                 if (token == null)
                 {
-                    throw new ObjectNotFoundException(typeof(Token), genericPage.TokenId);
+                    return null;
                 }
 
                 var translation = translations
-                    .First(x => x.TokenId == genericPage.TokenId);
+                    .FirstOrDefault(x => x != null &&
+                                         x.TokenId == genericPage.TokenId);
+
+                if (translation == null)
+                {
+                    return null;
+                }
 
                 var arguments = _arguments
                     .GetAssembly(genericPage.PageType)
@@ -66,6 +80,10 @@ namespace Bhasha.Common.Services
             }
 
             var pages = await Task.WhenAll(chapter.Pages.Select(PageFor));
+            if (pages.Any(x => x == null))
+            {
+                return null;
+            }
 
             return new Chapter(
                 chapter.Id,
