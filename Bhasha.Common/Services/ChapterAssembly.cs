@@ -46,7 +46,7 @@ namespace Bhasha.Common.Services
                 .WhenAll(chapter
                 .Pages
                 .Select(p => _database
-                .QueryTranslationByTokenId(p.TokenId, profile.From)));
+                .QueryTranslationByTokenId(p.TokenId, profile.To)));
 
             if (translations == null)
             {
@@ -55,17 +55,14 @@ namespace Bhasha.Common.Services
 
             async Task<Page?> PageFor(GenericPage genericPage)
             {
-                var token = await _tokens
-                    .Get(genericPage.TokenId);
+                var token = await _tokens.Get(genericPage.TokenId);
 
                 if (token == null)
                 {
                     return null;
                 }
 
-                var translation = translations
-                    .FirstOrDefault(x => x != null &&
-                                         x.TokenId == genericPage.TokenId);
+                var translation = await _database.QueryTranslationByTokenId(token.Id, profile.From);
 
                 if (translation == null)
                 {
