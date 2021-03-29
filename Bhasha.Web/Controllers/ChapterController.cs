@@ -34,7 +34,7 @@ namespace Bhasha.Web.Controllers
                 await Task.WhenAll(chapters.Select(chapter =>
                     _database.QueryStatsByChapterAndProfileId(chapter.Id, profile.Id)));
 
-            var completed = stats.ToDictionary(x => x.ChapterId, x => x.Completed);
+            var completed = stats.Where(x => x != null).ToDictionary(x => x.ChapterId, x => x.Completed);
             var uncompletedChapters = chapters.Where(x => !(completed.ContainsKey(x.Id) && completed[x.Id]));
             var result = await Task.WhenAll(uncompletedChapters.Select(async x => await _chapters.Assemble(x, profile)));
 
