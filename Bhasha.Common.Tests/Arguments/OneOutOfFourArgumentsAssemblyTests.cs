@@ -27,7 +27,7 @@ namespace Bhasha.Common.Tests.Arguments
 
             var tokenId = translations[0].TokenId;
             var arguments = _assembly.Assemble(translations, tokenId);
-            var expectedItem = translations[0].Native;
+            var expectedItem = $"{translations[0].Native} ({translations[0].Spoken})";
 
             Assert.That(arguments is OneOutOfFourArguments args &&
                 args.Options != null &&
