@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Bhasha.Common;
 using Bhasha.Common.Importers;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,9 +18,9 @@ namespace Bhasha.Web.Controllers
 
         // Authorize Author
         [HttpPost("add/chapter")]
-        public async Task AddToken([FromBody]ChapterDto chapter)
+        public Task<GenericChapter> AddToken([FromBody]ChapterDto chapter)
         {
-            await _importer.Import(chapter);
+            return _importer.Import(chapter);
         }
     }
 }

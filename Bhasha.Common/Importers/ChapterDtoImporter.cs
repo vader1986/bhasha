@@ -20,12 +20,15 @@ namespace Bhasha.Common.Importers
             _chapters = chapters;
         }
 
-        private Task<Token> ImportToken(ChapterDto.TokenDto dto, int level)
+        private async Task<Token> ImportToken(ChapterDto.TokenDto dto, int level)
         {
-            // TODO
-            // - add IDatabase
-            // - check for existing token for label
-            return _tokens.Add(new Token(
+            var token = await _database.QueryTokenByLabel(dto.Label);
+            if (token != null)
+            {
+                return token;
+            }
+
+            return await _tokens.Add(new Token(
                     dto.Label,
                     level,
                     Enum.Parse<CEFR>(dto.Cefr),
@@ -35,10 +38,11 @@ namespace Bhasha.Common.Importers
 
         private async Task ImportTranslation(string language, ChapterDto.TranslationDto dto, Token token)
         {
-            // TODO
-            // - add IDatabase
-            // - check for existing translation for token ID & language
-            await _translations.Add(new Translation(token.Id, language, dto.Native, dto.Spoken));
+            var translation = await _database.QueryTranslationByTokenId(token.Id, language);
+            if (translation == null)
+            {
+                await _translations.Add(new Translation(token.Id, language, dto.Native, dto.Spoken));
+            }
         }
 
         private async Task<GenericPage> ImportPage(string from, string to, ChapterDto.PageDto page, int level)
@@ -62,10 +66,13 @@ namespace Bhasha.Common.Importers
 
             var chapter = new GenericChapter(dto.Level, nameToken.Id, descToken.Id, pages);
 
-            // TODO
-            // - override IEquality<GenericChapter>
-            // - override IEquality<GenericPage>
-            // - check if equal chapter already exists
+            var existingChapters = await _database.QueryChaptersByLevel(dto.Level);
+            var existingChapter = existingChapters.FirstOrDefault(x => x.Equals(chapter));
+
+            if (existingChapter != null)
+            {
+                return existingChapter;
+            }
 
             return await _chapters.Add(chapter);
         }

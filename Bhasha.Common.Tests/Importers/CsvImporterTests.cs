@@ -11,7 +11,7 @@ namespace Bhasha.Common.Tests.Importers
     [TestFixture]
     public class CsvImporterTests
     {
-        private const string SampleId = "Bhasha.Common.Tests.Importers.Sample.csv";
+        private const string SampleId = "Bhasha.Common.Tests.Importers.CsvImporterSample.csv";
         private const string SampleFile = "sample.csv";
 
         private IStore<Token> _tokens;

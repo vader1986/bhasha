@@ -1,0 +1,69 @@
+﻿{
+  "from": "en_UK",
+  "to": "bn",
+  "level": 1,
+  "name": {
+    "token": {
+      "label": "animals",
+      "cefr": "A2",
+      "tokenType": "Noun",
+      "categories": []
+    },
+    "native": {
+      "native": "animals",
+      "spoken": "animals"
+    }
+  },
+  "description": {
+    "token": {
+      "label": "simple animals",
+      "cefr": "A2",
+      "tokenType": "Phrase",
+      "categories": [ "animals" ]
+    },
+    "native": {
+      "native": "simple animals",
+      "spoken": "simple animals"
+    }
+  },
+  "pages": [
+    {
+      "token": {
+        "label": "dog",
+        "cefr": "A1",
+        "tokenType": "Noun",
+        "categories": [
+          "pet",
+          "animal"
+        ]
+      },
+      "from": {
+        "native": "dog",
+        "spoken": "dog"
+      },
+      "to": {
+        "native": "কুকুর",
+        "spoken": "Kukura"
+      }
+    },
+    {
+      "token": {
+        "label": "cat",
+        "cefr": "A1",
+        "tokenType": "Noun",
+        "categories": [
+          "pet",
+          "animal"
+        ]
+      },
+      "from": {
+        "native": "cat",
+        "spoken": "kat"
+      },
+      "to": {
+        "native": "বিড়াল",
+        "spoken": "Biṛāla"
+      }
+    }
+  ]
+}
