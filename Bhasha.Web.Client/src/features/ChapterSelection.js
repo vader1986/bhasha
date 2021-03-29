@@ -30,7 +30,7 @@ function ChapterSelection(props) {
             <List component="nav">
                 { chapters.map(chapter => 
                 <ListItem button onClick={onSelect(chapter)}>
-                    <ListItemText>{chapter.name}</ListItemText>
+                    <ListItemText>{chapter.name.toUpperCase()}</ListItemText>
                 </ListItem>)
                 }
             </List>
