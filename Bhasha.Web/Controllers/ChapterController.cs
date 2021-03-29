@@ -25,12 +25,20 @@ namespace Bhasha.Web.Controllers
 
         // Authorize User
         [HttpGet("list")]
-        public async Task<GenericChapter[]> List(Guid profileId)
+        public async Task<Chapter[]> List(Guid profileId)
         {
             var profile = await _profiles.Get(profileId, UserId);
             var chapters = await _database.QueryChaptersByLevel(profile.Level);
 
-            return chapters.ToArray();
+            var stats =
+                await Task.WhenAll(chapters.Select(chapter =>
+                    _database.QueryStatsByChapterAndProfileId(chapter.Id, profile.Id)));
+
+            var completed = stats.ToDictionary(x => x.ChapterId, x => x.Completed);
+            var uncompletedChapters = chapters.Where(x => !(completed.ContainsKey(x.Id) && completed[x.Id]));
+            var result = await Task.WhenAll(uncompletedChapters.Select(async x => await _chapters.Assemble(x, profile)));
+
+            return result.Where(x => x != null).ToArray();
         }
 
         // Authorize User
@@ -41,16 +49,6 @@ namespace Bhasha.Web.Controllers
             var stats = await _database.QueryStatsByChapterAndProfileId(chapterId, profile.Id);
 
             return stats;
-        }
-
-        // Authorize Author
-        [HttpPost("get")]
-        public async Task<Chapter> Get(Guid profileId, Guid chapterId)
-        {
-            var profile = await _profiles.Get(profileId, UserId);
-            var chapter = await _chapters.Assemble(chapterId, profile);
-
-            return chapter;
         }
     }
 }

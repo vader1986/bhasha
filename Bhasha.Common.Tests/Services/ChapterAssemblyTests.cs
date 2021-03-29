@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Bhasha.Common.Arguments;
-using Bhasha.Common.Exceptions;
 using Bhasha.Common.Services;
 using Bhasha.Common.Tests.Support;
 using FakeItEasy;
@@ -16,7 +15,6 @@ namespace Bhasha.Common.Tests.Services
     {
         private IDatabase _database;
         private IStore<Token> _tokens;
-        private IStore<GenericChapter> _chapters;
         private IAssembleArguments _argument;
         private ChapterAssembly _assembly;
 
@@ -32,13 +30,12 @@ namespace Bhasha.Common.Tests.Services
         {
             _database = A.Fake<IDatabase>();
             _tokens = A.Fake<IStore<Token>>();
-            _chapters = A.Fake<IStore<GenericChapter>>();
             _testArguments = A.Fake<IArgumentAssemblyProvider>();
             _argument = A.Fake<IAssembleArguments>();
 
             A.CallTo(() => _testArguments.GetAssembly(A<PageType>._)).Returns(_argument);
 
-            _assembly = new ChapterAssembly(_database, _tokens, _chapters, _testArguments);
+            _assembly = new ChapterAssembly(_database, _tokens, _testArguments);
         }
 
         [Test]
@@ -46,7 +43,7 @@ namespace Bhasha.Common.Tests.Services
         {
             AssumeAllData();
 
-            var chapter = await _assembly.Assemble(_testChapter.Id, _testProfile);
+            var chapter = await _assembly.Assemble(_testChapter, _testProfile);
 
             Assert.That(chapter.Id == _testChapter.Id);
             Assert.That(chapter.Level == _testChapter.Level);
@@ -64,31 +61,16 @@ namespace Bhasha.Common.Tests.Services
         }
 
         [Test]
-        public void Assembly_missing_chapter_throws()
-        {
-            var profile = ProfileBuilder
-                .Default
-                .WithFrom(Language.Bengali)
-                .WithTo(Language.English)
-                .Build();
-
-            var chapterId = Guid.NewGuid();
-            
-            A.CallTo(() => _chapters.Get(chapterId))
-                .Returns(Task.FromResult<GenericChapter>(null));
-
-            Assert.ThrowsAsync<ObjectNotFoundException>(async () => await _assembly.Assemble(chapterId, profile));
-        }
-
-        [Test]
-        public void Assembly_missing_token_throws()
+        public async Task Assembly_missing_token_return_null()
         {
             AssumeAllData();
 
             A.CallTo(() => _tokens.Get(A<Guid>._))
                 .Returns(Task.FromResult<Token>(null));
 
-            Assert.ThrowsAsync<ObjectNotFoundException>(async () => await _assembly.Assemble(_testChapter.Id, _testProfile));
+            var result = await _assembly.Assemble(_testChapter, _testProfile);
+
+            Assert.That(result, Is.Null);
         }
 
         private void AssumeAllData()
@@ -121,9 +103,6 @@ namespace Bhasha.Common.Tests.Services
                 .Default
                 .WithTokenId(page.TokenId)
                 .Build();
-
-            A.CallTo(() => _chapters.Get(_testChapter.Id))
-                .Returns(Task.FromResult(_testChapter));
 
             A.CallTo(() => _tokens.Get(A<Guid>._))
                 .Returns(Task.FromResult(_testToken));
