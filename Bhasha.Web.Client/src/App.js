@@ -6,11 +6,12 @@ import ProfileSelection from './features/ProfileSelection';
 import ChapterSelection from './features/ChapterSelection';
 import Chapter from './features/Chapter';
 import { DISPLAY_CHAPTER, DISPLAY_CHAPTER_SELECTION, DISPLAY_PROFILE_SELECTION } from './consts';
+import NavigationBar from './features/NavigationBar';
 
 function App() {
   const [profile, setProfile] = React.useState(undefined);
   const [chapter, setChapter] = React.useState(undefined);
-  const [screen, setScreen] = React.useState(undefined);
+  const [screen, setScreen] = React.useState(DISPLAY_PROFILE_SELECTION);
 
   const onSelectProfile = profile => {
     setProfile(profile);
@@ -20,6 +21,17 @@ function App() {
   const onSelectChapter = chapter => {
     setChapter(chapter);
     setScreen(DISPLAY_CHAPTER);
+  };
+
+  const onSwitchToProfileSelection = () => {
+    setProfile(undefined);
+    setChapter(undefined);
+    setScreen(DISPLAY_PROFILE_SELECTION);
+  };
+
+  const onSwitchToChapterSelection = () => {
+    setChapter(undefined);
+    setScreen(DISPLAY_CHAPTER_SELECTION);
   };
 
   const renderScreen = () => {
@@ -41,6 +53,12 @@ function App() {
 
   return (
     <Container maxWidth="sm" className="App">
+      <NavigationBar
+        screen={screen}
+        profile={profile}
+        chapter={chapter}
+        onSelectProfile={onSwitchToProfileSelection}
+        onSelectChapter={onSwitchToChapterSelection} />
       <Paper>
         {renderScreen()}
       </Paper>

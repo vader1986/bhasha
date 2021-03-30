@@ -26,7 +26,7 @@ function Chapter(props) {
             <Card>
                 <CardContent>
                     <Typography className={classes.title} color="textSecondary" gutterBottom>
-                        {props.chapter.name.toUpperCase()}
+                        Please select the correct solution!
                     </Typography>
                     <Typography>
                         {props.chapter.pages[0].translation.native}

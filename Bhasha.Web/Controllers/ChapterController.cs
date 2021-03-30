@@ -28,7 +28,8 @@ namespace Bhasha.Web.Controllers
         public async Task<Chapter[]> List(Guid profileId, int level = int.MaxValue)
         {
             var profile = await _profiles.Get(profileId, UserId);
-            var chapters = await _database.QueryChaptersByLevel(Math.Min(profile.Level, level));
+            var appliedLevel = Math.Min(profile.Level, level);
+            var chapters = await _database.QueryChaptersByLevel(appliedLevel);
 
             var stats =
                 await Task.WhenAll(chapters.Select(chapter =>
