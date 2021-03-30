@@ -1,4 +1,4 @@
-import { Breadcrumbs, Card, CardContent, Link, Typography } from '@material-ui/core';
+import { Breadcrumbs, Card, CardContent, Link } from '@material-ui/core';
 import React from 'react';
 import { DISPLAY_CHAPTER, DISPLAY_CHAPTER_SELECTION, DISPLAY_PROFILE_SELECTION } from '../consts';
 
