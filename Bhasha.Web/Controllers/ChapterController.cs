@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Bhasha.Common;
 using Bhasha.Common.Services;
@@ -13,10 +12,10 @@ namespace Bhasha.Web.Controllers
     public class ChapterController : BaseController
     {
         private readonly IDatabase _database;
-        private readonly IAssembleChapters _chapters;
+        private readonly IChaptersLookup _chapters;
         private readonly IAuthorizedProfileLookup _profiles;
 
-        public ChapterController(IDatabase database, IAssembleChapters chapters, IAuthorizedProfileLookup profiles)
+        public ChapterController(IDatabase database, IChaptersLookup chapters, IAuthorizedProfileLookup profiles)
         {
             _database = database;
             _chapters = chapters;
@@ -28,18 +27,7 @@ namespace Bhasha.Web.Controllers
         public async Task<Chapter[]> List(Guid profileId, int level = int.MaxValue)
         {
             var profile = await _profiles.Get(profileId, UserId);
-            var appliedLevel = Math.Min(profile.Level, level);
-            var chapters = await _database.QueryChaptersByLevel(appliedLevel);
-
-            var stats =
-                await Task.WhenAll(chapters.Select(chapter =>
-                    _database.QueryStatsByChapterAndProfileId(chapter.Id, profile.Id)));
-
-            var completed = stats.Where(x => x != null).ToDictionary(x => x.ChapterId, x => x.Completed);
-            var uncompletedChapters = chapters.Where(x => !(completed.ContainsKey(x.Id) && completed[x.Id]));
-            var result = await Task.WhenAll(uncompletedChapters.Select(async x => await _chapters.Assemble(x, profile)));
-
-            return result.Where(x => x != null).ToArray();
+            return await _chapters.GetChapters(profile, level);
         }
 
         // Authorize User

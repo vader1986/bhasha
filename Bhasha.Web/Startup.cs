@@ -1,5 +1,6 @@
 using System.IO;
 using Bhasha.Common.Arguments;
+using Bhasha.Common.Extensions;
 using Bhasha.Common.Importers;
 using Bhasha.Common.MongoDB.Extensions;
 using Bhasha.Common.Services;
@@ -28,22 +29,11 @@ namespace Bhasha.Web
             
             services
                 .AddMongoDB(connectionString)
+                .AddBhashaServices()
                 .AddSingleton<IAuthorizedProfileLookup, AuthorizedProfileLookup>()
                 .AddSingleton<IAppCache, CachingService>()
                 .AddSwaggerDocument()
                 .AddControllers();
-
-            services
-                .AddTransient<ChapterDtoImporter>()
-                .AddTransient<IArgumentAssemblyProvider, ArgumentAssemblyProvider>()
-                .AddTransient<IAssembleChapters, ChapterAssembly>()
-                .AddTransient<ICheckResult, ResultChecker>()
-                .AddTransient<IUpdateStatsForEvaluation, EvaluationStatsUpdater>()
-                .AddTransient<IUpdateStatsForTip, TipStatsUpdater>()
-                .AddTransient<IEvaluateSubmit, SubmitEvaluator>();
-
-            services
-                .AddTransient<OneOutOfFourArgumentsAssembly>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)

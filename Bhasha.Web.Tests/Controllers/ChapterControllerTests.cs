@@ -15,7 +15,7 @@ namespace Bhasha.Web.Tests.Controllers
     public class ChapterControllerTests
     {
         private IDatabase _database;
-        private IAssembleChapters _chapters;
+        private IChaptersLookup _chapters;
         private IAuthorizedProfileLookup _profiles;
         private ChapterController _controller;
 
@@ -23,7 +23,7 @@ namespace Bhasha.Web.Tests.Controllers
         public void Before()
         {
             _database = A.Fake<IDatabase>();
-            _chapters = A.Fake<IAssembleChapters>();
+            _chapters = A.Fake<IChaptersLookup>();
             _profiles = A.Fake<IAuthorizedProfileLookup>();
             _controller = new ChapterController(_database, _chapters, _profiles);
         }
@@ -48,8 +48,8 @@ namespace Bhasha.Web.Tests.Controllers
 
             var expectedChapter = new Chapter(Guid.NewGuid(), 1, "x", "x", new Page[0], default);
 
-            A.CallTo(() => _chapters.Assemble(chapters[0], profile))
-                .Returns(Task.FromResult(expectedChapter));
+            A.CallTo(() => _chapters.GetChapters(profile, A<int>._))
+                .Returns(Task.FromResult(new[] { expectedChapter }));
 
             var result = await _controller.List(profile.Id);
 
