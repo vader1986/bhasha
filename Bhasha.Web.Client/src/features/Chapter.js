@@ -1,5 +1,6 @@
 import { Card, CardContent, Chip, makeStyles, Paper, Typography } from '@material-ui/core';
 import React from 'react';
+import Page from './pages/Page';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -20,6 +21,11 @@ const useStyles = makeStyles((theme) => ({
 
 function Chapter(props) {
     const classes = useStyles();
+    const [result, setResult] = React.useState(undefined)
+
+    const onSetResult = data => {
+      setResult(data);
+    };
 
     return (
         <div>
@@ -31,20 +37,14 @@ function Chapter(props) {
                     <Typography>
                         {props.chapter.pages[0].translation.native}
                     </Typography>
+                    { result !== undefined &&
+                    <Typography>
+                      Selected translation: {result}
+                    </Typography>
+                    }
                 </CardContent>
             </Card>
-            <Paper component="ul" className={classes.root}>
-            { props.chapter.pages[0].pageType === 0 && 
-              props.chapter.pages[0].arguments.options.map(option => 
-                <li key={option}>
-                    <Chip
-                        label={option}
-                        onClick={() => {alert(option)}}
-                        className={classes.chip}
-                    />
-                </li>)
-            }
-            </Paper>
+            <Page page={props.chapter.pages[0]} onSetResult={onSetResult} />
         </div>
     );
 }
