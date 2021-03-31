@@ -1,4 +1,4 @@
-import { Card, CardContent, Chip, makeStyles, Paper, Typography } from '@material-ui/core';
+import { Card, CardContent, makeStyles, Typography } from '@material-ui/core';
 import React from 'react';
 import Page from './pages/Page';
 
