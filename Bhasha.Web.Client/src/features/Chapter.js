@@ -1,15 +1,19 @@
-import { Card, CardContent, makeStyles, Typography } from '@material-ui/core';
+import { Card, CardContent, IconButton, makeStyles, Typography } from '@material-ui/core';
 import React from 'react';
 import Page from './pages/Page';
+import MenuIcon from '@material-ui/icons/Menu';
 
 const useStyles = makeStyles((theme) => ({
-    root: {
-      display: 'flex',
-      justifyContent: 'center',
-      flexWrap: 'wrap',
-      listStyle: 'none',
-      padding: theme.spacing(0.5),
-      margin: 0,
+    appBar: {
+      position: "fixed",
+      bottom: 0,
+      left: 0,
+      width: "100%"
+    },
+    appBarContent: {
+      display: "flex",
+      justifyContent: "center",
+      width: "100%"
     },
     title: {
       fontSize: 14,
@@ -45,6 +49,13 @@ function Chapter(props) {
                 </CardContent>
             </Card>
             <Page page={props.chapter.pages[0]} onSetResult={onSetResult} />
+            <div className={classes.appBar}>
+              <div className={classes.appBarContent}>
+                <IconButton>
+                  <MenuIcon />
+                </IconButton>
+              </div>
+            </div>
         </div>
     );
 }
