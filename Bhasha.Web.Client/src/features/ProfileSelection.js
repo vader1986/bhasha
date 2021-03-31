@@ -3,9 +3,9 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { Collapse } from '@material-ui/core';
-import axios from 'axios';
 import ProfileCreateDialog from './ProfileCreateDialog';
 import ProfileList from './ProfileList';
+import { api } from '../utils';
 
 function ProfileSelection(props) {
     const [open, setOpen] = React.useState(false);
@@ -29,7 +29,7 @@ function ProfileSelection(props) {
     };
 
     useEffect(() => {
-        axios
+        api
           .get(`api/profile/list`)
           .then(res => setProfiles(res.data));
     }, [setProfiles]);

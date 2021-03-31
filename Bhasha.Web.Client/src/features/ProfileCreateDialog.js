@@ -1,7 +1,6 @@
 import { Button, Chip, makeStyles, Paper } from '@material-ui/core';
-import axios from 'axios';
 import React, { useEffect } from 'react';
-import { getLanguageKey } from '../utils';
+import { api, getLanguageKey } from '../utils';
 
 const useStyles = makeStyles((theme) => ({
     container: {
@@ -28,7 +27,7 @@ function ProfileCreateDialog(props) {
     const [selectedTo, setSelectedTo] = React.useState(undefined);
 
     useEffect(() => {
-        axios
+        api
           .get(`api/profile/languages`)
           .then(res => setLanguages(res.data));
     }, [setLanguages]);
@@ -37,7 +36,7 @@ function ProfileCreateDialog(props) {
         const from = getLanguageKey(selectedFrom);
         const to = getLanguageKey(selectedTo);
 
-        axios
+        api
           .post(`api/profile/create?from=${from}&to=${to}`)
           .then(res => props.onCreate(res.data));
 

@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import axios from 'axios';
+import { api } from '../utils';
 
 function ChapterSelection(props) {
     const [chapters, setChapters] = React.useState([]);
@@ -12,7 +12,7 @@ function ChapterSelection(props) {
     }
 
     useEffect(() => {
-        axios
+        api
           .get(`api/chapter/list?profileId=${props.profile.id}`)
           .then(res => {
               setChapters(res.data);

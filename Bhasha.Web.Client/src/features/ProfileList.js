@@ -1,7 +1,7 @@
 import { IconButton, ListItem, ListItemSecondaryAction, ListItemText } from '@material-ui/core';
-import axios from 'axios';
 import React from 'react';
 import DeleteIcon from '@material-ui/icons/Delete';
+import { api } from '../utils';
 
 const ProfileList = (props) => {
 
@@ -10,7 +10,7 @@ const ProfileList = (props) => {
     };
 
     const onDeleteProfile = (profile) => () => {
-        axios
+        api
           .delete(`api/profile/delete?profileId=${profile.id}`)
           .then(_ => props.onDelete(profile));
     };
