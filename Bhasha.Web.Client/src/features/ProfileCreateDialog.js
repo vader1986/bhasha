@@ -75,7 +75,7 @@ function ProfileCreateDialog(props) {
                     }
                     { selectedTo !== undefined && 
                         <Chip
-                            label={`From ${selectedTo.name}`}
+                            label={`To ${selectedTo.name}`}
                             onDelete={onSelect(selectedTo, undefined)} /> 
                     }
                 </div>

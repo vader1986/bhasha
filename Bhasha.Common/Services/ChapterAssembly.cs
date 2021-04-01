@@ -53,7 +53,7 @@ namespace Bhasha.Common.Services
                 return null;
             }
 
-            async Task<Page?> PageFor(GenericPage genericPage)
+            async Task<Page?> PageFor(GenericPage genericPage, int index)
             {
                 var token = await _tokens.Get(genericPage.TokenId);
 
@@ -73,7 +73,9 @@ namespace Bhasha.Common.Services
                     .GetAssembly(genericPage.PageType)
                     .Assemble(translations, genericPage.TokenId);
 
-                return new Page(genericPage.PageType, token, translation, arguments);
+                var tips = await _database.QueryTips(chapter.Id, index);
+
+                return new Page(genericPage.PageType, token, translation, arguments, tips.Count());
             }
 
             var pages = await Task.WhenAll(chapter.Pages.Select(PageFor));

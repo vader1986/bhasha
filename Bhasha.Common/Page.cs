@@ -24,12 +24,18 @@ namespace Bhasha.Common
         /// </summary>
         public object Arguments { get; }
 
-        public Page(PageType pageType, Token token, Translation translation, object arguments)
+        /// <summary>
+        /// Number of tips available for this page.
+        /// </summary>
+        public int Tips { get; }
+
+        public Page(PageType pageType, Token token, Translation translation, object arguments, int tips)
         {
             PageType = pageType;
             Token = token;
             Translation = translation;
             Arguments = arguments;
+            Tips = tips;
         }
 
         public override string ToString()

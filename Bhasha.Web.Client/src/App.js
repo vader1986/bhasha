@@ -41,10 +41,10 @@ function App() {
         return <ProfileSelection onSelect={onSelectProfile} />;
 
       case DISPLAY_CHAPTER_SELECTION:
-        return <ChapterSelection onSelect={onSelectChapter} profile={profile}/>;
+        return <ChapterSelection onSelect={onSelectChapter} profile={profile} />;
 
       case DISPLAY_CHAPTER:
-        return <Chapter chapter={chapter} />;
+        return <Chapter chapter={chapter} profile={profile} />;
 
       default:
         return <ProfileSelection onSelect={onSelectProfile} />;
