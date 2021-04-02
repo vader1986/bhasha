@@ -77,7 +77,7 @@ namespace Bhasha.Common.MongoDB.Tests.Dto
             Assert.That(result.ChapterId == dto.ChapterId);
             Assert.That(result.ProfileId == dto.ProfileId);
             Assert.That(result.Completed == dto.Completed);
-            Assert.That(result.Tips, Is.EqualTo(Encoding.UTF8.GetBytes(dto.Tips)));
+            Assert.That(result.Tips, Is.EqualTo(dto.Tips));
             Assert.That(result.Submits, Is.EqualTo(Encoding.UTF8.GetBytes(dto.Submits)));
             Assert.That(result.Failures, Is.EqualTo(Encoding.UTF8.GetBytes(dto.Failures)));
         }
@@ -86,7 +86,7 @@ namespace Bhasha.Common.MongoDB.Tests.Dto
         public void Convert_ChapterStatsDto_throws()
         {
             var dto = ChapterStatsDtoBuilder.Build();
-            dto.Tips = null;
+            dto.Submits = null;
 
             Assert.Throws<InvalidDtoException>(() => _converter.Convert(dto));
         }
@@ -101,7 +101,7 @@ namespace Bhasha.Common.MongoDB.Tests.Dto
             Assert.That(result.ChapterId == stats.ChapterId);
             Assert.That(result.ProfileId == stats.ProfileId);
             Assert.That(result.Completed == stats.Completed);
-            Assert.That(result.Tips == Encoding.UTF8.GetString(stats.Tips));
+            Assert.That(result.Tips == stats.Tips);
             Assert.That(result.Submits == Encoding.UTF8.GetString(stats.Submits));
             Assert.That(result.Failures == Encoding.UTF8.GetString(stats.Failures));
         }
@@ -139,39 +139,6 @@ namespace Bhasha.Common.MongoDB.Tests.Dto
             Assert.That(result.From == profile.From);
             Assert.That(result.To == profile.To);
             Assert.That(result.Level == profile.Level);
-        }
-
-        [Test]
-        public void Convert_TipDto()
-        {
-            var dto = TipDtoBuilder.Build();
-            var result = _converter.Convert(dto);
-
-            Assert.That(result.Id == dto.Id);
-            Assert.That(result.ChapterId == dto.ChapterId);
-            Assert.That(result.PageIndex == dto.PageIndex);
-            Assert.That(result.Text == dto.Text);
-        }
-
-        [Test]
-        public void Convert_TipDto_throws()
-        {
-            var dto = TipDtoBuilder.Build();
-            dto.PageIndex = -1;
-
-            Assert.Throws<InvalidDtoException>(() => _converter.Convert(dto));
-        }
-
-        [Test]
-        public void Convert_Tip()
-        {
-            var tip = TipBuilder.Default.Build();
-            var result = _converter.Convert(tip);
-
-            Assert.That(result.Id == tip.Id);
-            Assert.That(result.ChapterId == tip.ChapterId);
-            Assert.That(result.PageIndex == tip.PageIndex);
-            Assert.That(result.Text == tip.Text);
         }
 
         [Test]

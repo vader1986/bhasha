@@ -9,7 +9,7 @@ namespace Bhasha.Common.Tests.Support
         private Guid _profileId = Guid.NewGuid();
         private Guid _chapterId = Guid.NewGuid();
         private bool _completed = true;
-        private byte[] _tips = Enumerable.Range(0, 5).Select(x => (byte)x).ToArray();
+        private int _tips = Rnd.Create.Next(0, 10);
         private byte[] _submits = Enumerable.Range(0, 5).Select(x => (byte)x).ToArray();
         private byte[] _failures = Enumerable.Range(0, 5).Select(x => (byte)x).ToArray();
 
@@ -39,7 +39,7 @@ namespace Bhasha.Common.Tests.Support
             return this;
         }
 
-        public ChapterStatsBuilder WithTips(byte[] tips)
+        public ChapterStatsBuilder WithTips(int tips)
         {
             _tips = tips;
             return this;

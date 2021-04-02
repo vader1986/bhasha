@@ -28,14 +28,17 @@ function Chapter(props) {
     const classes = useStyles();
     const [result, setResult] = React.useState(undefined);
     const [pageIndex] = React.useState(0);
+    const currentPage = props.chapter.pages[pageIndex];
 
     const onSetResult = data => {
       setResult(data);
     };
 
+    console.log(JSON.stringify(currentPage));
+
     const onTipClicked = () => {
-      const args = `profileId=${props.profile.id}&chapterId=${props.chapter.id}&pageIndex=${pageIndex}`;
-      api.post(`api/page/tip?${args}`).then(response => alert(response.data.text));
+      const args = `profileId=${props.profile.id}&chapterId=${props.chapter.id}`;
+      api.post(`api/page/tip?${args}`, currentPage.tipIds).then(response => alert(response.data));
     };
 
     return (
@@ -46,7 +49,7 @@ function Chapter(props) {
                         Please select the correct solution!
                     </Typography>
                     <Typography>
-                        {props.chapter.pages[pageIndex].translation.native}
+                        {currentPage.translation.native}
                     </Typography>
                     { result !== undefined &&
                     <Typography>
@@ -55,10 +58,10 @@ function Chapter(props) {
                     }
                 </CardContent>
             </Card>
-            <Page page={props.chapter.pages[0]} onSetResult={onSetResult} />
+            <Page page={currentPage} onSetResult={onSetResult} />
             <div className={classes.appBar}>
               <div className={classes.appBarContent}>
-                { props.chapter.tips > 0 &&
+                { currentPage.tipIds.length > 0 &&
                 <IconButton onClick={onTipClicked}>
                   <EmojiObjectsOutlinedIcon />
                 </IconButton>

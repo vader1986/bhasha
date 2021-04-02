@@ -13,7 +13,7 @@ namespace Bhasha.Common.MongoDB.Tests.Support
                 ChapterId = Guid.NewGuid(),
                 ProfileId = Guid.NewGuid(),
                 Completed = Rnd.Create.Next(0, 1) == 0,
-                Tips = Rnd.Create.NextString(8),
+                Tips = Rnd.Create.Next(0, 10),
                 Submits = Rnd.Create.NextString(8),
                 Failures = Rnd.Create.NextString(8)
             };

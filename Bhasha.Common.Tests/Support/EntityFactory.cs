@@ -31,14 +31,6 @@ namespace Bhasha.Common.Tests.Support
                     .Build() as TProduct;
             }
 
-            if (typeof(TProduct) == typeof(Tip))
-            {
-                return TipBuilder
-                    .Default
-                    .WithId(id ?? Guid.NewGuid())
-                    .Build() as TProduct;
-            }
-
             if (typeof(TProduct) == typeof(Token))
             {
                 return TokenBuilder

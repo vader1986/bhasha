@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace Bhasha.Common
 {
@@ -14,20 +15,26 @@ namespace Bhasha.Common
         /// </summary>
         public PageType PageType { get; }
 
-        public GenericPage(Guid tokenId, PageType pageType)
+        /// <summary>
+        /// Tips for the current page.
+        /// </summary>
+        public Guid[] TipIds { get; }
+
+        public GenericPage(Guid tokenId, PageType pageType, Guid[] tipIds)
         {
             TokenId = tokenId;
             PageType = pageType;
+            TipIds = tipIds;
         }
 
         public override string ToString()
         {
-            return $"{nameof(TokenId)}: {TokenId}, {nameof(PageType)}: {PageType}";
+            return $"{nameof(TokenId)}: {TokenId}, {nameof(PageType)}: {PageType}, {nameof(TipIds)}: {string.Join("/", TipIds)}";
         }
 
         public bool Equals(GenericPage other)
         {
-            return other != null && other.TokenId == TokenId && other.PageType == PageType;
+            return other != null && other.TokenId == TokenId && other.PageType == PageType && other.TipIds.SequenceEqual(TipIds);
         }
     }
 }

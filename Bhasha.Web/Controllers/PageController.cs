@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Bhasha.Common;
 using Bhasha.Common.Extensions;
@@ -38,15 +39,15 @@ namespace Bhasha.Web.Controllers
 
         // Authorize User
         [HttpPost("tip")]
-        public async Task<Tip> Tip(Guid profileId, Guid chapterId, int pageIndex)
+        public async Task<string> Tip(Guid profileId, Guid chapterId, [FromBody] Guid[] tipIds)
         {
             var profile = await _profiles.Get(profileId, UserId);
-            var tips = await _database.QueryTips(chapterId, pageIndex);
+            var tips = await Task.WhenAll(tipIds.Select(x => _database.QueryTranslationByTokenId(x, profile.To)));
             var tip = tips.Random();
 
-            await _tipStatsUpdater.UpdateStats(tip, profile);
+            await _tipStatsUpdater.UpdateStats(chapterId, profile);
 
-            return tip; 
+            return tip.Native; 
         }
     }
 }

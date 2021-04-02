@@ -18,7 +18,7 @@ namespace Bhasha.Common.MongoDB.Dto
         public bool Completed { get; set; }
 
         [BsonElement]
-        public string Tips { get; set; } = string.Empty;
+        public int Tips { get; set; }
 
         [BsonElement]
         public string Submits { get; set; } = string.Empty;
@@ -28,7 +28,7 @@ namespace Bhasha.Common.MongoDB.Dto
 
         public bool Equals(ChapterStats other)
         {
-            return other != null && other.Id == Id && other.ProfileId == ProfileId && other.ChapterId == ChapterId && other.Completed == Completed && Tips == Encoding.UTF8.GetString(other.Tips) && Submits == Encoding.UTF8.GetString(other.Submits) && Failures == Encoding.UTF8.GetString(other.Failures);
+            return other != null && other.Id == Id && other.ProfileId == ProfileId && other.ChapterId == ChapterId && other.Completed == Completed && Tips == other.Tips && Submits == Encoding.UTF8.GetString(other.Submits) && Failures == Encoding.UTF8.GetString(other.Failures);
         }
     }
 }

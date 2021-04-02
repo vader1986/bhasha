@@ -22,6 +22,7 @@
             public TokenDto Token { get; set; }
             public TranslationDto From { get; set; }
             public TranslationDto To { get; set; }
+            public ExpressionDto[] Tips { get; set; }
         }
 
         public class TranslationDto
@@ -33,6 +34,7 @@
         public class TokenDto
         {
             public string Label { get; set; }
+            public int? Level { get; set; }
             public string Cefr { get; set; } = "A1";
             public string TokenType { get; set; } = "Noun";
             public string[] Categories { get; set; } = new string[0];

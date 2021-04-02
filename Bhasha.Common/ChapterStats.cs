@@ -27,7 +27,7 @@ namespace Bhasha.Common
         /// <summary>
         /// Tips used for each page of the chapter.
         /// </summary>
-        public byte[] Tips { get; }
+        public int Tips { get; }
 
         /// <summary>
         /// Number of submits for each page.
@@ -39,7 +39,7 @@ namespace Bhasha.Common
         /// </summary>
         public byte[] Failures { get; }
 
-        public ChapterStats(Guid id, Guid profileId, Guid chapterId, bool completed, byte[] tips, byte[] submits, byte[] failures)
+        public ChapterStats(Guid id, Guid profileId, Guid chapterId, bool completed, int tips, byte[] submits, byte[] failures)
         {
             Id = id;
             ProfileId = profileId;
@@ -53,12 +53,12 @@ namespace Bhasha.Common
         public static ChapterStats Create(Guid profileId, GenericChapter genericChapter)
         {
             var pages = genericChapter.Pages.Length;
-            return new ChapterStats(default, profileId, genericChapter.Id, false, new byte[pages], new byte[pages], new byte[pages]);
+            return new ChapterStats(default, profileId, genericChapter.Id, false, 0, new byte[pages], new byte[pages]);
         }
 
         public override string ToString()
         {
-            return $"{nameof(Id)}: {Id}, {nameof(ProfileId)}: {ProfileId}, {nameof(ChapterId)}: {ChapterId}, {nameof(Completed)}: {Completed}, {nameof(Tips)}: {string.Join("/", Tips)}, {nameof(Submits)}: {string.Join("/", Submits)}, {nameof(Failures)}: {string.Join("/", Failures)}";
+            return $"{nameof(Id)}: {Id}, {nameof(ProfileId)}: {ProfileId}, {nameof(ChapterId)}: {ChapterId}, {nameof(Completed)}: {Completed}, {nameof(Tips)}: {Tips}, {nameof(Submits)}: {string.Join("/", Submits)}, {nameof(Failures)}: {string.Join("/", Failures)}";
         }
     }
 }

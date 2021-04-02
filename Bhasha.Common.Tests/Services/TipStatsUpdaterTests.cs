@@ -64,30 +64,22 @@ namespace Bhasha.Common.Tests.Services
                 .Default
                 .Build();
 
-            var tip = TipBuilder
-                .Default
-                .WithChapterId(chapter.Id)
-                .WithPageIndex(1)
-                .Build();
-
-
             var stats = ChapterStats.Create(profile.Id, chapter);
 
-            AssumeNoChapterStatsFor(tip.ChapterId, profile.Id);
+            AssumeNoChapterStatsFor(chapter.Id, profile.Id);
             AssumeGenericChapter(chapter);
             AssumeStatsAdded(stats);
 
-            await _statsUpdater.UpdateStats(tip, profile);
+            await _statsUpdater.UpdateStats(chapter.Id, profile);
 
             A.CallTo(() => _stats.Add(A<ChapterStats>.That
                 .Matches(x => x.Completed == false &&
-                              x.Tips.Length == chapter.Pages.Length &&
-                              x.Tips.All(x => x == 0))))
+                              x.Tips == 0)))
                 .MustHaveHappenedOnceExactly();
 
             A.CallTo(() => _stats.Replace(A<ChapterStats>.That
                 .Matches(x => x.Completed == false &&
-                              x.Tips[tip.PageIndex] == 1)))
+                              x.Tips == 1)))
                 .MustHaveHappenedOnceExactly();
         }
 
@@ -98,56 +90,46 @@ namespace Bhasha.Common.Tests.Services
                 .Default
                 .Build();
 
-            var tip = TipBuilder
-                .Default
-                .WithPageIndex(1)
-                .Build();
+            var chapterId = Guid.NewGuid();
 
             var stats = ChapterStatsBuilder
                 .Default
                 .WithProfileId(profile.Id)
-                .WithChapterId(tip.ChapterId)
+                .WithChapterId(chapterId)
                 .Build();
 
             AssumeChapterStats(stats);
 
-            var expectedTips = stats.Tips[tip.PageIndex] + 1;
+            var expectedTips = stats.Tips + 1;
 
-            await _statsUpdater.UpdateStats(tip, profile);
+            await _statsUpdater.UpdateStats(chapterId, profile);
 
             A.CallTo(() => _stats.Add(A<ChapterStats>._))
                 .MustNotHaveHappened();
 
             A.CallTo(() => _stats.Replace(A<ChapterStats>.That
                 .Matches(x => x.Completed == stats.Completed &&
-                              x.Tips[tip.PageIndex] == expectedTips)))
+                              x.Tips == expectedTips)))
                 .MustHaveHappenedOnceExactly();
         }
 
         [Test]
         public void UpdateStats_missing_chapter_throws()
         {
-            var chapterId = Guid
-                .NewGuid();
+            var chapterId = Guid.NewGuid();
 
             var profile = ProfileBuilder
                 .Default
                 .Build();
 
-            var tip = TipBuilder
-                .Default
-                .WithChapterId(chapterId)
-                .WithPageIndex(1)
-                .Build();
-
             A.CallTo(() => _database.QueryStatsByChapterAndProfileId(chapterId, profile.Id))
                 .Returns(Task.FromResult<ChapterStats>(null));
 
-            A.CallTo(() => _chapters.Get(tip.ChapterId))
+            A.CallTo(() => _chapters.Get(chapterId))
                 .Returns(Task.FromResult<GenericChapter>(null));
 
             Assert.ThrowsAsync<ObjectNotFoundException>(
-                async () => await _statsUpdater.UpdateStats(tip, profile));
+                async () => await _statsUpdater.UpdateStats(chapterId, profile));
         }
     }
 }

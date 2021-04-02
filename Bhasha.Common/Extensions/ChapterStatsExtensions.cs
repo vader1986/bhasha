@@ -29,10 +29,16 @@ namespace Bhasha.Common.Extensions
             return stats;
         }
 
-        public static ChapterStats WithTip(this ChapterStats stats, int pageIndex)
+        public static ChapterStats WithTip(this ChapterStats stats)
         {
-            stats.Tips.Inc(pageIndex);
-            return stats;
+            return new ChapterStats(
+                stats.Id,
+                stats.ProfileId,
+                stats.ChapterId,
+                stats.Completed,
+                stats.Tips + 1,
+                stats.Submits,
+                stats.Failures);
         }
     }
 }

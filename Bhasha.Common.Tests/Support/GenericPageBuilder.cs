@@ -6,6 +6,7 @@ namespace Bhasha.Common.Tests.Support
     {
         private Guid _tokenId = Guid.NewGuid();
         private PageType _pageType = PageType.OneOutOfFour;
+        private Guid[] _tipIds = new[] { Guid.NewGuid() };
 
         public GenericPageBuilder WithTokenId(Guid tokenId)
         {
@@ -19,7 +20,8 @@ namespace Bhasha.Common.Tests.Support
         {
             return new GenericPage(
                 _tokenId,
-                _pageType);
+                _pageType,
+                _tipIds);
         }
     }
 }

@@ -55,24 +55,23 @@ namespace Bhasha.Web.Tests.Controllers
         public async Task Tip()
         {
             var chapterId = Guid.NewGuid();
-            var pageIndex = 1;
             var profile = ProfileBuilder.Default.Build();
 
             A.CallTo(() => _profiles.Get(profile.Id, _controller.UserId))
                 .Returns(Task.FromResult(profile));
 
-            var tips = new[] { TipBuilder.Default.Build() };
+            var translation = TranslationBuilder.Default.Build();
 
-            A.CallTo(() => _database.QueryTips(chapterId, pageIndex))
-                .Returns(Task.FromResult<IEnumerable<Tip>>(tips));
+            A.CallTo(() => _database.QueryTranslationByTokenId(A<Guid>._, profile.To))
+                .Returns(Task.FromResult(translation));
 
-            var result = await _controller.Tip(profile.Id, chapterId, pageIndex);
+            var tipIds = new[] { Guid.NewGuid(), Guid.NewGuid() };
 
-            var expectedTip = tips.Single();
+            var result = await _controller.Tip(profile.Id, chapterId, tipIds);
 
-            Assert.That(result, Is.EqualTo(expectedTip));
+            Assert.That(result, Is.EqualTo(translation.Native));
 
-            A.CallTo(() => _stateUpdater.UpdateStats(expectedTip, profile))
+            A.CallTo(() => _stateUpdater.UpdateStats(chapterId, profile))
                 .MustHaveHappenedOnceExactly();
         }
     }

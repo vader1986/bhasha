@@ -15,7 +15,6 @@ namespace Bhasha.Common.MongoDB
             await db.CreateCollectionAsync(Names.Collections.Chapters);
             await db.CreateCollectionAsync(Names.Collections.Tokens);
             await db.CreateCollectionAsync(Names.Collections.Translations);
-            await db.CreateCollectionAsync(Names.Collections.Tips);
             await db.CreateCollectionAsync(Names.Collections.Stats);
 
             var profiles = db.GetCollection<ProfileDto>(Names.Collections.Profiles);
@@ -29,9 +28,6 @@ namespace Bhasha.Common.MongoDB
 
             var translations = db.GetCollection<TranslationDto>(Names.Collections.Translations);
             await translations.CreateIndices(x => x.Language, x => x.TokenId);
-
-            var tips = db.GetCollection<TipDto>(Names.Collections.Tips);
-            await tips.CreateIndices(x => x.ChapterId, x => x.PageIndex);
 
             var stats = db.GetCollection<ChapterStatsDto>(Names.Collections.Stats);
             await stats.CreateIndices(x => x.ProfileId, x => x.ChapterId);

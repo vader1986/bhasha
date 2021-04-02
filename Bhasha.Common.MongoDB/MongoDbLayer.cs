@@ -74,18 +74,6 @@ namespace Bhasha.Common.MongoDB
             return stats.Select(_converter.Convert);
         }
 
-        public async Task<IEnumerable<Tip>> QueryTips(Guid chapterId, int pageIndex)
-        {
-            var tips = await _db
-                .GetCollection<TipDto>()
-                .AsQueryable()
-                .Where(x => x.ChapterId == chapterId &&
-                            x.PageIndex == pageIndex)
-                .ToListAsync();
-
-            return tips.Select(_converter.Convert);
-        }
-
         public async Task<Translation?> QueryTranslationByTokenId(Guid tokenId, Language language)
         {
             var translation = await _db

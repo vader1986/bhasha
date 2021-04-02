@@ -1,4 +1,5 @@
-﻿using Bhasha.Common.Extensions;
+﻿using System;
+using Bhasha.Common.Extensions;
 
 namespace Bhasha.Common
 {
@@ -25,22 +26,22 @@ namespace Bhasha.Common
         public object Arguments { get; }
 
         /// <summary>
-        /// Number of tips available for this page.
+        /// Token IDs for tips available for this page.
         /// </summary>
-        public int Tips { get; }
+        public Guid[] TipIds { get; }
 
-        public Page(PageType pageType, Token token, Translation translation, object arguments, int tips)
+        public Page(PageType pageType, Token token, Translation translation, object arguments, Guid[] tipIds)
         {
             PageType = pageType;
             Token = token;
             Translation = translation;
             Arguments = arguments;
-            Tips = tips;
+            TipIds = tipIds;
         }
 
         public override string ToString()
         {
-            return $"{nameof(PageType)}: {PageType}, {nameof(Token)}: {Token}, {nameof(Translation)}: {Translation}, {nameof(Arguments)}: {Arguments?.Stringify()}";
+            return $"{nameof(PageType)}: {PageType}, {nameof(Token)}: {Token}, {nameof(Translation)}: {Translation}, {nameof(Arguments)}: {Arguments?.Stringify()}, {nameof(TipIds)}: {string.Join("/", TipIds)}";
         }
     }
 }

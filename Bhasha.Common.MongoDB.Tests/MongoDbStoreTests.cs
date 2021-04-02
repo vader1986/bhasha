@@ -55,7 +55,6 @@ namespace Bhasha.Common.MongoDB.Tests
             await Test_Add<ChapterStatsDto, ChapterStats>();
             await Test_Add<GenericChapterDto, GenericChapter>();
             await Test_Add<ProfileDto, Profile>();
-            await Test_Add<TipDto, Tip>();
             await Test_Add<TokenDto, Token>();
             await Test_Add<TranslationDto, Translation>();
         }
@@ -91,7 +90,6 @@ namespace Bhasha.Common.MongoDB.Tests
             await Test_Remove<ChapterStatsDto, ChapterStats>();
             await Test_Remove<GenericChapterDto, GenericChapter>();
             await Test_Remove<ProfileDto, Profile>();
-            await Test_Remove<TipDto, Tip>();
             await Test_Remove<TokenDto, Token>();
             await Test_Remove<TranslationDto, Translation>();
         }
@@ -120,7 +118,6 @@ namespace Bhasha.Common.MongoDB.Tests
             await Test_Get<ChapterStatsDto, ChapterStats>();
             await Test_Get<GenericChapterDto, GenericChapter>();
             await Test_Get<ProfileDto, Profile>();
-            await Test_Get<TipDto, Tip>();
             await Test_Get<TokenDto, Token>();
             await Test_Get<TranslationDto, Translation>();
         }
@@ -155,7 +152,6 @@ namespace Bhasha.Common.MongoDB.Tests
             await Test_Replace<ChapterStatsDto, ChapterStats>();
             await Test_Replace<GenericChapterDto, GenericChapter>();
             await Test_Replace<ProfileDto, Profile>();
-            await Test_Replace<TipDto, Tip>();
             await Test_Replace<TokenDto, Token>();
             await Test_Replace<TranslationDto, Translation>();
         }

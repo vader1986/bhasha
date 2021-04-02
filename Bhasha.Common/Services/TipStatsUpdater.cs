@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Bhasha.Common.Exceptions;
 using Bhasha.Common.Extensions;
 
@@ -6,7 +7,7 @@ namespace Bhasha.Common.Services
 {
     public interface IUpdateStatsForTip
     {
-        Task UpdateStats(Tip tip, Profile profile);
+        Task UpdateStats(Guid chapterId, Profile profile);
     }
 
     public class TipStatsUpdater : IUpdateStatsForTip
@@ -22,14 +23,13 @@ namespace Bhasha.Common.Services
             _chapters = chapters;
         }
 
-        public async Task UpdateStats(Tip tip, Profile profile)
+        public async Task UpdateStats(Guid chapterId, Profile profile)
         {
-            var stats =
-                await _database.QueryStatsByChapterAndProfileId(tip.ChapterId, profile.Id);
+            var stats = await _database.QueryStatsByChapterAndProfileId(chapterId, profile.Id);
 
             if (stats == default)
             {
-                var chapter = await _chapters.Get(tip.ChapterId);
+                var chapter = await _chapters.Get(chapterId);
 
                 if (chapter != null)
                 {
@@ -37,11 +37,11 @@ namespace Bhasha.Common.Services
                 }
                 else
                 {
-                    throw new ObjectNotFoundException(typeof(GenericChapter), tip.ChapterId);
+                    throw new ObjectNotFoundException(typeof(GenericChapter), chapterId);
                 }
             }
 
-            await _stats.Replace(stats.WithTip(tip.PageIndex));
+            await _stats.Replace(stats.WithTip());
         }
     }
 }

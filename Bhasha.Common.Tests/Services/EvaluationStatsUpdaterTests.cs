@@ -52,9 +52,9 @@ namespace Bhasha.Common.Tests.Services
             A.CallTo(() => _stats.Add(A<ChapterStats>.That
                 .Matches(x => x.Completed == false &&
                               x.ChapterId == genericChapter.Id &&
+                              x.Tips == 0 &&
                               IsInitialized(x.Failures, genericChapter) &&
-                              IsInitialized(x.Submits, genericChapter) &&
-                              IsInitialized(x.Tips, genericChapter))))
+                              IsInitialized(x.Submits, genericChapter))))
                 .MustHaveHappenedOnceExactly();
         }
 

@@ -127,32 +127,6 @@ namespace Bhasha.Common.MongoDB.Tests
         }
 
         [Test]
-        public async Task QueryTips()
-        {
-            var chapterId = Guid.NewGuid();
-            var pageIndex = 2;
-
-            var tips = Enumerable
-                .Range(1, 10)
-                .Select(i => {
-                    var dto = TipDtoBuilder.Build();
-                    dto.ChapterId = i < 5 ? chapterId : Guid.NewGuid();
-                    dto.PageIndex = i < 3 ? pageIndex : 3;
-                    return dto;
-                });
-
-            await _db
-                .GetCollection<TipDto>()
-                .InsertManyAsync(tips);
-
-            var result = await _layer.QueryTips(chapterId, pageIndex);
-
-            Assert.That(result.Count() == 2);
-            Assert.That(result.All(x => x.ChapterId == chapterId &&
-                                        x.PageIndex == pageIndex));
-        }
-
-        [Test]
         public async Task QueryTranslationByTokenId()
         {
             var tokenId = Guid.NewGuid();

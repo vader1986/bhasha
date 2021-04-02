@@ -19,7 +19,6 @@ namespace Bhasha.Common.MongoDB.Extensions
                 .AddTransient<IConvert<ChapterStatsDto, ChapterStats>, Converter>()
                 .AddTransient<IConvert<GenericChapterDto, GenericChapter>, Converter>()
                 .AddTransient<IConvert<ProfileDto, Profile>, Converter>()
-                .AddTransient<IConvert<TipDto, Tip>, Converter>()
                 .AddTransient<IConvert<TokenDto, Token>, Converter>()
                 .AddTransient<IConvert<TranslationDto, Translation>, Converter>();
 
@@ -27,7 +26,6 @@ namespace Bhasha.Common.MongoDB.Extensions
                 .AddTransient<IStore<GenericChapter>, MongoDbStore<GenericChapterDto, GenericChapter>>()
                 .AddTransient<IStore<ChapterStats>, MongoDbStore<ChapterStatsDto, ChapterStats>>()
                 .AddTransient<IStore<Profile>, MongoDbStore<ProfileDto, Profile>>()
-                .AddTransient<IStore<Tip>, MongoDbStore<TipDto, Tip>>()
                 .AddTransient<IStore<Token>, MongoDbStore<TokenDto, Token>>()
                 .AddTransient<IStore<Translation>, MongoDbStore<TranslationDto, Translation>>();
 

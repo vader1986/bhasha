@@ -192,7 +192,7 @@ namespace Bhasha.Common.Tests.Importers
                 Chapter.Level,
                 AToken.Id,
                 AToken.Id,
-                new [] { new GenericPage(AToken.Id, PageType.OneOutOfFour) });
+                new [] { new GenericPage(AToken.Id, PageType.OneOutOfFour, new Guid[0]) });
 
             A.CallTo(() => _database.QueryChaptersByLevel(A<int>._))
                 .Returns(Task.FromResult(existingChapter.ToEnumeration()));

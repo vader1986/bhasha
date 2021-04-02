@@ -47,19 +47,26 @@ namespace Bhasha.Common.Importers
 
         private async Task<GenericPage> ImportPage(string from, string to, ChapterDto.PageDto page, int level)
         {
-            var token = await ImportToken(page.Token, level);
+            var token = await ImportToken(page.Token, page.Token.Level ?? level);
             await ImportTranslation(from, page.From, token);
             await ImportTranslation(to, page.To, token);
 
-            return new GenericPage(token.Id, PageType.OneOutOfFour);
+            var tips = page.Tips ?? new ChapterDto.ExpressionDto[0];
+            var tipIds = await Task.WhenAll(tips.Select(async x => {
+                var tipToken = await ImportToken(x.Token, x.Token.Level ?? level);
+                await ImportTranslation(to, x.Native, tipToken);
+                return tipToken.Id;
+            }));
+
+            return new GenericPage(token.Id, PageType.OneOutOfFour, tipIds);
         }
 
         public async Task<GenericChapter> Import(ChapterDto dto)
         {
-            var nameToken = await ImportToken(dto.Name.Token, dto.Level);
+            var nameToken = await ImportToken(dto.Name.Token, dto.Name.Token.Level ?? dto.Level);
             await ImportTranslation(dto.From, dto.Name.Native, nameToken);
 
-            var descToken = await ImportToken(dto.Description.Token, dto.Level);
+            var descToken = await ImportToken(dto.Description.Token, dto.Description.Token.Level ?? dto.Level);
             await ImportTranslation(dto.From, dto.Description.Native, descToken);
 
             var pages = await Task.WhenAll(dto.Pages.Select(x => ImportPage(dto.From, dto.To, x, dto.Level)));

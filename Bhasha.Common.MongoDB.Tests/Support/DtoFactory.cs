@@ -22,11 +22,6 @@ namespace Bhasha.Common.MongoDB.Tests.Support
                 return ProfileDtoBuilder.Build() as TDto;
             }
 
-            if (typeof(TDto) == typeof(TipDto))
-            {
-                return TipDtoBuilder.Build() as TDto;
-            }
-
             if (typeof(TDto) == typeof(TokenDto))
             {
                 return TokenDtoBuilder.Build() as TDto;

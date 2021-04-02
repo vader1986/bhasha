@@ -33,8 +33,8 @@
         "cefr": "A1",
         "tokenType": "Noun",
         "categories": [
-          "pet",
-          "animal"
+          "pets",
+          "animals"
         ]
       },
       "from": {
@@ -44,7 +44,8 @@
       "to": {
         "native": "কুকুর",
         "spoken": "Kukura"
-      }
+      },
+      "tips": []
     },
     {
       "token": {
@@ -52,8 +53,8 @@
         "cefr": "A1",
         "tokenType": "Noun",
         "categories": [
-          "pet",
-          "animal"
+          "pets",
+          "animals"
         ]
       },
       "from": {
@@ -63,7 +64,41 @@
       "to": {
         "native": "বিড়াল",
         "spoken": "Biṛāla"
-      }
+      },
+      "tips": []
+    },
+    {
+      "token": {
+        "label": "cats and dogs are cute",
+        "cefr": "A2",
+        "tokenType": "Phrase",
+        "categories": [
+          "pets",
+          "animals"
+        ]
+      },
+      "from": {
+        "native": "cats and dogs are cute",
+        "spoken": "kats and dogs are kute"
+      },
+      "to": {
+        "native": "বিড়াল এবং কুকুর সুন্দর",
+        "spoken": "Biṛāla ēbaṁ kukura sundara"
+      },
+      "tips": [
+        {
+          "token": {
+            "label": "and",
+            "cefr": "A1",
+            "tokenType": "Conjunction",
+            "categories": []
+          },
+          "native": {
+            "native": "এবং",
+            "spoken": "Ēbaṁ"
+          }
+        }
+      ]
     }
   ]
 }

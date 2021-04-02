@@ -10,7 +10,6 @@ namespace Bhasha.Common.MongoDB.Dto
         IConvert<GenericChapterDto, GenericChapter>,
         IConvert<ChapterStatsDto, ChapterStats>,
         IConvert<ProfileDto, Profile>,
-        IConvert<TipDto, Tip>,
         IConvert<TokenDto, Token>,
         IConvert<TranslationDto, Translation>
     {
@@ -20,7 +19,8 @@ namespace Bhasha.Common.MongoDB.Dto
             {
                 return new GenericPage(
                     dto.TokenId,
-                    Enum.Parse<PageType>(dto.PageType));
+                    Enum.Parse<PageType>(dto.PageType),
+                    dto.TipIds);
             }
             catch (Exception e)
             {
@@ -33,7 +33,8 @@ namespace Bhasha.Common.MongoDB.Dto
             return new GenericPageDto
             {
                 TokenId = product.TokenId,
-                PageType = product.PageType.ToString()
+                PageType = product.PageType.ToString(),
+                TipIds = product.TipIds
             };
         }
 
@@ -75,7 +76,7 @@ namespace Bhasha.Common.MongoDB.Dto
                     dto.ProfileId,
                     dto.ChapterId,
                     dto.Completed,
-                    Encoding.UTF8.GetBytes(dto.Tips),
+                    dto.Tips,
                     Encoding.UTF8.GetBytes(dto.Submits),
                     Encoding.UTF8.GetBytes(dto.Failures));
             }
@@ -93,7 +94,7 @@ namespace Bhasha.Common.MongoDB.Dto
                 ChapterId = product.ChapterId,
                 ProfileId = product.ProfileId,
                 Completed = product.Completed,
-                Tips = Encoding.UTF8.GetString(product.Tips),
+                Tips = product.Tips,
                 Submits = Encoding.UTF8.GetString(product.Submits),
                 Failures = Encoding.UTF8.GetString(product.Failures)
             };
@@ -127,33 +128,6 @@ namespace Bhasha.Common.MongoDB.Dto
                 To = product.To,
                 Level = product.Level,
                 CompletedChapters = product.CompletedChapters
-            };
-        }
-
-        public Tip Convert(TipDto dto)
-        {
-            try
-            {
-                return new Tip(
-                    dto.Id,
-                    dto.ChapterId,
-                    dto.PageIndex,
-                    dto.Text);
-            }
-            catch (Exception e)
-            {
-                throw new InvalidDtoException(e, dto);
-            }
-        }
-
-        public TipDto Convert(Tip product)
-        {
-            return new TipDto
-            {
-                Id = product.Id,
-                ChapterId = product.ChapterId,
-                PageIndex = product.PageIndex,
-                Text = product.Text
             };
         }
 
