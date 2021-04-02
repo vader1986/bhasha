@@ -13,7 +13,7 @@ namespace Bhasha.Common.Arguments
                 .Where(x => x.TokenId != tokenId)
                 .Random(3)
                 .Append(translations.First(x => x.TokenId == tokenId))
-                .Select(x => $"{x.Native} ({x.Spoken})")
+                .Select(x => new OneOutOfFourArguments.Option(x.Native, $"{x.Native} ({x.Spoken})"))
                 .ToArray();
 
             options.Shuffle();

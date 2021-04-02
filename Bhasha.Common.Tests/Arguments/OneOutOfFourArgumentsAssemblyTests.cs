@@ -32,7 +32,8 @@ namespace Bhasha.Common.Tests.Arguments
             Assert.That(arguments is OneOutOfFourArguments args &&
                 args.Options != null &&
                 args.Options.Length == Math.Min(length, 4) &&
-                args.Options.Contains(expectedItem));
+                args.Options.Any(x => x.DisplayName == expectedItem &&
+                                      x.Value == translations[0].Native));
         }
     }
 }

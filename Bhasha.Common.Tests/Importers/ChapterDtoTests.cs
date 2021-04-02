@@ -47,33 +47,33 @@ namespace Bhasha.Common.Tests.Importers
 
             Assert.That(result.Pages.Length == 3);
 
-            Assert.That(result.Pages[0].Token.Label == "dog");
-            Assert.That(result.Pages[0].Token.Cefr == "A1");
-            Assert.That(result.Pages[0].Token.TokenType == "Noun");
+            Assert.That(result.Pages[0].Token.Label == "cats and dogs are cute");
+            Assert.That(result.Pages[0].Token.Cefr == "A2");
+            Assert.That(result.Pages[0].Token.TokenType == "Phrase");
             Assert.That(result.Pages[0].Token.Categories.SequenceEqual(new[] { "pets", "animals" }));
-            Assert.That(result.Pages[0].From.Native == "dog");
-            Assert.That(result.Pages[0].From.Spoken == "dog");
-            Assert.That(result.Pages[0].To.Native == "কুকুর");
-            Assert.That(result.Pages[0].To.Spoken == "Kukura");
+            Assert.That(result.Pages[0].From.Native == "cats and dogs are cute");
+            Assert.That(result.Pages[0].From.Spoken == "kats and dogs are kute");
+            Assert.That(result.Pages[0].To.Native == "বিড়াল এবং কুকুর সুন্দর");
+            Assert.That(result.Pages[0].To.Spoken == "Biṛāla ēbaṁ kukura sundara");
+            Assert.That(result.Pages[0].Tips.Length == 1);
 
-            Assert.That(result.Pages[1].Token.Label == "cat");
+            Assert.That(result.Pages[1].Token.Label == "dog");
             Assert.That(result.Pages[1].Token.Cefr == "A1");
             Assert.That(result.Pages[1].Token.TokenType == "Noun");
             Assert.That(result.Pages[1].Token.Categories.SequenceEqual(new[] { "pets", "animals" }));
-            Assert.That(result.Pages[1].From.Native == "cat");
-            Assert.That(result.Pages[1].From.Spoken == "kat");
-            Assert.That(result.Pages[1].To.Native == "বিড়াল");
-            Assert.That(result.Pages[1].To.Spoken == "Biṛāla");
+            Assert.That(result.Pages[1].From.Native == "dog");
+            Assert.That(result.Pages[1].From.Spoken == "dog");
+            Assert.That(result.Pages[1].To.Native == "কুকুর");
+            Assert.That(result.Pages[1].To.Spoken == "Kukura");
 
-            Assert.That(result.Pages[2].Token.Label == "cats and dogs are cute");
-            Assert.That(result.Pages[2].Token.Cefr == "A2");
-            Assert.That(result.Pages[2].Token.TokenType == "Phrase");
+            Assert.That(result.Pages[2].Token.Label == "cat");
+            Assert.That(result.Pages[2].Token.Cefr == "A1");
+            Assert.That(result.Pages[2].Token.TokenType == "Noun");
             Assert.That(result.Pages[2].Token.Categories.SequenceEqual(new[] { "pets", "animals" }));
-            Assert.That(result.Pages[2].From.Native == "cats and dogs are cute");
-            Assert.That(result.Pages[2].From.Spoken == "kats and dogs are kute");
-            Assert.That(result.Pages[2].To.Native == "বিড়াল এবং কুকুর সুন্দর");
-            Assert.That(result.Pages[2].To.Spoken == "Biṛāla ēbaṁ kukura sundara");
-            Assert.That(result.Pages[2].Tips.Length == 1);
+            Assert.That(result.Pages[2].From.Native == "cat");
+            Assert.That(result.Pages[2].From.Spoken == "kat");
+            Assert.That(result.Pages[2].To.Native == "বিড়াল");
+            Assert.That(result.Pages[2].To.Spoken == "Biṛāla");
         }
     }
 }

@@ -1,8 +1,8 @@
 import { Card, CardContent, IconButton, makeStyles, Typography } from '@material-ui/core';
 import React from 'react';
 import Page from './pages/Page';
-import EmojiObjectsOutlinedIcon from '@material-ui/icons/EmojiObjectsOutlined';
 import { api } from '../utils';
+import { AssignmentTurnedInOutlined, ContactSupportOutlined } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
     appBar: {
@@ -30,15 +30,22 @@ function Chapter(props) {
     const [pageIndex] = React.useState(0);
     const currentPage = props.chapter.pages[pageIndex];
 
+    const onSubmit = () => {
+      const args = `profileId=${props.profile.id}&chapterId=${props.chapter.id}&pageIndex=${pageIndex}&solution=${result}`;
+      api
+        .post(`api/page/submit?${args}`)
+        .then(response => alert(JSON.stringify(response.data)));
+    };
+
     const onSetResult = data => {
       setResult(data);
     };
 
-    console.log(JSON.stringify(currentPage));
-
     const onTipClicked = () => {
       const args = `profileId=${props.profile.id}&chapterId=${props.chapter.id}`;
-      api.post(`api/page/tip?${args}`, currentPage.tipIds).then(response => alert(response.data));
+      api
+        .post(`api/page/tip?${args}`, currentPage.tipIds)
+        .then(response => alert(response.data));
     };
 
     return (
@@ -63,7 +70,12 @@ function Chapter(props) {
               <div className={classes.appBarContent}>
                 { currentPage.tipIds.length > 0 &&
                 <IconButton onClick={onTipClicked}>
-                  <EmojiObjectsOutlinedIcon />
+                  <ContactSupportOutlined />
+                </IconButton>
+                }
+                { result !== undefined &&
+                <IconButton onClick={onSubmit}>
+                  <AssignmentTurnedInOutlined />
                 </IconButton>
                 }
               </div>

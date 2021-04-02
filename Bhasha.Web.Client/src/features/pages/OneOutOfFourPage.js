@@ -21,10 +21,10 @@ function OneOutOfFourPage(props) {
     return (
         <Paper component="ul" className={classes.root}>
         { props.page.arguments.options.map(option => 
-            <li key={option}>
+            <li key={option.value}>
                 <Chip
-                    label={option}
-                    onClick={setResult(option)}
+                    label={option.displayName}
+                    onClick={setResult(option.value)}
                     className={classes.chip}
                 />
             </li>)

@@ -2,11 +2,23 @@
 {
     public class OneOutOfFourArguments
     {
-        public string[] Options { get; }
+        public Option[] Options { get; }
 
-        public OneOutOfFourArguments(string[] options)
+        public OneOutOfFourArguments(Option[] options)
         {
             Options = options;
+        }
+
+        public class Option
+        {
+            public string Value { get; }
+            public string DisplayName { get; }
+
+            public Option(string value, string displayName)
+            {
+                Value = value;
+                DisplayName = displayName;
+            }
         }
     }
 }

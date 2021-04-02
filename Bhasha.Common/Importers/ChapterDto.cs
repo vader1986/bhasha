@@ -17,12 +17,19 @@
             public TranslationDto Native { get; set; }
         }
 
+        public class TipDto
+        {
+            public TokenDto Token { get; set; }
+            public TranslationDto From { get; set; }
+            public TranslationDto To { get; set; }
+        }
+
         public class PageDto
         {
             public TokenDto Token { get; set; }
             public TranslationDto From { get; set; }
             public TranslationDto To { get; set; }
-            public ExpressionDto[] Tips { get; set; }
+            public TipDto[] Tips { get; set; }
         }
 
         public class TranslationDto

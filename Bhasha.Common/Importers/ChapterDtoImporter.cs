@@ -51,10 +51,11 @@ namespace Bhasha.Common.Importers
             await ImportTranslation(from, page.From, token);
             await ImportTranslation(to, page.To, token);
 
-            var tips = page.Tips ?? new ChapterDto.ExpressionDto[0];
+            var tips = page.Tips ?? new ChapterDto.TipDto[0];
             var tipIds = await Task.WhenAll(tips.Select(async x => {
                 var tipToken = await ImportToken(x.Token, x.Token.Level ?? level);
-                await ImportTranslation(to, x.Native, tipToken);
+                await ImportTranslation(from, x.From, tipToken);
+                await ImportTranslation(to, x.To, tipToken);
                 return tipToken.Id;
             }));
 

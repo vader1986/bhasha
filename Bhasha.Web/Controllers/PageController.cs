@@ -44,10 +44,11 @@ namespace Bhasha.Web.Controllers
             var profile = await _profiles.Get(profileId, UserId);
             var tips = await Task.WhenAll(tipIds.Select(x => _database.QueryTranslationByTokenId(x, profile.To)));
             var tip = tips.Random();
+            var translation = await _database.QueryTranslationByTokenId(tip.TokenId, profile.From);
 
             await _tipStatsUpdater.UpdateStats(chapterId, profile);
 
-            return tip.Native; 
+            return $"{tip.Native} ({tip.Spoken}) = {translation.Native}";
         }
     }
 }
