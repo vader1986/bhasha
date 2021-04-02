@@ -60,16 +60,22 @@ namespace Bhasha.Web.Tests.Controllers
             A.CallTo(() => _profiles.Get(profile.Id, _controller.UserId))
                 .Returns(Task.FromResult(profile));
 
-            var translation = TranslationBuilder.Default.Build();
+            var from = TranslationBuilder.Default.Build();
+
+            A.CallTo(() => _database.QueryTranslationByTokenId(A<Guid>._, profile.From))
+                .Returns(Task.FromResult(from));
+
+            var to = TranslationBuilder.Default.Build();
 
             A.CallTo(() => _database.QueryTranslationByTokenId(A<Guid>._, profile.To))
-                .Returns(Task.FromResult(translation));
+                .Returns(Task.FromResult(to));
 
             var tipIds = new[] { Guid.NewGuid(), Guid.NewGuid() };
-
+            var expectedResult = $"{to.Native} ({to.Spoken}) = {from.Native}";
+            
             var result = await _controller.Tip(profile.Id, chapterId, tipIds);
 
-            Assert.That(result, Is.EqualTo(translation.Native));
+            Assert.That(result, Is.EqualTo(expectedResult));
 
             A.CallTo(() => _stateUpdater.UpdateStats(chapterId, profile))
                 .MustHaveHappenedOnceExactly();
