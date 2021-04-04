@@ -3,6 +3,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { api } from '../utils';
+import { Done } from '@material-ui/icons';
 
 function ChapterSelection(props) {
     const [chapters, setChapters] = React.useState([]);
@@ -27,20 +28,12 @@ function ChapterSelection(props) {
     }
 
     const createItem = chapter => {
-        if (chapter.completed || props.completedIds.includes(chapter.id))
-        {
-            return (
-                <ListItem disabled>
-                    <ListItemText>{chapter.name.toUpperCase()}</ListItemText>
-                </ListItem>);    
-        }
-        else
-        {
-            return (
-                <ListItem button onClick={onSelect(chapter)}>
-                    <ListItemText>{chapter.name.toUpperCase()}</ListItemText>
-                </ListItem>);
-        }
+        const completed = chapter.completed || props.completedIds.includes(chapter.id);
+        return (
+            <ListItem button onClick={onSelect(chapter)}>
+                <ListItemText>{chapter.name.toUpperCase()}</ListItemText>
+                {completed && <Done color="primary" />}
+            </ListItem>);
     };
 
     return (
