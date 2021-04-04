@@ -33,7 +33,7 @@ function NavigationBar(props) {
                         <Link
                           color="inherit"
                           component="button"
-                          variant="body2">SELECT CHAPTER</Link>
+                          variant="body2">LEVEL {props.profile.level}</Link>
                     }
                     { screen === DISPLAY_CHAPTER &&
                         <Link

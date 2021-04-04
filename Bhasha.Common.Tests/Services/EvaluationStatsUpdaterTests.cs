@@ -37,8 +37,6 @@ namespace Bhasha.Common.Tests.Services
         public async Task UpdateStats_creates_chapter_stats()
         {
             var genericChapter = GenericChapterBuilder.Default.Build();
-            var submit = new Submit(genericChapter.Id, 1, "test");
-            var evaluation = new Evaluation(Result.Correct, submit);
             var profile = ProfileBuilder.Default.Build();
 
             A.CallTo(() => _database.QueryStatsByChapterAndProfileId(genericChapter.Id, profile.Id))
@@ -47,7 +45,7 @@ namespace Bhasha.Common.Tests.Services
             A.CallTo(() => _stats.Add(A<ChapterStats>.Ignored))
                 .Returns(ChapterStats.Create(profile.Id, genericChapter));
 
-            await _statsUpdater.UpdateStats(evaluation, profile, genericChapter);
+            await _statsUpdater.UpdateStats(Result.Correct, 1, profile, genericChapter);
 
             A.CallTo(() => _stats.Add(A<ChapterStats>.That
                 .Matches(x => x.Completed == false &&
@@ -71,23 +69,23 @@ namespace Bhasha.Common.Tests.Services
 
             var stats = ChapterStatsBuilder
                 .Default
+                .WithCompleted(false)
                 .WithFailures(new byte[] { 0, 0, 0, 0, 0 })
                 .WithSubmits(new byte[] { 0, 0, 0, 0, 0 })
                 .WithChapterId(genericChapter.Id)
                 .Build();
 
-            var submit = new Submit(genericChapter.Id, 1, "test");
-            var evaluation = new Evaluation(Result.Wrong, submit);
+            var pageIndex = 1;
 
             A.CallTo(() => _database.QueryStatsByChapterAndProfileId(genericChapter.Id, profile.Id))
                 .Returns(Task.FromResult(stats));
 
-            await _statsUpdater.UpdateStats(evaluation, profile, genericChapter);
+            await _statsUpdater.UpdateStats(Result.Wrong, pageIndex, profile, genericChapter);
 
             A.CallTo(() => _stats.Replace(A<ChapterStats>.That
                 .Matches(x => x.ChapterId == genericChapter.Id &&
-                              x.Failures[submit.PageIndex] == 1 &&
-                              x.Submits[submit.PageIndex] == 1)))
+                              x.Failures[pageIndex] == 1 &&
+                              x.Submits[pageIndex] == 1)))
                 .MustHaveHappenedOnceExactly();
         }
 
@@ -110,19 +108,18 @@ namespace Bhasha.Common.Tests.Services
                 .WithChapterId(genericChapter.Id)
                 .Build();
 
-            var submit = new Submit(genericChapter.Id, 1, "test");
-            var evaluation = new Evaluation(Result.Correct, submit);
+            var pageIndex = 1;
 
             A.CallTo(() => _database.QueryStatsByChapterAndProfileId(genericChapter.Id, profile.Id))
                 .Returns(Task.FromResult(stats));
 
-            await _statsUpdater.UpdateStats(evaluation, profile, genericChapter);
+            await _statsUpdater.UpdateStats(Result.Correct, pageIndex, profile, genericChapter);
 
             A.CallTo(() => _stats.Replace(A<ChapterStats>.That
                 .Matches(x => x.ChapterId == genericChapter.Id &&
                               x.Completed == false &&
-                              x.Failures[submit.PageIndex] == 0 &&
-                              x.Submits[submit.PageIndex] == 1)))
+                              x.Failures[pageIndex] == 0 &&
+                              x.Submits[pageIndex] == 1)))
                 .MustHaveHappenedOnceExactly();
         }
 
@@ -145,19 +142,18 @@ namespace Bhasha.Common.Tests.Services
                 .WithChapterId(genericChapter.Id)
                 .Build();
 
-            var submit = new Submit(genericChapter.Id, 1, "test");
-            var evaluation = new Evaluation(Result.Correct, submit);
+            var pageIndex = 1;
 
             A.CallTo(() => _database.QueryStatsByChapterAndProfileId(genericChapter.Id, profile.Id))
                 .Returns(Task.FromResult(stats));
 
-            await _statsUpdater.UpdateStats(evaluation, profile, genericChapter);
+            await _statsUpdater.UpdateStats(Result.Correct, pageIndex, profile, genericChapter);
 
             A.CallTo(() => _stats.Replace(A<ChapterStats>.That
                 .Matches(x => x.ChapterId == genericChapter.Id &&
                               x.Completed == true &&
-                              x.Failures[submit.PageIndex] == 0 &&
-                              x.Submits[submit.PageIndex] == 1)))
+                              x.Failures[pageIndex] == 0 &&
+                              x.Submits[pageIndex] == 1)))
                 .MustHaveHappenedOnceExactly();
         }
     }

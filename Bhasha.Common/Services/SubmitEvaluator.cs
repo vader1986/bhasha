@@ -34,14 +34,13 @@ namespace Bhasha.Common.Services
 
             var page = chapter.Pages[submit.PageIndex];
 
-            var expected = await _database.QueryTranslationByTokenId(page.TokenId, profile.To);
+            var expected = await _database.QueryTranslationByTokenId(page.TokenId, profile.To)
+                ?? throw new ObjectNotFoundException(typeof(Translation), page.TokenId);
+
             var result = _checker.Evaluate(expected.Native, submit.Solution);
+            var updatedProfile = await _updateStats.UpdateStats(result, submit.PageIndex, profile, chapter);
 
-            var evaluation = new Evaluation(result, submit);
-
-            await _updateStats.UpdateStats(evaluation, profile, chapter);
-
-            return evaluation;
+            return new Evaluation(result, submit, updatedProfile);
         }
     }
 }

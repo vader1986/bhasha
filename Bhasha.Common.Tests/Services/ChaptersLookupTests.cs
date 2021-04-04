@@ -37,7 +37,7 @@ namespace Bhasha.Common.Tests.Services
             A.CallTo(() => _database.QueryChaptersByLevel(profile.Level))
                 .Returns(Task.FromResult<IEnumerable<GenericChapter>>(chapters));
 
-            var expectedChapter = new Chapter(Guid.NewGuid(), 1, "x", "x", new Page[0], default);
+            var expectedChapter = new Chapter(Guid.NewGuid(), 1, "x", "x", new Page[0], false, default);
 
             A.CallTo(() => _chapters.Assemble(chapters[0], profile))
                 .Returns(Task.FromResult(expectedChapter));

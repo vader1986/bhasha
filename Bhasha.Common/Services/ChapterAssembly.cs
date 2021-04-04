@@ -82,12 +82,16 @@ namespace Bhasha.Common.Services
                 return null;
             }
 
+            var stats = await _database.QueryStatsByChapterAndProfileId(chapter.Id, profile.Id);
+            var completed = stats?.Completed ?? false;
+
             return new Chapter(
                 chapter.Id,
                 chapter.Level,
                 name.Native,
                 description.Native,
                 pages,
+                completed,
                 token?.PictureId);
         }
     }

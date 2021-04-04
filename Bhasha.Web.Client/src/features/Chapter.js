@@ -27,14 +27,38 @@ const useStyles = makeStyles((theme) => ({
 function Chapter(props) {
     const classes = useStyles();
     const [result, setResult] = React.useState(undefined);
-    const [pageIndex] = React.useState(0);
-    const currentPage = props.chapter.pages[pageIndex];
+    const [pageIndex, setPageIndex] = React.useState(0);
+    const [completedPages, setCompletedPages] = React.useState([]);
+    const currentChapter = props.chapter;
+    const currentPage = currentChapter.pages[pageIndex];
+
+    if (completedPages.length === currentChapter.pages.length)
+    {
+      props.onCompleted(currentChapter);
+    }
+
+    const onCorrectResult = profile => {
+      setCompletedPages(previous => 
+        completedPages.includes(pageIndex) 
+          ? previous 
+          : previous.concat([pageIndex]));
+      props.onProfileUpdate(profile);
+    };
 
     const onSubmit = () => {
       const args = `profileId=${props.profile.id}&chapterId=${props.chapter.id}&pageIndex=${pageIndex}&solution=${result}`;
       api
         .post(`api/page/submit?${args}`)
-        .then(response => alert(JSON.stringify(response.data)));
+        .then(response => {
+          if (response.data.result === 0) {
+            onCorrectResult(response.data.profile);
+          }
+
+          setResult(undefined);
+          setPageIndex(previous => (previous + 1) % currentChapter.pages.length);
+
+          // TODO visualize correct / wrong result
+        });
     };
 
     const onSetResult = data => {
@@ -52,6 +76,9 @@ function Chapter(props) {
         <div>
             <Card>
                 <CardContent>
+                    <Typography className={classes.title} color="textSecondary" gutterBottom>
+                        Completed {completedPages.length} out of {currentChapter.pages.length} pages.
+                    </Typography>                  
                     <Typography className={classes.title} color="textSecondary" gutterBottom>
                         Please select the correct solution!
                     </Typography>

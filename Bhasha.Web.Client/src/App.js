@@ -11,7 +11,12 @@ import NavigationBar from './features/NavigationBar';
 function App() {
   const [profile, setProfile] = React.useState(undefined);
   const [chapter, setChapter] = React.useState(undefined);
+  const [completedIds, setCompletedIds] = React.useState([])
   const [screen, setScreen] = React.useState(DISPLAY_PROFILE_SELECTION);
+
+  const onProfileUpdate = profile => {
+    setProfile(profile);
+  };
 
   const onSelectProfile = profile => {
     setProfile(profile);
@@ -21,6 +26,12 @@ function App() {
   const onSelectChapter = chapter => {
     setChapter(chapter);
     setScreen(DISPLAY_CHAPTER);
+  };
+
+  const onChapterCompleted = chapter => {
+    setCompletedIds(previous => previous.concat([chapter.id]));
+    setChapter(undefined);
+    setScreen(DISPLAY_CHAPTER_SELECTION);
   };
 
   const onSwitchToProfileSelection = () => {
@@ -38,16 +49,25 @@ function App() {
     switch (screen)
     {
       case DISPLAY_PROFILE_SELECTION:
-        return <ProfileSelection onSelect={onSelectProfile} />;
+        return <ProfileSelection
+                  onSelect={onSelectProfile} />;
 
       case DISPLAY_CHAPTER_SELECTION:
-        return <ChapterSelection onSelect={onSelectChapter} profile={profile} />;
+        return <ChapterSelection
+                  onSelect={onSelectChapter}
+                  completedIds={completedIds}
+                  profile={profile} />;
 
       case DISPLAY_CHAPTER:
-        return <Chapter chapter={chapter} profile={profile} />;
+        return <Chapter
+                  chapter={chapter}
+                  profile={profile}
+                  onCompleted={onChapterCompleted}
+                  onProfileUpdate={onProfileUpdate} />;
 
       default:
-        return <ProfileSelection onSelect={onSelectProfile} />;
+        return <ProfileSelection
+                  onSelect={onSelectProfile} />;
     }
   };
 

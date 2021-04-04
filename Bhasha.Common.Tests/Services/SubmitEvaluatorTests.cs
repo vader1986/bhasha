@@ -37,7 +37,7 @@ namespace Bhasha.Common.Tests.Services
 
             var evaluation = await _submitEvaluator.Evaluate(profile, submit);
 
-            A.CallTo(() => _updateStats.UpdateStats(evaluation, profile, A<GenericChapter>._))
+            A.CallTo(() => _updateStats.UpdateStats(result, submit.PageIndex, profile, A<GenericChapter>._))
                 .MustHaveHappenedOnceExactly();
 
             Assert.That(evaluation.Result == result);

@@ -6,7 +6,7 @@ namespace Bhasha.Common.Services
 {
     public interface IUpdateStatsForEvaluation
     {
-        Task UpdateStats(Evaluation evaluation, Profile profile, GenericChapter chapter);
+        Task<Profile> UpdateStats(Result result, int pageIndex, Profile profile, GenericChapter chapter);
     }
 
     public class EvaluationStatsUpdater : IUpdateStatsForEvaluation
@@ -22,17 +22,25 @@ namespace Bhasha.Common.Services
             _profiles = profiles;
         }
 
-        private async Task UpdateProfile(Profile profile)
+        private async Task<Profile> UpdateProfile(Profile profile)
         {
             var completedChapters = profile.CompletedChapters + 1;
 
-            await _profiles.Replace(new Profile(
+            var chapters = await _database.QueryChaptersByLevel(profile.Level);
+            var stats = await Task.WhenAll(chapters.Select(chapter => _database.QueryStatsByChapterAndProfileId(chapter.Id, profile.Id)));
+            var level = stats.Any(x => x == null || !x.Completed) ? profile.Level : profile.Level + 1;
+
+            var updatedProfile = new Profile(
                 profile.Id,
                 profile.UserId,
                 profile.From,
                 profile.To,
-                completedChapters / 5 + 1,
-                completedChapters));
+                level,
+                completedChapters);
+
+            await _profiles.Replace(updatedProfile);
+
+            return updatedProfile;
         }
 
         private bool JustCompletedChapter(ChapterStats stats)
@@ -53,22 +61,25 @@ namespace Bhasha.Common.Services
                     .All(x => x);
         }
 
-        public async Task UpdateStats(Evaluation evaluation, Profile profile, GenericChapter chapter)
+        public async Task<Profile> UpdateStats(Result result, int pageIndex, Profile profile, GenericChapter chapter)
         {
             var stats =
                 await _database.QueryStatsByChapterAndProfileId(chapter.Id, profile.Id) ??
                 await _stats.Add(ChapterStats.Create(profile.Id, chapter));
 
-            var pageIndex = evaluation.Submit.PageIndex;
+            if (stats.Completed)
+            {
+                return profile;
+            }
 
-            if (evaluation.Result == Result.Correct)
+            if (result == Result.Correct)
             {
                 var updatedStats = stats.WithSuccess(pageIndex);
 
                 if (JustCompletedChapter(updatedStats))
                 {
-                    await UpdateProfile(profile);
                     await _stats.Replace(updatedStats.WithCompleted());
+                    return await UpdateProfile(profile);
                 }
                 else
                 {
@@ -79,6 +90,8 @@ namespace Bhasha.Common.Services
             {
                 await _stats.Replace(stats.WithFailure(pageIndex));
             }
+
+            return profile;
         }
     }
 }

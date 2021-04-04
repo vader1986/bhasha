@@ -24,14 +24,7 @@ namespace Bhasha.Common.Services
         {
             var appliedLevel = Math.Min(profile.Level, requestedLevel);
             var chapters = await _database.QueryChaptersByLevel(appliedLevel);
-
-            var stats =
-                await Task.WhenAll(chapters.Select(chapter =>
-                    _database.QueryStatsByChapterAndProfileId(chapter.Id, profile.Id)));
-
-            var completed = stats.Where(x => x != null).ToDictionary(x => x.ChapterId, x => x.Completed);
-            var uncompletedChapters = chapters.Where(x => !(completed.ContainsKey(x.Id) && completed[x.Id]));
-            var result = await Task.WhenAll(uncompletedChapters.Select(async x => await _chapters.Assemble(x, profile)));
+            var result = await Task.WhenAll(chapters.Select(async x => await _chapters.Assemble(x, profile)));
 
             return result.Where(x => x != null).ToArray();
         }

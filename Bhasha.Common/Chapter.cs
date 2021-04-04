@@ -31,23 +31,29 @@ namespace Bhasha.Common
         public Page[] Pages { get; }
 
         /// <summary>
+        /// Whether or not the chapter has been completed by the current user.
+        /// </summary>
+        public bool Completed { get; }
+
+        /// <summary>
         /// Link to an image representing the content of the chapter (optional).
         /// </summary>
         public ResourceId? PictureId { get; }
 
-        public Chapter(Guid id, int level, string name, string description, Page[] pages, ResourceId? pictureId)
+        public Chapter(Guid id, int level, string name, string description, Page[] pages, bool completed, ResourceId? pictureId)
         {
             Id = id;
             Level = level;
             Name = name;
             Description = description;
             Pages = pages;
+            Completed = completed;
             PictureId = pictureId;
         }
 
         public override string ToString()
         {
-            return $"{nameof(Id)}: {Id}, {nameof(Level)}: {Level}, {nameof(Name)}: {Name}, {nameof(Description)}: {Description}, {nameof(Pages)}: {string.Join('/', Pages?.Select(x => x.ToString()))}, {nameof(PictureId)}: {PictureId}";
+            return $"{nameof(Id)}: {Id}, {nameof(Level)}: {Level}, {nameof(Name)}: {Name}, {nameof(Description)}: {Description}, {nameof(Pages)}: {string.Join('/', Pages?.Select(x => x.ToString()))}, {nameof(Completed)}: {Completed}, {nameof(PictureId)}: {PictureId}";
         }
     }
 }

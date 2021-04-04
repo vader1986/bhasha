@@ -40,7 +40,7 @@ namespace Bhasha.Web.Tests.Controllers
             A.CallTo(() => _profiles.Get(profile.Id, _controller.UserId))
                 .Returns(Task.FromResult(profile));
 
-            var evaluation = new Evaluation(result, submit);
+            var evaluation = new Evaluation(result, submit, profile);
 
             A.CallTo(() => _evaluator.Evaluate(profile, A<Submit>.That.Matches(x => x.Equals(submit))))
                 .Returns(Task.FromResult(evaluation));

@@ -14,20 +14,26 @@ namespace Bhasha.Common
         /// </summary>
         public Submit Submit { get; }
 
-        public Evaluation(Result result, Submit submit)
+        /// <summary>
+        /// Updated profile.
+        /// </summary>
+        public Profile Profile { get; }
+
+        public Evaluation(Result result, Submit submit, Profile profile)
         {
             Result = result;
             Submit = submit;
+            Profile = profile;
         }
 
         public override string ToString()
         {
-            return $"{nameof(Result)}: {Result}, {nameof(Submit)}: {Submit}";
+            return $"{nameof(Result)}: {Result}, {nameof(Submit)}: {Submit}, {nameof(Profile)}: {Profile}";
         }
 
         public bool Equals(Evaluation other)
         {
-            return other != null && other.Result == Result && other.Submit.Equals(Submit);
+            return other != null && other.Result == Result && other.Submit.Equals(Submit) && other.Profile.Equals(Profile);
         }
     }
 }

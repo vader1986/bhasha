@@ -7,6 +7,7 @@ import { api } from '../utils';
 function ChapterSelection(props) {
     const [chapters, setChapters] = React.useState([]);
     const [loading, setLoading] = React.useState(true);
+
     const onSelect = (chapter) => () => {
         props.onSelect(chapter);
     }
@@ -25,14 +26,27 @@ function ChapterSelection(props) {
         return <div>... loading ...</div>
     }
 
+    const createItem = chapter => {
+        if (chapter.completed || props.completedIds.includes(chapter.id))
+        {
+            return (
+                <ListItem disabled>
+                    <ListItemText>{chapter.name.toUpperCase()}</ListItemText>
+                </ListItem>);    
+        }
+        else
+        {
+            return (
+                <ListItem button onClick={onSelect(chapter)}>
+                    <ListItemText>{chapter.name.toUpperCase()}</ListItemText>
+                </ListItem>);
+        }
+    };
+
     return (
         <div>
             <List component="nav">
-                { chapters.map(chapter => 
-                <ListItem button onClick={onSelect(chapter)}>
-                    <ListItemText>{chapter.name.toUpperCase()}</ListItemText>
-                </ListItem>)
-                }
+                { chapters.map(createItem) }
             </List>
         </div>
     );
