@@ -8,6 +8,7 @@ using Bhasha.Common.Tests.Support;
 using Bhasha.Web.Controllers;
 using Bhasha.Web.Services;
 using FakeItEasy;
+using LazyCache;
 using NUnit.Framework;
 
 namespace Bhasha.Web.Tests.Controllers
@@ -15,6 +16,7 @@ namespace Bhasha.Web.Tests.Controllers
     [TestFixture]
     public class PageControllerTests
     {
+        private IAppCache _cache;
         private IDatabase _database;
         private IAuthorizedProfileLookup _profiles;
         private IEvaluateSubmit _evaluator;
@@ -24,11 +26,12 @@ namespace Bhasha.Web.Tests.Controllers
         [SetUp]
         public void Before()
         {
+            _cache = A.Fake<IAppCache>();
             _database = A.Fake<IDatabase>();
             _profiles = A.Fake<IAuthorizedProfileLookup>();
             _evaluator = A.Fake<IEvaluateSubmit>();
             _stateUpdater = A.Fake<IUpdateStatsForTip>();
-            _controller = new PageController(_database, _profiles, _evaluator, _stateUpdater);
+            _controller = new PageController(_cache, _database, _profiles, _evaluator, _stateUpdater);
         }
 
         [Test]
@@ -49,6 +52,34 @@ namespace Bhasha.Web.Tests.Controllers
                 profile.Id, submit.ChapterId, submit.PageIndex, submit.Solution);
 
             Assert.That(eval, Is.EqualTo(evaluation));
+        }
+
+        [Test]
+        public async Task Submit_updated_profile([Values] Result result)
+        {
+            var profile = ProfileBuilder.Default.Build();
+            var submit = new Submit(Guid.NewGuid(), 1, "something");
+            var updatedProfile = new Profile(
+                profile.Id,
+                profile.UserId,
+                profile.From,
+                profile.To,
+                profile.Level + 1,
+                profile.CompletedChapters + 1);
+
+            A.CallTo(() => _profiles.Get(profile.Id, _controller.UserId))
+                .Returns(Task.FromResult(profile));
+
+            var evaluation = new Evaluation(result, submit, updatedProfile);
+
+            A.CallTo(() => _evaluator.Evaluate(profile, A<Submit>.That.Matches(x => x.Equals(submit))))
+                .Returns(Task.FromResult(evaluation));
+
+            await _controller.Submit(
+                profile.Id, submit.ChapterId, submit.PageIndex, submit.Solution);
+
+            A.CallTo(() => _cache.Remove(profile.Id.ToString()))
+                .MustHaveHappenedOnceExactly();
         }
 
         [Test]
