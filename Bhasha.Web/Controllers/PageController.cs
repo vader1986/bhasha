@@ -5,6 +5,7 @@ using Bhasha.Common;
 using Bhasha.Common.Extensions;
 using Bhasha.Common.Services;
 using Bhasha.Web.Services;
+using LazyCache;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bhasha.Web.Controllers
@@ -13,13 +14,15 @@ namespace Bhasha.Web.Controllers
     [Route("api/page")]
     public class PageController : BaseController
     {
+        private readonly IAppCache _cache;
         private readonly IDatabase _database;
         private readonly IAuthorizedProfileLookup _profiles;
         private readonly IEvaluateSubmit _evaluator;
         private readonly IUpdateStatsForTip _tipStatsUpdater;
 
-        public PageController(IDatabase database, IAuthorizedProfileLookup profiles, IEvaluateSubmit evaluator, IUpdateStatsForTip tipStatsUpdater)
+        public PageController(IAppCache cache, IDatabase database, IAuthorizedProfileLookup profiles, IEvaluateSubmit evaluator, IUpdateStatsForTip tipStatsUpdater)
         {
+            _cache = cache;
             _database = database;
             _profiles = profiles;
             _evaluator = evaluator;
@@ -33,6 +36,11 @@ namespace Bhasha.Web.Controllers
             var profile = await _profiles.Get(profileId, UserId);
             var submit = new Submit(chapterId, pageIndex, solution);
             var evaluation = await _evaluator.Evaluate(profile, submit);
+
+            if (!profile.Equals(evaluation.Profile))
+            {
+                _cache.Remove(profile.Id.ToString());
+            }
 
             return evaluation;
         }

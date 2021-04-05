@@ -2,7 +2,7 @@
 
 namespace Bhasha.Common
 {
-    public class Profile : IEntity
+    public class Profile : IEntity, IEquatable<Profile>
     {
         /// <summary>
         /// Unique identifier of this user profile.
@@ -52,6 +52,11 @@ namespace Bhasha.Common
         public override string ToString()
         {
             return $"{nameof(Id)}: {Id}, {nameof(UserId)}: {UserId}, {nameof(From)}: {From}, {nameof(To)}: {To}, {nameof(Level)}: {Level}, {nameof(CompletedChapters)}: {CompletedChapters}";
+        }
+
+        public bool Equals(Profile other)
+        {
+            return other != null && other.CompletedChapters == CompletedChapters && other.Level == Level && other.To == To && other.From == From && other.UserId == UserId && other.Id == Id;
         }
     }
 }
