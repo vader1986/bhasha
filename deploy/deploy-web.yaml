@@ -1,19 +1,29 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: web
+spec:
+  type: LoadBalancer
+  selector:
+    service: web
+  ports:
+    - port: 80 # container port of pod hosting website
+      targetPort: 80 # exposed port (access website)
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: bhasha
-  labels:
-    app: bhasha
+  name: web
 spec:
   replicas: 1
   selector:
     matchLabels:
-      service: bhasha
+      service: web
   template:
     metadata:
       labels:
-        app: bhasha
-        service: bhasha
+        app: web
+        service: web
     spec:
       containers:
         - name: bhasha
@@ -21,25 +31,8 @@ spec:
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80
-              protocol: TCP
           env:
             - name: ASPNETCORE_URLS
               value: http://+:80
             - name: ASPNETCORE_MongoDB
               value: mongodb://admin:password@mongodb-0.db.default.svc.cluster.local:27017
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: bhasha
-  labels:
-    app: bhasha
-    service: bhasha
-spec:
-  type: LoadBalancer
-  ports:
-    - port: 80
-      targetPort: 80
-      protocol: TCP
-  selector:
-    service: bhasha
