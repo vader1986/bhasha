@@ -35,4 +35,7 @@ spec:
             - name: ASPNETCORE_URLS
               value: http://+:80
             - name: ASPNETCORE_MongoDB
-              value: mongodb://admin:password@mongodb-0.db.default.svc.cluster.local:27017
+              valueFrom:
+                configMapKeyRef:
+                  name: bhasha-config
+                  key: mongodb

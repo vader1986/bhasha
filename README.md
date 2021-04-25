@@ -30,6 +30,13 @@ docker-compose build
 ```
 
 ### Deployment
+
+Assuming you've got docker installed on your machine with kubernetes enabled, you can deploy all required infrastructure for a local development environment:
+```bash
+kubectl apply -f deploy/dev
+```
+
+And finally deploy the actual Bhasha system:
 ```bash
 kubectl apply -f deploy
 ```

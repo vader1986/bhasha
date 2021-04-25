@@ -1,0 +1,6 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bhasha-config
+data:
+  mongodb: mongodb://admin:password@mongodb-0.db.default.svc.cluster.local:27017
