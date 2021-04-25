@@ -34,8 +34,18 @@ spec:
           env:
             - name: ASPNETCORE_URLS
               value: http://+:80
-            - name: ASPNETCORE_MongoDB
+            - name: ASPNETCORE_MongoUser
+              valueFrom: 
+                secretKeyRef:
+                  name: mongodb-secrets
+                  key: mongodb-user
+            - name: ASPNETCORE_MongoPassword
+              valueFrom: 
+                secretKeyRef:
+                  name: mongodb-secrets
+                  key: mongodb-password          
+            - name: ASPNETCORE_MongoHost
               valueFrom:
                 configMapKeyRef:
-                  name: bhasha-config
-                  key: mongodb
+                  name: mongodb-config
+                  key: hostname

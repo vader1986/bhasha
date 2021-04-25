@@ -25,8 +25,14 @@ namespace Bhasha.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
-            var connectionString = _configuration.GetValue<string>("MongoDB");
-            
+            var username = _configuration.GetValue<string>("MongoUser");
+            var password = _configuration.GetValue<string>("MongoPassword");
+            var host = _configuration.GetValue<string>("MongoHost");
+
+            var connectionString = $"mongodb://{username}:{password}@{host}";
+
+            System.Console.WriteLine(connectionString);
+
             services
                 .AddMongoDB(connectionString)
                 .AddBhashaServices()
@@ -39,7 +45,7 @@ namespace Bhasha.Web
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
         {
             var dir = Directory.GetCurrentDirectory();
-
+            
             if (Directory.Exists("wwwroot"))
             {
                 logger.LogInformation($"Web app: {string.Join(", ", Directory.GetFiles("wwwroot"))}");
