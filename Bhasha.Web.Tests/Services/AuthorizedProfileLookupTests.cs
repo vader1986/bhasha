@@ -25,6 +25,9 @@ namespace Bhasha.Web.Tests.Services
         public void Before()
         {
             _cache = new Mock<IAppCache>();
+            _cache
+                .Setup(x => x.DefaultCachePolicy)
+                .Returns(new CacheDefaults());
             _profiles = new Mock<IStore<DbUserProfile>>();
             _converter = new Mock<IConvert<DbUserProfile, Profile>>();
             _authorizedLookup = new AuthorizedProfileLookup(
@@ -41,10 +44,6 @@ namespace Bhasha.Web.Tests.Services
                     It.IsAny<Func<ICacheEntry, Task<Profile>>>(),
                     It.IsAny<MemoryCacheEntryOptions>()))
                 .ReturnsAsync(profile);
-
-            _cache
-                .Setup(x => x.DefaultCachePolicy)
-                .Returns(new CacheDefaults());
         }
 
         [Test]
