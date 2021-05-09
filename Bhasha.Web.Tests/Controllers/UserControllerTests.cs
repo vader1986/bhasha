@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Bhasha.Common;
-using Bhasha.Common.Services;
+﻿using System.Threading.Tasks;
+using Bhasha.Common.Database;
 using Bhasha.Common.Tests.Support;
 using Bhasha.Web.Controllers;
-using FakeItEasy;
+using Moq;
 using NUnit.Framework;
 
 namespace Bhasha.Web.Tests.Controllers
@@ -12,41 +10,47 @@ namespace Bhasha.Web.Tests.Controllers
     [TestFixture]
     public class UserControllerTests
     {
-        private IDatabase _database;
-        private IStore<ChapterStats> _stats;
-        private IStore<Profile> _profiles;
+        private Mock<IDatabase> _database;
+        private Mock<IStore<DbStats>> _stats;
+        private Mock<IStore<DbUserProfile>> _profiles;
         private UserController _controller;
 
         [SetUp]
         public void Before()
         {
-            _database = A.Fake<IDatabase>();
-            _stats = A.Fake<IStore<ChapterStats>>();
-            _profiles = A.Fake<IStore<Profile>>();
-            _controller = new UserController(_database, _stats, _profiles);
+            _database = new Mock<IDatabase>();
+            _stats = new Mock<IStore<DbStats>>();
+            _profiles = new Mock<IStore<DbUserProfile>>();
+            _controller = new UserController(
+                _database.Object,
+                _stats.Object,
+                _profiles.Object);
         }
 
         [Test]
         public async Task Delete()
         {
-            var profiles = new[] {
-                ProfileBuilder.Default.Build()
-            };
+            // setup
+            var profiles = new[] { DbUserProfileBuilder.Default.Build() };
 
-            A.CallTo(() => _database.QueryProfilesByUserId(_controller.UserId))
-                .Returns(Task.FromResult<IEnumerable<Profile>>(profiles));
+            _database
+                .Setup(x => x.QueryProfiles(_controller.UserId))
+                .ReturnsAsync(profiles);
 
-            var stats = new[] {
-                ChapterStatsBuilder.Default.Build()
-            };
+            var stats = new[] { DbStatsBuilder.Default.Build() };
 
-            A.CallTo(() => _database.QueryStatsByProfileId(profiles[0].Id))
-                .Returns(Task.FromResult<IEnumerable<ChapterStats>>(stats));
+            _database
+                .Setup(x => x.QueryStats(profiles[0].Id))
+                .ReturnsAsync(stats);
 
+            // act
             await _controller.Delete();
 
-            A.CallTo(() => _profiles.Remove(profiles[0])).MustHaveHappenedOnceExactly();
-            A.CallTo(() => _stats.Remove(stats[0])).MustHaveHappenedOnceExactly();
+            // assert
+            _profiles
+                .Verify(x => x.Remove(profiles[0].Id), Times.Once);
+            _stats
+                .Verify(x => x.Remove(stats[0].Id), Times.Once);
         }
     }
 }

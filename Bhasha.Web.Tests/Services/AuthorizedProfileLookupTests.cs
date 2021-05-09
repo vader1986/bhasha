@@ -1,40 +1,56 @@
 using System;
 using System.Threading.Tasks;
 using Bhasha.Common;
+using Bhasha.Common.Database;
 using Bhasha.Common.Extensions;
-using Bhasha.Common.Services;
 using Bhasha.Common.Tests.Support;
 using Bhasha.Web.Exceptions;
 using Bhasha.Web.Services;
-using FakeItEasy;
 using LazyCache;
 using Microsoft.Extensions.Caching.Memory;
+using Moq;
 using NUnit.Framework;
 
 namespace Bhasha.Web.Tests.Services
 {
-    using AFactory = A<Func<ICacheEntry, Task<Profile>>>;
-    using AString = A<string>;
-    using ACacheOption = A<MemoryCacheEntryOptions>;
-
     [TestFixture]
     public class AuthorizedProfileLookupTests
     {
-        private IAppCache _cache;
-        private IStore<Profile> _profiles;
+        private Mock<IAppCache> _cache;
+        private Mock<IStore<DbUserProfile>> _profiles;
+        private Mock<IConvert<DbUserProfile, Profile>> _converter;
         private AuthorizedProfileLookup _authorizedLookup;
 
         [SetUp]
         public void Before()
         {
-            _cache = A.Fake<IAppCache>();
-            _profiles = A.Fake<IStore<Profile>>();
-            _authorizedLookup = new AuthorizedProfileLookup(_cache, _profiles);
+            _cache = new Mock<IAppCache>();
+            _profiles = new Mock<IStore<DbUserProfile>>();
+            _converter = new Mock<IConvert<DbUserProfile, Profile>>();
+            _authorizedLookup = new AuthorizedProfileLookup(
+                _cache.Object,
+                _profiles.Object,
+                _converter.Object);
+        }
+
+        private void AssumeCachedProfile(Profile profile)
+        {
+            _cache
+                .Setup(x => x.GetOrAddAsync(
+                    It.IsAny<string>(),
+                    It.IsAny<Func<ICacheEntry, Task<Profile>>>(),
+                    It.IsAny<MemoryCacheEntryOptions>()))
+                .ReturnsAsync(profile);
+
+            _cache
+                .Setup(x => x.DefaultCachePolicy)
+                .Returns(new CacheDefaults());
         }
 
         [Test]
-        public async Task Get_profile_by_profile_id_for_user_id()
+        public async Task Get_ForCachedProfile_ReturnsCachedProfile()
         {
+            // setup
             var profileId = Guid.NewGuid();
             var userId = Rnd.Create.NextString();
 
@@ -44,17 +60,19 @@ namespace Bhasha.Web.Tests.Services
                 .WithUserId(userId)
                 .Build();
 
-            A.CallTo(() => _cache.GetOrAddAsync(AString._, AFactory._, ACacheOption._))
-                .Returns(Task.FromResult(profile));
+            AssumeCachedProfile(profile);
 
+            // act
             var result = await _authorizedLookup.Get(profileId, userId);
 
+            // assert
             Assert.That(result, Is.EqualTo(profile));
         }
 
         [Test]
-        public void Get_profile_for_different_user()
+        public void Get_ForDifferentUserId_ThrowsException()
         {
+            // setup
             var profileId = Guid.NewGuid();
             var userId = Rnd.Create.NextString();
 
@@ -64,24 +82,25 @@ namespace Bhasha.Web.Tests.Services
                 .WithUserId(userId)
                 .Build();
 
-            A.CallTo(() => _cache.GetOrAddAsync(AString._, AFactory._, ACacheOption._))
-                .Returns(Task.FromResult(profile));
-
             var otherUserId = Rnd.Create.NextString();
 
+            AssumeCachedProfile(profile);
+
+            // act & assert
             Assert.ThrowsAsync<UnauthorizedException>(async () =>
                 await _authorizedLookup.Get(profileId, otherUserId));
         }
 
         [Test]
-        public void Get_none_existing_profile()
+        public void Get_ForNonExistingProfile_ThrowsException()
         {
+            // setup
             var profileId = Guid.NewGuid();
             var userId = Rnd.Create.NextString();
 
-            A.CallTo(() => _cache.GetOrAddAsync(AString._, AFactory._, ACacheOption._))
-                .Returns(Task.FromResult<Profile>(null));
+            AssumeCachedProfile(null);
 
+            // act & assert
             Assert.ThrowsAsync<NotFoundException>(async () =>
                 await _authorizedLookup.Get(profileId, userId));
         }

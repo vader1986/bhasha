@@ -29,15 +29,15 @@ namespace Bhasha.Web.Controllers
 
         // Authorize User
         [HttpPost("create")]
-        public async Task<Profile> Create(string from, string to)
+        public async Task<Profile> Create(string native, string target)
         {
             var profile = new DbUserProfile {
                 Id = default,
                 UserId = UserId,
                 Languages = new DbProfile
                 {
-                    Native = from,
-                    Target = to
+                    Native = native,
+                    Target = target
                 },
                 Level = 1,
                 CompletedChapters = 0

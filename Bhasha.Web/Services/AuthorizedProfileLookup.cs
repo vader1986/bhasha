@@ -27,10 +27,8 @@ namespace Bhasha.Web.Services
 
         public async Task<Profile> Get(Guid profileId, string userId)
         {
-            var profile = await _cache.GetOrAddAsync(profileId.ToString(), async () => {
-                var entity = await _profiles.Get(profileId);
-                return _converter.Convert(entity);
-            });
+            var profile = await _cache.GetOrAddAsync(profileId.ToString(),
+                async () => _converter.Convert(await _profiles.Get(profileId)));
 
             if (profile == null)
             {

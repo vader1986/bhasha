@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Bhasha.Common;
-using Bhasha.Common.Services;
+using Bhasha.Common.Database;
 using Bhasha.Common.Tests.Support;
 using Bhasha.Web.Controllers;
 using Bhasha.Web.Services;
-using FakeItEasy;
+using Moq;
 using NUnit.Framework;
 
 namespace Bhasha.Web.Tests.Controllers
@@ -13,77 +12,98 @@ namespace Bhasha.Web.Tests.Controllers
     [TestFixture]
     public class ProfileControllerTests
     {
-        private IDatabase _database;
-        private IStore<Profile> _store;
-        private IStore<ChapterStats> _stats;
-        private IAuthorizedProfileLookup _profiles;
+        private Mock<IDatabase> _database;
+        private Mock<IStore<DbUserProfile>> _store;
+        private Mock<IStore<DbStats>> _stats;
+        private Mock<IAuthorizedProfileLookup> _profiles;
+        private Mock<IConvert<DbUserProfile, Profile>> _converter;
         private ProfileController _controller;
 
         [SetUp]
         public void Before()
         {
-            _database = A.Fake<IDatabase>();
-            _store = A.Fake<IStore<Profile>>();
-            _stats = A.Fake<IStore<ChapterStats>>();
-            _profiles = A.Fake<IAuthorizedProfileLookup>();
-            _controller = new ProfileController(_database, _store, _stats, _profiles);
+            _database = new Mock<IDatabase>();
+            _store = new Mock<IStore<DbUserProfile>>();
+            _stats = new Mock<IStore<DbStats>>();
+            _profiles = new Mock<IAuthorizedProfileLookup>();
+            _converter = new Mock<IConvert<DbUserProfile, Profile>>();
+            _controller = new ProfileController(
+                _database.Object,
+                _store.Object,
+                _stats.Object,
+                _profiles.Object,
+                _converter.Object);
         }
 
         [Test]
-        public async Task Create()
+        public async Task Create_ProfileForNativeAndTargetLanguage()
         {
-            var profile = ProfileBuilder
-                .Default
-                .Build();
+            // setup
+            var profile = DbUserProfileBuilder.Default.Build();
 
-            A.CallTo(() => _store.Add(A<Profile>._)).Returns(profile);
+            _store
+                .Setup(x => x.Add(It.IsAny<DbUserProfile>()))
+                .ReturnsAsync(profile);
 
+            // act
             var result = await _controller.Create(Language.English, Language.Bengali);
 
-            A.CallTo(() => _store.Add(A<Profile>.That
-                .Matches(x => x.Id == default &&
-                              x.From == Language.English &&
-                              x.To == Language.Bengali &&
-                              x.Level == 1)))
-                .MustHaveHappenedOnceExactly();
-
-            Assert.That(result, Is.EqualTo(profile));
+            // assert
+            _store
+                .Verify(x => x.Add(It.Is<DbUserProfile>(
+                    y => y.Id == default &&
+                    y.Languages.Native == Language.English &&
+                    y.Languages.Target == Language.Bengali &&
+                    y.Level == 1)), Times.Once);
         }
 
         [Test]
-        public async Task List()
+        public async Task List_UserProfiles()
         {
-            var profiles = new[] { ProfileBuilder.Default.Build() };
+            // setup
+            var profiles = new[] { DbUserProfileBuilder.Default.Build() };
 
-            A.CallTo(() => _database.QueryProfilesByUserId(_controller.UserId))
-                .Returns(Task.FromResult<IEnumerable<Profile>>(profiles));
+            _database
+                .Setup(x => x.QueryProfiles(_controller.UserId))
+                .ReturnsAsync(profiles);
 
+            var profile = ProfileBuilder.Default.Build();
+
+            _converter
+                .Setup(x => x.Convert(It.IsAny<DbUserProfile>()))
+                .Returns(profile);
+
+            // act
             var result = await _controller.List();
 
-            Assert.That(result, Is.EqualTo(profiles));
+            // assert
+            Assert.That(result, Is.EqualTo(new[] { profile }));
         }
 
         [Test]
-        public async Task Delete()
+        public async Task Delete_ExistingUserProfile_AlsoRemovesStats()
         {
-            var profile = ProfileBuilder
-                .Default
-                .Build();
+            // setup
+            var profile = ProfileBuilder.Default.Build();
 
-            A.CallTo(() => _profiles.Get(profile.Id, _controller.UserId))
-                .Returns(Task.FromResult(profile));
+            _profiles
+                .Setup(x => x.Get(profile.Id, _controller.UserId))
+                .ReturnsAsync(profile);
 
-            var stats = ChapterStatsBuilder
-                .Default
-                .Build();
+            var stats = DbStatsBuilder.Default.Build();
 
-            A.CallTo(() => _database.QueryStatsByProfileId(profile.Id))
-                .Returns(Task.FromResult<IEnumerable<ChapterStats>>(new[] { stats }));
+            _database
+                .Setup(x => x.QueryStats(profile.Id))
+                .ReturnsAsync(new[] { stats });
 
+            // act
             await _controller.Delete(profile.Id);
 
-            A.CallTo(() => _store.Remove(profile)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => _stats.Remove(stats)).MustHaveHappenedOnceExactly();
+            // assert
+            _store
+                .Verify(x => x.Remove(profile.Id), Times.Once);
+            _stats
+                .Verify(x => x.Remove(stats.Id), Times.Once);
         }
     }
 }
