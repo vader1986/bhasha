@@ -3,6 +3,7 @@ using Bhasha.Common;
 using Bhasha.Common.Database;
 using Bhasha.Common.Tests.Support;
 using Bhasha.Web.Controllers;
+using Bhasha.Web.Exceptions;
 using Bhasha.Web.Services;
 using Moq;
 using NUnit.Framework;
@@ -41,6 +42,10 @@ namespace Bhasha.Web.Tests.Controllers
             // setup
             var profile = DbUserProfileBuilder.Default.Build();
 
+            _database
+                .Setup(x => x.QueryProfiles(_controller.UserId))
+                .ReturnsAsync(new DbUserProfile[0]);
+
             _store
                 .Setup(x => x.Add(It.IsAny<DbUserProfile>()))
                 .ReturnsAsync(profile);
@@ -55,6 +60,46 @@ namespace Bhasha.Web.Tests.Controllers
                     y.Languages.Native == Language.English &&
                     y.Languages.Target == Language.Bengali &&
                     y.Level == 1)), Times.Once);
+        }
+
+        [Test]
+        public void Create_ForEqualNativeAndTargetLanguage_ThrowsException()
+        {
+            // setup
+            var profile = DbUserProfileBuilder.Default.Build();
+
+            _database
+                .Setup(x => x.QueryProfiles(_controller.UserId))
+                .ReturnsAsync(new DbUserProfile[0]);
+
+            _store
+                .Setup(x => x.Add(It.IsAny<DbUserProfile>()))
+                .ReturnsAsync(profile);
+
+            // act & assert
+            Assert.ThrowsAsync<BadRequestException>(
+                async () => await _controller.Create(Language.English, Language.English));
+        }
+
+        [Test]
+        public void Create_ForAlreadyExistingProfile_ThrowsException()
+        {
+            // setup
+            var profile = DbUserProfileBuilder.Default.Build();
+
+            _database
+                .Setup(x => x.QueryProfiles(_controller.UserId))
+                .ReturnsAsync(new[] { profile });
+
+            _store
+                .Setup(x => x.Add(It.IsAny<DbUserProfile>()))
+                .ReturnsAsync(profile);
+
+            // act & assert
+            Assert.ThrowsAsync<BadRequestException>(
+                async () => await _controller.Create(
+                    profile.Languages.Native,
+                    profile.Languages.Target));
         }
 
         [Test]

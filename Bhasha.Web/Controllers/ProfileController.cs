@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Bhasha.Common;
 using Bhasha.Common.Database;
+using Bhasha.Web.Exceptions;
 using Bhasha.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,6 +32,12 @@ namespace Bhasha.Web.Controllers
         [HttpPost("create")]
         public async Task<Profile> Create(string native, string target)
         {
+            if (native == target)
+            {
+                throw new BadRequestException(
+                    $"{nameof(native)} and {nameof(target)} must be different");
+            }
+
             var profile = new DbUserProfile {
                 Id = default,
                 UserId = UserId,
@@ -42,6 +49,14 @@ namespace Bhasha.Web.Controllers
                 Level = 1,
                 CompletedChapters = 0
             };
+
+            var profiles = await _database.QueryProfiles(UserId);
+            if (profiles.Any(p => p.Languages.Native == native &&
+                                  p.Languages.Target == target))
+            {
+                throw new BadRequestException(
+                    $"Profile from {native} => {target} already exists");
+            }
 
             return _converter.Convert(await _store.Add(profile));
         }
