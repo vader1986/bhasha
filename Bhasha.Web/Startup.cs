@@ -1,9 +1,7 @@
 using System.IO;
-using Bhasha.Common.Arguments;
 using Bhasha.Common.Extensions;
-using Bhasha.Common.Importers;
+using Bhasha.Common.MongoDB;
 using Bhasha.Common.MongoDB.Extensions;
-using Bhasha.Common.Services;
 using Bhasha.Web.Services;
 using LazyCache;
 using Microsoft.AspNetCore.Builder;
@@ -34,7 +32,7 @@ namespace Bhasha.Web
             System.Console.WriteLine(connectionString);
 
             services
-                .AddMongoDB(connectionString)
+                .AddMongoDB(new MongoSettings { ConnectionString = connectionString })
                 .AddBhashaServices()
                 .AddSingleton<IAuthorizedProfileLookup, AuthorizedProfileLookup>()
                 .AddSingleton<IAppCache, CachingService>()

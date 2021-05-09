@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using Bhasha.Common.Extensions;
 
 namespace Bhasha.Common.Tests.Support
@@ -8,10 +7,12 @@ namespace Bhasha.Common.Tests.Support
     {
         private Guid _id = Guid.NewGuid();
         private string _userId = Rnd.Create.NextString();
-        private Language _from = Language.English;
-        private Language _to = Language.Bengali;
-        private int _level = Rnd.Create.Next();
-        private int _completedChapters = Rnd.Create.Next();
+        private Language _native = Language.English;
+        private Language _target = Language.Bengali;
+        private int _level = Rnd.Create.Next(1, 10);
+        private int _completedChapters = Rnd.Create.Next(1, 10);
+
+        public static ProfileBuilder Default => new();
 
         public ProfileBuilder WithId(Guid id)
         {
@@ -25,29 +26,33 @@ namespace Bhasha.Common.Tests.Support
             return this;
         }
 
-        public ProfileBuilder WithFrom(Language from)
+        public ProfileBuilder WithNative(Language native)
         {
-            _from = from;
+            _native = native;
             return this;
         }
 
-        public ProfileBuilder WithTo(Language to)
+        public ProfileBuilder WithTarget(Language target)
         {
-            _to = to;
+            _target = target;
             return this;
         }
 
-        public static ProfileBuilder Default = new();
+        public ProfileBuilder WithLevel(int level)
+        {
+            _level = level;
+            return this;
+        }
+
+        public ProfileBuilder WithCompletedChapters(int completedChapters)
+        {
+            _completedChapters = completedChapters;
+            return this;
+        }
 
         public Profile Build()
         {
-            return new Profile(
-                _id,
-                _userId,
-                _from,
-                _to,
-                _level,
-                _completedChapters);
+            return new Profile(_id, _userId, _native, _target, _level, _completedChapters);
         }
     }
 }

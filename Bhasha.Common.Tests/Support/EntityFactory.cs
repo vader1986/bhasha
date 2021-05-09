@@ -1,4 +1,5 @@
 ﻿using System;
+using Bhasha.Common.Database;
 
 namespace Bhasha.Common.Tests.Support
 {
@@ -6,49 +7,32 @@ namespace Bhasha.Common.Tests.Support
     {
         public static TProduct Build<TProduct>(Guid? id = default) where TProduct : class, IEntity
         {
-            if (typeof(TProduct) == typeof(ChapterStats))
+            if (typeof(TProduct) == typeof(DbStats))
             {
-                return ChapterStatsBuilder
-                    .Default
-                    .WithId(id ?? Guid.NewGuid())
-                    .Build() as TProduct;
+                return (DbStatsBuilder.Default.WithId(id ?? Guid.NewGuid()).Build() as TProduct)!;
             }
 
-            if (typeof(TProduct) == typeof(GenericChapter))
+            if (typeof(TProduct) == typeof(DbChapter))
             {
-                return GenericChapterBuilder
-                    .Default
-                    .WithId(id ?? Guid.NewGuid())
-                    .Build() as TProduct;
-
+                return (DbChapterBuilder.Default.WithId(id ?? Guid.NewGuid()).Build() as TProduct)!;
             }
 
-            if (typeof(TProduct) == typeof(Profile))
+            if (typeof(TProduct) == typeof(DbUserProfile))
             {
-                return ProfileBuilder
-                    .Default
-                    .WithId(id ?? Guid.NewGuid())
-                    .Build() as TProduct;
+                return (DbUserProfileBuilder.Default.WithId(id ?? Guid.NewGuid()).Build() as TProduct)!;
             }
 
-            if (typeof(TProduct) == typeof(Token))
+            if (typeof(TProduct) == typeof(DbExpression))
             {
-                return TokenBuilder
-                    .Default
-                    .WithId(id ?? Guid.NewGuid())
-                    .Build() as TProduct;
+                return (DbExpressionBuilder.Default.WithId(id ?? Guid.NewGuid()).Build() as TProduct)!;
             }
 
-            if (typeof(TProduct) == typeof(Translation))
+            if (typeof(TProduct) == typeof(DbWord))
             {
-                return TranslationBuilder
-                    .Default
-                    .WithId(id ?? Guid.NewGuid())
-                    .Build() as TProduct;
+                return (DbWordBuilder.Default.WithId(id ?? Guid.NewGuid()).Build() as TProduct)!;
             }
 
-            throw new InvalidOperationException(
-                $"found no builder for {typeof(TProduct).Name}");
+            throw new InvalidOperationException($"found no builder for {typeof(TProduct).Name}");
         }
     }
 }

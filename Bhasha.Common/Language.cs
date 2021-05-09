@@ -7,6 +7,7 @@ namespace Bhasha.Common
 
     public class Language : IEquatable<Language>
     {
+        public readonly static Language Unknown = new Language(string.Empty, string.Empty);
         public readonly static Language English = new Language("en", "English", "UK");
         public readonly static Language Bengali = new Language("bn", "Bengali");
 
@@ -28,7 +29,12 @@ namespace Bhasha.Common
 
         public static Language Parse(string tag)
         {
-            return Supported[tag];
+            if (Supported.TryGetValue(tag, out var language))
+            {
+                return language;
+            }
+
+            return Unknown;
         }
 
         public override bool Equals(object obj)

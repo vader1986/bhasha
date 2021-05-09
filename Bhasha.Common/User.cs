@@ -1,6 +1,8 @@
-﻿namespace Bhasha.Common
+﻿using System;
+
+namespace Bhasha.Common
 {
-    public class User
+    public class User : IEquatable<User?>
     {
         /// <summary>
         /// Username choosen by the user.
@@ -18,9 +20,29 @@
             Email = email;
         }
 
-        public override string ToString()
+        public override bool Equals(object? obj)
         {
-            return $"{nameof(UserName)}: {UserName}, {nameof(Email)}: {Email}";
+            return Equals(obj as User);
+        }
+
+        public bool Equals(User? other)
+        {
+            return other != null && UserName == other.UserName && Email == other.Email;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(UserName, Email);
+        }
+
+        public static bool operator ==(User? left, User? right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(User? left, User? right)
+        {
+            return !(left == right);
         }
     }
 }

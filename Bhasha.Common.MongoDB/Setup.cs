@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Bhasha.Common.MongoDB.Dto;
+using Bhasha.Common.Database;
 using Bhasha.Common.MongoDB.Extensions;
 using MongoDB.Driver;
 
@@ -11,26 +11,27 @@ namespace Bhasha.Common.MongoDB
         {
             var db = client.GetDatabase(Names.Database);
 
-            await db.CreateCollectionAsync(Names.Collections.Profiles);
-            await db.CreateCollectionAsync(Names.Collections.Chapters);
-            await db.CreateCollectionAsync(Names.Collections.Tokens);
-            await db.CreateCollectionAsync(Names.Collections.Translations);
-            await db.CreateCollectionAsync(Names.Collections.Stats);
+            await db.CreateCollectionAsync(nameof(DbChapter));
+            await db.CreateCollectionAsync(nameof(DbExpression));
+            await db.CreateCollectionAsync(nameof(DbStats));
+            await db.CreateCollectionAsync(nameof(DbTranslatedChapter));
+            await db.CreateCollectionAsync(nameof(DbUserProfile));
+            await db.CreateCollectionAsync(nameof(DbWord));
 
-            var profiles = db.GetCollection<ProfileDto>(Names.Collections.Profiles);
-            await profiles.CreateIndices(x => x.UserId);
+            var profiles = db.GetCollection<DbUserProfile>(nameof(DbUserProfile));
+            await profiles.CreateIndices(x => x.UserId!);
 
-            var chapters = db.GetCollection<GenericChapterDto>(Names.Collections.Chapters);
+            var chapters = db.GetCollection<DbChapter>(nameof(DbChapter));
             await chapters.CreateIndices(x => x.Level);
 
-            var tokens = db.GetCollection<TokenDto>(Names.Collections.Tokens);
-            await tokens.CreateIndices(x => x.Label);
-
-            var translations = db.GetCollection<TranslationDto>(Names.Collections.Translations);
-            await translations.CreateIndices(x => x.Language, x => x.TokenId);
-
-            var stats = db.GetCollection<ChapterStatsDto>(Names.Collections.Stats);
+            var stats = db.GetCollection<DbStats>(nameof(DbStats));
             await stats.CreateIndices(x => x.ProfileId, x => x.ChapterId);
+
+            var translatedChapters = db.GetCollection<DbTranslatedChapter>(nameof(DbTranslatedChapter));
+            await translatedChapters.CreateIndices(
+                x => x.ChapterId,
+                x => x.Languages!.Native!,
+                x => x.Languages!.Target!);
 
             return db;
         }

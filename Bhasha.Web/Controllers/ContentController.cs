@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Bhasha.Common;
+using Bhasha.Common.Database;
 using Bhasha.Common.Importers;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,16 +9,16 @@ namespace Bhasha.Web.Controllers
     [Route("api/content")]
     public class ContentController : BaseController
     {
-        private readonly ChapterDtoImporter _importer;
+        private readonly ChapterImporter _importer;
 
-        public ContentController(ChapterDtoImporter importer)
+        public ContentController(ChapterImporter importer)
         {
             _importer = importer;
         }
 
         // Authorize Author
         [HttpPost("add/chapter")]
-        public Task<GenericChapter> AddToken([FromBody]ChapterDto chapter)
+        public Task<DbTranslatedChapter> AddToken([FromBody] DbTranslatedChapter chapter)
         {
             return _importer.Import(chapter);
         }

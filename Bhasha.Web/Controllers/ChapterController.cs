@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Bhasha.Common;
+using Bhasha.Common.Database;
 using Bhasha.Common.Services;
 using Bhasha.Web.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -14,30 +15,33 @@ namespace Bhasha.Web.Controllers
         private readonly IDatabase _database;
         private readonly IChaptersLookup _chapters;
         private readonly IAuthorizedProfileLookup _profiles;
+        private readonly IConvert<DbStats, Stats> _stats;
 
-        public ChapterController(IDatabase database, IChaptersLookup chapters, IAuthorizedProfileLookup profiles)
+        public ChapterController(IDatabase database, IChaptersLookup chapters, IAuthorizedProfileLookup profiles, IConvert<DbStats, Stats> stats)
         {
             _database = database;
             _chapters = chapters;
             _profiles = profiles;
+            _stats = stats;
         }
 
         // Authorize User
         [HttpGet("list")]
-        public async Task<Chapter[]> List(Guid profileId, int level = int.MaxValue)
+        public async Task<ChapterEnvelope[]> List(Guid profileId, int level = int.MaxValue)
         {
-            var profile = await _profiles.Get(profileId, UserId);
-            return await _chapters.GetChapters(profile, level);
+            return await _chapters.GetChapters(await _profiles.Get(profileId, UserId), level);
         }
 
         // Authorize User
         [HttpGet("stats")]
-        public async Task<ChapterStats> Stats(Guid profileId, Guid chapterId)
+        public async Task<Stats> Stats(Guid profileId, Guid chapterId)
         {
             var profile = await _profiles.Get(profileId, UserId);
-            var stats = await _database.QueryStatsByChapterAndProfileId(chapterId, profile.Id);
+            var stats = await _database.QueryStats(chapterId, profile.Id);
 
-            return stats;
+            stats.Validate();
+
+            return _stats.Convert(stats);
         }
     }
 }

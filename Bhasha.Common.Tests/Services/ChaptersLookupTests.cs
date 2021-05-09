@@ -1,9 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Bhasha.Common.Database;
 using Bhasha.Common.Services;
 using Bhasha.Common.Tests.Support;
-using FakeItEasy;
+using Moq;
 using NUnit.Framework;
 
 namespace Bhasha.Common.Tests.Services
@@ -11,40 +12,166 @@ namespace Bhasha.Common.Tests.Services
     [TestFixture]
     public class ChaptersLookupTests
     {
-        private IDatabase _database;
-        private IAssembleChapters _chapters;
-        private IChaptersLookup _lookup;
+        private Mock<IDatabase> _database;
+        private Mock<IStore<DbTranslatedChapter>> _chapters;
+        private Mock<IStore<DbStats>> _stats;
+        private Mock<IConvert<DbTranslatedChapter, Chapter>> _convertChapters;
+        private Mock<IConvert<DbStats, Stats>> _convertStats;
+        private ChaptersLookup _lookup;
 
         [SetUp]
         public void Before()
         {
-            _database = A.Fake<IDatabase>();
-            _chapters = A.Fake<IAssembleChapters>();
-            _lookup = new ChaptersLookup(_database, _chapters);
+            
+            _database = new Mock<IDatabase>();
+            _chapters = new Mock<IStore<DbTranslatedChapter>>();
+            _stats = new Mock<IStore<DbStats>>();
+            _convertChapters = new Mock<IConvert<DbTranslatedChapter, Chapter>>();
+            _convertStats = new Mock<IConvert<DbStats, Stats>>();
+            _lookup = new ChaptersLookup(
+                _database.Object,
+                _chapters.Object,
+                _stats.Object,
+                _convertChapters.Object,
+                _convertStats.Object);
+        }
+
+        private void AssumePopulatedDatabase(int expectedChapters, int expectedLevel)
+        {
+            var chapters = Enumerable
+                .Range(1, expectedChapters)
+                .Select(level => DbChapterBuilder.Default.Build())
+                .ToList();
+
+            _database
+                .Setup(x => x.QueryChapters(expectedLevel))
+                .ReturnsAsync(chapters);
+
+            var stats = DbStatsBuilder.Default.Build();
+
+            _database
+                .Setup(x => x.QueryStats(It.IsAny<Guid>(), It.IsAny<Guid>()))
+                .ReturnsAsync(stats);
+
+            var chapter = DbTranslatedChapterBuilder.Default.Build();
+
+            _chapters
+                .Setup(x => x.Get(It.IsAny<Guid>()))
+                .ReturnsAsync(chapter);
+
+            _stats
+                .Setup(x => x.Add(It.IsAny<DbStats>()))
+                .ReturnsAsync(stats);
+
+            var convertedChapter = ChapterBuilder.Default.Build();
+            var convertedStats = StatsBuilder.Default.Build();
+
+            _convertChapters
+                .Setup(x => x.Convert(chapter))
+                .Returns(convertedChapter);
+
+            _convertStats
+                .Setup(x => x.Convert(stats))
+                .Returns(convertedStats);
         }
 
         [Test]
-        public async Task GetChapters()
+        public async Task GetChapters_ForProfileAndLevel_ReturnsExpectedChapters()
         {
-            var profile = ProfileBuilder.Default.Build();
-            var stats = ChapterStatsBuilder.Default.WithCompleted(false).Build();
+            // setup
+            const int expectedChapters = 10;
+            const int expectedLevel = 5;
 
-            A.CallTo(() => _database.QueryStatsByChapterAndProfileId(A<Guid>._, A<Guid>._))
-                .Returns(Task.FromResult(stats));
+            AssumePopulatedDatabase(expectedChapters, expectedLevel);
 
-            var chapters = new[] { GenericChapterBuilder.Default.WithId(stats.ChapterId).Build() };
+            var profile = ProfileBuilder
+                .Default
+                .WithLevel(expectedLevel)
+                .Build();
 
-            A.CallTo(() => _database.QueryChaptersByLevel(profile.Level))
-                .Returns(Task.FromResult<IEnumerable<GenericChapter>>(chapters));
+            // act
+            var result = await _lookup.GetChapters(profile, expectedLevel);
 
-            var expectedChapter = new Chapter(Guid.NewGuid(), 1, "x", "x", new Page[0], false, default);
+            // assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Length, Is.EqualTo(expectedChapters));
+        }
 
-            A.CallTo(() => _chapters.Assemble(chapters[0], profile))
-                .Returns(Task.FromResult(expectedChapter));
+        [Test]
+        public async Task GetChapters_ForMissingStats_CreatesNewStats()
+        {
+            // setup
+            const int expectedChapters = 10;
+            const int expectedLevel = 5;
 
-            var result = await _lookup.GetChapters(profile);
+            AssumePopulatedDatabase(expectedChapters, expectedLevel);
 
-            Assert.That(result, Is.EquivalentTo(new[] { expectedChapter }));
+            _database
+                .Setup(x => x.QueryStats(It.IsAny<Guid>(), It.IsAny<Guid>()))
+                .ReturnsAsync(default(DbStats));
+
+            var profile = ProfileBuilder
+                .Default
+                .WithLevel(expectedLevel)
+                .Build();
+
+            // act
+            var result = await _lookup.GetChapters(profile, expectedLevel);
+
+            // assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Length, Is.EqualTo(expectedChapters));
+
+            _stats.Verify(x => x.Add(It.IsAny<DbStats>()), Times.Exactly(expectedChapters));
+        }
+
+        [Test]
+        public async Task GetChapters_ForProfileWithLowerLevel_ReturnsLowerLevelChapters()
+        {
+            // setup
+            const int expectedChapters = 10;
+            const int expectedLevel = 5;
+
+            AssumePopulatedDatabase(expectedChapters, expectedLevel);
+
+            var profile = ProfileBuilder
+                .Default
+                .WithLevel(expectedLevel)
+                .Build();
+
+            // act
+            var result = await _lookup.GetChapters(profile, int.MaxValue);
+
+            // assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Length, Is.EqualTo(expectedChapters));
+        }
+
+
+        [Test]
+        public async Task GetChapters_ForMissingChapter_DoesNotThrow()
+        {
+            // setup
+            const int expectedChapters = 10;
+            const int expectedLevel = 5;
+
+            AssumePopulatedDatabase(expectedChapters, expectedLevel);
+
+            _chapters
+                .Setup(x => x.Get(It.IsAny<Guid>()))
+                .ReturnsAsync(default(DbTranslatedChapter));
+
+            var profile = ProfileBuilder
+                .Default
+                .WithLevel(expectedLevel)
+                .Build();
+
+            // act
+            var result = await _lookup.GetChapters(profile, int.MaxValue);
+
+            // assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Length, Is.EqualTo(0));
         }
     }
 }

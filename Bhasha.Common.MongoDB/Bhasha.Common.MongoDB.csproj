@@ -13,9 +13,6 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Dto\" />
-    <Folder Include="Exceptions\" />
     <Folder Include="Extensions\" />
-    <Folder Include="Attributes\" />
   </ItemGroup>
 </Project>
