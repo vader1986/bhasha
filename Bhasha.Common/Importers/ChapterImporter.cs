@@ -95,9 +95,8 @@ namespace Bhasha.Common.Importers
 
             if (existing != null && !existing.Translations!.ContainsKey(language))
             {
-
-                var words = expression.Words.Select(x => x.Id).ToArray();
-                existing.Translations.Add(language, words);
+                var wordsIds = expression.Words.Select(x => x.Id).ToArray();
+                existing.Translations.Add(language, new DbWords { WordIds = wordsIds });
                 await _expressions.Replace(existing);
 
                 return true;
@@ -155,8 +154,8 @@ namespace Bhasha.Common.Importers
             var newExpression = new DbExpression {
                 Cefr = expression.Cefr,
                 ExprType = expression.ExprType,
-                Translations = new Dictionary<string, Guid[]> {
-                    { language, wordIds }
+                Translations = new Dictionary<string, DbWords> {
+                    { language, new DbWords { WordIds = wordIds } }
                 }
             };
 

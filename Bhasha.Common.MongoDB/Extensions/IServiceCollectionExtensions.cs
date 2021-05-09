@@ -1,5 +1,8 @@
 ﻿using Bhasha.Common.Database;
 using Microsoft.Extensions.DependencyInjection;
+using Mongo.Migration.Startup;
+using Mongo.Migration.Startup.DotNetCore;
+using MongoDB.Driver;
 
 namespace Bhasha.Common.MongoDB.Extensions
 {
@@ -8,8 +11,12 @@ namespace Bhasha.Common.MongoDB.Extensions
         public static IServiceCollection AddMongoDB(this IServiceCollection services, MongoSettings settings)
         {
             services
+                .AddSingleton<IMongoClient>(new MongoClient(settings.ConnectionString))
                 .AddSingleton<IDatabase, MongoDatabase>()
-                .AddSingleton(MongoWrapper.Create(settings));
+                .AddMigration(new MongoMigrationSettings {
+                    Database = Names.Database,
+                    ConnectionString = settings.ConnectionString
+                });
 
             services
                 .AddTransient<IStore<DbChapter>, MongoStore<DbChapter>>()

@@ -11,7 +11,10 @@ namespace Bhasha.Common.Tests.Support
         private CEFR _cefr = Rnd.Create.Choose(Enum.GetValues<CEFR>());
         private PartOfSpeech _partOfSpeech = Rnd.Create.Choose(Enum.GetValues<PartOfSpeech>());
         private ResourceId _pictureId;
-        private Dictionary<string, DbTranslation> _translations = new();
+        private Dictionary<string, DbTranslation> _translations = new Dictionary<string, DbTranslation> {
+            { Language.English, DbTranslationBuilder.Default.Build() },
+            { Language.Bengali, DbTranslationBuilder.Default.Build() }
+        };
 
         public static DbWordBuilder Default => new();
 

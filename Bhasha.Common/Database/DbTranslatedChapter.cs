@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Bhasha.Common.Exceptions;
 
 namespace Bhasha.Common.Database
 {
-    public class DbTranslatedChapter : ICanBeValidated, IEntity
+    public class DbTranslatedChapter : ICanBeValidated, IEntity, IEquatable<DbTranslatedChapter?>
     {
         /// <summary>
         /// Unqiue identifier of the chapter translation used as primary key
@@ -61,6 +63,39 @@ namespace Bhasha.Common.Database
             {
                 page.Validate();
             }
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as DbTranslatedChapter);
+        }
+
+        public bool Equals(DbTranslatedChapter? other)
+        {
+            return other != null &&
+                   Id.Equals(other.Id) &&
+                   ChapterId.Equals(other.ChapterId) &&
+                   Languages == other.Languages &&
+                   Level == other.Level &&
+                   Name == other.Name &&
+                   Description == other.Description &&
+                   Pages.SequenceEqual(other.Pages) &&
+                   PictureId == other.PictureId;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Id, ChapterId, Languages, Level, Name, Description, Pages, PictureId);
+        }
+
+        public static bool operator ==(DbTranslatedChapter? left, DbTranslatedChapter? right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(DbTranslatedChapter? left, DbTranslatedChapter? right)
+        {
+            return !(left == right);
         }
     }
 }

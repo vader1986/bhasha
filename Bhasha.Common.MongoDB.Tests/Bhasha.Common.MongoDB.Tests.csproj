@@ -19,10 +19,6 @@
     <ProjectReference Include="..\Bhasha.Common.Tests\Bhasha.Common.Tests.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Dto\" />
-    <Folder Include="Support\" />
-  </ItemGroup>
-  <ItemGroup>
     <None Update="Import\Sample.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

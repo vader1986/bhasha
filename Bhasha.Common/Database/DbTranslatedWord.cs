@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using Bhasha.Common.Exceptions;
 
 namespace Bhasha.Common.Database
 {
-    public class DbTranslatedWord : ICanBeValidated
+    public class DbTranslatedWord : ICanBeValidated, IEquatable<DbTranslatedWord?>
     {
         /// <summary>
         /// Unqiue identifier of the word (language independent).
@@ -38,6 +39,36 @@ namespace Bhasha.Common.Database
             }
 
             Translation.Validate();
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as DbTranslatedWord);
+        }
+
+        public bool Equals(DbTranslatedWord? other)
+        {
+            return other != null &&
+                   Id.Equals(other.Id) &&
+                   PartOfSpeech == other.PartOfSpeech &&
+                   Cefr == other.Cefr &&
+                   PictureId == other.PictureId &&
+                   Translation == other.Translation;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Id, PartOfSpeech, Cefr, PictureId, Translation);
+        }
+
+        public static bool operator ==(DbTranslatedWord? left, DbTranslatedWord? right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(DbTranslatedWord? left, DbTranslatedWord? right)
+        {
+            return !(left == right);
         }
     }
 }

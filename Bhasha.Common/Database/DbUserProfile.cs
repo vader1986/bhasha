@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Bhasha.Common.Exceptions;
 
 namespace Bhasha.Common.Database
@@ -6,7 +7,7 @@ namespace Bhasha.Common.Database
     /// <summary>
     /// Database representation of the user <see cref="Profile"/>.
     /// </summary>
-    public class DbUserProfile : ICanBeValidated, IEntity
+    public class DbUserProfile : ICanBeValidated, IEntity, IEquatable<DbUserProfile?>
     {
         /// <summary>
         /// Unqiue identifier of the profile.
@@ -41,6 +42,36 @@ namespace Bhasha.Common.Database
             }
 
             Languages.Validate();
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as DbUserProfile);
+        }
+
+        public bool Equals(DbUserProfile? other)
+        {
+            return other != null &&
+                   Id.Equals(other.Id) &&
+                   UserId == other.UserId &&
+                   Languages == other.Languages &&
+                   Level == other.Level &&
+                   CompletedChapters == other.CompletedChapters;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Id, UserId, Languages, Level, CompletedChapters);
+        }
+
+        public static bool operator ==(DbUserProfile? left, DbUserProfile? right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(DbUserProfile? left, DbUserProfile? right)
+        {
+            return !(left == right);
         }
     }
 }

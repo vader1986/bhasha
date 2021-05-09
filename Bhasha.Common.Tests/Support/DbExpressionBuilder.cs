@@ -10,7 +10,10 @@ namespace Bhasha.Common.Tests.Support
         private Guid _id = Guid.NewGuid();
         private CEFR _cefr = Rnd.Create.Choose(Enum.GetValues<CEFR>());
         private ExpressionType _exprType = Rnd.Create.Choose(Enum.GetValues<ExpressionType>());
-        private Dictionary<string, Guid[]> _translations = new();
+        private Dictionary<string, DbWords> _translations = new Dictionary<string, DbWords> {
+            { Language.English, new DbWords { WordIds = new[]{ Guid.NewGuid() } } },
+            { Language.Bengali, new DbWords { WordIds = new[]{ Guid.NewGuid() } } }
+        };
 
         public static DbExpressionBuilder Default => new();
 
@@ -32,7 +35,7 @@ namespace Bhasha.Common.Tests.Support
             return this;
         }
 
-        public DbExpressionBuilder WithTranslations(Dictionary<string, Guid[]> translations)
+        public DbExpressionBuilder WithTranslations(Dictionary<string, DbWords> translations)
         {
             _translations = translations;
             return this;

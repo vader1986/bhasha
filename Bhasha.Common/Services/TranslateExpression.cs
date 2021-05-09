@@ -33,7 +33,7 @@ namespace Bhasha.Common.Services
                 return default;
             }
 
-            var wordIds = translations[language];
+            var wordIds = translations[language].WordIds;
             var words = await Task.WhenAll(wordIds.Select(id => _words.Translate(id, language)));
 
             if (words == null || words.Any(x => x == null))

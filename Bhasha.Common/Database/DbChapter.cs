@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Bhasha.Common.Exceptions;
 
 namespace Bhasha.Common.Database
@@ -7,7 +8,7 @@ namespace Bhasha.Common.Database
     /// Represents a <see cref="Chapter"/> by only holding the minimum amount of
     /// information, references (IDs) rather than actual objects.
     /// </summary>
-    public class DbChapter : ICanBeValidated, IEntity
+    public class DbChapter : ICanBeValidated, IEntity, IEquatable<DbChapter?>
     {
         /// <summary>
         /// Reference to the <see cref="Chapter"/>.
@@ -46,6 +47,37 @@ namespace Bhasha.Common.Database
             {
                 throw new InvalidObjectException(this);
             }
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as DbChapter);
+        }
+
+        public bool Equals(DbChapter? other)
+        {
+            return other != null &&
+                   Id.Equals(other.Id) &&
+                   Level == other.Level &&
+                   NameId.Equals(other.NameId) &&
+                   DescriptionId.Equals(other.DescriptionId) &&
+                   Pages.SequenceEqual(other.Pages) &&
+                   PictureId == other.PictureId;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Id, Level, NameId, DescriptionId, Pages, PictureId);
+        }
+
+        public static bool operator ==(DbChapter? left, DbChapter? right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(DbChapter? left, DbChapter? right)
+        {
+            return !(left == right);
         }
     }
 }

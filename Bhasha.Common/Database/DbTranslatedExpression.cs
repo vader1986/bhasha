@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Bhasha.Common.Exceptions;
 
 namespace Bhasha.Common.Database
 {
-    public class DbTranslatedExpression : ICanBeValidated
+    public class DbTranslatedExpression : ICanBeValidated, IEquatable<DbTranslatedExpression?>
     {
         /// <summary>
         /// Reference to the <see cref="DbExpression"/>. 
@@ -27,7 +29,7 @@ namespace Bhasha.Common.Database
 
         public void Validate()
         {
-            if (Words == null || Words.Length == 0)
+            if (Words == null || Words.Length == 0)
             {
                 throw new InvalidObjectException(this);
             }
@@ -36,6 +38,35 @@ namespace Bhasha.Common.Database
             {
                 word.Validate();
             }
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as DbTranslatedExpression);
+        }
+
+        public bool Equals(DbTranslatedExpression? other)
+        {
+            return other != null &&
+                   ExpressionId.Equals(other.ExpressionId) &&
+                   ExprType == other.ExprType &&
+                   Cefr == other.Cefr &&
+                   Words.SequenceEqual(other.Words);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(ExpressionId, ExprType, Cefr, Words);
+        }
+
+        public static bool operator ==(DbTranslatedExpression? left, DbTranslatedExpression? right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(DbTranslatedExpression? left, DbTranslatedExpression? right)
+        {
+            return !(left == right);
         }
     }
 }

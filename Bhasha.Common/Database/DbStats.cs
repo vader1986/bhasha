@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Bhasha.Common.Exceptions;
 using Bhasha.Common.Extensions;
@@ -9,7 +10,7 @@ namespace Bhasha.Common.Database
     /// Database representation for <see cref="Stats"/> associated with a user
     /// <see cref="Profile"/> and a <see cref="Chapter"/>.
     /// </summary>
-    public class DbStats : ICanBeValidated, IEntity
+    public class DbStats : ICanBeValidated, IEntity, IEquatable<DbStats?>
     {
         /// <summary>
         /// Unique identifier of the <see cref="DbStats"/> used as primary key
@@ -104,6 +105,38 @@ namespace Bhasha.Common.Database
             {
                 throw new InvalidObjectException(this);
             }
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as DbStats);
+        }
+
+        public bool Equals(DbStats? other)
+        {
+            return other != null &&
+                   Id.Equals(other.Id) &&
+                   ProfileId.Equals(other.ProfileId) &&
+                   ChapterId.Equals(other.ChapterId) &&
+                   Completed == other.Completed &&
+                   Tips.SequenceEqual(other.Tips) &&
+                   Submits.SequenceEqual(other.Submits) &&
+                   Failures.SequenceEqual(other.Failures);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Id, ProfileId, ChapterId, Completed, Tips, Submits, Failures);
+        }
+
+        public static bool operator ==(DbStats? left, DbStats? right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(DbStats? left, DbStats? right)
+        {
+            return !(left == right);
         }
     }
 }

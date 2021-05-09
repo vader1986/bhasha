@@ -17,6 +17,11 @@ namespace Bhasha.Common.Tests.Support
                 return (DbChapterBuilder.Default.WithId(id ?? Guid.NewGuid()).Build() as TProduct)!;
             }
 
+            if (typeof(TProduct) == typeof(DbTranslatedChapter))
+            {
+                return (DbTranslatedChapterBuilder.Default.WithId(id ?? Guid.NewGuid()).Build() as TProduct)!;
+            }
+
             if (typeof(TProduct) == typeof(DbUserProfile))
             {
                 return (DbUserProfileBuilder.Default.WithId(id ?? Guid.NewGuid()).Build() as TProduct)!;

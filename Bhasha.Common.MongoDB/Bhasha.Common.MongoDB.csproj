@@ -11,8 +11,10 @@
   <ItemGroup>
     <PackageReference Include="MongoDB.Driver" Version="2.11.6" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
+    <PackageReference Include="Mongo.Migration" Version="3.0.123" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Extensions\" />
+    <Folder Include="Migrations\" />
   </ItemGroup>
 </Project>
