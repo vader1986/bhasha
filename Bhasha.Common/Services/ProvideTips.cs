@@ -29,13 +29,17 @@ namespace Bhasha.Common.Services
         public async Task<string> GetTip(Profile profile, Guid chapterId, int pageIndex)
         {
             var chapter = await _chapters.Get(chapterId);
-
             if (chapter == null)
             {
                 throw new ObjectNotFoundException(typeof(DbChapter), chapterId);
             }
 
             chapter.Validate();
+
+            if (pageIndex < 0 || pageIndex >= chapter.Pages!.Length)
+            {
+                throw new ArgumentOutOfRangeException(nameof(pageIndex));
+            }
 
             var expressionId = chapter.Pages![pageIndex].ExpressionId;
             var expression = await _expressions.Translate(expressionId, profile.Native);

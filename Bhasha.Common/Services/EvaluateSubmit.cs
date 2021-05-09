@@ -25,12 +25,9 @@ namespace Bhasha.Common.Services
             var chapter = await _chapters.Get(submit.ChapterId)
                 ?? throw new ObjectNotFoundException(typeof(DbChapter), submit.ChapterId);
 
-            if (chapter.Pages == null || chapter.Pages.Length == 0)
-            {
-                throw new InvalidObjectException(chapter);
-            }
+            chapter.Validate();
 
-            if (submit.PageIndex < 0 || submit.PageIndex >= chapter.Pages.Length)
+            if (submit.PageIndex < 0 || submit.PageIndex >= chapter.Pages!.Length)
             {
                 throw new ArgumentOutOfRangeException(nameof(submit.PageIndex));
             }
