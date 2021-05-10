@@ -1,33 +1,33 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Bhasha.Common.Arguments;
+using Bhasha.Common.Services;
 
 namespace Bhasha.Common.Database
 {
     public class DatabaseTypeConverter
         : IConvert<DbTranslatedWord, TranslatedWord>,
-          IConvert<DbTranslatedExpression, TranslatedExpression>,
+          IConvert<DbTranslatedExpression, TranslatedExpression, Language>,
           IConvert<DbTranslatedChapter, Chapter>,
           IConvert<DbUserProfile, Profile>,
           IConvert<DbStats, Stats>
     {
-        private readonly IConvert<IEnumerable<string>, string> _wordsToPhrase;
+        private readonly IWordsPhraseConverter _wordsToPhrase;
         private readonly IArgumentAssemblyProvider _argumentAssemblies;
 
-        public DatabaseTypeConverter(IConvert<IEnumerable<string>, string> wordsToPhrase, IArgumentAssemblyProvider argumentAssemblies)
+        public DatabaseTypeConverter(IWordsPhraseConverter wordsToPhrase, IArgumentAssemblyProvider argumentAssemblies)
         {
             _wordsToPhrase = wordsToPhrase;
             _argumentAssemblies = argumentAssemblies;
         }
 
-        public TranslatedExpression Convert(DbTranslatedExpression input)
+        public TranslatedExpression Convert(DbTranslatedExpression input, Language language)
         {
             input.Validate();
 
             var expression = new Expression(input.ExpressionId, input.ExprType, input.Cefr);
             var words = input.Words.Select(Convert).ToArray();
-            var native = _wordsToPhrase.Convert(words.Select(word => word.Native));
-            var spoken = _wordsToPhrase.Convert(words.Select(word => word.Spoken));
+            var native = _wordsToPhrase.Convert(words.Select(word => word.Native), language);
+            var spoken = _wordsToPhrase.Convert(words.Select(word => word.Spoken), language);
 
             return new TranslatedExpression(expression, words, native, spoken);
         }
@@ -48,7 +48,10 @@ namespace Bhasha.Common.Database
         {
             input.Validate();
 
-            var targets = input.Pages.Select(page => Convert(page.Target!));
+            var native = input.Languages!.Native!;
+            var target = input.Languages!.Target!;
+
+            var targets = input.Pages.Select(page => Convert(page.Target!, target));
 
             object Assembly(DbTranslatedPage page)
             {
@@ -56,10 +59,10 @@ namespace Bhasha.Common.Database
                 return assembly.Assemble(targets!, page.Native!.ExpressionId);
             }
 
-            var name = Convert(input.Name!);
-            var description = Convert(input.Description!);
+            var name = Convert(input.Name!, native);
+            var description = Convert(input.Description!, native);
             var pictureId = input.PictureId;
-            var pages = input.Pages.Select(page => new Page(page.PageType, Convert(page.Native!), Assembly(page))).ToArray();
+            var pages = input.Pages.Select(page => new Page(page.PageType, Convert(page.Native!, native), Assembly(page))).ToArray();
 
             return new Chapter(input.ChapterId, input.Level, name, description, pages, pictureId);
         }

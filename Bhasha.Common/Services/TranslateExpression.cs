@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Bhasha.Common.Database;
@@ -10,9 +9,9 @@ namespace Bhasha.Common.Services
     {
         private readonly IStore<DbExpression> _expressions;
         private readonly ITranslate<Guid, TranslatedWord> _words;
-        private readonly IConvert<IEnumerable<string>, string> _wordsToPhrase;
+        private readonly IWordsPhraseConverter _wordsToPhrase;
 
-        public TranslateExpression(IStore<DbExpression> expressions, ITranslate<Guid, TranslatedWord> words, IConvert<IEnumerable<string>, string> wordsToPhrase)
+        public TranslateExpression(IStore<DbExpression> expressions, ITranslate<Guid, TranslatedWord> words, IWordsPhraseConverter wordsToPhrase)
         {
             _expressions = expressions;
             _words = words;
@@ -41,8 +40,8 @@ namespace Bhasha.Common.Services
                 return default;
             }
 
-            var native = _wordsToPhrase.Convert(words.Select(word => word!.Native));
-            var spoken = _wordsToPhrase.Convert(words.Select(word => word!.Spoken));
+            var native = _wordsToPhrase.Convert(words.Select(word => word!.Native), language);
+            var spoken = _wordsToPhrase.Convert(words.Select(word => word!.Spoken), language);
             var expr = new Expression(expression.Id, expression.ExprType, expression.Cefr);
 
             return new TranslatedExpression(expr, words!, native, spoken);

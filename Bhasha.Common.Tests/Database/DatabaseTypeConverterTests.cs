@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Bhasha.Common.Arguments;
 using Bhasha.Common.Database;
+using Bhasha.Common.Services;
 using Bhasha.Common.Tests.Support;
 using Moq;
 using NUnit.Framework;
@@ -11,7 +12,7 @@ namespace Bhasha.Common.Tests.Database
     [TestFixture]
     public class DatabaseTypeConverterTests
     {
-        private Mock<IConvert<IEnumerable<string>, string>> _wordsToPhrase;
+        private Mock<IWordsPhraseConverter> _wordsToPhrase;
         private Mock<IAssembleArguments> _assembly;
         private Mock<IArgumentAssemblyProvider> _argumentAssemblies;
         private DatabaseTypeConverter _converter;
@@ -19,7 +20,7 @@ namespace Bhasha.Common.Tests.Database
         [SetUp]
         public void Before()
         {
-            _wordsToPhrase = new Mock<IConvert<IEnumerable<string>, string>>();
+            _wordsToPhrase = new Mock<IWordsPhraseConverter>();
             _assembly = new Mock<IAssembleArguments>();
             _argumentAssemblies = new Mock<IArgumentAssemblyProvider>();
             _argumentAssemblies
@@ -38,11 +39,11 @@ namespace Bhasha.Common.Tests.Database
             var expression = DbTranslatedExpressionBuilder.Default.Build();
 
             _wordsToPhrase
-                .Setup(x => x.Convert(It.IsAny<IEnumerable<string>>()))
+                .Setup(x => x.Convert(It.IsAny<IEnumerable<string>>(), It.IsAny<Language>()))
                 .Returns("good");
 
             // act
-            var result = _converter.Convert(expression);
+            var result = _converter.Convert(expression, Language.Bengali);
 
             // assert
             Assert.NotNull(result);

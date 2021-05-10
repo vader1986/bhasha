@@ -14,11 +14,11 @@ namespace Bhasha.Common.Extensions
         {
             return services
                 .AddTransient<IConvert<DbTranslatedWord, TranslatedWord>, DatabaseTypeConverter>()
-                .AddTransient<IConvert<DbTranslatedExpression, TranslatedExpression>, DatabaseTypeConverter>()
+                .AddTransient<IConvert<DbTranslatedExpression, TranslatedExpression, Language>, DatabaseTypeConverter>()
                 .AddTransient<IConvert<DbTranslatedChapter, Chapter>, DatabaseTypeConverter>()
                 .AddTransient<IConvert<DbUserProfile, Profile>, DatabaseTypeConverter>()
                 .AddTransient<IConvert<DbStats, Stats>, DatabaseTypeConverter>()
-                .AddTransient<IConvert<IEnumerable<string>, string>, WordsPhraseConverter>()
+                .AddTransient<IWordsPhraseConverter, WordsPhraseConverter>()
                 .AddTransient<IProvideTips, ProvideTips>()
                 .AddTransient<ChapterImporter>()
                 .AddTransient<IArgumentAssemblyProvider, ArgumentAssemblyProvider>()

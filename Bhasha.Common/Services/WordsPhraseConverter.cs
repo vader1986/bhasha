@@ -1,22 +1,27 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Bhasha.Common.Extensions;
 
 namespace Bhasha.Common.Services
 {
-    public class WordsPhraseConverter : IConvert<IEnumerable<string>, string>
+    public class WordsPhraseConverter : IWordsPhraseConverter
     {
-        private static readonly ISet<char> Signs = new HashSet<char> {
-            '.', '?', '!', ',', '-', ';'
-        };
-
-        private static string Enclose(string word)
+        public string Convert(IEnumerable<string> words, Language language)
         {
-            return word.Length == 1 && Signs.Contains(word[0]) ? $"{word} " : word;
-        }
+            return words.Aggregate((x, y) => {
 
-        public string Convert(IEnumerable<string> words)
-        {
-            return string.Join(" ", words.Select(Enclose));
+                if (y.StartsWithSign())
+                {
+                    return x + y;
+                }
+
+                if (x.EndsWithSign())
+                {
+                    return x + " " + y.ToUpperFirstLetter();
+                }
+
+                return x + " " + y;
+            });
         }
     }
 }
