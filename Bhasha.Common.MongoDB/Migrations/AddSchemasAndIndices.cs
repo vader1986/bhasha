@@ -11,7 +11,7 @@ namespace Bhasha.Common.MongoDB.Migrations
         {
         }
 
-        public override void Down(IMongoDatabase db)
+        public override void Up(IMongoDatabase db)
         {
             db.CreateCollection(nameof(DbChapter));
             db.CreateCollection(nameof(DbExpression));
@@ -36,7 +36,7 @@ namespace Bhasha.Common.MongoDB.Migrations
                 x => x.Languages!.Target!);
         }
 
-        public override void Up(IMongoDatabase db)
+        public override void Down(IMongoDatabase db)
         {
             db.DropCollection(nameof(DbChapter));
             db.DropCollection(nameof(DbExpression));

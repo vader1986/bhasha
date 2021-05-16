@@ -37,7 +37,7 @@ function ProfileCreateDialog(props) {
         const to = getLanguageKey(selectedTo);
 
         api
-          .post(`api/profile/create?from=${from}&to=${to}`)
+          .post(`api/profile/create?native=${from}&target=${to}`)
           .then(res => props.onCreate(res.data));
 
         setSelectedFrom(undefined);
@@ -70,12 +70,12 @@ function ProfileCreateDialog(props) {
                 <div className={classes.container}>
                     { selectedFrom !== undefined && 
                         <Chip
-                            label={`From ${selectedFrom.name}`}
+                            label={`Native ${selectedFrom.name}`}
                             onDelete={onSelect(selectedFrom, undefined)} />
                     }
                     { selectedTo !== undefined && 
                         <Chip
-                            label={`To ${selectedTo.name}`}
+                            label={`Target ${selectedTo.name}`}
                             onDelete={onSelect(selectedTo, undefined)} /> 
                     }
                 </div>
