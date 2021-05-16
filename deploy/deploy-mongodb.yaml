@@ -10,7 +10,7 @@ spec:
     app: db
   ports:
     - port: 27017 # container port of MongoDB pod
-      nodePort: 32463 # exposed port (used for connection string)
+      nodePort: 30000 # exposed port (used for connection string)
 ---
 apiVersion: apps/v1
 kind: StatefulSet
