@@ -3,6 +3,7 @@
     public enum ExpressionType
     {
         Word,
+        Expression,
         Phrase,
         Text
     }
