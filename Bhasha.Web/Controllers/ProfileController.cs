@@ -2,7 +2,8 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Bhasha.Common;
-using Bhasha.Common.Services;
+using Bhasha.Common.Database;
+using Bhasha.Web.Exceptions;
 using Bhasha.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,31 +14,62 @@ namespace Bhasha.Web.Controllers
     public class ProfileController : BaseController
     {
         private readonly IDatabase _database;
-        private readonly IStore<Profile> _store;
-        private readonly IStore<ChapterStats> _stats;
+        private readonly IStore<DbUserProfile> _store;
+        private readonly IStore<DbStats> _stats;
         private readonly IAuthorizedProfileLookup _profiles;
+        private readonly IConvert<DbUserProfile, Profile> _converter;
 
-        public ProfileController(IDatabase database, IStore<Profile> store, IStore<ChapterStats> stats, IAuthorizedProfileLookup profiles)
+        public ProfileController(IDatabase database, IStore<DbUserProfile> store, IStore<DbStats> stats, IAuthorizedProfileLookup profiles, IConvert<DbUserProfile, Profile> converter)
         {
             _database = database;
             _store = store;
             _stats = stats;
             _profiles = profiles;
+            _converter = converter;
         }
 
         // Authorize User
         [HttpPost("create")]
-        public async Task<Profile> Create(string from, string to)
+        public async Task<Profile> Create(string native, string target)
         {
-            return await _store.Add(new Profile(default, UserId, from, to, 1, 0));
+            if (native == target)
+            {
+                throw new BadRequestException(
+                    $"{nameof(native)} and {nameof(target)} must be different");
+            }
+
+            var profile = new DbUserProfile {
+                Id = default,
+                UserId = UserId,
+                Languages = new DbProfile
+                {
+                    Native = native,
+                    Target = target
+                },
+                Level = 1,
+                CompletedChapters = 0
+            };
+
+            var profiles = await _database.QueryProfiles(UserId);
+            if (profiles.Any(p => p.Languages.Native == native &&
+                                  p.Languages.Target == target))
+            {
+                throw new BadRequestException(
+                    $"Profile from {native} => {target} already exists");
+            }
+
+            return _converter.Convert(await _store.Add(profile));
         }
 
         // Authorize User
         [HttpGet("list")]
         public async Task<Profile[]> List()
         {
-            var profiles = await _database.QueryProfilesByUserId(UserId);
-            return profiles.ToArray();
+            var profiles = await _database.QueryProfiles(UserId);
+
+            return profiles
+                .Select(_converter.Convert)
+                .ToArray();
         }
 
         // Authorize User
@@ -52,11 +84,11 @@ namespace Bhasha.Web.Controllers
         public async Task Delete(Guid profileId)
         {
             var profile = await _profiles.Get(profileId, UserId);
-            var stats = await _database.QueryStatsByProfileId(profileId);
+            var stats = await _database.QueryStats(profileId);
 
             var deletions = stats
-                .Select(x => _stats.Remove(x))
-                .Append(_store.Remove(profile));
+                .Select(x => _stats.Remove(x.Id))
+                .Append(_store.Remove(profile.Id));
 
             await Task.WhenAll(deletions);
         }

@@ -14,8 +14,8 @@ const useStyles = makeStyles((theme) => ({
 
 function OneOutOfFourPage(props) {
     const classes = useStyles();
-    const setResult = option => () => {
-        props.onSetResult(option);
+    const setSolution = option => () => {
+        props.onSetSolution(option);
     };
 
     return (
@@ -24,7 +24,7 @@ function OneOutOfFourPage(props) {
             <li key={option.value}>
                 <Chip
                     label={option.displayName}
-                    onClick={setResult(option.value)}
+                    onClick={setSolution(option.value)}
                     className={classes.chip}
                 />
             </li>)

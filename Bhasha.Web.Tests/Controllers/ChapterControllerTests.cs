@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Bhasha.Common;
+using Bhasha.Common.Database;
 using Bhasha.Common.Services;
 using Bhasha.Common.Tests.Support;
 using Bhasha.Web.Controllers;
 using Bhasha.Web.Services;
-using FakeItEasy;
+using Moq;
 using NUnit.Framework;
 
 namespace Bhasha.Web.Tests.Controllers
@@ -14,72 +13,82 @@ namespace Bhasha.Web.Tests.Controllers
     [TestFixture]
     public class ChapterControllerTests
     {
-        private IDatabase _database;
-        private IChaptersLookup _chapters;
-        private IAuthorizedProfileLookup _profiles;
+        private Mock<IDatabase> _database;
+        private Mock<IChaptersLookup> _chapters;
+        private Mock<IAuthorizedProfileLookup> _profiles;
+        private Mock<IConvert<DbStats, Stats>> _stats;
         private ChapterController _controller;
 
         [SetUp]
         public void Before()
         {
-            _database = A.Fake<IDatabase>();
-            _chapters = A.Fake<IChaptersLookup>();
-            _profiles = A.Fake<IAuthorizedProfileLookup>();
-            _controller = new ChapterController(_database, _chapters, _profiles);
+            _database = new Mock<IDatabase>();
+            _chapters = new Mock<IChaptersLookup>();
+            _profiles = new Mock<IAuthorizedProfileLookup>();
+            _stats = new Mock<IConvert<DbStats, Stats>>();
+            _controller = new ChapterController(
+                _database.Object,
+                _chapters.Object,
+                _profiles.Object,
+                _stats.Object);
         }
 
         [Test]
-        public async Task List()
+        public async Task List_ChaptersForMaximumProfileLevel()
         {
+            // setup
             var profile = ProfileBuilder.Default.Build();
 
-            A.CallTo(() => _profiles.Get(profile.Id, _controller.UserId))
-                .Returns(Task.FromResult(profile));
+            _profiles
+                .Setup(x => x.Get(profile.Id, _controller.UserId))
+                .ReturnsAsync(profile);
 
-            var stats = ChapterStatsBuilder.Default.WithCompleted(false).Build();
+            var chapterEnvelope = new ChapterEnvelope(
+                ChapterBuilder.Default.Build(),
+                StatsBuilder.Default.Build());
 
-            A.CallTo(() => _database.QueryStatsByChapterAndProfileId(A<Guid>._, A<Guid>._))
-                .Returns(Task.FromResult(stats));
+            var chapters = new[] { chapterEnvelope };
 
-            var chapters = new[] { GenericChapterBuilder.Default.WithId(stats.ChapterId).Build() };
+            _chapters
+                .Setup(x => x.GetChapters(profile, int.MaxValue))
+                .ReturnsAsync(chapters);
 
-            A.CallTo(() => _database.QueryChaptersByLevel(profile.Level))
-                .Returns(Task.FromResult<IEnumerable<GenericChapter>>(chapters));
-
-            var expectedChapter = new Chapter(Guid.NewGuid(), 1, "x", "x", new Page[0], false, default);
-
-            A.CallTo(() => _chapters.GetChapters(profile, A<int>._))
-                .Returns(Task.FromResult(new[] { expectedChapter }));
-
+            // act
             var result = await _controller.List(profile.Id);
 
-            A.CallTo(() => _profiles.Get(profile.Id, _controller.UserId))
-                .MustHaveHappenedOnceExactly();
-
-            Assert.That(result, Is.EquivalentTo(new[] { expectedChapter }));
+            // assert
+            Assert.That(result, Is.EqualTo(chapters));
         }
 
         [Test]
-        public async Task Stats()
+        public async Task Stats_ForProfileAndChapterId()
         {
-            var stats = ChapterStatsBuilder
-                .Default
+            // setup
+            var profile = ProfileBuilder.Default.Build();
+
+            _profiles
+                .Setup(x => x.Get(profile.Id, _controller.UserId))
+                .ReturnsAsync(profile);
+
+            var stats = DbStatsBuilder.Default
+                .WithProfileId(profile.Id)
                 .Build();
 
-            var profile = ProfileBuilder
-                .Default
-                .WithId(stats.ProfileId)
-                .Build();
+            _database
+                .Setup(x => x.QueryStats(stats.ChapterId, profile.Id))
+                .ReturnsAsync(stats);
 
-            A.CallTo(() => _profiles.Get(profile.Id, _controller.UserId))
-                .Returns(Task.FromResult(profile));
+            var expectedStats = StatsBuilder.Default.Build();
 
-            A.CallTo(() => _database.QueryStatsByChapterAndProfileId(stats.ChapterId, stats.ProfileId))
-                .Returns(Task.FromResult(stats));
+            _stats
+                .Setup(x => x.Convert(stats))
+                .Returns(expectedStats);
 
+            // act
             var result = await _controller.Stats(stats.ProfileId, stats.ChapterId);
 
-            Assert.That(result, Is.EqualTo(stats));
+            // assert
+            Assert.That(result, Is.EqualTo(expectedStats));
         }
     }
 }

@@ -1,33 +1,30 @@
-﻿using Bhasha.Common.MongoDB.Dto;
-using Bhasha.Common.Services;
+﻿using Bhasha.Common.Database;
 using Microsoft.Extensions.DependencyInjection;
+using Mongo.Migration.Startup;
+using Mongo.Migration.Startup.DotNetCore;
+using MongoDB.Driver;
 
 namespace Bhasha.Common.MongoDB.Extensions
 {
     public static class IServiceCollectionExtensions
     {
-        public static IServiceCollection AddMongoDB(this IServiceCollection services, string connectionString)
+        public static IServiceCollection AddMongoDB(this IServiceCollection services, MongoSettings settings)
         {
-            var db = MongoDb.Create(connectionString);
+            services
+                .AddSingleton<IMongoClient>(new MongoClient(settings.ConnectionString))
+                .AddSingleton<IDatabase, MongoDatabase>()
+                .AddMigration(new MongoMigrationSettings {
+                    Database = Names.Database,
+                    ConnectionString = settings.ConnectionString
+                });
 
             services
-                .AddTransient<Converter>()
-                .AddSingleton<IDatabase, MongoDbLayer>()
-                .AddSingleton<IMongoDb>(db);
-
-            services
-                .AddTransient<IConvert<ChapterStatsDto, ChapterStats>, Converter>()
-                .AddTransient<IConvert<GenericChapterDto, GenericChapter>, Converter>()
-                .AddTransient<IConvert<ProfileDto, Profile>, Converter>()
-                .AddTransient<IConvert<TokenDto, Token>, Converter>()
-                .AddTransient<IConvert<TranslationDto, Translation>, Converter>();
-
-            services
-                .AddTransient<IStore<GenericChapter>, MongoDbStore<GenericChapterDto, GenericChapter>>()
-                .AddTransient<IStore<ChapterStats>, MongoDbStore<ChapterStatsDto, ChapterStats>>()
-                .AddTransient<IStore<Profile>, MongoDbStore<ProfileDto, Profile>>()
-                .AddTransient<IStore<Token>, MongoDbStore<TokenDto, Token>>()
-                .AddTransient<IStore<Translation>, MongoDbStore<TranslationDto, Translation>>();
+                .AddTransient<IStore<DbChapter>, MongoStore<DbChapter>>()
+                .AddTransient<IStore<DbStats>, MongoStore<DbStats>>()
+                .AddTransient<IStore<DbUserProfile>, MongoStore<DbUserProfile>>()
+                .AddTransient<IStore<DbExpression>, MongoStore<DbExpression>>()
+                .AddTransient<IStore<DbTranslatedChapter>, MongoStore<DbTranslatedChapter>>()
+                .AddTransient<IStore<DbWord>, MongoStore<DbWord>>();
 
             return services;
         }

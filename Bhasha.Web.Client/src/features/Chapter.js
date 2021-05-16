@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
 
 function Chapter(props) {
     const classes = useStyles();
-    const [result, setResult] = React.useState(undefined);
+    const [solution, setSolution] = React.useState(undefined);
     const [pageIndex, setPageIndex] = React.useState(0);
     const [completedPages, setCompletedPages] = React.useState([]);
     const currentChapter = props.chapter;
@@ -46,29 +46,29 @@ function Chapter(props) {
     };
 
     const onSubmit = () => {
-      const args = `profileId=${props.profile.id}&chapterId=${props.chapter.id}&pageIndex=${pageIndex}&solution=${result}`;
+      const args = `profileId=${props.profile.id}&chapterId=${props.chapter.id}&pageIndex=${pageIndex}&solution=${solution}`;
       api
         .post(`api/page/submit?${args}`)
         .then(response => {
-          if (response.data.result === 0) {
+          if (response.data.result === 'Correct') {
             onCorrectResult(response.data.profile);
           }
 
-          setResult(undefined);
+          setSolution(undefined);
           setPageIndex(previous => (previous + 1) % currentChapter.pages.length);
 
           // TODO visualize correct / wrong result
         });
     };
 
-    const onSetResult = data => {
-      setResult(data);
+    const onSetSolution = data => {
+      setSolution(data);
     };
 
     const onTipClicked = () => {
-      const args = `profileId=${props.profile.id}&chapterId=${props.chapter.id}`;
+      const args = `profileId=${props.profile.id}&chapterId=${props.chapter.id}&pageIndex=${pageIndex}`;
       api
-        .post(`api/page/tip?${args}`, currentPage.tipIds)
+        .post(`api/page/tip?${args}`)
         .then(response => alert(response.data));
     };
 
@@ -85,22 +85,20 @@ function Chapter(props) {
                     <Typography>
                         {currentPage.translation.native}
                     </Typography>
-                    { result !== undefined &&
+                    { solution !== undefined &&
                     <Typography>
-                      Selected translation: {result}
+                      Selected translation: {solution}
                     </Typography>
                     }
                 </CardContent>
             </Card>
-            <Page page={currentPage} onSetResult={onSetResult} />
+            <Page page={currentPage} onSetSolution={onSetSolution} />
             <div className={classes.appBar}>
               <div className={classes.appBarContent}>
-                { currentPage.tipIds.length > 0 &&
                 <IconButton onClick={onTipClicked}>
                   <ContactSupportOutlined />
                 </IconButton>
-                }
-                { result !== undefined &&
+                { solution !== undefined &&
                 <IconButton onClick={onSubmit}>
                   <AssignmentTurnedInOutlined />
                 </IconButton>

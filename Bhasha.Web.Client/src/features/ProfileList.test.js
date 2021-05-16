@@ -5,12 +5,12 @@ const testProfiles = [
   {
     id: "4b970432-25cf-429a-b8c5-8691d120bb98",
     userId: "user-111",
-    from: {
+    native: {
       id: "en",
       region: "UK",
       name: "English"
     },
-    to: {
+    target: {
       id: "bn",
       region: null,
       name: "Bengali"
@@ -21,12 +21,12 @@ const testProfiles = [
   {
     id: "47c74ca7-cb82-4063-b55e-829051894326",
     userId: "user-222",
-    from: {
+    native: {
       id: "bn",
       region: null,
       name: "Bengali"
     },
-    to: {
+    target: {
       id: "en",
       region: "UK",
       name: "English"

@@ -7,11 +7,15 @@ function NavigationBar(props) {
     
     const language = 
         props.profile !== undefined ? 
-        props.profile.to.name.toUpperCase() : null;
+        props.profile.target.name.toUpperCase() : null;
+
+    const level =
+        props.profile !== undefined ?
+        props.profile.level : null;
 
     const chapter = 
         props.chapter !== undefined ? 
-        props.chapter.name.toUpperCase() : null;
+        props.chapter.name.native.toUpperCase() : null;
 
     return (
         <Card>
@@ -33,7 +37,7 @@ function NavigationBar(props) {
                         <Link
                           color="inherit"
                           component="button"
-                          variant="body2">LEVEL {props.profile.level}</Link>
+                          variant="body2">LEVEL {level}</Link>
                     }
                     { screen === DISPLAY_CHAPTER &&
                         <Link

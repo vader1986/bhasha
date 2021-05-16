@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Bhasha.Common;
-using Bhasha.Common.Services;
+using Bhasha.Common.Database;
 using Bhasha.Web.Exceptions;
 using LazyCache;
 
@@ -14,18 +14,21 @@ namespace Bhasha.Web.Services
 
     public class AuthorizedProfileLookup : IAuthorizedProfileLookup
     {
-        private readonly IStore<Profile> _profiles;
         private readonly IAppCache _cache;
+        private readonly IStore<DbUserProfile> _profiles;
+        private readonly IConvert<DbUserProfile, Profile> _converter;
 
-        public AuthorizedProfileLookup(IAppCache cache, IStore<Profile> profiles)
+        public AuthorizedProfileLookup(IAppCache cache, IStore<DbUserProfile> profiles, IConvert<DbUserProfile, Profile> converter)
         {
             _cache = cache;
             _profiles = profiles;
+            _converter = converter;
         }
 
         public async Task<Profile> Get(Guid profileId, string userId)
         {
-            var profile = await _cache.GetOrAddAsync(profileId.ToString(), () => _profiles.Get(profileId));
+            var profile = await _cache.GetOrAddAsync(profileId.ToString(),
+                async () => _converter.Convert(await _profiles.Get(profileId)));
 
             if (profile == null)
             {

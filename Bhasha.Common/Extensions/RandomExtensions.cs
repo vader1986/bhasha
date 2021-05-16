@@ -29,6 +29,15 @@ namespace Bhasha.Common.Extensions
                     .ToArray());
         }
 
+        /// <summary>
+        /// Creates an <see cref="IEnumerable{String}"/> of random strings with
+        /// the specified settings.
+        /// </summary>
+        /// <param name="random">Random number generator</param>
+        /// <param name="min">Minimum number of strings to create</param>
+        /// <param name="max">Maximum number of strings to create</param>
+        /// <param name="length">Length of each string</param>
+        /// <returns><see cref="IEnumerable{String}"/> of random strings.</returns>
         public static IEnumerable<string> NextStrings(this Random random, int min = 1, int max = 10, int length = -1)
         {
             return Enumerable
@@ -36,13 +45,34 @@ namespace Bhasha.Common.Extensions
                 .Select(_ => random.NextString(length));
         }
 
+        /// <summary>
+        /// A phase of random, whitespace separated strings.
+        /// </summary>
+        /// <param name="random">Random number generator</param>
+        /// <param name="min">Minimum number of words in the phrase</param>
+        /// <param name="max">Maximum number of words in the phrase</param>
+        /// <param name="length">Length of each string</param>
+        /// <returns>A phase of random, whitespace separated strings.</returns>
         public static string NextPhrase(this Random random, int min = 1, int max = 10, int length = -1)
         {
             return string.Join(" ", random.NextStrings(min, max, length));
         }
 
+        /// <summary>
+        /// Picks a random elements from the specified elements.
+        /// </summary>
+        /// <typeparam name="T">Type of elements</typeparam>
+        /// <param name="random">Random number generator</param>
+        /// <param name="elements">Non-empty array of elements to chooses from</param>
+        /// <returns>A randomly choosen element from the specified elements.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Array of elements is empty</exception>
         public static T Choose<T>(this Random random, params T[] elements)
         {
+            if (elements.Length == 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(elements));
+            }
+
             return elements[random.Next(0, elements.Length - 1)];
         }
     }

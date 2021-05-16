@@ -6,7 +6,7 @@ import { api } from '../utils';
 const ProfileList = (props) => {
 
     const displayName = (profile) => {
-        return `${profile.from.name} - ${profile.to.name}`;
+        return `${profile.native.name} - ${profile.target.name}`;
     };
 
     const onDeleteProfile = (profile) => () => {

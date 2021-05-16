@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using Bhasha.Common;
-using Bhasha.Common.Services;
+using Bhasha.Common.Database;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bhasha.Web.Controllers
@@ -11,10 +10,10 @@ namespace Bhasha.Web.Controllers
     public class UserController : BaseController
     {
         private readonly IDatabase _database;
-        private readonly IStore<ChapterStats> _stats;
-        private readonly IStore<Profile> _profiles;
+        private readonly IStore<DbStats> _stats;
+        private readonly IStore<DbUserProfile> _profiles;
 
-        public UserController(IDatabase database, IStore<ChapterStats> stats, IStore<Profile> profiles)
+        public UserController(IDatabase database, IStore<DbStats> stats, IStore<DbUserProfile> profiles)
         {
             _database = database;
             _stats = stats;
@@ -24,18 +23,15 @@ namespace Bhasha.Web.Controllers
         [HttpDelete("delete")]
         public async Task Delete()
         {
-            var profiles = await _database
-                .QueryProfilesByUserId(UserId);
+            var profiles = await _database.QueryProfiles(UserId);
 
             var chapterStats = await Task.WhenAll(profiles
-                .Select(x => x.Id)
-                .Select(_database.QueryStatsByProfileId));
+                .Select(x => _database.QueryStats(x.Id)));
 
             await Task.WhenAll(chapterStats
                 .SelectMany(x => x)
-                .Select(_stats.Remove)
-                .Concat(profiles
-                .Select(_profiles.Remove)));
+                .Select(x => _stats.Remove(x.Id))
+                .Concat(profiles.Select(x => _profiles.Remove(x.Id))));
         }
     }
 }

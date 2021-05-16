@@ -18,15 +18,20 @@ namespace Bhasha.Common.Tests.Arguments
         }
 
         [Test]
-        public void Assemble_arguments_translations_options([Range(1, 10)]int length)
+        public void Assemble_Translations_ReturnsExpectedArguments([Range(1, 10)] int length)
         {
+            // setup
             var translations = Enumerable
-                .Range(0, length)
-                .Select(_ => TranslationBuilder.Default.Build())
+                .Range(1, length)
+                .Select(_ => TranslatedExpressionBuilder.Default.Build())
                 .ToArray();
 
-            var tokenId = translations[0].TokenId;
-            var arguments = _assembly.Assemble(translations, tokenId);
+            var expressionId = translations[0].Expression.Id;
+
+            // act
+            var arguments = _assembly.Assemble(translations, expressionId);
+
+            // assert
             var expectedItem = $"{translations[0].Native} ({translations[0].Spoken})";
 
             Assert.That(arguments is OneOutOfFourArguments args &&

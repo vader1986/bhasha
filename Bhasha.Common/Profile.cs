@@ -2,7 +2,7 @@
 
 namespace Bhasha.Common
 {
-    public class Profile : IEntity, IEquatable<Profile>
+    public class Profile : IEquatable<Profile?>
     {
         /// <summary>
         /// Unique identifier of this user profile.
@@ -17,46 +17,71 @@ namespace Bhasha.Common
         /// <summary>
         /// Native language for this profile.
         /// </summary>
-        public Language From { get; }
+        public Language Native { get; }
 
         /// <summary>
-        /// Language to learn.
+        /// Target language to learn.
         /// </summary>
-        public Language To { get; }
+        public Language Target { get; }
 
         /// <summary>
         /// Language level the user has reached within this profile.
         /// </summary>
-        public int Level { get; }
+        public int Level { get; private set; }
 
         /// <summary>
         /// Total number of completed chapters.
         /// </summary>
-        public int CompletedChapters { get; }
+        public int CompletedChapters { get; private set; }
 
-        public Profile(Guid id, string userId, Language from, Language to, int level, int completedChapters)
+        public Profile(Guid id, string userId, Language native, Language target, int level, int completedChapters)
         {
-            if (from == to)
+            if (native == target)
             {
-                throw new ArgumentException(nameof(to));
+                throw new ArgumentException(nameof(target));
             }
 
             Id = id;
             UserId = userId;
-            From = from;
-            To = to;
+            Native = native;
+            Target = target;
             Level = level;
             CompletedChapters = completedChapters;
         }
 
-        public override string ToString()
+        public void CompleteLevel()
         {
-            return $"{nameof(Id)}: {Id}, {nameof(UserId)}: {UserId}, {nameof(From)}: {From}, {nameof(To)}: {To}, {nameof(Level)}: {Level}, {nameof(CompletedChapters)}: {CompletedChapters}";
+            Level++;
         }
 
-        public bool Equals(Profile other)
+        public void CompleteChapter()
         {
-            return other != null && other.CompletedChapters == CompletedChapters && other.Level == Level && other.To == To && other.From == From && other.UserId == UserId && other.Id == Id;
+            CompletedChapters++;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as Profile);
+        }
+
+        public bool Equals(Profile? other)
+        {
+            return other != null && Id.Equals(other.Id) && UserId == other.UserId && Native == other.Native && Target == other.Target && Level == other.Level && CompletedChapters == other.CompletedChapters;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Id, UserId, Native, Target, Level, CompletedChapters);
+        }
+
+        public static bool operator ==(Profile? left, Profile? right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(Profile? left, Profile? right)
+        {
+            return !(left == right);
         }
     }
 }

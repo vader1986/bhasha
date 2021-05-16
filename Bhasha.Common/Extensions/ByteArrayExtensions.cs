@@ -2,7 +2,7 @@
 {
     public static class ByteArrayExtensions
     {
-        public static void Inc(this byte[] bytes, int index, byte max = byte.MaxValue)
+        public static void Increment(this byte[] bytes, int index, byte max = byte.MaxValue)
         {
             if (bytes[index] != max)
             {

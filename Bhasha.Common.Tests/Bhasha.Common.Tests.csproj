@@ -9,7 +9,7 @@
     <PackageReference Include="NUnit" Version="3.12.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.16.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
-    <PackageReference Include="FakeItEasy" Version="6.2.1" />
+    <PackageReference Include="Moq" Version="4.16.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -17,16 +17,10 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Extensions\" />
-    <Folder Include="Importers\" />
     <Folder Include="Arguments\" />
     <Folder Include="Support\" />
     <Folder Include="Services\" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Importers\ChapterDtoSample.json" />
-    <EmbeddedResource Include="Importers\CsvImporterSample.csv" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="Importers\CsvImporterSample.csv" />
+    <Folder Include="Database\" />
+    <Folder Include="Importers\" />
   </ItemGroup>
 </Project>

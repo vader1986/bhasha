@@ -83,5 +83,10 @@ namespace Bhasha.Common.Extensions
             }
             return -1;
         }
+
+        public static bool All<T>(this IEnumerable<T> source, Func<T, int, bool> predicate)
+        {
+            return source.Select(predicate).All(x => x);
+        }
     }
 }

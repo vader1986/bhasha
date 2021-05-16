@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Bhasha.Common;
-using Bhasha.Common.Extensions;
 using Bhasha.Common.Services;
 using Bhasha.Web.Services;
 using LazyCache;
@@ -15,18 +13,16 @@ namespace Bhasha.Web.Controllers
     public class PageController : BaseController
     {
         private readonly IAppCache _cache;
-        private readonly IDatabase _database;
         private readonly IAuthorizedProfileLookup _profiles;
         private readonly IEvaluateSubmit _evaluator;
-        private readonly IUpdateStatsForTip _tipStatsUpdater;
+        private readonly IProvideTips _tipsProvider;
 
-        public PageController(IAppCache cache, IDatabase database, IAuthorizedProfileLookup profiles, IEvaluateSubmit evaluator, IUpdateStatsForTip tipStatsUpdater)
+        public PageController(IAppCache cache, IAuthorizedProfileLookup profiles, IEvaluateSubmit evaluator, IProvideTips tipsProvider)
         {
             _cache = cache;
-            _database = database;
             _profiles = profiles;
             _evaluator = evaluator;
-            _tipStatsUpdater = tipStatsUpdater;
+            _tipsProvider = tipsProvider;
         }
 
         // Authorize User
@@ -39,7 +35,10 @@ namespace Bhasha.Web.Controllers
 
             if (!profile.Equals(evaluation.Profile))
             {
-                _cache.Remove(profile.Id.ToString());
+                var cachedId = profile.Id.ToString();
+
+                _cache.Remove(cachedId);
+                _cache.Add(cachedId, profile);
             }
 
             return evaluation;
@@ -47,16 +46,9 @@ namespace Bhasha.Web.Controllers
 
         // Authorize User
         [HttpPost("tip")]
-        public async Task<string> Tip(Guid profileId, Guid chapterId, [FromBody] Guid[] tipIds)
+        public async Task<string> Tip(Guid profileId, Guid chapterId, int pageIndex)
         {
-            var profile = await _profiles.Get(profileId, UserId);
-            var tips = await Task.WhenAll(tipIds.Select(x => _database.QueryTranslationByTokenId(x, profile.To)));
-            var tip = tips.Random();
-            var translation = await _database.QueryTranslationByTokenId(tip.TokenId, profile.From);
-
-            await _tipStatsUpdater.UpdateStats(chapterId, profile);
-
-            return $"{tip.Native} ({tip.Spoken}) = {translation.Native}";
+            return await _tipsProvider.GetTip(await _profiles.Get(profileId, UserId), chapterId, pageIndex);
         }
     }
 }

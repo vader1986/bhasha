@@ -7,15 +7,18 @@ namespace Bhasha.Common.Tests.Extensions
     public class ByteArrayExtensionsTests
     {
         [Test]
-        public void Inc_byte_at_index()
+        public void Increment_ByteAtIndex_UpdatesOnlyIndexedByte()
         {
+            // setup
             var bytes = new byte[]
             {
                 1, 2, 3, 4
             };
 
-            bytes.Inc(2);
+            // act
+            bytes.Increment(2);
 
+            // assert
             Assert.That(bytes[0] == 1);
             Assert.That(bytes[1] == 2);
             Assert.That(bytes[2] == 4);
@@ -23,15 +26,18 @@ namespace Bhasha.Common.Tests.Extensions
         }
 
         [Test]
-        public void Inc_byte_at_maximum()
+        public void Increment_ByteWithMaximumValue_KeepsMaximumValue()
         {
+            // setup
             var bytes = new byte[]
             {
                 1, byte.MaxValue, 3, 4
             };
 
-            bytes.Inc(1);
+            // act
+            bytes.Increment(1);
 
+            // assert
             Assert.AreEqual(bytes, new byte[] {
                 1, byte.MaxValue, 3, 4
             });

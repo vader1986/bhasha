@@ -2,7 +2,7 @@
 
 namespace Bhasha.Common
 {
-    public class Submit : IEquatable<Submit>
+    public class Submit : IEquatable<Submit?>
     {
         /// <summary>
         /// Reference to the chapter the solution is submitted for. 
@@ -31,14 +31,29 @@ namespace Bhasha.Common
             Solution = solution;
         }
 
-        public override string ToString()
+        public override bool Equals(object? obj)
         {
-            return $"{nameof(ChapterId)}: {ChapterId}, {nameof(PageIndex)}: {PageIndex}, {nameof(Solution)}: {Solution}";
+            return Equals(obj as Submit);
         }
 
-        public bool Equals(Submit other)
+        public bool Equals(Submit? other)
         {
-            return other != null && other.ChapterId == ChapterId && other.PageIndex == PageIndex && other.Solution == Solution;
+            return other != null && ChapterId.Equals(other.ChapterId) && PageIndex == other.PageIndex && Solution == other.Solution;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(ChapterId, PageIndex, Solution);
+        }
+
+        public static bool operator ==(Submit? left, Submit? right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(Submit? left, Submit? right)
+        {
+            return !(left == right);
         }
     }
 }

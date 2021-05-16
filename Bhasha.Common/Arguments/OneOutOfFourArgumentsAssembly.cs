@@ -7,13 +7,18 @@ namespace Bhasha.Common.Arguments
 {
     public class OneOutOfFourArgumentsAssembly : IAssembleArguments
     {
-        public object Assemble(IEnumerable<Translation> translations, Guid tokenId)
+        private static OneOutOfFourArguments.Option ConvertToOption(TranslatedExpression expression)
+        {
+            return new OneOutOfFourArguments.Option(expression.Native, $"{expression.Native} ({expression.Spoken})");
+        }
+
+        public object Assemble(IEnumerable<TranslatedExpression> translations, Guid expressionId)
         {
             var options = translations
-                .Where(x => x.TokenId != tokenId)
+                .Where(x => x.Expression.Id != expressionId)
                 .Random(3)
-                .Append(translations.First(x => x.TokenId == tokenId))
-                .Select(x => new OneOutOfFourArguments.Option(x.Native, $"{x.Native} ({x.Spoken})"))
+                .Append(translations.First(x => x.Expression.Id == expressionId))
+                .Select(ConvertToOption)
                 .ToArray();
 
             options.Shuffle();

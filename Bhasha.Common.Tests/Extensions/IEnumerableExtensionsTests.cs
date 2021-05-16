@@ -8,87 +8,128 @@ namespace Bhasha.Common.Tests.Extensions
     public class IEnumerableExtensionsTests
     {
         [Test]
-        public void Shuffle_keeps_elements()
+        public void Shuffle_Array_KeepsArrayEquivalent()
         {
+            // setup
             var source = new[] { 1, 2, 3, 4, 5 };
 
+            // act
             source.Shuffle();
 
+            // assert
             Assert.That(source, Is.EquivalentTo(new[] { 1, 2, 3, 4, 5 }));
         }
 
         [Test]
-        public void Random_element_from_empty_array()
+        public void Random_ElementOfEmptyArray_ThrowsException()
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() => new int[0].Random());
+            // act & assert
+            Assert.Throws<ArgumentOutOfRangeException>(() => Array.Empty<int>().Random());
         }
 
         [Test]
-        public void Random_element_of_array()
+        public void Random_ElementOfSingleElementArray_ReturnsElement()
         {
+            // setup
             var expected = new object();
             var array = new[] { expected };
 
-            Assert.That(array.Random() == expected);
+            // act
+            var result = array.Random();
+
+            // assert
+            Assert.That(result == expected);
         }
 
         [Test]
-        public void RandomOrDefault_from_empty_array()
+        public void RandomOrDefault_FromEmptyArray_ReturnsDefault()
         {
-            var array = new object[0];
+            // setup
+            var array = Array.Empty<object>();
 
-            Assert.That(array.RandomOrDefault() == null);
+            // act
+            var result = array.RandomOrDefault();
+
+            // assert
+            Assert.That(result == default);
         }
 
         [Test]
-        public void RandomOrDefault_element_of_array()
+        public void RandomOrDefault_OfSingleElement_ReturnsElement()
         {
+            // setup
             var expected = new object();
             var array = new[] { expected };
 
-            Assert.That(array.RandomOrDefault() == expected);
+            // act
+            var result = array.RandomOrDefault();
+
+            // assert
+            Assert.That(result == expected);
         }
 
         [Test]
-        public void IsEmpty_no_elements()
+        public void IsEmpty_EmptyArray_ReturnsTrue()
         {
-            var source = new int[0];
+            // setup
+            var source = Array.Empty<int>();
 
-            Assert.That(source.IsEmpty());
+            // act
+            var isEmpty = source.IsEmpty();
+
+            // assert
+            Assert.That(isEmpty);
         }
 
         [Test]
-        public void IsEmpty_for_elements()
+        public void IsEmpty_ForNoneEmptyArray_ReturnsFalse()
         {
+            // setup
             var source = new[] { 1 };
 
-            Assert.That(source.IsEmpty(), Is.False);
+            // act
+            var isEmpty = source.IsEmpty();
+
+            // assert
+            Assert.That(isEmpty, Is.False);
         }
 
         [Test]
-        public void IndexOf_matching_element()
+        public void IndexOf_MatchingElement_ReturnsExpectedIndex()
         {
+            // setup
             var source = new[] { 1, 2, 3 };
+
+            // act
             var result = source.IndexOf(2);
 
+            // assert
             Assert.That(result == 1);
         }
 
         [Test]
-        public void IndexOf_multiple_matching_elements()
+        public void IndexOf_MultipleMatchingElements_ReturnsFirstIndex()
         {
+            // setup
             var source = new[] { 1, 2, 3, 2 };
+
+            // act
             var result = source.IndexOf(2);
 
+            // assert
             Assert.That(result == 1);
         }
 
         [Test]
-        public void IndexOf_no_matching_element()
+        public void IndexOf_NoMatchingElement_ReturnsMinusOne()
         {
+            // setup
             var source = new[] { 1, 2, 3, 2 };
+
+            // act
             var result = source.IndexOf(5);
 
+            // assert
             Assert.That(result == -1);
         }
     }

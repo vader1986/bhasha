@@ -6,7 +6,7 @@ import { api } from '../utils';
 import { Done } from '@material-ui/icons';
 
 function ChapterSelection(props) {
-    const [chapters, setChapters] = React.useState([]);
+    const [envelopes, setChapterEnvelopes] = React.useState([]);
     const [loading, setLoading] = React.useState(true);
 
     const onSelect = (chapter) => () => {
@@ -17,21 +17,23 @@ function ChapterSelection(props) {
         api
           .get(`api/chapter/list?profileId=${props.profile.id}`)
           .then(res => {
-              setChapters(res.data);
+              setChapterEnvelopes(res.data);
               setLoading(false);
             });
-    }, [setChapters, props]);
+    }, [setChapterEnvelopes, props]);
 
     if (loading)
     {
         return <div>... loading ...</div>
     }
 
-    const createItem = chapter => {
-        const completed = chapter.completed || props.completedIds.includes(chapter.id);
+    const createItem = envelope => {
+        const completed = envelope.stats.completed || props.completedIds.includes(envelope.chapter.id);
+        const chapter = envelope.chapter;
+
         return (
             <ListItem button onClick={onSelect(chapter)}>
-                <ListItemText>{chapter.name.toUpperCase()}</ListItemText>
+                <ListItemText>{chapter.name.native.toUpperCase()}</ListItemText>
                 {completed && <Done color="primary" />}
             </ListItem>);
     };
@@ -39,7 +41,7 @@ function ChapterSelection(props) {
     return (
         <div>
             <List component="nav">
-                { chapters.map(createItem) }
+                { envelopes.map(createItem) }
             </List>
         </div>
     );
