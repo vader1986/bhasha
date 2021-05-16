@@ -12,7 +12,7 @@ namespace Bhasha.Common.MongoDB.Extensions
         {
             return client
                 .GetDatabase(Names.Database)
-                .GetCollection<T>(nameof(T));
+                .GetCollection<T>(typeof(T).Name);
         }
 
         public static IEnumerable<string> CreateIndices<T>(this IMongoCollection<T> collection, params Expression<Func<T, object>>[] selectors)

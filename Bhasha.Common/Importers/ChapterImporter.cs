@@ -162,6 +162,18 @@ namespace Bhasha.Common.Importers
             expression.ExpressionId = importedExpression.Id;
         }
 
+        public Task<DbExpression> Import(DbExpression expression)
+        {
+            expression.Validate();
+            return _expressions.Add(expression);
+        }
+
+        public Task<DbWord> Import(DbWord word)
+        {
+            word.Validate();
+            return _words.Add(word);
+        }
+
         public async Task<DbTranslatedChapter> Import(DbTranslatedChapter chapter)
         {
             var expressions = chapter.Pages
@@ -173,7 +185,6 @@ namespace Bhasha.Common.Importers
             await Task.WhenAll(chapter.Pages.Select(page => ImportExpression(page.Target!, chapter.Languages!.Target!)));
 
             var dbChapter = new DbChapter {
-                Id = default,
                 Level = chapter.Level,
                 NameId = chapter.Name!.ExpressionId,
                 DescriptionId = chapter.Description!.ExpressionId,
@@ -184,8 +195,9 @@ namespace Bhasha.Common.Importers
                 }).ToArray()
             };
 
-            await _chapters.Add(dbChapter);
+            dbChapter = await _chapters.Add(dbChapter);
 
+            chapter.Id = dbChapter.Id;
             chapter.Validate();
 
             return await _translatedChapters.Add(chapter);

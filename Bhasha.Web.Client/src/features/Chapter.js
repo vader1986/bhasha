@@ -50,7 +50,7 @@ function Chapter(props) {
       api
         .post(`api/page/submit?${args}`)
         .then(response => {
-          if (response.data.result === 0) {
+          if (response.data.result === 'Correct') {
             onCorrectResult(response.data.profile);
           }
 
@@ -66,9 +66,9 @@ function Chapter(props) {
     };
 
     const onTipClicked = () => {
-      const args = `profileId=${props.profile.id}&chapterId=${props.chapter.id}`;
+      const args = `profileId=${props.profile.id}&chapterId=${props.chapter.id}&pageIndex=${pageIndex}`;
       api
-        .post(`api/page/tip?${args}`, currentPage.tipIds)
+        .post(`api/page/tip?${args}`)
         .then(response => alert(response.data));
     };
 
@@ -95,11 +95,9 @@ function Chapter(props) {
             <Page page={currentPage} onSetSolution={onSetSolution} />
             <div className={classes.appBar}>
               <div className={classes.appBarContent}>
-                { currentPage.tipIds.length > 0 &&
                 <IconButton onClick={onTipClicked}>
                   <ContactSupportOutlined />
                 </IconButton>
-                }
                 { solution !== undefined &&
                 <IconButton onClick={onSubmit}>
                   <AssignmentTurnedInOutlined />

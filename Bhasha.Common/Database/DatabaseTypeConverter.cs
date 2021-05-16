@@ -64,7 +64,7 @@ namespace Bhasha.Common.Database
             var pictureId = input.PictureId;
             var pages = input.Pages.Select(page => new Page(page.PageType, Convert(page.Native!, native), Assembly(page))).ToArray();
 
-            return new Chapter(input.ChapterId, input.Level, name, description, pages, pictureId);
+            return new Chapter(input.Id, input.Level, name, description, pages, pictureId);
         }
 
         public Profile Convert(DbUserProfile input)

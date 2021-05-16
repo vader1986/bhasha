@@ -18,9 +18,23 @@ namespace Bhasha.Web.Controllers
 
         // Authorize Author
         [HttpPost("add/chapter")]
-        public Task<DbTranslatedChapter> AddToken([FromBody] DbTranslatedChapter chapter)
+        public Task<DbTranslatedChapter> AddChapter([FromBody] DbTranslatedChapter chapter)
         {
             return _importer.Import(chapter);
+        }
+
+        // Authorize Author
+        [HttpPost("add/expression")]
+        public Task<DbExpression> AddExpression([FromBody] DbExpression expression)
+        {
+            return _importer.Import(expression);
+        }
+
+        // Authorize Author
+        [HttpPost("add/word")]
+        public Task<DbWord> AddWord([FromBody] DbWord word)
+        {
+            return _importer.Import(word);
         }
     }
 }

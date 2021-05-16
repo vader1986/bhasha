@@ -7,7 +7,6 @@ namespace Bhasha.Common.Tests.Support
     public class DbTranslatedChapterBuilder
     {
         private Guid _id = Guid.NewGuid();
-        private Guid _chapterId = Guid.NewGuid();
         private int _level = Rnd.Create.Next(1, 10);
         private DbTranslatedExpression _name = DbTranslatedExpressionBuilder.Default.Build();
         private DbTranslatedExpression _description = DbTranslatedExpressionBuilder.Default.Build();
@@ -20,12 +19,6 @@ namespace Bhasha.Common.Tests.Support
         public DbTranslatedChapterBuilder WithId(Guid id)
         {
             _id = id;
-            return this;
-        }
-
-        public DbTranslatedChapterBuilder WithChapterId(Guid chapterId)
-        {
-            _chapterId = chapterId;
             return this;
         }
 
@@ -70,7 +63,6 @@ namespace Bhasha.Common.Tests.Support
             return new DbTranslatedChapter
             {
                 Id = _id,
-                ChapterId = _chapterId,
                 Level = _level,
                 Name = _name,
                 Description = _description,

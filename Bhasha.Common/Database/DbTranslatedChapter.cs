@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Bhasha.Common.Exceptions;
 
@@ -9,14 +8,9 @@ namespace Bhasha.Common.Database
     {
         /// <summary>
         /// Unqiue identifier of the chapter translation used as primary key
-        /// for database storage.
+        /// for database storage. This ID has to match <see cref="DbChapter.Id"/>
         /// </summary>
         public Guid Id { get; set; }
-
-        /// <summary>
-        /// Unique identifier of the associated <see cref="DbChapter"/>.
-        /// </summary>
-        public Guid ChapterId { get; set; }
 
         /// <summary>
         /// Language profile including native- and target-language.
@@ -74,7 +68,6 @@ namespace Bhasha.Common.Database
         {
             return other != null &&
                    Id.Equals(other.Id) &&
-                   ChapterId.Equals(other.ChapterId) &&
                    Languages == other.Languages &&
                    Level == other.Level &&
                    Name == other.Name &&
@@ -85,7 +78,7 @@ namespace Bhasha.Common.Database
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Id, ChapterId, Languages, Level, Name, Description, Pages, PictureId);
+            return HashCode.Combine(Id, Languages, Level, Name, Description, Pages, PictureId);
         }
 
         public static bool operator ==(DbTranslatedChapter? left, DbTranslatedChapter? right)

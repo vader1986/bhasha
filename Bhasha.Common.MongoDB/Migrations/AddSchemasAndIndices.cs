@@ -31,7 +31,6 @@ namespace Bhasha.Common.MongoDB.Migrations
 
             var translatedChapters = db.GetCollection<DbTranslatedChapter>(nameof(DbTranslatedChapter));
             translatedChapters.CreateIndices(
-                x => x.ChapterId,
                 x => x.Languages!.Native!,
                 x => x.Languages!.Target!);
         }

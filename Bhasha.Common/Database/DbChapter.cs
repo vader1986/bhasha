@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text.Json.Serialization;
 using Bhasha.Common.Exceptions;
 
 namespace Bhasha.Common.Database

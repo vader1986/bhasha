@@ -57,6 +57,10 @@ namespace Bhasha.Common.Tests.Importers
                 .Setup(x => x.Add(It.IsAny<DbTranslatedChapter>()))
                 .Returns<DbTranslatedChapter>(Task.FromResult);
 
+            _chapters
+                .Setup(x => x.Add(It.IsAny<DbChapter>()))
+                .Returns<DbChapter>(Task.FromResult);
+
             // act
             await _importer.Import(chapter);
 

@@ -14,8 +14,8 @@ function NavigationBar(props) {
         props.profile.level : null;
 
     const chapter = 
-        props.envelope !== undefined ? 
-        props.envelope.chapter.name.native.toUpperCase() : null;
+        props.chapter !== undefined ? 
+        props.chapter.name.native.toUpperCase() : null;
 
     return (
         <Card>

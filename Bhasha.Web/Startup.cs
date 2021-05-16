@@ -1,4 +1,5 @@
 using System.IO;
+using System.Text.Json.Serialization;
 using Bhasha.Common.Extensions;
 using Bhasha.Common.MongoDB;
 using Bhasha.Common.MongoDB.Extensions;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Converters;
 
 namespace Bhasha.Web
 {
@@ -36,11 +38,18 @@ namespace Bhasha.Web
                 .AddBhashaServices()
                 .AddSingleton<IAuthorizedProfileLookup, AuthorizedProfileLookup>()
                 .AddSingleton<IAppCache, CachingService>()
-                .AddSwaggerDocument()
-                .AddControllers();
+                .AddOpenApiDocument()
+                .AddControllers()
+                .AddJsonOptions(cfg =>
+                {
+                    cfg.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                })
+                .AddNewtonsoftJson(cfg => {
+                    cfg.SerializerSettings.Converters.Add(new StringEnumConverter());
+                });
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment _, ILogger<Startup> logger)
         {
             var dir = Directory.GetCurrentDirectory();
             
