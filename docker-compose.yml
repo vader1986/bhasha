@@ -1,6 +1,15 @@
 version: '2'
 
 services:
-  bhasha:
-    build: .
-    image: bhasha:latest
+  bhasha-author-api:
+    build: Bhasha.Author.Api/
+    image: bhasha-author-api:latest
+  bhasha-author-web:
+    build: Bhasha.Author.Web/
+    image: bhasha-author-web:latest
+  bhasha-student-api:
+    build: Bhasha.Student.Api/
+    image: bhasha-student-api:latest
+  bhasha-student-web:
+    build: Bhasha.Student.Web/
+    image: bhasha-student-web:latest
