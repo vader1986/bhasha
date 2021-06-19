@@ -19,23 +19,6 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Install Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-
-    - name: NPM Install
-      run: npm install
-      working-directory: Bhasha.Web.Client
-
-    - name: NPM Test
-      run: npm test
-      working-directory: Bhasha.Web.Client
-
-    - name: NPM Build
-      run: npm run build
-      working-directory: Bhasha.Web.Client
-
     - name: Install .NET
       uses: actions/setup-dotnet@v1
       with:

@@ -1,0 +1,58 @@
+[
+    {
+        "id": "8fa69724-a3e8-4642-9a0f-7a6669e3e275",
+        "partOfSpeech": "Noun",
+        "cefr": "A1",
+        "translations": {
+            "bn": {
+                "native": "বিড়াল",
+                "spoken": "Biṛāla"
+            },
+            "en_UK": {
+                "native": "cat",
+                "spoken": "kat"
+            }
+        }
+    },
+    {
+        "id": "2c876fbe-d09d-4dee-8d5a-cd012bc14e51",
+        "partOfSpeech": "Noun",
+        "cefr": "A1",
+        "translations": {
+            "bn": {
+                "native": "কুকুর",
+                "spoken": "Kukura"
+            },
+            "en_UK": {
+                "native": "dog",
+                "spoken": "dôɡ"
+            }
+        }
+    },
+    {
+        "id": "2e4e7044-7464-4862-ab25-81cf74162303",
+        "partOfSpeech": "Noun",
+        "cefr": "A2",
+        "pictureId": null,
+        "translations": {
+            "en_UK": {
+                "native": "animals",
+                "spoken": "ˈanəməls",
+                "audioId": null
+            }
+        }
+    },
+    {
+        "id": "93978174-8f3e-4ce3-8f1d-9bb67c2810d7",
+        "partOfSpeech": "Adjective",
+        "cefr": "A2",
+        "pictureId": null,
+        "translations": {
+            "en_UK": {
+                "native": "basic",
+                "spoken": "ˈbāsik",
+                "audioId": null
+            }
+        }
+    }
+]
