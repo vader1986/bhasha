@@ -16,9 +16,9 @@ namespace Bhasha.Common.MongoDB
         {
             var section = config.GetSection("Database");
 
-            var hostname = config.GetValue<string>("Hostname");
+            var hostname = section.GetValue<string>("Hostname");
             var username = section.GetValue<string>("User");
-            var password = config.GetValue<string>("Password");
+            var password = section.GetValue<string>("Password");
 
             return new MongoSettings
             {

@@ -22,10 +22,6 @@ There's also a _react-app_ named `Bhasha.Web.Client`.
 
 ### Build
 ```bash
-cd Bhasha.Web.Client
-npm install
-npm run build
-cd ..
 docker-compose build
 ```
 
@@ -33,10 +29,6 @@ docker-compose build
 
 Assuming you've got docker installed on your machine with kubernetes enabled, you can deploy all required infrastructure for a local development environment:
 ```bash
-kubectl apply -f deploy/dev
+kubectl apply -f deploy/dev -R
 ```
 
-And finally deploy the actual Bhasha system:
-```bash
-kubectl apply -f deploy
-```

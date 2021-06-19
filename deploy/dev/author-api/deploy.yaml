@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: web
+  name: bhasha-author-api
 spec:
   type: LoadBalancer
   selector:
-    service: web
+    service: bhasha-author-api
   ports:
     - port: 80 # container port of pod hosting website
       targetPort: 80 # exposed port (access website)
@@ -13,39 +13,36 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: web
+  name: bhasha-author-api
 spec:
   replicas: 1
   selector:
     matchLabels:
-      service: web
+      service: bhasha-author-api
   template:
     metadata:
       labels:
-        app: web
-        service: web
+        app: bhasha-author-api
+        service: bhasha-author-api
     spec:
       containers:
-        - name: bhasha
-          image: bhasha:latest
+        - name: bhasha-author-api
+          image: bhasha-author-api:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80
           env:
             - name: ASPNETCORE_URLS
               value: http://+:80
-            - name: ASPNETCORE_MongoUser
+            - name: ASPNETCORE_Database__User
               valueFrom: 
                 secretKeyRef:
                   name: mongodb-secrets
                   key: mongodb-user
-            - name: ASPNETCORE_MongoPassword
+            - name: ASPNETCORE_Database__Password
               valueFrom: 
                 secretKeyRef:
                   name: mongodb-secrets
                   key: mongodb-password          
-            - name: ASPNETCORE_MongoHost
-              valueFrom:
-                configMapKeyRef:
-                  name: mongodb-config
-                  key: hostname
+            - name: ASPNETCORE_Database__Hostname
+              value: mongodb-0.db.default.svc.cluster.local:27017
