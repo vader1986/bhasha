@@ -10,8 +10,6 @@ WORKDIR /src
 
 COPY ["Bhasha.Common/Bhasha.Common.csproj", "Bhasha.Common/"]
 RUN dotnet restore "Bhasha.Common/Bhasha.Common.csproj"
-COPY ["Bhasha.Common.MongoDB/Bhasha.Common.MongoDB.csproj", "Bhasha.Common.MongoDB/"]
-RUN dotnet restore "Bhasha.Common.MongoDB/Bhasha.Common.MongoDB.csproj"
 
 COPY ["Bhasha.Author.Web/Bhasha.Author.Web.csproj", "Bhasha.Author.Web/"]
 RUN dotnet restore "Bhasha.Author.Web/Bhasha.Author.Web.csproj"
@@ -22,7 +20,7 @@ RUN dotnet build "Bhasha.Author.Web.csproj" -c Release -o /app/build
 FROM build AS publish
 RUN dotnet publish "Bhasha.Author.Web.csproj" -c Release -o /app/publish
 
-FROM base AS final
-WORKDIR /app
-COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Bhasha.Author.Web.dll"]
+FROM nginx:alpine
+WORKDIR /var/www/web
+COPY --from=publish /app/publish/wwwroot .
+COPY Bhasha.Author.Web/nginx.conf /etc/nginx/nginx.conf
