@@ -7,6 +7,12 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
+
+COPY ["Bhasha.Common/Bhasha.Common.csproj", "Bhasha.Common/"]
+RUN dotnet restore "Bhasha.Common/Bhasha.Common.csproj"
+COPY ["Bhasha.Common.MongoDB/Bhasha.Common.MongoDB.csproj", "Bhasha.Common.MongoDB/"]
+RUN dotnet restore "Bhasha.Common.MongoDB/Bhasha.Common.MongoDB.csproj"
+
 COPY ["Bhasha.Author.Web/Bhasha.Author.Web.csproj", "Bhasha.Author.Web/"]
 RUN dotnet restore "Bhasha.Author.Web/Bhasha.Author.Web.csproj"
 COPY . .

@@ -3,10 +3,15 @@
 FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base
 WORKDIR /app
 EXPOSE 80
-EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
+
+COPY ["Bhasha.Common/Bhasha.Common.csproj", "Bhasha.Common/"]
+RUN dotnet restore "Bhasha.Common/Bhasha.Common.csproj"
+COPY ["Bhasha.Common.MongoDB/Bhasha.Common.MongoDB.csproj", "Bhasha.Common.MongoDB/"]
+RUN dotnet restore "Bhasha.Common.MongoDB/Bhasha.Common.MongoDB.csproj"
+
 COPY ["Bhasha.Student.Web/Bhasha.Student.Web.csproj", "Bhasha.Student.Web/"]
 RUN dotnet restore "Bhasha.Student.Web/Bhasha.Student.Web.csproj"
 COPY . .
