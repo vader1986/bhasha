@@ -9,7 +9,10 @@ There's no reason for this project to limit itself for a specific language, it's
 The VS solution contains multiple folders:
 * `Bhasha.Common` - general collection of model classes used across the entire project
 * `Bhasha.Common.MongoDb` - MongoDB layer to access, add, update and delete user and language data
-* `Bhasha.Web` - .NET backend hosting the client app and web api to access data
+* `Bhasha.Student.Api` - Web API for language students to access language data (including user stats)
+* `Bhasha.Student.Web` - [Blazor UI](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor) for language students
+* `Bhasha.Author.Api` - Web API for content authors to add translations, chapters, etc.
+* `Bhasha.Author.Web` - [Blazor UI](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor) for content authors
 
 There's also a _react-app_ named `Bhasha.Web.Client`. 
 
