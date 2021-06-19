@@ -22,7 +22,7 @@ There's also a _react-app_ named `Bhasha.Web.Client`.
 
 ### Build
 ```bash
-docker-compose build
+docker-compose build --no-cache
 ```
 
 ### Deployment
@@ -32,3 +32,8 @@ Assuming you've got docker installed on your machine with kubernetes enabled, yo
 kubectl apply -f deploy/dev -R
 ```
 
+Following URLs are exposed:
+* http://localhost:5000/swagger (Bhasha Author API)
+* http://localhost:5001/index.html (Bhasha Author Website)
+* http://localhost:5002/swagger (Bhasha Student API)
+* http://localhost:5003/index.html (Bhasha Student Website)
