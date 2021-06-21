@@ -34,5 +34,11 @@ spec:
           env:
             - name: ASPNETCORE_URLS
               value: http://+:80
-            - name: ASPNETCORE_AuthorApi
-              value: http://bhasha-author-api.default.svc.cluster.local
+          volumeMounts:
+          - name: config-volume
+            mountPath: /var/www/web/config.json
+            subPath: config.json
+      volumes:
+        - name: config-volume
+          configMap:
+            name: bhasha-author-web-config
