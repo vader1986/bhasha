@@ -1,3 +1,4 @@
+using Bhasha.Common.Api;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -19,16 +20,9 @@ namespace Bhasha.Author.Api
             services.AddBhasha(_configuration);
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment _)
         {
-            //app.UseHttpsRedirection();
-            app.UseRouting();
-            //app.UseAuthorization();
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
-            app.UseDefaultFiles();
-            app.UseStaticFiles();
-            app.UseOpenApi();
-            app.UseSwaggerUi3();
+            app.UseBhasha();
         }
     }
 }

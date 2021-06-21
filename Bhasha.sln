@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bhasha.Student.Api.Tests", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bhasha.Author.Api.Tests", "Bhasha.Author.Api.Tests\Bhasha.Author.Api.Tests.csproj", "{743156E3-05CC-4D67-8370-B9E510BEC3FA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bhasha.Common.Api", "Bhasha.Common.Api\Bhasha.Common.Api.csproj", "{75F14CFC-A887-4121-90A9-889E17679C69}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|anycpu = Debug|anycpu
@@ -69,6 +71,10 @@ Global
 		{743156E3-05CC-4D67-8370-B9E510BEC3FA}.Debug|anycpu.Build.0 = Debug|Any CPU
 		{743156E3-05CC-4D67-8370-B9E510BEC3FA}.Release|anycpu.ActiveCfg = Release|Any CPU
 		{743156E3-05CC-4D67-8370-B9E510BEC3FA}.Release|anycpu.Build.0 = Release|Any CPU
+		{75F14CFC-A887-4121-90A9-889E17679C69}.Debug|anycpu.ActiveCfg = Debug|Any CPU
+		{75F14CFC-A887-4121-90A9-889E17679C69}.Debug|anycpu.Build.0 = Debug|Any CPU
+		{75F14CFC-A887-4121-90A9-889E17679C69}.Release|anycpu.ActiveCfg = Release|Any CPU
+		{75F14CFC-A887-4121-90A9-889E17679C69}.Release|anycpu.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

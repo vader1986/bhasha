@@ -10,8 +10,12 @@ WORKDIR /src
 
 COPY ["Bhasha.Common/Bhasha.Common.csproj", "Bhasha.Common/"]
 RUN dotnet restore "Bhasha.Common/Bhasha.Common.csproj"
+
 COPY ["Bhasha.Common.MongoDB/Bhasha.Common.MongoDB.csproj", "Bhasha.Common.MongoDB/"]
 RUN dotnet restore "Bhasha.Common.MongoDB/Bhasha.Common.MongoDB.csproj"
+
+COPY ["Bhasha.Common.Api/Bhasha.Common.Api.csproj", "Bhasha.Common.Api/"]
+RUN dotnet restore "Bhasha.Common.Api/Bhasha.Common.Api.csproj"
 
 COPY ["Bhasha.Student.Api/Bhasha.Student.Api.csproj", "Bhasha.Student.Api/"]
 RUN dotnet restore "Bhasha.Student.Api/Bhasha.Student.Api.csproj"

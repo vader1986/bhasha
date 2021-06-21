@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: bhasha-author-api
+  name: author-api-service
 spec:
   type: LoadBalancer
   selector:

@@ -18,5 +18,8 @@
     <ProjectReference Include="..\Bhasha.Common.MongoDB\Bhasha.Common.MongoDB.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
+    <ProjectReference Include="..\Bhasha.Common.Api\Bhasha.Common.Api.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
   </ItemGroup>
 </Project>

@@ -34,5 +34,11 @@ spec:
           env:
             - name: ASPNETCORE_URLS
               value: http://+:80
-            - name: ASPNETCORE_StudentApi
-              value: http://bhasha-student-api.default.svc.cluster.local
+          volumeMounts:
+          - name: config-volume
+            mountPath: /var/www/web/config.json
+            subPath: config.json
+      volumes:
+        - name: config-volume
+          configMap:
+            name: bhasha-student-web-config

@@ -1,12 +1,11 @@
 using System;
 using System.Net.Http;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Text;
+using Bhasha.Student.Web.Services;
+using LazyCache;
+using MatBlazor;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 namespace Bhasha.Student.Web
 {
@@ -16,9 +15,11 @@ namespace Bhasha.Student.Web
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("#app");
-
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-
+            builder.Services.AddScoped<ISettingsProvider, SettingsProvider>();
+            builder.Services.AddScoped<IStudentApiClient, StudentApiClient>();
+            builder.Services.AddSingleton<IAppCache, CachingService>();
+            builder.Services.AddMatBlazor();
             await builder.Build().RunAsync();
         }
     }

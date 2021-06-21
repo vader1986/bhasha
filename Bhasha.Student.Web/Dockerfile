@@ -23,4 +23,4 @@ RUN dotnet publish "Bhasha.Student.Web.csproj" -c Release -o /app/publish
 FROM nginx:alpine
 WORKDIR /var/www/web
 COPY --from=publish /app/publish/wwwroot .
-COPY Bhasha.Author.Web/nginx.conf /etc/nginx/nginx.conf
+COPY Bhasha.Student.Web/nginx.conf /etc/nginx/nginx.conf
