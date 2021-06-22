@@ -1,3 +1,4 @@
+using Bhasha.Common.Api;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -17,24 +18,11 @@ namespace Bhasha.Student.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddBhasha(_configuration);
+       }
 
-            services.AddCors(cors => cors.AddPolicy("BhashaPolicy", x =>
-                x.AllowAnyOrigin()
-                 .AllowAnyMethod()
-                 .AllowAnyHeader()));
-        }
-
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment _)
         {
-            //app.UseHttpsRedirection();
-            app.UseCors("BhashaPolicy");
-            app.UseRouting();
-            //app.UseAuthorization();
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
-            app.UseDefaultFiles();
-            app.UseStaticFiles();
-            app.UseOpenApi();
-            app.UseSwaggerUi3();
+            app.UseBhasha();
         }
     }
 }

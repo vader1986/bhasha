@@ -2,10 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <OutputType>Library</OutputType>
+    <NoDefaultLaunchSettingsFile>true</NoDefaultLaunchSettingsFile>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="LazyCache" Version="2.1.3" />
+  <ItemGroup>  
     <PackageReference Include="NSwag.AspNetCore" Version="13.11.1" />
   </ItemGroup>
 
@@ -16,12 +17,6 @@
     <ProjectReference Include="..\Bhasha.Common.MongoDB\Bhasha.Common.MongoDB.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
-    <ProjectReference Include="..\Bhasha.Common.Api\Bhasha.Common.Api.csproj">
-      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
-    </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Controllers\" />
-    <Folder Include="Services\" />
-  </ItemGroup>
+
 </Project>
