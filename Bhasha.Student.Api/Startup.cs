@@ -1,4 +1,6 @@
 using Bhasha.Common.Api;
+using Bhasha.Student.Api.Services;
+using LazyCache;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -17,7 +19,10 @@ namespace Bhasha.Student.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddBhasha(_configuration);
+            services
+                .AddSingleton<IAuthorizedProfileLookup, AuthorizedProfileLookup>()
+                .AddSingleton<IAppCache, CachingService>()
+                .AddBhasha(_configuration);
        }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment _)
