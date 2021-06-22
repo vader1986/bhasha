@@ -1,6 +1,7 @@
 ﻿using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
+using LazyCache;
 using Microsoft.Extensions.Configuration;
 
 namespace Bhasha.Student.Web.Services
@@ -14,10 +15,11 @@ namespace Bhasha.Student.Web.Services
     {
         private readonly string _settingsPath;
         private readonly HttpClient _httpClient;
-        private AppSettings _settings;
-
-        public SettingsProvider(IConfiguration configuration, HttpClient httpClient)
+        private readonly IAppCache _cache;
+        
+        public SettingsProvider(IConfiguration configuration, HttpClient httpClient, IAppCache cache)
         {
+            _cache = cache;
             _settingsPath = configuration.GetValue<string>("Settings");
             _httpClient = httpClient;
         }
@@ -32,7 +34,7 @@ namespace Bhasha.Student.Web.Services
 
         public async Task<AppSettings> GetSettings()
         {
-            return _settings ??= await FetchSettings();
+            return await _cache.GetOrAddAsync(nameof(AppSettings), FetchSettings);
         }
     }
 }

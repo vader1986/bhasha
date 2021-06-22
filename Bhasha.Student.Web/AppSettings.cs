@@ -2,6 +2,6 @@
 {
     public class AppSettings
     {
-        public string AuthorApi { get; set; }
+        public string StudentApi { get; set; }
     }
 }

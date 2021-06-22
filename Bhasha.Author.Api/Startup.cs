@@ -17,11 +17,17 @@ namespace Bhasha.Author.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddBhasha(_configuration);
+
+            services.AddCors(cors => cors.AddPolicy("BhashaPolicy", x =>
+                x.AllowAnyOrigin()
+                 .AllowAnyMethod()
+                 .AllowAnyHeader()));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             //app.UseHttpsRedirection();
+            app.UseCors("BhashaPolicy");
             app.UseRouting();
             //app.UseAuthorization();
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });

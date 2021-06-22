@@ -5,5 +5,5 @@ metadata:
 data:
   config.json: |
     {
-      "AuthorApi": "http://bhasha-author-api.default.svc.cluster.local"
+      "AuthorApi": "http://localhost:5000/"
     }
