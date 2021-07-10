@@ -15,6 +15,7 @@ namespace Bhasha.Common.MongoDB.Tests
     [TestFixture]
     public class MongoStoreTests
     {
+        private const string DbName = "TestDB";
         private IMongoClient _client;
         private MongoDbRunner _runner;
 
@@ -26,7 +27,7 @@ namespace Bhasha.Common.MongoDB.Tests
 
             MongoMigrationClient.Initialize(_client, new MongoMigrationSettings
             {
-                Database = Names.Database,
+                Database = DbName,
                 ConnectionString = _runner.ConnectionString
             });
         }
@@ -42,13 +43,13 @@ namespace Bhasha.Common.MongoDB.Tests
         private async Task Test_Add<TProduct>()
             where TProduct : class, IEntity, ICanBeValidated
         {
-            var store = new MongoStore<TProduct>(_client);
+            var store = new MongoStore<TProduct>(_client, DbName);
             var product = EntityFactory.Build<TProduct>();
 
             var result = await store.Add(product);
 
             var dto = await _client
-                .Collection<TProduct>()
+                .Collection<TProduct>(DbName)
                 .AsQueryable()
                 .SingleAsync(x => x.Id == result.Id);
 
@@ -69,11 +70,11 @@ namespace Bhasha.Common.MongoDB.Tests
         private async Task Test_Remove<TProduct>()
             where TProduct : class, IEntity, ICanBeValidated
         {
-            var store = new MongoStore<TProduct>(_client);
+            var store = new MongoStore<TProduct>(_client, DbName);
             var product = EntityFactory.Build<TProduct>();
 
             await _client
-                .Collection<TProduct>()
+                .Collection<TProduct>(DbName)
                 .InsertOneAsync(product);
 
             var deletedItems = await store.Remove(product.Id);
@@ -81,7 +82,7 @@ namespace Bhasha.Common.MongoDB.Tests
             Assert.That(deletedItems, Is.EqualTo(1));
 
             var foundAny = await _client
-                .Collection<TProduct>()
+                .Collection<TProduct>(DbName)
                 .AsQueryable()
                 .AnyAsync(x => true);
 
@@ -102,11 +103,11 @@ namespace Bhasha.Common.MongoDB.Tests
         private async Task Test_Get<TProduct>()
             where TProduct : class, IEntity, ICanBeValidated
         {
-            var store = new MongoStore<TProduct>(_client);
+            var store = new MongoStore<TProduct>(_client, DbName);
             var product = EntityFactory.Build<TProduct>();
 
             await _client
-                .Collection<TProduct>()
+                .Collection<TProduct>(DbName)
                 .InsertOneAsync(product);
 
             var result = await store.Get(product.Id);
@@ -129,11 +130,11 @@ namespace Bhasha.Common.MongoDB.Tests
         private async Task Test_Replace<TProduct>()
             where TProduct : class, IEntity, ICanBeValidated
         {
-            var store = new MongoStore<TProduct>(_client);
+            var store = new MongoStore<TProduct>(_client, DbName);
             var product = EntityFactory.Build<TProduct>();
 
             await _client
-                .Collection<TProduct>()
+                .Collection<TProduct>(DbName)
                 .InsertOneAsync(product);
 
             var updatedProduct = EntityFactory.Build<TProduct>(product.Id);
@@ -141,7 +142,7 @@ namespace Bhasha.Common.MongoDB.Tests
             await store.Replace(updatedProduct);
 
             var result = await _client
-                .Collection<TProduct>()
+                .Collection<TProduct>(DbName)
                 .AsQueryable()
                 .SingleAsync(x => x.Id == product.Id);
 

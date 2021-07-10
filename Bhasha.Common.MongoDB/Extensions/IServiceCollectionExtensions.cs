@@ -8,23 +8,23 @@ namespace Bhasha.Common.MongoDB.Extensions
 {
     public static class IServiceCollectionExtensions
     {
-        public static IServiceCollection AddMongoDB(this IServiceCollection services, MongoSettings settings)
+        public static IServiceCollection AddMongoDB(this IServiceCollection services, string connectionString, string databaseName)
         {
             services
-                .AddSingleton<IMongoClient>(new MongoClient(settings.ConnectionString))
-                .AddSingleton<IDatabase, MongoDatabase>()
+                .AddSingleton<IMongoClient>(new MongoClient(connectionString))
+                .AddSingleton<IDatabase>(sp => new MongoDatabase(sp.GetRequiredService<IMongoClient>(), databaseName))
                 .AddMigration(new MongoMigrationSettings {
-                    Database = Names.Database,
-                    ConnectionString = settings.ConnectionString
+                    Database = databaseName,
+                    ConnectionString = connectionString
                 });
 
             services
-                .AddTransient<IStore<DbChapter>, MongoStore<DbChapter>>()
-                .AddTransient<IStore<DbStats>, MongoStore<DbStats>>()
-                .AddTransient<IStore<DbUserProfile>, MongoStore<DbUserProfile>>()
-                .AddTransient<IStore<DbExpression>, MongoStore<DbExpression>>()
-                .AddTransient<IStore<DbTranslatedChapter>, MongoStore<DbTranslatedChapter>>()
-                .AddTransient<IStore<DbWord>, MongoStore<DbWord>>();
+                .AddTransient<IStore<DbChapter>>(sp => new MongoStore<DbChapter>(sp.GetRequiredService<IMongoClient>(), databaseName))
+                .AddTransient<IStore<DbStats>>(sp => new MongoStore<DbStats>(sp.GetRequiredService<IMongoClient>(), databaseName))
+                .AddTransient<IStore<DbUserProfile>>(sp => new MongoStore<DbUserProfile>(sp.GetRequiredService<IMongoClient>(), databaseName))
+                .AddTransient<IStore<DbExpression>>(sp => new MongoStore<DbExpression>(sp.GetRequiredService<IMongoClient>(), databaseName))
+                .AddTransient<IStore<DbTranslatedChapter>>(sp => new MongoStore<DbTranslatedChapter>(sp.GetRequiredService<IMongoClient>(), databaseName))
+                .AddTransient<IStore<DbWord>>(sp => new MongoStore<DbWord>(sp.GetRequiredService<IMongoClient>(), databaseName));
 
             return services;
         }

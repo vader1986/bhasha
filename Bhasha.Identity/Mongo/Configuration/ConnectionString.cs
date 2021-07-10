@@ -1,8 +1,8 @@
-﻿namespace Bhasha.Common.MongoDB
+﻿namespace Bhasha.Identity.Mongo.Configuration
 {
     public static class ConnectionString
     {
-        public static string Build(string hostname, string username, string password)
+        public static string ForMongoDB(string hostname, string username, string password)
         {
             return $"mongodb://{username}:{password}@{hostname}";
         }

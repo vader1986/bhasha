@@ -17,6 +17,7 @@ namespace Bhasha.Common.MongoDB.Tests
     [TestFixture]
     public class MongoDatabaseTests
     {
+        private const string DbName = "TestDB";
         private IMongoClient _client;
         private MongoDbRunner _runner;
         private MongoDatabase _db;
@@ -26,10 +27,10 @@ namespace Bhasha.Common.MongoDB.Tests
         {
             _runner = MongoDbRunner.Start();
             _client = new MongoClient(_runner.ConnectionString);
-            _db = new MongoDatabase(_client);
+            _db = new MongoDatabase(_client, DbName);
 
             MongoMigrationClient.Initialize(_client, new MongoMigrationSettings {
-                Database = Names.Database,
+                Database = DbName,
                 ConnectionString = _runner.ConnectionString
             });
         }
@@ -51,7 +52,7 @@ namespace Bhasha.Common.MongoDB.Tests
                 .Select(i => DbChapterBuilder.Default.WithLevel(i).Build());
 
             await _client
-                .Collection<DbChapter>()
+                .Collection<DbChapter>(DbName)
                 .InsertManyAsync(chapters);
 
             // act
@@ -75,7 +76,7 @@ namespace Bhasha.Common.MongoDB.Tests
                     .Build());
 
             await _client
-                .Collection<DbUserProfile>()
+                .Collection<DbUserProfile>(DbName)
                 .InsertManyAsync(profiles);
 
             // act
@@ -102,7 +103,7 @@ namespace Bhasha.Common.MongoDB.Tests
                 .ToArray();
 
             await _client
-                .Collection<DbStats>()
+                .Collection<DbStats>(DbName)
                 .InsertManyAsync(stats);
 
             // act
@@ -126,7 +127,7 @@ namespace Bhasha.Common.MongoDB.Tests
                     .Build());
 
             await _client
-                .Collection<DbStats>()
+                .Collection<DbStats>(DbName)
                 .InsertManyAsync(stats);
 
             // act

@@ -13,6 +13,7 @@ The VS solution contains multiple folders:
 * `Bhasha.Student.Web` - [Blazor UI](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor) for language students
 * `Bhasha.Author.Api` - Web API for content authors to add translations, chapters, etc.
 * `Bhasha.Author.Web` - [Blazor UI](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor) for content authors
+* `Bhasha.Identity` - [Identity Server](https://github.com/souzartn/IdentityServer4.Samples.Mongo) for user management and authentication
 
 There's also a _react-app_ named `Bhasha.Web.Client`. 
 
@@ -31,8 +32,14 @@ docker-compose build --no-cache
 
 Assuming you've got docker installed on your machine with kubernetes enabled, you can deploy all required infrastructure for a local development environment:
 ```bash
-kubectl apply -f deploy/dev -R
+kubectl apply -f deploy/infrastructure -R
 ```
+
+You can also deploy all services in k8s:
+```bash
+kubectl apply -f deploy/development -R
+```
+Alternatively, you can just run the services from Visual Studio.
 
 Following URLs are exposed:
 * http://localhost:5000/swagger (Bhasha Author API)
