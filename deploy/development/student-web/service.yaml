@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: bhasha-student-web
+spec:
+  type: LoadBalancer
+  selector:
+    service: bhasha-student-web
+  ports:
+    - port: 5003 # exposed port (access website)
+      targetPort: 80 # container port of pod hosting website

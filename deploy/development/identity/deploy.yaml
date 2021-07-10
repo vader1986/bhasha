@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: bhasha-author-api
+  name: bhasha-identity
 spec:
   replicas: 1
   selector:
     matchLabels:
-      service: bhasha-author-api
+      service: bhasha-identity
   template:
     metadata:
       labels:
-        app: bhasha-author-api
-        service: bhasha-author-api
+        app: bhasha-identity
+        service: bhasha-identity
     spec:
       containers:
-        - name: bhasha-author-api
-          image: bhasha-author-api:latest
+        - name: bhasha-identity
+          image: bhasha-identity:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80
@@ -35,4 +35,4 @@ spec:
             - name: ASPNETCORE_Database__Hostname
               value: mongodb-0.db.default.svc.cluster.local:27017
             - name: ASPNETCORE_Database__Name
-              value: Bhasha
+              value: Identity
