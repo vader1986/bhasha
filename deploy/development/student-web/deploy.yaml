@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bhasha-student-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: bhasha-student-web
+  template:
+    metadata:
+      labels:
+        app: bhasha-student-web
+        service: bhasha-student-web
+    spec:
+      containers:
+        - name: bhasha-student-web
+          image: bhasha-student-web:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+          env:
+            - name: ASPNETCORE_URLS
+              value: http://+:80
+          volumeMounts:
+          - name: config-volume
+            mountPath: /var/www/web/config.json
+            subPath: config.json
+      volumes:
+        - name: config-volume
+          configMap:
+            name: bhasha-student-web-config

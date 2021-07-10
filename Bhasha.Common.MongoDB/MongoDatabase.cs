@@ -11,17 +11,19 @@ namespace Bhasha.Common.MongoDB
 {
     public class MongoDatabase : IDatabase
     {
-        private readonly IMongoClient _db;
+        private readonly IMongoClient _client;
+        private readonly string _databaseName;
 
-        public MongoDatabase(IMongoClient db)
+        public MongoDatabase(IMongoClient client, string databaseName)
         {
-            _db = db;
+            _client = client;
+            _databaseName = databaseName;
         }
 
         public async Task<IEnumerable<DbChapter>> QueryChapters(int level)
         {
-            return await _db
-               .Collection<DbChapter>()
+            return await _client
+               .Collection<DbChapter>(_databaseName)
                .AsQueryable()
                .Where(x => x.Level == level)
                .ToListAsync();
@@ -29,8 +31,8 @@ namespace Bhasha.Common.MongoDB
 
         public async Task<IEnumerable<DbUserProfile>> QueryProfiles(string userId)
         {
-            return await _db
-               .Collection<DbUserProfile>()
+            return await _client
+               .Collection<DbUserProfile>(_databaseName)
                .AsQueryable()
                .Where(x => x.UserId == userId)
                .ToListAsync();
@@ -38,8 +40,8 @@ namespace Bhasha.Common.MongoDB
 
         public async Task<DbStats?> QueryStats(Guid chapterId, Guid profileId)
         {
-            return await _db
-               .Collection<DbStats>()
+            return await _client
+               .Collection<DbStats>(_databaseName)
                .AsQueryable()
                .FirstOrDefaultAsync(x => x.ChapterId == chapterId &&
                                          x.ProfileId == profileId);
@@ -47,8 +49,8 @@ namespace Bhasha.Common.MongoDB
 
         public async Task<IEnumerable<DbStats>> QueryStats(Guid profileId)
         {
-            return await _db
-               .Collection<DbStats>()
+            return await _client
+               .Collection<DbStats>(_databaseName)
                .AsQueryable()
                .Where(x => x.ProfileId == profileId)
                .ToListAsync();

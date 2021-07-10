@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
+using Bhasha.Common.Api.Configuration;
 using Bhasha.Common.Extensions;
-using Bhasha.Common.MongoDB;
 using Bhasha.Common.MongoDB.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -26,8 +26,10 @@ namespace Bhasha.Common.Api
 
         public static void AddBhasha(this IServiceCollection services, IConfiguration configuration)
         {
+            var settings = MongoSettings.From(configuration);
+
             services
-                .AddMongoDB(MongoSettings.From(configuration))
+                .AddMongoDB(settings.ConnectionString, settings.DatabaseName)
                 .AddBhashaServices();
 
             services

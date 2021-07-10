@@ -8,10 +8,10 @@ namespace Bhasha.Common.MongoDB.Extensions
 {
     public static class MongoExtensions
     {
-        public static IMongoCollection<T> Collection<T>(this IMongoClient client)
+        public static IMongoCollection<T> Collection<T>(this IMongoClient client, string dbName)
         {
             return client
-                .GetDatabase(Names.Database)
+                .GetDatabase(dbName)
                 .GetCollection<T>(typeof(T).Name);
         }
 

@@ -24,3 +24,9 @@ services:
       context: .
       dockerfile: Bhasha.Student.Web/Dockerfile
     image: bhasha-student-web
+
+  bhasha-identity:
+    build:
+      context: .
+      dockerfile: Bhasha.Identity/Dockerfile
+    image: bhasha-identity    

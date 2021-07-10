@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bhasha.Author.Api.Tests", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bhasha.Common.Api", "Bhasha.Common.Api\Bhasha.Common.Api.csproj", "{75F14CFC-A887-4121-90A9-889E17679C69}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bhasha.Identity", "Bhasha.Identity\Bhasha.Identity.csproj", "{B5E60414-DA17-495E-A22D-5E10A6C60BA0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|anycpu = Debug|anycpu
@@ -75,6 +77,10 @@ Global
 		{75F14CFC-A887-4121-90A9-889E17679C69}.Debug|anycpu.Build.0 = Debug|Any CPU
 		{75F14CFC-A887-4121-90A9-889E17679C69}.Release|anycpu.ActiveCfg = Release|Any CPU
 		{75F14CFC-A887-4121-90A9-889E17679C69}.Release|anycpu.Build.0 = Release|Any CPU
+		{B5E60414-DA17-495E-A22D-5E10A6C60BA0}.Debug|anycpu.ActiveCfg = Debug|Any CPU
+		{B5E60414-DA17-495E-A22D-5E10A6C60BA0}.Debug|anycpu.Build.0 = Debug|Any CPU
+		{B5E60414-DA17-495E-A22D-5E10A6C60BA0}.Release|anycpu.ActiveCfg = Release|Any CPU
+		{B5E60414-DA17-495E-A22D-5E10A6C60BA0}.Release|anycpu.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

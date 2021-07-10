@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: identity-config
+data:
+  appsettings.json: |-
+    {
+      "Logging": {
+        "LogLevel": {
+          "Default": "Information",
+          "Microsoft": "Warning",
+          "Microsoft.Hosting.Lifetime": "Information"
+        }
+      },
+      "urls": "https://+:443;http://+:80",
+      "Kestrel": {
+        "Certificates": {
+          "Default": {
+            "Path": "/app/https/identity.pfx"
+          }
+        }
+      },
+      "Database": {
+        "Hostname": "mongodb-0.db.default.svc.cluster.local:27017",
+        "Name": "Identity"
+      }
+    }

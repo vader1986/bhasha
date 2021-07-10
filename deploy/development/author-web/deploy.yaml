@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bhasha-author-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: bhasha-author-web
+  template:
+    metadata:
+      labels:
+        app: bhasha-author-web
+        service: bhasha-author-web
+    spec:
+      containers:
+        - name: bhasha-author-web
+          image: bhasha-author-web:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+          env:
+            - name: ASPNETCORE_URLS
+              value: http://+:80
+          volumeMounts:
+          - name: config-volume
+            mountPath: /var/www/web/config.json
+            subPath: config.json
+      volumes:
+        - name: config-volume
+          configMap:
+            name: bhasha-author-web-config
