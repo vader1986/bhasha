@@ -1,33 +1,34 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: student-api-service
+  name: author-api-service
 spec:
   type: LoadBalancer
   selector:
-    service: bhasha-student-api
+    service: bhasha-author-api
   ports:
-    - port: 5002 # exposed port (access website)
+    - protocol: TCP
+      port: 5000 # exposed port (access website)
       targetPort: 80 # container port of pod hosting website
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: bhasha-student-api
+  name: bhasha-author-api
 spec:
   replicas: 1
   selector:
     matchLabels:
-      service: bhasha-student-api
+      service: bhasha-author-api
   template:
     metadata:
       labels:
-        app: bhasha-student-api
-        service: bhasha-student-api
+        app: bhasha-author-api
+        service: bhasha-author-api
     spec:
       containers:
-        - name: bhasha-student-api
-          image: bhasha-student-api:latest
+        - name: bhasha-author-api
+          image: bhasha-author-api:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80
@@ -43,6 +44,8 @@ spec:
               valueFrom: 
                 secretKeyRef:
                   name: mongodb-secrets
-                  key: mongodb-password          
+                  key: mongodb-password
             - name: ASPNETCORE_Database__Hostname
               value: mongodb-0.db.default.svc.cluster.local:27017
+            - name: ASPNETCORE_Database__Name
+              value: Bhasha
