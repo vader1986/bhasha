@@ -1,6 +1,5 @@
 ﻿using IdentityServer4.Models;
 using Mongo.Migration.Migrations.Database;
-using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 
 namespace Bhasha.Identity.Mongo.Migrations
