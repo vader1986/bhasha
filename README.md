@@ -64,7 +64,7 @@ Following URLs are exposed:
 * http://localhost:5001/index.html (Bhasha Author Website)
 * http://localhost:5002/swagger (Bhasha Student API)
 * http://localhost:5003/index.html (Bhasha Student Website)
-* https://localhost:5005 (User Management)
+* https://localhost:5005/account/login (User Management)
 
 ### Deployment for Production
 
