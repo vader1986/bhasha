@@ -28,21 +28,44 @@ There's also a _react-app_ named `Bhasha.Web.Client`.
 docker-compose build --no-cache
 ```
 
-### Deployment
+### Deployment for Development
 
-Assuming you've got docker installed on your machine with kubernetes enabled, you can deploy all required infrastructure for a local development environment:
+#### MAC OS
+Assuming you've got docker installed on your machine with kubernetes enabled, you can deploy required infrastructure for a local development environment:
 ```bash
 kubectl apply -f deploy/infrastructure -R
 ```
 
-You can also deploy all services in k8s:
+Create a [self-signing HTTPS certificate](https://docs.microsoft.com/en-us/aspnet/core/security/docker-https?view=aspnetcore-5.0):
+```bash
+dotnet dev-certs https -ep ${HOME}/.aspnet/https/aspnetapp.pfx -p password
+dotnet dev-certs https --trust
+```
+
+In case you already got a developer certificate, you have to remove and re-create it:
+```bash
+dotnet dev-certs https --clean
+dotnet dev-certs https -ep ${HOME}/.aspnet/https/aspnetapp.pfx -p password
+dotnet dev-certs https --trust
+```
+
+Deploy the HTTPS certificate as a secret to kubernetes:
+```bash
+kubectl create secret generic identity-cert-secret --from-file=identity.pfx=${HOME}/.aspnet/https/aspnetapp.pfx
+```
+
+Deploy all services to your local kubernetes cluster:
 ```bash
 kubectl apply -f deploy/development -R
 ```
-Alternatively, you can just run the services from Visual Studio.
 
 Following URLs are exposed:
 * http://localhost:5000/swagger (Bhasha Author API)
 * http://localhost:5001/index.html (Bhasha Author Website)
 * http://localhost:5002/swagger (Bhasha Student API)
 * http://localhost:5003/index.html (Bhasha Student Website)
+* https://localhost:5005 (User Management)
+
+### Deployment for Production
+
+TODO
