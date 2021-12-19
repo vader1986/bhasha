@@ -7,6 +7,11 @@ spec:
   selector:
     service: bhasha-author-api
   ports:
-    - protocol: TCP
-      port: 5000 # exposed port (access website)
+    - name: http
+      protocol: TCP
+      port: 5001 # exposed port (access website)
       targetPort: 80 # container port of pod hosting website
+    - name: https
+      protocol: TCP
+      port: 5010 # exposed port (access website)
+      targetPort: 443 # container port of pod hosting website

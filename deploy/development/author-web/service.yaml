@@ -7,5 +7,5 @@ spec:
   selector:
     service: bhasha-author-web
   ports:
-    - port: 5001 # exposed port (access website)
+    - port: 5004 # exposed port (access website)
       targetPort: 80 # container port of pod hosting website

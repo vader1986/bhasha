@@ -27,7 +27,7 @@ spec:
           volumeMounts:
             - name: identity-settings-volume
               mountPath: /app/config
-            - name: identity-cert-volume
+            - name: cert-volume
               mountPath: /app/https
               readOnly: true
           env:
@@ -50,6 +50,6 @@ spec:
       - name: identity-settings-volume
         configMap:
           name: identity-config
-      - name: identity-cert-volume
+      - name: cert-volume
         secret:
-          secretName: identity-cert-secret
+          secretName: cert-secret

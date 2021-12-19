@@ -9,9 +9,9 @@ spec:
   ports:
     - name: http
       protocol: TCP
-      port: 5004 # exposed port (access website)
+      port: 5003 # exposed port (access website)
       targetPort: 80 # container port of pod hosting website
     - name: https
       protocol: TCP
-      port: 5005 # exposed port (access website)
+      port: 5030 # exposed port (access website)
       targetPort: 443 # container port of pod hosting website

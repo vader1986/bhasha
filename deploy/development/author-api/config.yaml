@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: identity-config
+  name: author-api-config
 data:
   appsettings.json: |-
     {
@@ -22,6 +22,10 @@ data:
       },
       "Database": {
         "Hostname": "mongodb-0.db.default.svc.cluster.local:27017",
-        "Name": "Identity"
+        "Name": "Bhasha"
+      },
+      "JWT": {
+        "Audience": "Author",
+        "Authority": "https://bhasha-identity:5040"
       }
     }

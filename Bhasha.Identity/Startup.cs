@@ -8,6 +8,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using IdentityServerHost.Quickstart.UI;
 using Bhasha.Identity.Mongo.Extensions;
+using Bhasha.Common;
+using Bhasha.Common.Api;
 
 namespace Bhasha.Identity
 {
@@ -25,6 +27,7 @@ namespace Bhasha.Identity
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            
             var builder = services
                 .AddIdentityServer(options =>
                 {
@@ -46,6 +49,7 @@ namespace Bhasha.Identity
             }
 
             services.AddAuthentication();
+            services.AddAnyCors();
         }
 
         public void Configure(IApplicationBuilder app)
@@ -57,7 +61,6 @@ namespace Bhasha.Identity
             }
 
             app.UseStaticFiles();
-
             app.UseRouting();
             app.UseIdentityServer();
             app.UseAuthorization();

@@ -5,5 +5,5 @@ metadata:
 data:
   config.json: |
     {
-      "StudentApi": "http://localhost:5002/"
+      "StudentApi": "https://localhost:5020/"
     }

@@ -6,6 +6,7 @@ using Bhasha.Common;
 using Bhasha.Common.Database;
 using Bhasha.Common.Exceptions;
 using Bhasha.Student.Api.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bhasha.Student.Api.Controllers
@@ -72,7 +73,7 @@ namespace Bhasha.Student.Api.Controllers
                 .ToArray();
         }
 
-        [HttpGet("languages")]
+        [HttpGet("languages"), Authorize(Roles = Roles.Student)]
         [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Web API method")]
         public Language[] Languages()
         {

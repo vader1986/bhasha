@@ -27,4 +27,12 @@
     <Folder Include="Mongo\Extensions\" />
     <Folder Include="Mongo\Configuration\" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Bhasha.Common\Bhasha.Common.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
+    <ProjectReference Include="..\Bhasha.Common.Api\Bhasha.Common.Api.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
+  </ItemGroup>
 </Project>

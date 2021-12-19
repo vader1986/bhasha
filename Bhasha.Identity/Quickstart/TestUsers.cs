@@ -6,8 +6,7 @@ using IdentityModel;
 using IdentityServer4.Test;
 using System.Collections.Generic;
 using System.Security.Claims;
-using System.Text.Json;
-using IdentityServer4;
+using Bhasha.Common;
 
 namespace IdentityServerHost.Quickstart.UI
 {
@@ -17,14 +16,6 @@ namespace IdentityServerHost.Quickstart.UI
         {
             get
             {
-                var address = new
-                {
-                    street_address = "One Hacker Way",
-                    locality = "Heidelberg",
-                    postal_code = 69118,
-                    country = "Germany"
-                };
-
                 return new List<TestUser>
                 {
                     new TestUser
@@ -39,8 +30,7 @@ namespace IdentityServerHost.Quickstart.UI
                             new Claim(JwtClaimTypes.FamilyName, "Smith"),
                             new Claim(JwtClaimTypes.Email, "AliceSmith@email.com"),
                             new Claim(JwtClaimTypes.EmailVerified, "true", ClaimValueTypes.Boolean),
-                            new Claim(JwtClaimTypes.WebSite, "http://alice.com"),
-                            new Claim(JwtClaimTypes.Address, JsonSerializer.Serialize(address), IdentityServerConstants.ClaimValueTypes.Json)
+                            new Claim(JwtClaimTypes.Scope, Roles.Student)
                         }
                     },
                     new TestUser
@@ -55,8 +45,7 @@ namespace IdentityServerHost.Quickstart.UI
                             new Claim(JwtClaimTypes.FamilyName, "Smith"),
                             new Claim(JwtClaimTypes.Email, "BobSmith@email.com"),
                             new Claim(JwtClaimTypes.EmailVerified, "true", ClaimValueTypes.Boolean),
-                            new Claim(JwtClaimTypes.WebSite, "http://bob.com"),
-                            new Claim(JwtClaimTypes.Address, JsonSerializer.Serialize(address), IdentityServerConstants.ClaimValueTypes.Json)
+                            new Claim(JwtClaimTypes.Scope, Roles.Author)
                         }
                     }
                 };

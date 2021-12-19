@@ -18,10 +18,24 @@ spec:
           image: bhasha-author-api:latest
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 80
+            - name: http
+              containerPort: 80
+              protocol: TCP
+            - name: https
+              containerPort: 443
+              protocol: TCP
+          volumeMounts:
+            - name: author-api-settings-volume
+              mountPath: /app/config
+            - name: cert-volume
+              mountPath: /app/https
+              readOnly: true
           env:
-            - name: ASPNETCORE_URLS
-              value: http://+:80
+            - name: ASPNETCORE_Kestrel__Certificates__Default__Password
+              valueFrom: 
+                secretKeyRef:
+                  name: author-api-secrets
+                  key: cert-password
             - name: ASPNETCORE_Database__User
               valueFrom: 
                 secretKeyRef:
@@ -32,7 +46,10 @@ spec:
                 secretKeyRef:
                   name: mongodb-secrets
                   key: mongodb-password
-            - name: ASPNETCORE_Database__Hostname
-              value: mongodb-0.db.default.svc.cluster.local:27017
-            - name: ASPNETCORE_Database__Name
-              value: Bhasha
+      volumes:
+      - name: author-api-settings-volume
+        configMap:
+          name: author-api-config
+      - name: cert-volume
+        secret:
+          secretName: cert-secret

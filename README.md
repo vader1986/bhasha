@@ -36,7 +36,7 @@ Assuming you've got docker installed on your machine with kubernetes enabled, yo
 kubectl apply -f deploy/infrastructure -R
 ```
 
-Create a [self-signing HTTPS certificate](https://docs.microsoft.com/en-us/aspnet/core/security/docker-https?view=aspnetcore-5.0):
+First, we need to create an HTTPS certificate for the identity server and both Web APIs. Create a [self-signing HTTPS certificate](https://docs.microsoft.com/en-us/aspnet/core/security/docker-https?view=aspnetcore-5.0):
 ```bash
 dotnet dev-certs https -ep ${HOME}/.aspnet/https/aspnetapp.pfx -p password
 dotnet dev-certs https --trust
@@ -51,20 +51,20 @@ dotnet dev-certs https --trust
 
 Deploy the HTTPS certificate as a secret to kubernetes:
 ```bash
-kubectl create secret generic identity-cert-secret --from-file=identity.pfx=${HOME}/.aspnet/https/aspnetapp.pfx
+kubectl create secret generic cert-secret --from-file=cert.pfx=${HOME}/.aspnet/https/aspnetapp.pfx
 ```
 
-Deploy all services to your local kubernetes cluster:
+Now you can deploy all services to your local kubernetes cluster:
 ```bash
 kubectl apply -f deploy/development -R
 ```
 
 Following URLs are exposed:
-* http://localhost:5000/swagger (Bhasha Author API)
-* http://localhost:5001/index.html (Bhasha Author Website)
-* http://localhost:5002/swagger (Bhasha Student API)
-* http://localhost:5003/index.html (Bhasha Student Website)
-* https://localhost:5005/account/login (User Management)
+* https://localhost:5010/swagger (Bhasha Author API)
+* http://localhost:5004/index.html (Bhasha Author Website)
+* https://localhost:5020/swagger (Bhasha Student API)
+* http://localhost:5005/index.html (Bhasha Student Website)
+* https://localhost:5030/account/login (User Management)
 
 ### Deployment for Production
 
