@@ -1,10 +1,18 @@
 ﻿@page "/"
 
-<PageTitle>Index</PageTitle>
+<MudNavMenu>
+    <MudNavLink Href="" Icon="@Icons.Material.Filled.Home">About Bhasha</MudNavLink>
+    <AuthorizeView Roles="Author, Admin">
+        <MudNavLink Href="/counter">Author</MudNavLink>
+    </AuthorizeView>
 
-<h1>Hello, world!</h1>
+    <AuthorizeView Roles="Student, Admin">
+        <MudNavLink Href="/fetchdata">Student</MudNavLink>
+    </AuthorizeView>
 
-Welcome to your new app.
+    <AuthorizeView Roles="Admin">
+        <MudNavLink Href="">Admin</MudNavLink>
+    </AuthorizeView>
+</MudNavMenu>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
 
