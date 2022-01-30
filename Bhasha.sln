@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bhasha.Identity", "Bhasha.I
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bhasha.Web", "Bhasha.Web\Bhasha.Web.csproj", "{A96DEE7E-2289-4582-9C64-4814359498E4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bhasha.Web.Tests", "Bhasha.Web.Tests\Bhasha.Web.Tests.csproj", "{9EFB903A-AB77-4D28-A7E0-80B053E3EEF6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|anycpu = Debug|anycpu
@@ -87,6 +89,10 @@ Global
 		{A96DEE7E-2289-4582-9C64-4814359498E4}.Debug|anycpu.Build.0 = Debug|Any CPU
 		{A96DEE7E-2289-4582-9C64-4814359498E4}.Release|anycpu.ActiveCfg = Release|Any CPU
 		{A96DEE7E-2289-4582-9C64-4814359498E4}.Release|anycpu.Build.0 = Release|Any CPU
+		{9EFB903A-AB77-4D28-A7E0-80B053E3EEF6}.Debug|anycpu.ActiveCfg = Debug|Any CPU
+		{9EFB903A-AB77-4D28-A7E0-80B053E3EEF6}.Debug|anycpu.Build.0 = Debug|Any CPU
+		{9EFB903A-AB77-4D28-A7E0-80B053E3EEF6}.Release|anycpu.ActiveCfg = Release|Any CPU
+		{9EFB903A-AB77-4D28-A7E0-80B053E3EEF6}.Release|anycpu.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,14 +1,14 @@
 ﻿@page "/"
 
-    <MudButton FullWidth="true" Link="/">About Bhasha</MudButton>
-    <AuthorizeView Roles="Author, Admin">
-        <MudButton FullWidth="true" Link="/counter">Author</MudButton>
-    </AuthorizeView>
+<MudButton FullWidth="true" Link="/">About Bhasha</MudButton>
+<AuthorizeView Roles="Author, Admin">
+    <MudButton FullWidth="true" Link="/counter">Author</MudButton>
+</AuthorizeView>
 
-    <AuthorizeView Roles="Student, Admin">
-        <MudButton FullWidth="true" Link="/fetchdata">Student</MudButton>
-    </AuthorizeView>
+<AuthorizeView Roles="Student, Admin">
+    <MudButton FullWidth="true" Link="/fetchdata">Student</MudButton>
+</AuthorizeView>
 
-    <AuthorizeView Roles="Admin">
-        <MudButton FullWidth="true" Link="">Admin</MudButton>
-    </AuthorizeView>
+<AuthorizeView Roles="Admin">
+    <MudButton FullWidth="true" Link="">Admin</MudButton>
+</AuthorizeView>
