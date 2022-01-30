@@ -20,7 +20,7 @@ public class MongoRepositoryTests
     {
         _runner = MongoDbRunner.Start();
         _client = new MongoClient(_runner.ConnectionString);
-        _repository = new MongoRepository<Item>(_client, "testDB", "testCollection");
+        _repository = new MongoRepository<Item>(_client);
     }
 
     [TearDown]
@@ -31,7 +31,9 @@ public class MongoRepositoryTests
 
     private IMongoCollection<Item> GetCollection()
     {
-        return _client.GetDatabase("testDB").GetCollection<Item>("testCollection");
+        return _client
+            .GetDatabase(MongoRepository<Item>.DatabaseName)
+            .GetCollection<Item>("Item");
     }
 
     [Test]

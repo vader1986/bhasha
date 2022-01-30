@@ -6,21 +6,20 @@ namespace Bhasha.Web.Services;
 
 public class MongoRepository<T> : IRepository<T>
 {
+    public const string DatabaseName = "Bhasha";
 	private readonly IMongoClient _client;
-    private readonly string _databaseName;
     private readonly string _collectionName;
 
-	public MongoRepository(IMongoClient client, string databaseName, string collectionName)
+	public MongoRepository(IMongoClient client)
 	{
 		_client = client;
-        _databaseName = databaseName;
-        _collectionName = collectionName;
+        _collectionName = typeof(T).Name;
 	}
 
     private IMongoCollection<T> GetCollection()
     {
         return _client
-            .GetDatabase(_databaseName)
+            .GetDatabase(DatabaseName)
             .GetCollection<T>(_collectionName);
     }
 
