@@ -1,0 +1,97 @@
+﻿@page "/profiles"
+
+<PageTitle>Create Profile</PageTitle>
+
+@inject IProfileManager ProfileManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<MudPaper Width="100%">
+    <MudContainer MaxWidth="MaxWidth.Small">
+        <MudCard Outlined="true">
+            <MudCardContent Style="text-align: center">
+
+                @if (_profiles != null && _profiles.Length > 0)
+                {
+                    <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" VerticalAlign="true">
+                        @foreach (var profile in _profiles)
+                        {
+                        <MudButton>@Language.Parse(@profile.Native).Pretty() - @Language.Parse(@profile.Target).Pretty()</MudButton>
+                        }
+                    </MudButtonGroup>
+                    <MudDivider DividerType="DividerType.Middle" Class="my-3" />
+                }
+
+                <MudText>Please select your native language</MudText>
+                <MudChipSet Filter="true" SelectedChipChanged="OnSelectedNative">
+                    @foreach (var language in Language.Supported.Values)
+                    {
+                        <MudChip Value="language">@language.Pretty()</MudChip>
+                    }
+                </MudChipSet>
+                <MudDivider DividerType="DividerType.Middle" Class="my-3" />
+                <MudText>... and select your target language</MudText>
+                <MudChipSet Filter="true" SelectedChipChanged="OnSelectedTarget">
+                    @foreach (var language in Language.Supported.Values)
+                    {
+                        <MudChip Value="language">@language.Pretty()</MudChip>
+                    }
+                </MudChipSet>
+
+                <MudDivider DividerType="DividerType.Middle" Class="my-3" />
+                <MudButton Disabled="@_disableCreateButton" Variant="Variant.Outlined" OnClick="OnCreate">Create</MudButton>
+            </MudCardContent>
+        </MudCard>
+    </MudContainer>
+</MudPaper>
+
+@code {
+    private string? _userId;
+    private Profile[] _profiles;
+    private bool _disableCreateButton = true;
+    private Language? _selectedNative;
+    private Language? _selectedTarget;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userId = state.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier);
+
+        _userId = userId.Value;
+        _profiles = await ProfileManager.GetProfiles(_userId);
+    }
+
+    private void OnSelectedNative(MudChip chip)
+    {
+        _selectedNative = (Language)chip.Value;
+        ValidateParameters();
+    }
+
+    private void OnSelectedTarget(MudChip chip)
+    {
+        _selectedTarget = (Language)chip.Value;
+        ValidateParameters();
+    }
+
+    private void ValidateParameters()
+    {
+        if (_selectedNative != null && _selectedTarget != null && _profiles != null)
+        {
+            var alreadyExists = _profiles.Any(x => x.Native == _selectedNative && x.Target == _selectedTarget);
+            var invalidSelection = _selectedNative == _selectedTarget;
+
+            _disableCreateButton = alreadyExists || invalidSelection;
+        }
+        else
+        {
+            _disableCreateButton = true;
+        }
+    }
+
+    private async Task OnCreate()
+    {
+        var profile = await ProfileManager.Create(_userId, _selectedNative, _selectedTarget);
+        _profiles = _profiles.Append(profile).ToArray();
+
+        ValidateParameters();
+    }
+}

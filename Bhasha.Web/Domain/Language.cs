@@ -60,17 +60,22 @@ namespace Bhasha.Web.Domain
 
         public static bool operator !=(Language lhs, Language rhs)
         {
-            return !lhs.Equals(rhs);
+            return !Equals(lhs, rhs);
         }
 
         public static bool operator ==(Language lhs, Language rhs)
         {
-            return lhs.Equals(rhs);
+            return Equals(lhs, rhs);
         }
 
         public override string ToString()
         {
             return Region != default ? $"{Id}_{Region}" : Id;
+        }
+
+        public string Pretty()
+        {
+            return Region != default ? $"{Name} ({Region})" : Name;
         }
 
         public static implicit operator string(Language language)

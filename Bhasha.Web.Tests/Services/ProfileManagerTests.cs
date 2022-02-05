@@ -27,6 +27,15 @@ public class ProfileManagerTests
             new Profile(Guid.NewGuid(), "user-123", Language.English, Language.Bengali, 0, 0));
     }
 
+    [TestCase(null)]
+    [TestCase("")]
+    [TestCase("  ")]
+    public void GivenCreateCall_WhenUserIdIsNullOrEmpty_ThenThrowException(string emptyUserId)
+    {
+        Assert.ThrowsAsync<ArgumentNullException>(async () =>
+            await _profileManager.Create(emptyUserId, Language.English, Language.Bengali));
+    }
+
     [Test]
     public void GivenCreateCall_WhenNativeLanguageNotSupported_ThenThrowException()
     {
@@ -71,5 +80,29 @@ public class ProfileManagerTests
 
         // verify
         Assert.That(profile, Is.Not.Null);
+    }
+
+    [TestCase(null)]
+    [TestCase("")]
+    [TestCase("  ")]
+    public void GivenEmptyUserId_WhenGetProfiles_ThenThrowException(string emptyUserId)
+    {
+        Assert.ThrowsAsync<ArgumentNullException>(async () =>
+            await _profileManager.GetProfiles(emptyUserId));
+    }
+
+    [Test]
+    public async Task GivenUserProfiles_WhenGetProfilesForUser_ThenReturnProfiles()
+    {
+        // prepare
+        var userProfiles = new[] { new Profile(Guid.Empty, "user-123", Language.Bengali, Language.English, 1, 1) };
+        A.CallTo(() => _repository.Find(A<Expression<Func<Profile, bool>>>.Ignored))
+            .Returns(Task.FromResult(userProfiles));
+
+        // act
+        var profiles = await _profileManager.GetProfiles("user-123");
+
+        // verify
+        Assert.AreEqual(userProfiles, profiles);
     }
 }

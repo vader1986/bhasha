@@ -3,8 +3,8 @@
 	public record Profile(
 		Guid Id,
 		string UserId,
-		Language Native,
-		Language Target,
+		string Native,
+		string Target,
 		int Level,
 		int CompletedChapters);
 }

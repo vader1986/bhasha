@@ -16,6 +16,9 @@ public class ProfileManager : IProfileManager
 
     public async Task<Profile> Create(string userId, Language native, Language target)
     {
+        if (string.IsNullOrWhiteSpace(userId))
+            throw new ArgumentNullException(nameof(userId));
+
         if (!native.IsSupported())
             throw new ArgumentException($"Native language {native} is not supported", nameof(native));
 
@@ -33,5 +36,14 @@ public class ProfileManager : IProfileManager
 
         var profile = _factory.Create() with { UserId = userId, Native = native, Target = target };
         return await _repository.Add(profile);
+    }
+
+    public async Task<Profile[]> GetProfiles(string userId)
+    {
+        if (string.IsNullOrWhiteSpace(userId))
+            throw new ArgumentNullException(nameof(userId));
+
+        var userProfiles = await _repository.Find(x => x.UserId == userId);
+        return userProfiles.ToArray();
     }
 }

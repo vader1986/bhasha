@@ -1,7 +1,6 @@
 ﻿using AspNetCore.Identity.Mongo;
 using Bhasha.Web;
 using Bhasha.Web.Areas.Identity;
-using Bhasha.Web.Data;
 using Bhasha.Web.Domain;
 using Bhasha.Web.Identity;
 using Bhasha.Web.Interfaces;
@@ -38,8 +37,7 @@ builder.Services
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<AppUser>>();
-builder.Services.AddSingleton<WeatherForecastService>();
+builder.Services.AddSingleton<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<AppUser>>();
 builder.Services.AddMudServices();
 
 // MongoDB
@@ -47,8 +45,10 @@ builder.Services.AddSingleton<IMongoClient>(_ => new MongoClient(mongoSettings.C
 
 // Bhasha services
 builder.Services.AddSingleton<IRepository<Profile>, MongoRepository<Profile>>();
+builder.Services.AddSingleton<IRepository<Chapter>, MongoRepository<Chapter>>();
+builder.Services.AddSingleton<IRepository<Expression>, MongoRepository<Expression>>();
 builder.Services.AddSingleton<IFactory<Profile>, ProfileFactory>();
-builder.Services.AddScoped<IProfileManager, ProfileManager>();
+builder.Services.AddSingleton<IProfileManager, ProfileManager>();
 
 var app = builder.Build();
 
