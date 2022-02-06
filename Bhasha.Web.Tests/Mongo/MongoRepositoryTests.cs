@@ -8,7 +8,6 @@ using NUnit.Framework;
 
 namespace Bhasha.Web.Tests.Mongo;
 
-[TestFixture]
 public class MongoRepositoryTests
 {
     private const string DbName = "TestDB";

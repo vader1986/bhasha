@@ -5,7 +5,6 @@ using NUnit.Framework;
 
 namespace Bhasha.Web.Tests.Services
 {
-	[TestFixture]
 	public class TranslationExtensionsTests
 	{
 		[Test, AutoData]

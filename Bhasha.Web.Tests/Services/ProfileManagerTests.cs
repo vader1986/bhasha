@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using AutoFixture.NUnit3;
 using Bhasha.Web.Domain;
 using Bhasha.Web.Interfaces;
 using Bhasha.Web.Services;
@@ -9,7 +11,6 @@ using NUnit.Framework;
 
 namespace Bhasha.Web.Tests.Services;
 
-[TestFixture]
 public class ProfileManagerTests
 {
     private ProfileManager _profileManager = default!;
@@ -23,8 +24,10 @@ public class ProfileManagerTests
         _factory = A.Fake<IFactory<Profile>>();
         _profileManager = new ProfileManager(_repository, _factory);
 
-        A.CallTo(() => _factory.Create()).Returns(
-            new Profile(Guid.NewGuid(), "user-123", Language.English, Language.Bengali, 0, 0));
+        var progress = new Progress(1, Guid.Empty, new Guid[0], 0, new int[0]);
+        var profile = new Profile(Guid.NewGuid(), "user-123", Language.English, Language.Bengali, progress);
+
+        A.CallTo(() => _factory.Create()).Returns(profile);
     }
 
     [TestCase(null)]
@@ -57,15 +60,16 @@ public class ProfileManagerTests
             await _profileManager.Create("user-123", Language.Bengali, Language.Bengali));
     }
 
-    [Test]
-    public void GivenCreateCall_WhenProfileAlreadyExists_ThenThrowException()
+    [Test, AutoData]
+    public void GivenCreateCall_WhenProfileAlreadyExists_ThenThrowException(Profile profile)
     {
-        var existingProfile = new Profile(Guid.Empty, "user-123", Language.English, Language.Bengali, 1, 1);
+        profile = profile with { UserId = "user-123", Native = Language.English, Target = Language.Bengali };
+
         A.CallTo(() => _repository.Find(A<Expression<Func<Profile, bool>>>.Ignored))
-            .Returns(Task.FromResult(new[] { existingProfile }));
+            .Returns(Task.FromResult(new[] { profile }));
 
         Assert.ThrowsAsync<InvalidOperationException>(async () =>
-            await _profileManager.Create("user-123", Language.English, Language.Bengali));
+            await _profileManager.Create(profile.UserId, profile.Native, profile.Target));
     }
 
     [Test]
@@ -91,18 +95,17 @@ public class ProfileManagerTests
             await _profileManager.GetProfiles(emptyUserId));
     }
 
-    [Test]
-    public async Task GivenUserProfiles_WhenGetProfilesForUser_ThenReturnProfiles()
+    [Test, AutoData]
+    public async Task GivenUserProfiles_WhenGetProfilesForUser_ThenReturnProfiles(Profile[] profiles)
     {
         // prepare
-        var userProfiles = new[] { new Profile(Guid.Empty, "user-123", Language.Bengali, Language.English, 1, 1) };
         A.CallTo(() => _repository.Find(A<Expression<Func<Profile, bool>>>.Ignored))
-            .Returns(Task.FromResult(userProfiles));
+            .Returns(Task.FromResult(profiles));
 
         // act
-        var profiles = await _profileManager.GetProfiles("user-123");
+        var result = await _profileManager.GetProfiles("user-123");
 
         // verify
-        Assert.AreEqual(userProfiles, profiles);
+        Assert.AreEqual(profiles, result);
     }
 }
