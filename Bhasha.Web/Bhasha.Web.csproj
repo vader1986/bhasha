@@ -19,20 +19,4 @@
     <PackageReference Include="MudBlazor" Version="6.0.5" />
     <PackageReference Include="Mongo.Migration" Version="3.1.4" />
   </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="Services\" />
-    <None Remove="Domain\" />
-    <None Remove="Interfaces\" />
-    <None Remove="Mongo.Migration" />
-    <None Remove="Extensions\" />
-    <None Remove="Mongo\Migrations\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Services\" />
-    <Folder Include="Domain\" />
-    <Folder Include="Interfaces\" />
-    <Folder Include="Mongo\" />
-    <Folder Include="Mongo\Migrations\" />
-  </ItemGroup>
 </Project>

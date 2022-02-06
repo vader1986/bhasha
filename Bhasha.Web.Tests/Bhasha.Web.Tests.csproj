@@ -22,10 +22,5 @@
   <ItemGroup>
     <ProjectReference Include="..\Bhasha.Web\Bhasha.Web.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <None Remove="Mongo\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Mongo\" />
-  </ItemGroup>
+
 </Project>

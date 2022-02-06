@@ -3,6 +3,7 @@ using System.Linq;
 using AutoFixture.NUnit3;
 using Bhasha.Web.Domain;
 using Bhasha.Web.Services;
+using Bhasha.Web.Tests.Support;
 using NUnit.Framework;
 
 namespace Bhasha.Web.Tests.Services
@@ -11,21 +12,15 @@ namespace Bhasha.Web.Tests.Services
 	public class ExpressionExtensionsTests
 	{
 		[Test, AutoData]
-		public void GivenExpressionWithoutReferenceTranslation_WhenCallReference_ThenThrow(Expression expression, Translation[] translations)
+		public void GivenExpressionWithoutReferenceTranslation_WhenCallReference_ThenThrow(Expression expression)
 		{
-			translations = translations.Where(x => x.Language != Language.Reference).ToArray();
-			expression = expression with { Translations = translations };
-
-			Assert.Throws<ArgumentException>(() => expression.Reference());
+			Assert.Throws<ArgumentException>(() => expression.WithoutReference().Reference());
 		}
 
 		[Test, AutoData]
-		public void GivenExpression_WhenCallReference_ThenReturnReferenceString(Expression expression, Translation[] translations)
+		public void GivenExpression_WhenCallReference_ThenReturnReferenceString(Expression expression)
         {
-			translations = translations.Append(new Translation(Language.Reference, "x", default, default)).ToArray();
-			expression = expression with { Translations = translations };
-
-			Assert.AreEqual("x", expression.Reference());
+			Assert.NotNull(expression.WithReference().Reference());
         }
 
 		[Test, AutoData]
