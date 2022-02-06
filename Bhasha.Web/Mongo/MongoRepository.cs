@@ -2,24 +2,25 @@
 using Bhasha.Web.Interfaces;
 using MongoDB.Driver;
 
-namespace Bhasha.Web.Services;
+namespace Bhasha.Web.Mongo;
 
 public class MongoRepository<T> : IRepository<T>
 {
-    public const string DatabaseName = "Bhasha";
 	private readonly IMongoClient _client;
     private readonly string _collectionName;
+    private readonly string _databaseName;
 
-	public MongoRepository(IMongoClient client)
+	public MongoRepository(IMongoClient client, MongoSettings settings)
 	{
 		_client = client;
         _collectionName = typeof(T).Name;
-	}
+        _databaseName = settings.DatabaseName;
+    }
 
     private IMongoCollection<T> GetCollection()
     {
         return _client
-            .GetDatabase(DatabaseName)
+            .GetDatabase(_databaseName)
             .GetCollection<T>(_collectionName);
     }
 

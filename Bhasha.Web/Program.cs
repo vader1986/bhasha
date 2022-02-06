@@ -4,9 +4,12 @@ using Bhasha.Web.Areas.Identity;
 using Bhasha.Web.Domain;
 using Bhasha.Web.Identity;
 using Bhasha.Web.Interfaces;
+using Bhasha.Web.Mongo;
 using Bhasha.Web.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Mongo.Migration.Startup;
+using Mongo.Migration.Startup.DotNetCore;
 using MongoDB.Driver;
 using MudBlazor.Services;
 
@@ -41,7 +44,13 @@ builder.Services.AddSingleton<AuthenticationStateProvider, RevalidatingIdentityA
 builder.Services.AddMudServices();
 
 // MongoDB
+builder.Services.AddSingleton(mongoSettings);
 builder.Services.AddSingleton<IMongoClient>(_ => new MongoClient(mongoSettings.ConnectionString));
+builder.Services.AddMigration(new MongoMigrationSettings
+{
+    Database = mongoSettings.DatabaseName,
+    ConnectionString = mongoSettings.ConnectionString
+});
 
 // Bhasha services
 builder.Services.AddSingleton<IRepository<Profile>, MongoRepository<Profile>>();

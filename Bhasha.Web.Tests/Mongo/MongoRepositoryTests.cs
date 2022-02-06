@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Bhasha.Web.Mongo;
 using Bhasha.Web.Services;
 using Mongo2Go;
 using MongoDB.Driver;
 using NUnit.Framework;
 
-namespace Bhasha.Web.Tests.Services;
+namespace Bhasha.Web.Tests.Mongo;
 
 [TestFixture]
 public class MongoRepositoryTests
@@ -20,7 +21,9 @@ public class MongoRepositoryTests
     {
         _runner = MongoDbRunner.Start();
         _client = new MongoClient(_runner.ConnectionString);
-        _repository = new MongoRepository<Item>(_client);
+        _repository = new MongoRepository<Item>(_client, new MongoSettings {
+            DatabaseName = DbName
+        });
     }
 
     [TearDown]
@@ -32,7 +35,7 @@ public class MongoRepositoryTests
     private IMongoCollection<Item> GetCollection()
     {
         return _client
-            .GetDatabase(MongoRepository<Item>.DatabaseName)
+            .GetDatabase(DbName)
             .GetCollection<Item>("Item");
     }
 
