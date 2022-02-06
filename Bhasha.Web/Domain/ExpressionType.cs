@@ -6,7 +6,7 @@
         Expression,
         Phrase,
         Text,
-        Mark
+        Punctuation
     }
 }
 

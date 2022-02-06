@@ -10,10 +10,11 @@ namespace Bhasha.Web.Domain
         public readonly static Language Unknown = new (string.Empty, string.Empty);
         public readonly static Language English = new ("en", "English", "UK");
         public readonly static Language Bengali = new ("bn", "Bengali");
+        public readonly static Language Reference = English;
 
         public readonly static LanguageSet Supported = new()
         {
-            { English, English }, { Bengali, Bengali }
+            { English.ToString(), English }, { Bengali.ToString(), Bengali }
         };
 
         public string Id { get; }
@@ -27,9 +28,9 @@ namespace Bhasha.Web.Domain
             Region = region;
         }
 
-        public static Language Parse(string tag)
+        public static Language Parse(string? tag)
         {
-            if (Supported.TryGetValue(tag, out var language))
+            if (tag != null && Supported.TryGetValue(tag, out var language))
             {
                 return language;
             }
@@ -39,7 +40,7 @@ namespace Bhasha.Web.Domain
 
         public bool IsSupported()
         {
-            return Supported.ContainsKey(this);
+            return Supported.ContainsKey(this.ToString());
         }
 
         public override bool Equals(object? obj)

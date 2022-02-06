@@ -1,46 +1,38 @@
 ﻿<MudDialog>
     <DialogContent>
-        <MudSelect T="PageType" @bind-Value="_pageType" Label="Page Type" AnchorOrigin="Origin.BottomCenter">
+        <MudSelect T="PageType" @bind-Value="_state.PageType" Label="Page Type" AnchorOrigin="Origin.BottomCenter">
             @foreach (var pageType in Enum.GetValues<PageType>())
             {
                 <MudSelectItem Value="pageType" />
             }
         </MudSelect>
-        <MudSelect T="CEFR" @bind-Value="_cefr" Label="Page Type" AnchorOrigin="Origin.BottomCenter">
+        <MudSelect T="CEFR" @bind-Value="_state.Cefr" Label="CEFR" AnchorOrigin="Origin.BottomCenter">
             @foreach (var cefr in Enum.GetValues<CEFR>())
             {
                 <MudSelectItem Value="cefr" />
             }
         </MudSelect>
-        <MudSelect T="ExpressionType" @bind-Value="_expr" Label="Page Type" AnchorOrigin="Origin.BottomCenter">
+        <MudSelect T="ExpressionType" @bind-Value="_state.Expr" Label="Expression Type" AnchorOrigin="Origin.BottomCenter">
             @foreach (var expr in Enum.GetValues<ExpressionType>())
             {
                 <MudSelectItem Value="expr" />
             }
         </MudSelect>
-        <MudTextField T="string" @bind-Text="_native" Label="Native" />
-        <MudTextField T="string" @bind-Text="_nativeSpoken" Label="Native Spoken" />
-        <MudTextField T="string" @bind-Text="_target" Label="Target" />
-        <MudTextField T="string" @bind-Text="_targetSpoken" Label="Target Spoken" />
+        <MudTextField T="string" @bind-Text="_state.Native" Label="Native" />
+        <MudTextField T="string" @bind-Text="_state.NativeSpoken" Label="Native Spoken" />
+        <MudTextField T="string" @bind-Text="_state.Target" Label="Target" />
+        <MudTextField T="string" @bind-Text="_state.TargetSpoken" Label="Target Spoken" />
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" Disabled="CannotCreatePage" OnClick="Submit">Ok</MudButton>
+        <MudButton Color="Color.Primary" Disabled="_state.CannotCreatePage" OnClick="Submit">Ok</MudButton>
     </DialogActions>
 </MudDialog>
 @code {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
-    private bool CannotCreatePage => string.IsNullOrWhiteSpace(_native) || string.IsNullOrWhiteSpace(_target);
-    private PageType _pageType = PageType.MultipleChoice;
-    private CEFR _cefr = CEFR.Unknown;
-    private ExpressionType _expr = ExpressionType.Word;
-    private string _native;
-    private string _nativeSpoken;
-    private string _target;
-    private string _targetSpoken;
-    private List<string> _leads = new List<string>();
+    private AddPageState _state = new AddPageState();
 
-    void Submit() => MudDialog.Close(DialogResult.Ok((_pageType, _native, _nativeSpoken, _target, _targetSpoken, _cefr, _expr, _leads.ToArray())));
+    void Submit() => MudDialog.Close(DialogResult.Ok(_state));
     void Cancel() => MudDialog.Cancel();
 }

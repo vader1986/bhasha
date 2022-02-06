@@ -4,18 +4,18 @@
 
 @inject IDialogService DialogService
 @inject IRepository<Chapter> ChapterRepository
-@inject IRepository<Expression> ExpressionRepository
+@inject IExpressionManager ExpressionManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
 <MudPaper Width="100%">
     <MudContainer MaxWidth="MaxWidth.Small">
         <MudCard Outlined="true">
             <MudCardContent Style="text-align: center">
-                <MudTextField @bind-Value="@_name" Label="Name" Variant="Variant.Outlined" />
-                <MudTextField @bind-Value="@_description" Label="Description" Variant="Variant.Outlined" Lines="3" />
+                <MudTextField @bind-Value="@_state.Name" Label="Name" Variant="Variant.Outlined" />
+                <MudTextField @bind-Value="@_state.Description" Label="Description" Variant="Variant.Outlined" Lines="3" />
 
                 <MudDivider DividerType="DividerType.Middle" Class="my-3" />
-                <MudNumericField Label="Required Level" @bind-Value="@_requiredLevel" Variant="Variant.Text" Min="0" Max="100" />
+                <MudNumericField Label="Required Level" @bind-Value="@_state.RequiredLevel" Variant="Variant.Text" Min="0" Max="100" />
 
                 <MudText>Native Language</MudText>
                 <MudChipSet Filter="true" SelectedChipChanged="OnSelectedNative">
@@ -33,58 +33,52 @@
                     }
                 </MudChipSet>
 
-                <MudButton OnClick="OpenCreatePage" Variant="Variant.Outlined" Color="Color.Primary">
+                <MudButton OnClick="OpenCreatePage" Disabled="@_state.DisableCreatePage" Variant="Variant.Outlined" Color="Color.Primary">
                     Add Page
                 </MudButton>
 
                 <MudChipSet>
-                    @foreach (var addedPage in _pages)
+                    @foreach (var addedPage in _state.Pages)
                     {
-                    <MudChip Value="addedPage">@_idExpressionMap[@addedPage.ExpressionId]</MudChip>
+                        <MudChip Value="addedPage">@_state.GetPageTitle(addedPage)</MudChip>
                     }
                 </MudChipSet>
 
-                @if (!string.IsNullOrWhiteSpace(_error))
+                @if (!string.IsNullOrWhiteSpace(_state.Error))
                 {
                     <MudDivider DividerType="DividerType.Middle" Class="my-3" />
-                    <MudText Color="Color.Error">@_error</MudText>
+                    <MudText Color="Color.Error">@_state.Error</MudText>
                 }
 
                 <MudDivider DividerType="DividerType.Middle" Class="my-3" />
-                <MudButton Variant="Variant.Outlined" OnClick="OnCreate">Create</MudButton>
+                <MudButton Variant="Variant.Outlined" OnClick="_state.Submit">Create</MudButton>
             </MudCardContent>
         </MudCard>
     </MudContainer>
 </MudPaper>
 
 @code {
-    private string? _userId;
-    private string? _name;
-    private string? _description;
-    private string? _native;
-    private string? _target;
-    private List<Domain.Page> _pages = new List<Domain.Page>();
-    private int? _requiredLevel;
-    private IDictionary<Guid, string> _idExpressionMap = new Dictionary<Guid, string>();
-
-    private string? _error;
+    private AddChapterState _state = new AddChapterState();
 
     protected override async Task OnInitializedAsync()
     {
+        _state.ChapterRepository = ChapterRepository;
+        _state.ExpressionManager = ExpressionManager;
+
         var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var userId = state.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier);
 
-        _userId = userId.Value;
+        _state.UserId = userId.Value;
     }
 
     private void OnSelectedNative(MudChip chip)
     {
-        _native = (Language)chip.Value;
+        _state.NativeLanguage = (chip?.Value as Language)?.ToString();
     }
 
     private void OnSelectedTarget(MudChip chip)
     {
-        _target = (Language)chip.Value;
+        _state.TargetLanguage = (chip?.Value as Language)?.ToString();
     }
 
     private async Task OpenCreatePage()
@@ -93,100 +87,7 @@
 
         if (!result.Cancelled)
         {
-            var (pageType, native, nativeSpoken, target, targetSpoken, cefr, exprType, leads) =
-                ((PageType, string, string, string, string, CEFR, ExpressionType, string[])) result.Data;
-            var expression = new Expression(Guid.Empty, exprType, cefr, null, new[] {
-                new Translation(_native, native, nativeSpoken, null),
-                new Translation(_target, target, targetSpoken, null)
-            });
-
-            var expressionId = (await ExpressionRepository.Add(expression)).Id;
-
-            _idExpressionMap[expressionId] = native;
-            _pages.Add(new Domain.Page(pageType, expressionId, leads));
+            await _state.SubmitPageState((AddPageState)result.Data);
         }
-    }
-
-    private void ValidateParameters()
-    {
-        _error = null;
-
-        if (string.IsNullOrWhiteSpace(_userId))
-        {
-            _error = "Unknown user! Make sure you're logged in!";
-            return;
-        }
-
-        if (string.IsNullOrWhiteSpace(_name))
-        {
-            _error = "NAME must not be empty!";
-            return;
-        }
-
-        if (string.IsNullOrWhiteSpace(_description))
-        {
-            _error = "DESCRIPTION must not be empty!";
-            return;
-        }
-
-        if (_requiredLevel == null)
-        {
-            _error = "Please select a REQUIRED LEVEL!";
-            return;
-        }
-
-        if (_native == null)
-        {
-            _error = "Please select a NATIVE LANGUAGE!";
-            return;
-        }
-
-        if (_target == null)
-        {
-            _error = "Please select a TARGET LANGUAGE!";
-            return;
-        }
-
-        if (_target == _native)
-        {
-            _error = "TARGET language must be different from NATIVE language!";
-            return;
-        }
-
-        if (_pages.Count < 3)
-        {
-            _error = "A chapter requires at least 3 chapters!";
-            return;
-        }
-    }
-
-    private void Clear()
-    {
-        _userId = null;
-        _name = null;
-        _native = null;
-        _target = null;
-        _description = null;
-        _requiredLevel = null;
-        _pages.Clear();
-    }
-
-    private async Task OnCreate()
-    {
-        ValidateParameters();
-
-        if (_error != null)
-            return;
-
-        var name = new Expression(Guid.Empty, ExpressionType.Word, CEFR.Unknown, null, new[] { new Translation(_native, _name, null, null) });
-        var nameId = (await ExpressionRepository.Add(name)).Id;
-
-        var description = new Expression(Guid.Empty, ExpressionType.Phrase, CEFR.Unknown, null, new[] { new Translation(_native, _description, null, null) });
-        var descriptionId = (await ExpressionRepository.Add(description)).Id;
-
-        var chapter = new Chapter(Guid.Empty, _requiredLevel.Value, nameId, descriptionId, _pages.ToArray(), null, _userId);
-        await ChapterRepository.Add(chapter);
-
-        Clear();
     }
 }

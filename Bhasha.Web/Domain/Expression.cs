@@ -7,4 +7,3 @@
 		string? ResourceId,
 		Translation[] Translations);
 }
-
