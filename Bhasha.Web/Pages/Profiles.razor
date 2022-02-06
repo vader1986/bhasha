@@ -10,7 +10,7 @@
         <MudCard Outlined="true">
             <MudCardContent Style="text-align: center">
 
-                @if (_profiles != null && _profiles.Length > 0)
+                @if (_profiles != null && _profiles.Count > 0)
                 {
                     <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" VerticalAlign="true">
                         @foreach (var profile in _profiles)
@@ -46,7 +46,7 @@
 
 @code {
     private string? _userId;
-    private Profile[] _profiles;
+    private List<Profile> _profiles = new List<Profile>();
     private bool _disableCreateButton = true;
     private Language? _selectedNative;
     private Language? _selectedTarget;
@@ -57,18 +57,18 @@
         var userId = state.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier);
 
         _userId = userId.Value;
-        _profiles = await ProfileManager.GetProfiles(_userId);
+        _profiles.AddRange(await ProfileManager.GetProfiles(_userId));
     }
 
     private void OnSelectedNative(MudChip chip)
     {
-        _selectedNative = (Language)chip.Value;
+        _selectedNative = chip.Value as Language;
         ValidateParameters();
     }
 
     private void OnSelectedTarget(MudChip chip)
     {
-        _selectedTarget = (Language)chip.Value;
+        _selectedTarget = chip.Value as Language;
         ValidateParameters();
     }
 
@@ -89,8 +89,7 @@
 
     private async Task OnCreate()
     {
-        var profile = await ProfileManager.Create(_userId, _selectedNative, _selectedTarget);
-        _profiles = _profiles.Append(profile).ToArray();
+        _profiles.Add(await ProfileManager.Create(_userId!, _selectedNative!, _selectedTarget!));
 
         ValidateParameters();
     }

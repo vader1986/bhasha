@@ -59,12 +59,12 @@ namespace Bhasha.Web.Domain
             return HashCode.Combine(Id, Region);
         }
 
-        public static bool operator !=(Language lhs, Language rhs)
+        public static bool operator !=(Language? lhs, Language? rhs)
         {
             return !Equals(lhs, rhs);
         }
 
-        public static bool operator ==(Language lhs, Language rhs)
+        public static bool operator ==(Language? lhs, Language? rhs)
         {
             return Equals(lhs, rhs);
         }

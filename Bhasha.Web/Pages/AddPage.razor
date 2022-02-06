@@ -29,10 +29,10 @@
     </DialogActions>
 </MudDialog>
 @code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [CascadingParameter] MudDialogInstance? MudDialog { get; set; }
 
     private AddPageState _state = new AddPageState();
 
-    void Submit() => MudDialog.Close(DialogResult.Ok(_state));
-    void Cancel() => MudDialog.Cancel();
+    void Submit() => MudDialog?.Close(DialogResult.Ok(_state));
+    void Cancel() => MudDialog?.Cancel();
 }
