@@ -1,11 +1,12 @@
 ﻿@page "/"
 
 <MudButton FullWidth="true" Link="/">About Bhasha</MudButton>
-<AuthorizeView Roles="Author, Admin">
+
+<AuthorizeView Roles="Author">
     <MudButton FullWidth="true" Link="/addchapter">Author</MudButton>
 </AuthorizeView>
 
-<AuthorizeView Roles="Student, Admin">
+<AuthorizeView Roles="Student">
     <MudButton FullWidth="true" Link="/profiles">Student</MudButton>
 </AuthorizeView>
 

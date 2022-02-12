@@ -43,6 +43,14 @@ public class MongoRepository<T> : IRepository<T>
         return await items.FirstOrDefaultAsync();
     }
 
+    public async Task<T[]> GetMany(params Guid[] ids)
+    {
+        var filter = Builders<T>.Filter.In("_id", ids);
+        var result = await GetCollection().FindAsync(filter);
+        var items = await result.ToListAsync();
+        return items.ToArray();
+    }
+
     public async Task<bool> Remove(Guid id)
     {
         var filter = Builders<T>.Filter.Eq("_id", id);

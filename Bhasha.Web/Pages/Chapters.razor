@@ -1,0 +1,36 @@
+﻿@page "/chapters/{ProfileId:guid}"
+
+@inject IProfileManager ProfileManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<AuthorizeView Roles="Student">
+    <MudPaper Style="text-align: center">
+        <MudList Clickable="true">
+            @foreach (var chapter in _chapters)
+            {
+                <MudListItem Avatar="@Icons.Material.Filled.Image">
+                    @chapter.Name
+                </MudListItem>
+            }
+        </MudList>
+    </MudPaper>
+</AuthorizeView>
+
+@code {
+
+    [Parameter]
+    public Guid ProfileId { get; set; }
+
+    private string? _userId;
+    private IEnumerable<DisplayedChapter> _chapters = new[] {
+        new DisplayedChapter(Guid.Empty, "Introduction", "Start to learn Bengali!", new DisplayedPage[0], default)
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userId = state.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier);
+
+        _userId = userId.Value;
+    }
+}

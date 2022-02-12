@@ -9,7 +9,11 @@
         <LoginDisplay />
     </MudAppBar>
     <MudMainContent>
-        @Body
+        <MudContainer Width="100%">
+            <MudContainer MaxWidth="MaxWidth.Small">
+                @Body
+            </MudContainer>
+        </MudContainer>
     </MudMainContent>
 </MudLayout>
 

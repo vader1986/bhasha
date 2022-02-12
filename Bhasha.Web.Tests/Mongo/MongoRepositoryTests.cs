@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
+using AutoFixture.NUnit3;
 using Bhasha.Web.Mongo;
 using Bhasha.Web.Services;
 using Mongo2Go;
@@ -67,6 +69,43 @@ public class MongoRepositoryTests
 
         Assert.NotNull(itemFound);
         Assert.AreEqual(itemFound.Name, "car");
+    }
+
+    [Test]
+    public async Task GivenItem_WhenGet_ThenReturnItem()
+    {
+        // prepare
+        var item = new Item(Guid.Empty, "car");
+        await GetCollection().InsertOneAsync(item);
+
+        // act
+        var result = await _repository.Get(item.Id);
+
+        // verify
+        Assert.AreEqual(item, result);
+    }
+
+    [Test]
+    public async Task GivenNoItem_WhenGet_ThenReturnNull()
+    {
+        // act
+        var result = await _repository.Get(Guid.NewGuid());
+
+        // verify
+        Assert.IsNull(result);
+    }
+
+    [Test, AutoData]
+    public async Task GivenItems_WhenGetMany_ThenReturnItems(Item[] items)
+    {
+        // prepare
+        await GetCollection().InsertManyAsync(items);
+
+        // act
+        var result = await _repository.GetMany(items.Select(x => x.Id).ToArray());
+
+        // assert
+        Assert.That(result, Is.EquivalentTo(items));
     }
 
     [Test]
@@ -154,12 +193,11 @@ public class MongoRepositoryTests
         Assert.That(await result.AnyAsync(), Is.True);
     }
 
-    [Test]
-    public async Task GivenItemInDB_WhenUpdated_ThenReturnTrue()
+    [Test, AutoData]
+    public async Task GivenItemInDB_WhenUpdated_ThenReturnTrue(Item item)
     {
         // prepare
         var collection = GetCollection();
-        var item = new Item(Guid.Empty, "car");
         await collection.InsertOneAsync(item);
 
         // act
@@ -169,12 +207,11 @@ public class MongoRepositoryTests
         Assert.That(hasBeenUpdated);
     }
 
-    [Test]
-    public async Task GivenItemInDB_WhenUpdated_ThenItemUpdatedInDB()
+    [Test, AutoData]
+    public async Task GivenItemInDB_WhenUpdated_ThenItemUpdatedInDB(Item item)
     {
         // prepare
         var collection = GetCollection();
-        var item = new Item(Guid.Empty, "car");
         await collection.InsertOneAsync(item);
 
         // act
