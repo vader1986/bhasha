@@ -1,6 +1,6 @@
 ﻿using Bhasha.Web.Domain;
 
-namespace Bhasha.Web.Pages
+namespace Bhasha.Web.Pages.Author
 {
 	public class AddPageState
 	{

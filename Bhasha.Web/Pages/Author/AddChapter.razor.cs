@@ -2,7 +2,7 @@
 using Bhasha.Web.Domain;
 using MudBlazor;
 
-namespace Bhasha.Web.Pages
+namespace Bhasha.Web.Pages.Author
 {
     public partial class AddChapter
     {

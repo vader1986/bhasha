@@ -1,7 +1,7 @@
 ﻿using Bhasha.Web.Domain;
 using Bhasha.Web.Interfaces;
 
-namespace Bhasha.Web.Pages
+namespace Bhasha.Web.Pages.Author
 {
 	public class AddChapterState
 	{
@@ -89,7 +89,6 @@ namespace Bhasha.Web.Pages
 
         public async Task SubmitPageState(AddPageState pageState)
         {
-
             var expression =
                 ExpressionFactory.Create() with
                 {
