@@ -1,36 +1,40 @@
-﻿using System.Security.Claims;
-using Bhasha.Web.Domain;
+﻿using Bhasha.Web.Domain;
+using Bhasha.Web.Interfaces;
+using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
 namespace Bhasha.Web.Pages.Author
 {
-    public partial class AddChapter
+    public partial class AddChapter : UserPage
     {
-        private AddChapterState _state = new AddChapterState();
+        private readonly AddChapterState _state = new AddChapterState();
+
+        [Inject] public IDialogService DialogService { get; set; } = default!;
+        [Inject] public IRepository<Chapter> ChapterRepository { get; set; } = default!;
+        [Inject] public IFactory<Expression> ExpressionFactory { get; set; } = default!;
+        [Inject] public IExpressionManager ExpressionManager { get; set; } = default!;
 
         protected override async Task OnInitializedAsync()
         {
+            await base.OnInitializedAsync();
+
             _state.ChapterRepository = ChapterRepository;
             _state.ExpressionFactory = ExpressionFactory;
             _state.ExpressionManager = ExpressionManager;
-
-            var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-            var userId = state.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier);
-
-            _state.UserId = userId.Value;
+            _state.UserId = UserId;
         }
 
-        private void OnSelectedNative(MudChip chip)
+        internal void OnSelectedNative(MudChip chip)
         {
             _state.NativeLanguage = (chip?.Value as Language)?.ToString();
         }
 
-        private void OnSelectedTarget(MudChip chip)
+        internal void OnSelectedTarget(MudChip chip)
         {
             _state.TargetLanguage = (chip?.Value as Language)?.ToString();
         }
 
-        private async Task OpenCreatePage()
+        internal async Task OpenCreatePage()
         {
             var result = await DialogService.Show<AddPage>("Create Page").Result;
 

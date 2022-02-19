@@ -28,11 +28,3 @@
         <MudButton Color="Color.Primary" Disabled="_state.CannotCreatePage" OnClick="Submit">Ok</MudButton>
     </DialogActions>
 </MudDialog>
-@code {
-    [CascadingParameter] MudDialogInstance? MudDialog { get; set; }
-
-    private AddPageState _state = new AddPageState();
-
-    void Submit() => MudDialog?.Close(DialogResult.Ok(_state));
-    void Cancel() => MudDialog?.Cancel();
-}

@@ -1,8 +1,5 @@
 ﻿@page "/profiles"
-
-@inject IProfileManager ProfileManager
-@inject AuthenticationStateProvider AuthenticationStateProvider
-@inject NavigationManager NavigationManager
+@inherits UserPage
 
 <AuthorizeView Roles="Student">
     <MudCard>
@@ -40,59 +37,3 @@
         </MudCardContent>
     </MudCard>
 </AuthorizeView>
-
-@code {
-    private string? _userId;
-    private List<Profile> _profiles = new List<Profile>();
-    private bool _disableCreateButton = true;
-    private Language? _selectedNative;
-    private Language? _selectedTarget;
-
-    protected override async Task OnInitializedAsync()
-    {
-        var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var userId = state.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier);
-
-        _userId = userId.Value;
-        _profiles.AddRange(await ProfileManager.GetProfiles(_userId));
-    }
-
-    private void OnSelectProfile(Profile profile)
-    {
-        NavigationManager.NavigateTo($"chapters/{profile.Id}");
-    }
-
-    private void OnSelectedNative(MudChip chip)
-    {
-        _selectedNative = chip.Value as Language;
-        ValidateParameters();
-    }
-
-    private void OnSelectedTarget(MudChip chip)
-    {
-        _selectedTarget = chip.Value as Language;
-        ValidateParameters();
-    }
-
-    private void ValidateParameters()
-    {
-        if (_selectedNative != null && _selectedTarget != null && _profiles != null)
-        {
-            var alreadyExists = _profiles.Any(x => x.Native == _selectedNative && x.Target == _selectedTarget);
-            var invalidSelection = _selectedNative == _selectedTarget;
-
-            _disableCreateButton = alreadyExists || invalidSelection;
-        }
-        else
-        {
-            _disableCreateButton = true;
-        }
-    }
-
-    private async Task OnCreate()
-    {
-        _profiles.Add(await ProfileManager.Create(_userId!, _selectedNative!, _selectedTarget!));
-
-        ValidateParameters();
-    }
-}

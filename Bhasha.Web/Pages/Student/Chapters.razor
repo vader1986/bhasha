@@ -1,9 +1,5 @@
 ﻿@page "/chapters/{ProfileId:guid}"
-
-@inject IProfileManager ProfileManager
-@inject IChapterProvider ChapterProvider
-@inject AuthenticationStateProvider AuthenticationStateProvider
-@inject NavigationManager NavigationManager
+@inherits UserPage
 
 <AuthorizeView Roles="Student">
     <MudPaper Style="text-align: center">
@@ -26,27 +22,3 @@
         </MudList>
     </MudPaper>
 </AuthorizeView>
-
-@code {
-
-    [Parameter]
-    public Guid ProfileId { get; set; }
-
-    private string? _userId;
-    private ChapterDescription[] _chapters = Array.Empty<ChapterDescription>();
-
-    protected override async Task OnInitializedAsync()
-    {
-        var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var userId = state.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier);
-
-        _userId = userId.Value;
-
-        _chapters = await ChapterProvider.GetChapters(ProfileId);
-    }
-
-    private void OnSelectChapter(ChapterDescription chapter)
-    {
-        NavigationManager.NavigateTo($"chapter/{chapter.ChapterId}");
-    }
-}

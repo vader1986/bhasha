@@ -1,10 +1,5 @@
 ﻿@page "/addchapter"
-
-@inject IDialogService DialogService
-@inject IRepository<Chapter> ChapterRepository
-@inject IFactory<Expression> ExpressionFactory
-@inject IExpressionManager ExpressionManager
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inherits UserPage
 
 <AuthorizeView Roles="Author">
 
