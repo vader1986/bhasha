@@ -1,16 +1,27 @@
 ﻿@page "/chapters/{ProfileId:guid}"
 
 @inject IProfileManager ProfileManager
+@inject IChapterProvider ChapterProvider
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
 
 <AuthorizeView Roles="Student">
     <MudPaper Style="text-align: center">
         <MudList Clickable="true">
             @foreach (var chapter in _chapters)
             {
-                <MudListItem Avatar="@Icons.Material.Filled.Image">
-                    @chapter.Name
-                </MudListItem>
+                @if (chapter.Completed)
+                {
+                    <MudListItem Avatar="@Icons.Material.Filled.Image" OnClick="() => OnSelectChapter(chapter)">
+                        @chapter.Name
+                    </MudListItem>
+                }
+                else
+                {
+                    <MudListItem Avatar="@Icons.Material.Outlined.Image" OnClick="() => OnSelectChapter(chapter)">
+                        @chapter.Name
+                    </MudListItem>
+                }
             }
         </MudList>
     </MudPaper>
@@ -22,9 +33,7 @@
     public Guid ProfileId { get; set; }
 
     private string? _userId;
-    private IEnumerable<DisplayedChapter> _chapters = new[] {
-        new DisplayedChapter(Guid.Empty, "Introduction", "Start to learn Bengali!", new DisplayedPage[0], default)
-    };
+    private ChapterDescription[] _chapters = Array.Empty<ChapterDescription>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -32,5 +41,12 @@
         var userId = state.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier);
 
         _userId = userId.Value;
+
+        _chapters = await ChapterProvider.GetChapters(ProfileId);
+    }
+
+    private void OnSelectChapter(ChapterDescription chapter)
+    {
+        NavigationManager.NavigateTo($"chapter/{chapter.ChapterId}");
     }
 }

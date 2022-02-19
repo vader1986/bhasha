@@ -4,4 +4,9 @@
 	{
 		TProduct Create();
 	}
+
+	public interface IFactory<TConfig, TProduct>
+	{
+		TProduct Create(TConfig config);
+	}
 }

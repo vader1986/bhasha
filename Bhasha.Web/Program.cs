@@ -57,6 +57,7 @@ builder.Services.AddSingleton<IRepository<Profile>, MongoRepository<Profile>>();
 builder.Services.AddSingleton<IRepository<Chapter>, MongoRepository<Chapter>>();
 builder.Services.AddSingleton<IRepository<Expression>, MongoRepository<Expression>>();
 builder.Services.AddSingleton<IFactory<Profile>, ProfileFactory>();
+builder.Services.AddSingleton<IFactory<Expression>, ExpressionFactory>();
 builder.Services.AddSingleton<IProfileManager, ProfileManager>();
 builder.Services.AddSingleton<IExpressionManager, ExpressionManager>();
 builder.Services.AddSingleton<ITranslationProvider, TranslationProvider>();

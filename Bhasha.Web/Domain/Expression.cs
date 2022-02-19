@@ -5,5 +5,7 @@
 		ExpressionType ExpressionType,
 		CEFR Cefr,
 		string? ResourceId,
+		string[] Labels,
+		int Level,
 		Translation[] Translations);
 }

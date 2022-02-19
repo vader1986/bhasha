@@ -7,6 +7,7 @@ namespace Bhasha.Web.Pages
 	{
         public IRepository<Chapter> ChapterRepository { get; set; } = default!;
         public IExpressionManager ExpressionManager { get; set; } = default!;
+        public IFactory<Expression> ExpressionFactory { get; set; } = default!;
 
         private readonly IDictionary<Guid, string> _expressionNames = new Dictionary<Guid, string>();
 
@@ -88,15 +89,18 @@ namespace Bhasha.Web.Pages
 
         public async Task SubmitPageState(AddPageState pageState)
         {
-            var expression = new Expression(
-                Guid.Empty,
-                pageState.Expr,
-                pageState.Cefr,
-                null,
-                new[] {
-                new Translation(NativeLanguage!, pageState.Native!, pageState.NativeSpoken, null),
-                new Translation(TargetLanguage!, pageState.Target!, pageState.TargetSpoken, null)
-            });
+
+            var expression =
+                ExpressionFactory.Create() with
+                {
+                    ExpressionType = pageState.Expr,
+                    Cefr = pageState.Cefr,
+                    Translations = new[]
+                    {
+                        new Translation(NativeLanguage!, pageState.Native!, pageState.NativeSpoken, default),
+                        new Translation(TargetLanguage!, pageState.Target!, pageState.TargetSpoken, default)
+                    }
+                };
 
             var expressionId = (await ExpressionManager.AddOrUpdate(expression)).Id;
 
@@ -112,10 +116,10 @@ namespace Bhasha.Web.Pages
             if (Error != null)
                 return;
 
-            var name = new Expression(Guid.Empty, ExpressionType.Word, CEFR.Unknown, null, new[] { new Translation(Language.Reference, Name!, null, null) });
+            var name = ExpressionFactory.Create() with { Translations = new[] { new Translation(Language.Reference, Name!, default, default) } };
             var nameId = (await ExpressionManager.AddOrUpdate(name)).Id;
 
-            var description = new Expression(Guid.Empty, ExpressionType.Phrase, CEFR.Unknown, null, new[] { new Translation(Language.Reference, Description!, null, null) });
+            var description = ExpressionFactory.Create() with { Translations = new[] { new Translation(Language.Reference, Description!, default, default) } };
             var descriptionId = (await ExpressionManager.AddOrUpdate(description)).Id;
 
             var chapter = new Chapter(Guid.Empty, RequiredLevel!.Value, nameId, descriptionId, Pages.ToArray(), null, UserId!);

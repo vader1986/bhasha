@@ -13,7 +13,7 @@ namespace Bhasha.Web.Tests.Services
 	public class TranslationProviderTests
 	{
 		private IRepository<Expression> _expressionRepository = default!;
-		private TranslationProvider _translationProvider;
+		private TranslationProvider _translationProvider = default!;
 
 		[SetUp]
 		public void Before()
