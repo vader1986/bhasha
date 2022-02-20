@@ -6,8 +6,7 @@ namespace Bhasha.Web.Pages.Author
 	public class AddChapterState
 	{
         public IRepository<Chapter> ChapterRepository { get; set; } = default!;
-        public IExpressionManager ExpressionManager { get; set; } = default!;
-        public IFactory<Expression> ExpressionFactory { get; set; } = default!;
+        public ITranslationManager TranslationManager { get; set; } = default!;
 
         private readonly IDictionary<Guid, string> _expressionNames = new Dictionary<Guid, string>();
 
@@ -16,6 +15,8 @@ namespace Bhasha.Web.Pages.Author
         public string? Description { get; set; }
         public string? NativeLanguage { get; set; }
         public string? TargetLanguage { get; set; }
+        public string? ReferenceName { get; set; }
+        public string? ReferenceDescription { get; set; }
         public int? RequiredLevel { get; set; }
         public List<Page> Pages { get; } = new List<Page>();
         public string? Error { get; private set; }
@@ -66,6 +67,16 @@ namespace Bhasha.Web.Pages.Author
                 return "TARGET language must be different from NATIVE language!";
             }
 
+            if (string.IsNullOrWhiteSpace(ReferenceName) && NativeLanguage != Language.Reference)
+            {
+                return $"REFERENCE NAME must be set to the {Language.Reference} translation of name!";
+            }
+
+            if (string.IsNullOrWhiteSpace(ReferenceDescription) && NativeLanguage != Language.Reference)
+            {
+                return $"REFERENCE DESCRIPTION must be set to the {Language.Reference} translation of description!";
+            }
+
             if (Pages.Count < 3)
             {
                 return "A chapter requires at least 3 chapters!";
@@ -78,7 +89,9 @@ namespace Bhasha.Web.Pages.Author
         {
             Error = null;
             Name = null;
+            ReferenceName = null;
             Description = null;
+            ReferenceDescription = null;
             NativeLanguage = null;
             TargetLanguage = null;
             RequiredLevel = null;
@@ -87,25 +100,42 @@ namespace Bhasha.Web.Pages.Author
             _expressionNames.Clear();
         }
 
+        private Translation? GetReference(AddPageState pageState, Translation native, Translation target)
+        {
+            if (NativeLanguage != null && NativeLanguage == Language.Reference)
+                return native;
+
+            if (TargetLanguage != null && TargetLanguage == Language.Reference)
+                return target;
+
+            if (string.IsNullOrEmpty(pageState.NativeReference))
+                return null;
+
+            return new Translation(Guid.Empty, Guid.Empty, Language.Reference, pageState.NativeReference, default, default);
+        }
+
         public async Task SubmitPageState(AddPageState pageState)
         {
-            var expression =
-                ExpressionFactory.Create() with
-                {
-                    ExpressionType = pageState.Expr,
-                    Cefr = pageState.Cefr,
-                    Translations = new[]
-                    {
-                        new Translation(NativeLanguage!, pageState.Native!, pageState.NativeSpoken, default),
-                        new Translation(TargetLanguage!, pageState.Target!, pageState.TargetSpoken, default)
-                    }
-                };
+            var native = new Translation(
+                Guid.Empty, Guid.Empty, NativeLanguage!, pageState.Native!, pageState.NativeSpoken, default);
 
-            var expressionId = (await ExpressionManager.AddOrUpdate(expression)).Id;
+            var target = new Translation(
+                Guid.Empty, Guid.Empty, TargetLanguage!, pageState.Target!, pageState.TargetSpoken, default);
 
-            _expressionNames[expressionId] = pageState.Native!;
+            var reference = GetReference(pageState, native, target);
 
-            Pages.Add(new Domain.Page(pageState.PageType, expressionId, pageState.Leads.ToArray()));
+            if (reference == null)
+            {
+                Error = $"Page translation for reference language {Language.Reference} not set";
+                return;
+            }
+
+            native = await TranslationManager.AddOrUpdate(native, reference);
+            await TranslationManager.AddOrUpdate(target, reference);
+
+            _expressionNames[native.ExpressionId] = native.Native;
+
+            Pages.Add(new Domain.Page(pageState.PageType, native.ExpressionId, pageState.Leads.ToArray()));
         }
 
         public async Task Submit()
@@ -115,16 +145,27 @@ namespace Bhasha.Web.Pages.Author
             if (Error != null)
                 return;
 
-            var name = ExpressionFactory.Create() with { Translations = new[] { new Translation(Language.Reference, Name!, default, default) } };
-            var nameId = (await ExpressionManager.AddOrUpdate(name)).Id;
+            try
+            {
+                var refName = ReferenceName ?? Name;
+                var refNameTranslation = new Translation(Guid.Empty, Guid.Empty, Language.Reference, refName!, default, default);
+                var nameTranslation = new Translation(Guid.Empty, Guid.Empty, NativeLanguage!, Name!, default, default);
+                var name = await TranslationManager.AddOrUpdate(nameTranslation, refNameTranslation);
 
-            var description = ExpressionFactory.Create() with { Translations = new[] { new Translation(Language.Reference, Description!, default, default) } };
-            var descriptionId = (await ExpressionManager.AddOrUpdate(description)).Id;
+                var refDescription = ReferenceDescription ?? Description;
+                var refDescriptionTranslation = new Translation(Guid.Empty, Guid.Empty, Language.Reference, refDescription!, default, default);
+                var descriptionTranslation = new Translation(Guid.Empty, Guid.Empty, NativeLanguage!, Description!, default, default);
+                var description = await TranslationManager.AddOrUpdate(descriptionTranslation, refDescriptionTranslation);
 
-            var chapter = new Chapter(Guid.Empty, RequiredLevel!.Value, nameId, descriptionId, Pages.ToArray(), null, UserId!);
-            await ChapterRepository.Add(chapter);
+                var chapter = new Chapter(Guid.Empty, RequiredLevel!.Value, name.ExpressionId, description.ExpressionId, Pages.ToArray(), null, UserId!);
+                await ChapterRepository.Add(chapter);
 
-            Clear();
+                Clear();
+            }
+            catch (Exception e)
+            {
+                Error = e.Message;
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using Bhasha.Web.Interfaces;
 using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 
 namespace Bhasha.Web.Mongo;
 
@@ -34,6 +35,12 @@ public class MongoRepository<T> : IRepository<T>
     {
         var items = await GetCollection().FindAsync(query);
         return items.ToEnumerable().ToArray();
+    }
+
+    public async Task<T[]> Find(Expression<Func<T, bool>> query, int samples)
+    {
+        var items = await GetCollection().AsQueryable().Where(query).Sample(samples).ToListAsync();
+        return items.ToArray();
     }
 
     public async Task<T?> Get(Guid id)

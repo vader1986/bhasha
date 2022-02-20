@@ -12,21 +12,22 @@ namespace Bhasha.Web.Tests.Services
 {
 	public class TranslationProviderTests
 	{
-		private IRepository<Expression> _expressionRepository = default!;
+		private IRepository<Translation> _repository = default!;
 		private TranslationProvider _translationProvider = default!;
 
 		[SetUp]
 		public void Before()
         {
-			_expressionRepository = A.Fake<IRepository<Expression>>();
-			_translationProvider = new TranslationProvider(_expressionRepository);
+			_repository = A.Fake<IRepository<Translation>>();
+			_translationProvider = new TranslationProvider(_repository);
 		}
 
 		[Test]
-		public async Task GivenNoExpression_WhenFind_ThenReturnNull()
+		public async Task GivenNoMatchingTranslation_WhenFind_ThenReturnNull()
         {
 			// setup
-			A.CallTo(() => _expressionRepository.Get(A<Guid>.Ignored)).Returns(default(Expression));
+			A.CallTo(() => _repository.Find(A<System.Linq.Expressions.Expression<Func<Translation, bool>>>.Ignored))
+				.Returns(Array.Empty<Translation>());
 
 			// act
 			var result = await _translationProvider.Find(Guid.NewGuid(), Language.Bengali);
@@ -36,42 +37,27 @@ namespace Bhasha.Web.Tests.Services
         }
 
 		[Test, AutoData]
-		public async Task GivenNoMatchingTranslation_WhenFind_ThenReturnNull(Expression expression)
+		public async Task GivenTranslation_WhenFind_ThenReturnTranslation(Translation translation)
         {
 			// setup
-			A.CallTo(() => _expressionRepository.Get(A<Guid>.Ignored)).Returns(expression with { Translations = new Translation[0]});
+			A.CallTo(() => _repository.Find(A<System.Linq.Expressions.Expression<Func<Translation, bool>>>.Ignored))
+                .Returns(new[] { translation });
 
 			// act
 			var result = await _translationProvider.Find(Guid.NewGuid(), Language.Bengali);
-
-			// verify
-			Assert.IsNull(result);
-		}
-
-		[Test, AutoData]
-		public async Task GivenTranslation_WhenFind_ThenReturnTranslation(Expression expression, Translation translation)
-        {
-			// setup
-			translation = translation with { Language = Language.Bengali };
-			expression = expression with { Translations = expression.Translations.Append(translation).ToArray() };
-
-			A.CallTo(() => _expressionRepository.Get(expression.Id)).Returns(expression);
-
-			// act
-			var result = await _translationProvider.Find(expression.Id, Language.Bengali);
 
 			// verify
 			Assert.AreEqual(translation, result);
 		}
 
 		[Test, AutoData]
-		public void GivenSomeExpressions_WhenFindAll_ThenThrowException(Expression[] expressions)
+		public void GivenSomeExpressions_WhenFindAll_ThenThrowException(Translation[] translations)
 		{
 			// setup
-			A.CallTo(() => _expressionRepository.GetMany(A<Guid[]>.Ignored))
-				.Returns(Task.FromResult(expressions));
+			A.CallTo(() => _repository.Find(A<System.Linq.Expressions.Expression<Func<Translation, bool>>>.Ignored))
+				.Returns(translations);
 
-			var guids = expressions.Select(x => x.Id).Append(Guid.NewGuid()).ToArray();
+			var guids = Enumerable.Range(0, translations.Length - 1).Select(_ => Guid.NewGuid()).ToArray();
 
 			// act & verify
 			Assert.ThrowsAsync<InvalidOperationException>(async () =>
@@ -79,31 +65,13 @@ namespace Bhasha.Web.Tests.Services
 		}
 
 		[Test, AutoData]
-		public void GivenAllExpressionsWithMissingTranslations_WhenFindAll_ThenThrowException(Expression[] expressions)
+		public async Task GivenAllExpressionsWithTranslations_WhenFindAll_ThenReturnTranslations(Translation[] translations)
 		{
 			// setup
-			expressions = expressions.Select(x => x with { Translations = new Translation[0] }).ToArray();
-			A.CallTo(() => _expressionRepository.GetMany(A<Guid[]>.Ignored))
-				.Returns(Task.FromResult(expressions));
+			A.CallTo(() => _repository.Find(A<System.Linq.Expressions.Expression<Func<Translation, bool>>>.Ignored))
+				.Returns(translations);
 
-			var guids = expressions.Select(x => x.Id).ToArray();
-
-			// act & verify
-			Assert.ThrowsAsync<InvalidOperationException>(async () =>
-				await _translationProvider.FindAll(Language.Bengali, guids));
-		}
-
-		[Test, AutoData]
-		public async Task GivenAllExpressionsWithTranslations_WhenFindAll_ThenReturnTranslations(Expression[] expressions, Translation translation)
-		{
-			// setup
-			expressions = expressions.Select(x => x with {
-				Translations = new[] { translation with { Language = Language.Bengali } } }).ToArray();
-
-			A.CallTo(() => _expressionRepository.GetMany(A<Guid[]>.Ignored))
-				.Returns(Task.FromResult(expressions));
-
-			var guids = expressions.Select(x => x.Id).ToArray();
+			var guids = Enumerable.Range(0, translations.Length).Select(_ => Guid.NewGuid()).ToArray();
 
 			// act
 			var result = await _translationProvider.FindAll(Language.Bengali, guids);

@@ -6,18 +6,7 @@
                 <MudSelectItem Value="pageType" />
             }
         </MudSelect>
-        <MudSelect T="CEFR" @bind-Value="_state.Cefr" Label="CEFR" AnchorOrigin="Origin.BottomCenter">
-            @foreach (var cefr in Enum.GetValues<CEFR>())
-            {
-                <MudSelectItem Value="cefr" />
-            }
-        </MudSelect>
-        <MudSelect T="ExpressionType" @bind-Value="_state.Expr" Label="Expression Type" AnchorOrigin="Origin.BottomCenter">
-            @foreach (var expr in Enum.GetValues<ExpressionType>())
-            {
-                <MudSelectItem Value="expr" />
-            }
-        </MudSelect>
+        <MudTextField T="string" @bind-Text="_state.NativeReference" Label="English" />
         <MudTextField T="string" @bind-Text="_state.Native" Label="Native" />
         <MudTextField T="string" @bind-Text="_state.NativeSpoken" Label="Native Spoken" />
         <MudTextField T="string" @bind-Text="_state.Target" Label="Target" />

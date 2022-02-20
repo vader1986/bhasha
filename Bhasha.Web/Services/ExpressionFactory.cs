@@ -9,12 +9,12 @@ namespace Bhasha.Web.Services
         {
             return new Expression(
                 Id: Guid.Empty,
-                ExpressionType: ExpressionType.Word,
-                Cefr: CEFR.Unknown,
+                ExpressionType: default,
+                PartOfSpeech: default,
+                Cefr: default,
                 ResourceId: default,
-                Labels: new string[0],
-                Level: default,
-                Translations: new Translation[0]);
+                Labels: Array.Empty<string>(),
+                Level: default);
         }
     }
 }

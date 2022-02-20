@@ -11,16 +11,14 @@ namespace Bhasha.Web.Pages.Author
 
         [Inject] public IDialogService DialogService { get; set; } = default!;
         [Inject] public IRepository<Chapter> ChapterRepository { get; set; } = default!;
-        [Inject] public IFactory<Expression> ExpressionFactory { get; set; } = default!;
-        [Inject] public IExpressionManager ExpressionManager { get; set; } = default!;
+        [Inject] public ITranslationManager TranslationManager { get; set; } = default!;
 
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
 
             _state.ChapterRepository = ChapterRepository;
-            _state.ExpressionFactory = ExpressionFactory;
-            _state.ExpressionManager = ExpressionManager;
+            _state.TranslationManager = TranslationManager;
             _state.UserId = UserId;
         }
 

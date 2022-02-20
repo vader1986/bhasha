@@ -2,10 +2,12 @@
 using Bhasha.Web;
 using Bhasha.Web.Areas.Identity;
 using Bhasha.Web.Domain;
+using Bhasha.Web.Domain.Pages;
 using Bhasha.Web.Identity;
 using Bhasha.Web.Interfaces;
 using Bhasha.Web.Mongo;
 using Bhasha.Web.Services;
+using Bhasha.Web.Services.Pages;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Mongo.Migration.Startup;
@@ -56,12 +58,15 @@ builder.Services.AddMigration(new MongoMigrationSettings
 builder.Services.AddSingleton<IRepository<Profile>, MongoRepository<Profile>>();
 builder.Services.AddSingleton<IRepository<Chapter>, MongoRepository<Chapter>>();
 builder.Services.AddSingleton<IRepository<Expression>, MongoRepository<Expression>>();
+builder.Services.AddSingleton<IRepository<Translation>, MongoRepository<Translation>>();
 builder.Services.AddSingleton<IFactory<Profile>, ProfileFactory>();
 builder.Services.AddSingleton<IFactory<Expression>, ExpressionFactory>();
 builder.Services.AddSingleton<IProfileManager, ProfileManager>();
-builder.Services.AddSingleton<IExpressionManager, ExpressionManager>();
+builder.Services.AddSingleton<ITranslationManager, TranslationManager>();
 builder.Services.AddSingleton<ITranslationProvider, TranslationProvider>();
 builder.Services.AddSingleton<IChapterProvider, ChapterProvider>();
+builder.Services.AddSingleton<IAsyncFactory<Page, Profile, DisplayedPage>, PageFactory>();
+builder.Services.AddSingleton<IAsyncFactory<Page, Profile, DisplayedPage<MultipleChoice>>, MultipleChoicePageFactory>();
 
 var app = builder.Build();
 

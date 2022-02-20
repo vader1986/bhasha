@@ -3,11 +3,13 @@
 	public record DisplayedPage(
 		string Expression,
 		string? Spoken,
-		string? Lead);
+		string? Lead,
+		bool HasLead);
 
 	public record DisplayedPage<T>(
 		string Expression,
 		string? Spoken,
 		string? Lead,
-		T Arguments) : DisplayedPage(Expression, Spoken, Lead);
+		bool HasLead,
+		T Arguments) : DisplayedPage(Expression, Spoken, Lead, HasLead);
 }

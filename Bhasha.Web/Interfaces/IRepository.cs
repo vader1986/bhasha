@@ -8,6 +8,7 @@ namespace Bhasha.Web.Interfaces
 		Task<T?> Get(Guid id);
 		Task<T[]> GetMany(params Guid[] ids);
 		Task<T[]> Find(Expression<Func<T, bool>> query);
+		Task<T[]> Find(Expression<Func<T, bool>> query, int samples);
 		Task<bool> Remove(Guid id);
 		Task<bool> Update(Guid id, T item);
 	}

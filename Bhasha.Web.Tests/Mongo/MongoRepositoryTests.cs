@@ -10,6 +10,11 @@ using NUnit.Framework;
 
 namespace Bhasha.Web.Tests.Mongo;
 
+/*
+ * ToDo:
+ * - add missing unit tests for new Find function
+ */
+
 public class MongoRepositoryTests
 {
     private const string DbName = "TestDB";

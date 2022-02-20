@@ -13,13 +13,19 @@ namespace Bhasha.Web.Tests.Pages.Author
 	{
 		private AddChapterState _state = default!;
 
+		/*
+		 * ToDo:
+		 * - throw exception leads to error text
+		 * - name & description added to translations
+		 * - handling of references
+		 */
+
 		[SetUp]
 		public void Before()
 		{
 			_state = new AddChapterState();
 			_state.ChapterRepository = A.Fake<IRepository<Chapter>>();
-			_state.ExpressionFactory = A.Fake<IFactory<Expression>>();
-			_state.ExpressionManager = A.Fake<IExpressionManager>();
+			_state.TranslationManager = A.Fake<ITranslationManager>();
 			_state.UserId = "Test User 123";
 			_state.Name = "Introduction";
 			_state.Description = "First steps ...";

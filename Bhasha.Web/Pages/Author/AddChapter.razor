@@ -10,7 +10,9 @@
             <MudCard Outlined="true">
                 <MudCardContent Style="text-align: center">
                     <MudTextField @bind-Value="@_state.Name" Label="Name" Variant="Variant.Outlined" />
+                    <MudTextField @bind-Value="@_state.ReferenceName" Label="Name (English)" Variant="Variant.Outlined" />
                     <MudTextField @bind-Value="@_state.Description" Label="Description" Variant="Variant.Outlined" Lines="3" />
+                    <MudTextField @bind-Value="@_state.ReferenceDescription" Label="Description (English)" Variant="Variant.Outlined" />
 
                     <MudDivider DividerType="DividerType.Middle" Class="my-3" />
                     <MudNumericField Label="Required Level" @bind-Value="@_state.RequiredLevel" Variant="Variant.Text" Min="0" Max="100" />

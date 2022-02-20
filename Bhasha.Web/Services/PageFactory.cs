@@ -4,22 +4,24 @@ using Bhasha.Web.Interfaces;
 
 namespace Bhasha.Web.Services
 {
-    public class PageFactory : IFactory<(Translation Word, PageType Page), DisplayedPage>
+    public class PageFactory : IAsyncFactory<Page, Profile, DisplayedPage>
     {
-        private readonly IRepository<Expression> _expressionRepository;
+        private readonly IAsyncFactory<Page, Profile, DisplayedPage<MultipleChoice>> _multipleChoiceFactory;
 
-        public PageFactory(IRepository<Expression> expressionRepository)
+        public PageFactory(
+            IAsyncFactory<Page, Profile, DisplayedPage<MultipleChoice>> multipleChoiceFactory)
         {
-            _expressionRepository = expressionRepository;
+            _multipleChoiceFactory = multipleChoiceFactory;
         }
 
-        public DisplayedPage Create((Translation Word, PageType Page) config)
+        public async Task<DisplayedPage> CreateAsync(Page page, Profile profile)
         {
-            if (config.Page == PageType.MultipleChoice)
+            if (page.PageType == PageType.MultipleChoice)
             {
+                return await _multipleChoiceFactory.CreateAsync(page, profile);
             }
 
-            throw new NotImplementedException();
+            throw new ArgumentException($"{page.PageType} is not supported", nameof(page));
         }
     }
 }

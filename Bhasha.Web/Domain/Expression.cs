@@ -2,10 +2,10 @@
 {
 	public record Expression(
 		Guid Id,
-		ExpressionType ExpressionType,
-		CEFR Cefr,
+		ExpressionType? ExpressionType,
+		PartOfSpeech? PartOfSpeech,
+		CEFR? Cefr,
 		string? ResourceId,
 		string[] Labels,
-		int Level,
-		Translation[] Translations);
+		int Level);
 }
