@@ -1,111 +1,108 @@
 ﻿using System;
-using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
-using AutoFixture.NUnit3;
+using AutoFixture.Xunit2;
 using Bhasha.Web.Domain;
 using Bhasha.Web.Interfaces;
 using Bhasha.Web.Services;
-using FakeItEasy;
-using NUnit.Framework;
+using NSubstitute;
+using Xunit;
 
 namespace Bhasha.Web.Tests.Services;
 
 public class ProfileManagerTests
 {
-    private ProfileManager _profileManager = default!;
-    private IRepository<Profile> _repository = default!;
-    private IFactory<Profile> _factory = default!;
+    private readonly ProfileManager _profileManager;
+    private readonly IRepository<Profile> _repository;
+    private readonly IFactory<Profile> _factory;
 
-    [SetUp]
-    public void Before()
+    public ProfileManagerTests()
     {
-        _repository = A.Fake<IRepository<Profile>>();
-        _factory = A.Fake<IFactory<Profile>>();
+        _repository = Substitute.For<IRepository<Profile>>();
+        _factory = Substitute.For<IFactory<Profile>>();
         _profileManager = new ProfileManager(_repository, _factory);
 
-        var progress = new Progress(1, Guid.Empty, new Guid[0], 0, new int[0]);
+        var progress = new Progress(1, Guid.Empty, Array.Empty<Guid>(), 0, Array.Empty<int>());
         var profile = new Profile(Guid.NewGuid(), "user-123", Language.English, Language.Bengali, progress);
 
-        A.CallTo(() => _factory.Create()).Returns(profile);
+        _factory.Create().Returns(profile);
     }
 
-    [TestCase(null)]
-    [TestCase("")]
-    [TestCase("  ")]
-    public void GivenCreateCall_WhenUserIdIsNullOrEmpty_ThenThrowException(string emptyUserId)
+    [Fact]
+    public void GivenCreateCall_WhenUserIdIsNullOrEmpty_ThenThrowException()
     {
         Assert.ThrowsAsync<ArgumentNullException>(async () =>
-            await _profileManager.Create(emptyUserId, Language.English, Language.Bengali));
+            await _profileManager.Create(null!, Language.English, Language.Bengali));
+        Assert.ThrowsAsync<ArgumentNullException>(async () =>
+            await _profileManager.Create("", Language.English, Language.Bengali));
+        Assert.ThrowsAsync<ArgumentNullException>(async () =>
+            await _profileManager.Create(" ", Language.English, Language.Bengali));
     }
 
-    [Test]
+    [Fact]
     public void GivenCreateCall_WhenNativeLanguageNotSupported_ThenThrowException()
     {
         Assert.ThrowsAsync<ArgumentException>(async () =>
             await _profileManager.Create("user-123", Language.Unknown, Language.Bengali));
     }
 
-    [Test]
+    [Fact]
     public void GivenCreateCall_WhenTargetLanguageNotSupported_ThenThrowException()
     {
         Assert.ThrowsAsync<ArgumentException>(async () =>
             await _profileManager.Create("user-123", Language.Bengali, Language.Unknown));
     }
 
-    [Test]
+    [Fact]
     public void GivenCreateCall_WhenTargetAndNativeLanguagesAreEqual_ThenThrowException()
     {
         Assert.ThrowsAsync<ArgumentException>(async () =>
             await _profileManager.Create("user-123", Language.Bengali, Language.Bengali));
     }
 
-    [Test, AutoData]
+    [Theory, AutoData]
     public void GivenCreateCall_WhenProfileAlreadyExists_ThenThrowException(Profile profile)
     {
         profile = profile with { UserId = "user-123", Native = Language.English, Target = Language.Bengali };
-
-        A.CallTo(() => _repository.Find(A<Expression<Func<Profile, bool>>>.Ignored))
-            .Returns(Task.FromResult(new[] { profile }));
+        _repository.Find(default!).ReturnsForAnyArgs(new[] { profile });
 
         Assert.ThrowsAsync<InvalidOperationException>(async () =>
             await _profileManager.Create(profile.UserId, profile.Native, profile.Target));
     }
 
-    [Test]
-    public async Task GivenCreateCall_WhenCreated_ThenReturnNewProfile()
+    [Fact]
+    public async Task GivenCreateCall_WhenCreated_ThenAddNewProfile()
     {
         // prepare
-        A.CallTo(() => _repository.Find(A<Expression<Func<Profile, bool>>>.Ignored))
-            .Returns(Task.FromResult(Array.Empty<Profile>()));
+        _repository.Find(default!).ReturnsForAnyArgs(Array.Empty<Profile>());
 
         // act
-        var profile = await _profileManager.Create("user-123", Language.English, Language.Bengali);
+        await _profileManager.Create("user-123", Language.English, Language.Bengali);
 
         // verify
-        Assert.That(profile, Is.Not.Null);
+        await _repository.Received(1).Add(Arg.Any<Profile>());
     }
 
-    [TestCase(null)]
-    [TestCase("")]
-    [TestCase("  ")]
-    public void GivenEmptyUserId_WhenGetProfiles_ThenThrowException(string emptyUserId)
+    [Fact]
+    public void GivenEmptyUserId_WhenGetProfiles_ThenThrowException()
     {
         Assert.ThrowsAsync<ArgumentNullException>(async () =>
-            await _profileManager.GetProfiles(emptyUserId));
+            await _profileManager.GetProfiles(null!));
+        Assert.ThrowsAsync<ArgumentNullException>(async () =>
+            await _profileManager.GetProfiles(""));
+        Assert.ThrowsAsync<ArgumentNullException>(async () =>
+            await _profileManager.GetProfiles(" "));
     }
 
-    [Test, AutoData]
+    [Theory, AutoData]
     public async Task GivenUserProfiles_WhenGetProfilesForUser_ThenReturnProfiles(Profile[] profiles)
     {
         // prepare
-        A.CallTo(() => _repository.Find(A<Expression<Func<Profile, bool>>>.Ignored))
-            .Returns(Task.FromResult(profiles));
+        _repository.Find(default!).ReturnsForAnyArgs(profiles);
 
         // act
         var result = await _profileManager.GetProfiles("user-123");
 
         // verify
-        Assert.AreEqual(profiles, result);
+        Assert.Equal(profiles, result);
     }
 }

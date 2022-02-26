@@ -1,13 +1,13 @@
 ﻿using System;
 using Bhasha.Web.Domain;
 using Bhasha.Web.Services;
-using NUnit.Framework;
+using Xunit;
 
 namespace Bhasha.Web.Tests.Services;
 
 public class ProfileFactoryTests
 {
-    [Test]
+    [Fact]
     public void GivenAProfileFactory_WhenCreate_ThenReturnNewProfile()
     {
         // prepare
@@ -17,15 +17,15 @@ public class ProfileFactoryTests
         var profile = factory.Create();
 
         // verify
-        Assert.That(profile.Id, Is.EqualTo(Guid.Empty));
-        Assert.That(profile.UserId, Is.EqualTo(string.Empty));
-        Assert.That(profile.Native, Is.EqualTo(Language.Unknown.ToString()));
-        Assert.That(profile.Target, Is.EqualTo(Language.Unknown.ToString()));
-        Assert.That(profile.Progress.Level, Is.EqualTo(1));
-        Assert.That(profile.Progress.ChapterId, Is.EqualTo(Guid.Empty));
-        Assert.That(profile.Progress.CompletedChapters, Is.EqualTo(Array.Empty<Guid>()));
-        Assert.That(profile.Progress.PageIndex, Is.EqualTo(0));
-        Assert.That(profile.Progress.CompletedPages, Is.EqualTo(Array.Empty<int>()));
+        Assert.Equal(profile.Id, Guid.Empty);
+        Assert.Equal(profile.UserId, string.Empty);
+        Assert.Equal(profile.Native, Language.Unknown.ToString());
+        Assert.Equal(profile.Target, Language.Unknown.ToString());
+        Assert.Equal(1, profile.Progress.Level);
+        Assert.Equal(profile.Progress.ChapterId, Guid.Empty);
+        Assert.Equal(profile.Progress.CompletedChapters, Array.Empty<Guid>());
+        Assert.Equal(0, profile.Progress.PageIndex);
+        Assert.Equal(profile.Progress.CompletedPages, Array.Empty<int>());
     }
 }
 

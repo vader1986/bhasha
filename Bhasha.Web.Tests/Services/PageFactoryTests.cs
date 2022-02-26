@@ -1,38 +1,37 @@
 ﻿using System.Threading.Tasks;
-using AutoFixture.NUnit3;
+using AutoFixture.Xunit2;
 using Bhasha.Web.Domain;
 using Bhasha.Web.Domain.Pages;
 using Bhasha.Web.Interfaces;
 using Bhasha.Web.Services;
-using FakeItEasy;
-using NUnit.Framework;
+using NSubstitute;
+using Xunit;
 
 namespace Bhasha.Web.Tests.Services
 {
 	public class PageFactoryTests
 	{
-		private PageFactory _pageFactory = default!;
-		private IAsyncFactory<Page, Profile, DisplayedPage<MultipleChoice>> _multipleChoicePageFactory = default!;
+		private readonly PageFactory _pageFactory;
+		private readonly IAsyncFactory<Page, Profile, DisplayedPage<MultipleChoice>> _multipleChoicePageFactory;
 
-		[SetUp]
-		public void Before()
+		public PageFactoryTests()
 		{
-			_multipleChoicePageFactory = A.Fake<IAsyncFactory<Page, Profile, DisplayedPage<MultipleChoice>>>();
+			_multipleChoicePageFactory = Substitute.For<IAsyncFactory<Page, Profile, DisplayedPage<MultipleChoice>>>();
 			_pageFactory = new PageFactory(_multipleChoicePageFactory);
 		}
 
-		[Test, AutoData]
+		[Theory, AutoData]
 		public async Task GivenPageAndProfile_WhenCreateMultipleChoicePage_ThenReturnFactoryProduct(Page page, Profile profile, DisplayedPage<MultipleChoice> displayedPage)
 		{
 			// prepare
 			page = page with { PageType = PageType.MultipleChoice };
-			A.CallTo(() => _multipleChoicePageFactory.CreateAsync(page, profile)).Returns(displayedPage);
+			_multipleChoicePageFactory.CreateAsync(page, profile).Returns(displayedPage);
 
 			// act
 			var result = await _pageFactory.CreateAsync(page, profile);
 
 			// verify
-			Assert.AreEqual(displayedPage, result);
+			Assert.Equal(displayedPage, result);
 		}
 	}
 }

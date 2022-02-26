@@ -1,24 +1,24 @@
 ﻿using System;
 using Bhasha.Web.Services;
-using NUnit.Framework;
+using Xunit;
 
 namespace Bhasha.Web.Tests.Services
 {
 	public class ExpressionFactoryTests
 	{
-		[Test]
+		[Fact]
 		public void CreateNewExpression()
 		{
 			var factory = new ExpressionFactory();
 			var expression = factory.Create();
 
-			Assert.That(expression.Id, Is.EqualTo(Guid.Empty));
-			Assert.That(expression.Labels, Is.EqualTo(Array.Empty<string>()));
-			Assert.That(expression.Level, Is.EqualTo(0));
-			Assert.That(expression.ResourceId, Is.EqualTo(null));
-			Assert.That(expression.Cefr, Is.EqualTo(null));
-			Assert.That(expression.ExpressionType, Is.EqualTo(null));
-			Assert.That(expression.PartOfSpeech, Is.EqualTo(null));
+			Assert.Equal(expression.Id, Guid.Empty);
+			Assert.Equal(expression.Labels, Array.Empty<string>());
+			Assert.Equal(0, expression.Level);
+			Assert.Null(expression.ResourceId);
+			Assert.Null(expression.Cefr);
+			Assert.Null(expression.ExpressionType);
+			Assert.Null(expression.PartOfSpeech);
 		}
 	}
 }

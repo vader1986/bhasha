@@ -19,10 +19,4 @@
     <PackageReference Include="MudBlazor" Version="6.0.5" />
     <PackageReference Include="Mongo.Migration" Version="3.1.4" />
   </ItemGroup>
-  <ItemGroup>
-    <None Remove="Services\Pages\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Services\Pages\" />
-  </ItemGroup>
 </Project>

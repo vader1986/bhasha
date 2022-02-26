@@ -1,34 +1,33 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoFixture.NUnit3;
+using AutoFixture.Xunit2;
 using Bhasha.Web.Mongo;
 using Mongo2Go;
 using MongoDB.Driver;
-using NUnit.Framework;
+using Xunit;
 
 namespace Bhasha.Web.Tests.Mongo;
 
-public class MongoRepositoryTests
+public class MongoRepositoryTests : IDisposable
 {
     private const string DbName = "TestDB";
-    private MongoDbRunner _runner = default!;
-    private MongoRepository<Item> _repository = default!;
-    private MongoClient _client = default!;
+    private readonly MongoDbRunner _runner;
+    private readonly MongoRepository<Item> _repository;
+    private readonly MongoClient _client;
 
-    [SetUp]
-    public void Before()
+    public MongoRepositoryTests()
     {
         _runner = MongoDbRunner.Start();
-        _client = new MongoClient(_runner.ConnectionString);
+        _client = new(_runner.ConnectionString);
         _repository = new MongoRepository<Item>(_client, new MongoSettings {
             DatabaseName = DbName
         });
     }
 
-    [TearDown]
-    public void After()
+    public void Dispose()
     {
+        GC.SuppressFinalize(this);
         _runner.Dispose();
     }
 
@@ -39,7 +38,7 @@ public class MongoRepositoryTests
             .GetCollection<Item>("Item");
     }
 
-    [Test]
+    [Fact]
     public async Task GivenAnItem_WhenAdded_ThenReturnItemWithNewId()
     {
         // prepare
@@ -49,11 +48,11 @@ public class MongoRepositoryTests
         var result = await _repository.Add(item);
 
         // verify
-        Assert.That(result.Id, Is.Not.EqualTo(Guid.Empty));
-        Assert.That(result.Name, Is.EqualTo("car"));
+        Assert.NotEqual(Guid.Empty, result.Id);
+        Assert.Equal("car", result.Name);
     }
 
-    [Test]
+    [Fact]
     public async Task GivenAnItem_WhenAdded_ThenItemAddedToMongoDb()
     {
         // prepare
@@ -67,10 +66,10 @@ public class MongoRepositoryTests
         var itemFound = await itemsFound.FirstOrDefaultAsync();
 
         Assert.NotNull(itemFound);
-        Assert.AreEqual(itemFound.Name, "car");
+        Assert.Equal("car", itemFound.Name);
     }
 
-    [Test]
+    [Fact]
     public async Task GivenItem_WhenGet_ThenReturnItem()
     {
         // prepare
@@ -81,20 +80,20 @@ public class MongoRepositoryTests
         var result = await _repository.Get(item.Id);
 
         // verify
-        Assert.AreEqual(item, result);
+        Assert.Equal(item, result);
     }
 
-    [Test]
+    [Fact]
     public async Task GivenNoItem_WhenGet_ThenReturnNull()
     {
         // act
         var result = await _repository.Get(Guid.NewGuid());
 
         // verify
-        Assert.IsNull(result);
+        Assert.Null(result);
     }
 
-    [Test, AutoData]
+    [Theory, AutoData]
     public async Task GivenItems_WhenGetMany_ThenReturnItems(Item[] items)
     {
         // prepare
@@ -104,10 +103,10 @@ public class MongoRepositoryTests
         var result = await _repository.GetMany(items.Select(x => x.Id).ToArray());
 
         // assert
-        Assert.That(result, Is.EquivalentTo(items));
+        Assert.Equal(items, result);
     }
 
-    [Test]
+    [Fact]
     public async Task GivenMatchingItemInDB_WhenFindCalled_ThenItemReturned()
     {
         // prepare
@@ -118,10 +117,10 @@ public class MongoRepositoryTests
         var result = await _repository.Find(x => x.Name == "car");
 
         // verify
-        Assert.AreEqual(result, new[] { item });
+        Assert.Equal(result, new[] { item });
     }
 
-    [Test]
+    [Fact]
     public async Task GivenNoMatchingItemInDB_WhenFindCalled_ThenReturnEmptyArray()
     {
         // prepare
@@ -132,10 +131,10 @@ public class MongoRepositoryTests
         var result = await _repository.Find(x => x.Name == "airplane");
 
         // verify
-        Assert.IsEmpty(result);
+        Assert.Empty(result);
     }
 
-    [Test]
+    [Fact]
     public async Task GivenItemInDB_WhenRemoved_ThenReturnTrue()
     {
         // prepare
@@ -146,20 +145,20 @@ public class MongoRepositoryTests
         var itemHasBeenRemoved = await _repository.Remove(item.Id);
 
         // verify
-        Assert.That(itemHasBeenRemoved);
+        Assert.True(itemHasBeenRemoved);
     }
 
-    [Test]
+    [Fact]
     public async Task GivenNoItemInDB_WhenRemoved_ThenReturnFalse()
     {
         // act
         var itemHasBeenRemoved = await _repository.Remove(Guid.NewGuid());
 
         // verify
-        Assert.That(itemHasBeenRemoved, Is.False);
+        Assert.False(itemHasBeenRemoved);
     }
 
-    [Test]
+    [Fact]
     public async Task GivenItemInDB_WhenRemoved_ThenItemHasBeenDeletedFromDB()
     {
         // prepare
@@ -172,10 +171,10 @@ public class MongoRepositoryTests
 
         // verify
         var result = await collection.FindAsync(x => x.Id == item.Id);
-        Assert.That(await result.AnyAsync(), Is.False);
+        Assert.False(await result.AnyAsync());
     }
 
-    [Test]
+    [Fact]
     public async Task GivenNonMatchingItemInDB_WhenRemoveCalled_ThenItemIsNotDeletedFromDB()
     {
         // prepare
@@ -187,12 +186,12 @@ public class MongoRepositoryTests
         var hasBeenRemoved = await _repository.Remove(Guid.NewGuid());
 
         // verify
-        Assert.That(hasBeenRemoved, Is.False);
+        Assert.False(hasBeenRemoved);
         var result = await collection.FindAsync(x => x.Id == item.Id);
-        Assert.That(await result.AnyAsync(), Is.True);
+        Assert.True(await result.AnyAsync());
     }
 
-    [Test, AutoData]
+    [Theory, AutoData]
     public async Task GivenItemInDB_WhenUpdated_ThenReturnTrue(Item item)
     {
         // prepare
@@ -203,10 +202,10 @@ public class MongoRepositoryTests
         var hasBeenUpdated = await _repository.Update(item.Id, item with { Name = "truck" });
 
         // verify
-        Assert.That(hasBeenUpdated);
+        Assert.True(hasBeenUpdated);
     }
 
-    [Test, AutoData]
+    [Theory, AutoData]
     public async Task GivenItemInDB_WhenUpdated_ThenItemUpdatedInDB(Item item)
     {
         // prepare
@@ -220,10 +219,10 @@ public class MongoRepositoryTests
         var result = await collection.FindAsync(x => x.Id == item.Id);
         var updatedItem = await result.SingleAsync();
 
-        Assert.That(updatedItem.Name, Is.EqualTo("truck"));
+        Assert.Equal("truck", updatedItem.Name);
     }
 
-    [Test]
+    [Fact]
     public async Task GivenNoItemInDB_WhenUpdateCalled_ThenReturnFalse()
     {
         // prepare
@@ -233,10 +232,10 @@ public class MongoRepositoryTests
         var hasBeenUpdated = await _repository.Update(item.Id, item with { Name = "truck" });
 
         // verify
-        Assert.That(hasBeenUpdated, Is.False);
+        Assert.False(hasBeenUpdated);
     }
 
-    [Test, AutoData]
+    [Theory, AutoData]
     public async Task GivenItemsInDB_WhenFind5Samples_ThenReturn5Samples(Item[] items)
     {
         // prepare
@@ -246,7 +245,7 @@ public class MongoRepositoryTests
         var results = await _repository.Find(_ => true, items.Length - 1);
 
         // verify
-        Assert.AreEqual(items.Length - 1, results.Length);
+        Assert.Equal(items.Length - 1, results.Length);
     }
 }
 

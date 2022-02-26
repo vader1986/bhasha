@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Threading.Tasks;
-using AutoFixture.NUnit3;
+using AutoFixture.Xunit2;
 using Bhasha.Web.Domain;
 using Bhasha.Web.Interfaces;
 using Bhasha.Web.Pages.Author;
-using FakeItEasy;
-using NUnit.Framework;
+using NSubstitute;
+using Xunit;
 
 namespace Bhasha.Web.Tests.Pages.Author
 {
 	public class AddChapterStateTests
 	{
-		private AddChapterState _state = default!;
+		private readonly AddChapterState _state;
 
 		/*
 		 * ToDo:
@@ -20,49 +20,56 @@ namespace Bhasha.Web.Tests.Pages.Author
 		 * - handling of references
 		 */
 
-		[SetUp]
-		public void Before()
+		public AddChapterStateTests()
 		{
-			_state = new AddChapterState();
-			_state.ChapterRepository = A.Fake<IRepository<Chapter>>();
-			_state.TranslationManager = A.Fake<ITranslationManager>();
-			_state.UserId = "Test User 123";
-			_state.Name = "Introduction";
-			_state.Description = "First steps ...";
-			_state.NativeLanguage = Language.English;
-			_state.TargetLanguage = Language.Bengali;
-			_state.RequiredLevel = 1;
-			_state.Pages.Add(new Page(PageType.ClozeChoice, Guid.NewGuid(), Array.Empty<string>()));
+            _state = new AddChapterState
+            {
+                ChapterRepository = Substitute.For<IRepository<Chapter>>(),
+                TranslationManager = Substitute.For<ITranslationManager>(),
+                UserId = "Test User 123",
+                Name = "Introduction",
+                Description = "First steps ...",
+                NativeLanguage = Language.English,
+                TargetLanguage = Language.Bengali,
+                RequiredLevel = 1
+            };
+            _state.Pages.Add(new Page(PageType.ClozeChoice, Guid.NewGuid(), Array.Empty<string>()));
 			_state.Pages.Add(new Page(PageType.ClozeChoice, Guid.NewGuid(), Array.Empty<string>()));
 			_state.Pages.Add(new Page(PageType.ClozeChoice, Guid.NewGuid(), Array.Empty<string>()));
 		}
 
-		[Test, AutoData]
-		public async Task GivenAddPageState_WhenSubmitPageState_ThenAddPage(AddPageState pageState)
+		[Theory, AutoData]
+		public async Task GivenAddPageState_WhenSubmitPageState_ThenAddPage(AddPageState pageState, Translation translation)
 		{
 			// setup
+			_state.TranslationManager.AddOrUpdate(default!, default).ReturnsForAnyArgs(translation);
 			_state.Pages.Clear();
 
 			// act
 			await _state.SubmitPageState(pageState);
 
 			// verify
-			Assert.That(_state.Pages.Count, Is.EqualTo(1));
+			Assert.Single(_state.Pages);
 		}
 
-		[Test]
-		public async Task GivenAllData_WhenSubmit_ThenNoErrorAndAddChapter()
+		[Theory, AutoData]
+		public async Task GivenAllData_WhenSubmit_ThenNoErrorAndAddChapter(Translation translation)
 		{
+			// setup
+			_state.TranslationManager.AddOrUpdate(default!, default).ReturnsForAnyArgs(translation);
+
 			// act
 			await _state.Submit();
 
 			// verify
-			Assert.IsNull(_state.Error);
-			A.CallTo(() => _state.ChapterRepository.Add(A<Chapter>.Ignored))
-				.MustHaveHappenedOnceExactly();
+			Assert.Null(_state.Error);
+
+			await _state.ChapterRepository
+				.Received(1)
+				.Add(Arg.Any<Chapter>());
 		}
 
-		[Test]
+		[Fact]
 		public async Task GivenMissingUserId_WhenSubmit_ThenSetError()
         {
 			// setup
@@ -72,10 +79,10 @@ namespace Bhasha.Web.Tests.Pages.Author
 			await _state.Submit();
 
 			// verify
-			Assert.AreEqual("Unknown user! Make sure you're logged in!", _state.Error);
+			Assert.Equal("Unknown user! Make sure you're logged in!", _state.Error);
         }
 
-		[Test]
+		[Fact]
 		public async Task GivenMissingName_WhenSubmit_ThenSetError()
 		{
 			// setup
@@ -85,10 +92,10 @@ namespace Bhasha.Web.Tests.Pages.Author
 			await _state.Submit();
 
 			// verify
-			Assert.AreEqual("NAME must not be empty!", _state.Error);
+			Assert.Equal("NAME must not be empty!", _state.Error);
 		}
 
-		[Test]
+		[Fact]
 		public async Task GivenMissingDescription_WhenSubmit_ThenSetError()
 		{
 			// setup
@@ -98,10 +105,10 @@ namespace Bhasha.Web.Tests.Pages.Author
 			await _state.Submit();
 
 			// verify
-			Assert.AreEqual("DESCRIPTION must not be empty!", _state.Error);
+			Assert.Equal("DESCRIPTION must not be empty!", _state.Error);
 		}
 
-		[Test]
+		[Fact]
 		public async Task GivenMissingRequiredLevel_WhenSubmit_ThenSetError()
 		{
 			// setup
@@ -111,10 +118,10 @@ namespace Bhasha.Web.Tests.Pages.Author
 			await _state.Submit();
 
 			// verify
-			Assert.AreEqual("Please select a REQUIRED LEVEL!", _state.Error);
+			Assert.Equal("Please select a REQUIRED LEVEL!", _state.Error);
 		}
 
-		[Test]
+		[Fact]
 		public async Task GivenMissingNativeLanguage_WhenSubmit_ThenSetError()
 		{
 			// setup
@@ -124,10 +131,10 @@ namespace Bhasha.Web.Tests.Pages.Author
 			await _state.Submit();
 
 			// verify
-			Assert.AreEqual("Please select a NATIVE LANGUAGE!", _state.Error);
+			Assert.Equal("Please select a NATIVE LANGUAGE!", _state.Error);
 		}
 
-		[Test]
+		[Fact]
 		public async Task GivenMissingTargetLanguage_WhenSubmit_ThenSetError()
 		{
 			// setup
@@ -137,10 +144,10 @@ namespace Bhasha.Web.Tests.Pages.Author
 			await _state.Submit();
 
 			// verify
-			Assert.AreEqual("Please select a TARGET LANGUAGE!", _state.Error);
+			Assert.Equal("Please select a TARGET LANGUAGE!", _state.Error);
 		}
 
-		[Test]
+		[Fact]
 		public async Task GivenTargetLanguageEqualToNativeLanguage_WhenSubmit_ThenSetError()
 		{
 			// setup
@@ -150,10 +157,10 @@ namespace Bhasha.Web.Tests.Pages.Author
 			await _state.Submit();
 
 			// verify
-			Assert.AreEqual("TARGET language must be different from NATIVE language!", _state.Error);
+			Assert.Equal("TARGET language must be different from NATIVE language!", _state.Error);
 		}
 
-		[Test]
+		[Fact]
 		public async Task GivenMissingPages_WhenSubmit_ThenSetError()
 		{
 			// setup
@@ -163,7 +170,7 @@ namespace Bhasha.Web.Tests.Pages.Author
 			await _state.Submit();
 
 			// verify
-			Assert.AreEqual("A chapter requires at least 3 chapters!", _state.Error);
+			Assert.Equal("A chapter requires at least 3 chapters!", _state.Error);
 		}
 	}
 }

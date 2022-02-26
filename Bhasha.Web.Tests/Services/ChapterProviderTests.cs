@@ -1,45 +1,42 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
-using AutoFixture.NUnit3;
+using AutoFixture.Xunit2;
 using Bhasha.Web.Domain;
 using Bhasha.Web.Interfaces;
 using Bhasha.Web.Services;
-using FakeItEasy;
-using NUnit.Framework;
+using NSubstitute;
+using Xunit;
 
 namespace Bhasha.Web.Tests.Services
 {
 	public class ChapterProviderTests
 	{
-		private IRepository<Chapter> _chapterRepository = default!;
-		private IRepository<Profile> _profileRepository = default!;
-		private ITranslationProvider _translationProvider = default!;
-		private ChapterProvider _chapterProvider = default!;
+		private readonly IRepository<Chapter> _chapterRepository;
+		private readonly IRepository<Profile> _profileRepository;
+		private readonly ITranslationProvider _translationProvider;
+		private readonly ChapterProvider _chapterProvider;
 
-		[SetUp]
-		public void Before()
+		public ChapterProviderTests()
         {
-			_chapterRepository = A.Fake<IRepository<Chapter>>();
-			_profileRepository = A.Fake<IRepository<Profile>>();
-			_translationProvider = A.Fake<ITranslationProvider>();
+			_chapterRepository = Substitute.For<IRepository<Chapter>>();
+			_profileRepository = Substitute.For<IRepository<Profile>>();
+			_translationProvider = Substitute.For<ITranslationProvider>();
 			_chapterProvider = new ChapterProvider(_chapterRepository, _profileRepository, _translationProvider);
 		}
 
-		[Test]
+		[Fact]
 		public void GivenNoProfile_WhenGetChapters_ThenThrowException()
 		{
 			// setup
-			A.CallTo(() => _profileRepository.Get(A<Guid>.Ignored)).Returns(default(Profile));
+			_profileRepository.Get(default).ReturnsForAnyArgs(default(Profile));
 
 			// act & verify
 			Assert.ThrowsAsync<InvalidOperationException>(async () =>
 				await _chapterProvider.GetChapters(Guid.Empty));
 		}
 
-		[Test, AutoData]
+		[Theory, AutoData]
 		public async Task GivenProfileAndChapter_WhenGetChapters_ThenReturnChapterDescriptions(Profile profile, Chapter[] chapters, Translation translation)
         {
 			// setup
@@ -48,19 +45,15 @@ namespace Bhasha.Web.Tests.Services
 				.Select(x => x.NameId).Concat(chapters.Select(x => x.DescriptionId))
 				.ToDictionary(x => x, _ => translation);
 
-			A.CallTo(() => _profileRepository.Get(profile.Id)).Returns(profile);
-
-			A.CallTo(() => _chapterRepository.Find(A<Expression<Func<Chapter, bool>>>.Ignored))
-				.Returns(Task.FromResult(chapters));
-
-			A.CallTo(() => _translationProvider.FindAll(profile.Native, A<Guid[]>.Ignored))
-				.Returns(Task.FromResult<IDictionary<Guid, Translation>>(translations));
+			_profileRepository.Get(profile.Id).Returns(profile);
+			_chapterRepository.Find(default!).ReturnsForAnyArgs(chapters);
+			_translationProvider.FindAll(default!, default!).ReturnsForAnyArgs(translations);
 
 			// act
 			var result = await _chapterProvider.GetChapters(profile.Id);
 
 			// verify
-			Assert.That(result.Length, Is.EqualTo(chapters.Length));
+			Assert.Equal(chapters.Length, result.Length);
 		}
 	}
 }

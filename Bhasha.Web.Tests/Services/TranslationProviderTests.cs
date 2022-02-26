@@ -1,61 +1,57 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoFixture.NUnit3;
+using AutoFixture.Xunit2;
 using Bhasha.Web.Domain;
 using Bhasha.Web.Interfaces;
 using Bhasha.Web.Services;
-using FakeItEasy;
-using NUnit.Framework;
+using NSubstitute;
+using Xunit;
 
 namespace Bhasha.Web.Tests.Services
 {
 	public class TranslationProviderTests
 	{
-		private IRepository<Translation> _repository = default!;
-		private TranslationProvider _translationProvider = default!;
+		private readonly IRepository<Translation> _repository;
+		private readonly TranslationProvider _translationProvider;
 
-		[SetUp]
-		public void Before()
+		public TranslationProviderTests()
         {
-			_repository = A.Fake<IRepository<Translation>>();
+			_repository = Substitute.For<IRepository<Translation>>();
 			_translationProvider = new TranslationProvider(_repository);
 		}
 
-		[Test]
+		[Fact]
 		public async Task GivenNoMatchingTranslation_WhenFind_ThenReturnNull()
         {
 			// setup
-			A.CallTo(() => _repository.Find(A<System.Linq.Expressions.Expression<Func<Translation, bool>>>.Ignored))
-				.Returns(Array.Empty<Translation>());
+			_repository.Find(default!).ReturnsForAnyArgs(Array.Empty<Translation>());
 
 			// act
 			var result = await _translationProvider.Find(Guid.NewGuid(), Language.Bengali);
 
 			// verify
-			Assert.IsNull(result);
+			Assert.Null(result);
         }
 
-		[Test, AutoData]
+		[Theory, AutoData]
 		public async Task GivenTranslation_WhenFind_ThenReturnTranslation(Translation translation)
         {
 			// setup
-			A.CallTo(() => _repository.Find(A<System.Linq.Expressions.Expression<Func<Translation, bool>>>.Ignored))
-                .Returns(new[] { translation });
+			_repository.Find(default!).ReturnsForAnyArgs(new[] { translation });
 
 			// act
 			var result = await _translationProvider.Find(Guid.NewGuid(), Language.Bengali);
 
 			// verify
-			Assert.AreEqual(translation, result);
+			Assert.Equal(translation, result);
 		}
 
-		[Test, AutoData]
+		[Theory, AutoData]
 		public void GivenSomeExpressions_WhenFindAll_ThenThrowException(Translation[] translations)
 		{
 			// setup
-			A.CallTo(() => _repository.Find(A<System.Linq.Expressions.Expression<Func<Translation, bool>>>.Ignored))
-				.Returns(translations);
+			_repository.Find(default!).ReturnsForAnyArgs(translations);
 
 			var guids = Enumerable.Range(0, translations.Length - 1).Select(_ => Guid.NewGuid()).ToArray();
 
@@ -64,20 +60,18 @@ namespace Bhasha.Web.Tests.Services
 				await _translationProvider.FindAll(Language.Bengali, guids));
 		}
 
-		[Test, AutoData]
+		[Theory, AutoData]
 		public async Task GivenAllExpressionsWithTranslations_WhenFindAll_ThenReturnTranslations(Translation[] translations)
 		{
 			// setup
-			A.CallTo(() => _repository.Find(A<System.Linq.Expressions.Expression<Func<Translation, bool>>>.Ignored))
-				.Returns(translations);
-
+			_repository.Find(default!).ReturnsForAnyArgs(translations);
 			var guids = Enumerable.Range(0, translations.Length).Select(_ => Guid.NewGuid()).ToArray();
 
 			// act
 			var result = await _translationProvider.FindAll(Language.Bengali, guids);
 
 			// verify
-			Assert.That(result.Count, Is.EqualTo(guids.Length));
+			Assert.Equal(result.Count, guids.Length);
 		}
 	}
 }
