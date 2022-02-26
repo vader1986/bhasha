@@ -7,15 +7,8 @@ There's no reason for this project to limit itself for a specific language, it's
 ## Project Structure
 
 The VS solution contains multiple folders:
-* `Bhasha.Common` - general collection of model classes used across the entire project
-* `Bhasha.Common.MongoDb` - MongoDB layer to access, add, update and delete user and language data
-* `Bhasha.Student.Api` - Web API for language students to access language data (including user stats)
-* `Bhasha.Student.Web` - [Blazor UI](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor) for language students
-* `Bhasha.Author.Api` - Web API for content authors to add translations, chapters, etc.
-* `Bhasha.Author.Web` - [Blazor UI](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor) for content authors
-* `Bhasha.Identity` - [Identity Server](https://github.com/souzartn/IdentityServer4.Samples.Mongo) for user management and authentication
-
-There's also a _react-app_ named `Bhasha.Web.Client`. 
+* `Bhasha.Web` - back- and front-end service based on Blazor Server
+* `Bhasha.Web.Tests` - unit tests for front- and back-end components
 
 ## Build & Deployment
 
@@ -58,13 +51,6 @@ Now you can deploy all services to your local kubernetes cluster:
 ```bash
 kubectl apply -f deploy/development -R
 ```
-
-Following URLs are exposed:
-* https://localhost:5010/swagger (Bhasha Author API)
-* http://localhost:5004/index.html (Bhasha Author Website)
-* https://localhost:5020/swagger (Bhasha Student API)
-* http://localhost:5005/index.html (Bhasha Student Website)
-* https://localhost:5030/account/login (User Management)
 
 ### Deployment for Production
 

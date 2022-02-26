@@ -3,17 +3,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture.NUnit3;
 using Bhasha.Web.Mongo;
-using Bhasha.Web.Services;
 using Mongo2Go;
 using MongoDB.Driver;
 using NUnit.Framework;
 
 namespace Bhasha.Web.Tests.Mongo;
-
-/*
- * ToDo:
- * - add missing unit tests for new Find function
- */
 
 public class MongoRepositoryTests
 {
@@ -240,6 +234,19 @@ public class MongoRepositoryTests
 
         // verify
         Assert.That(hasBeenUpdated, Is.False);
+    }
+
+    [Test, AutoData]
+    public async Task GivenItemsInDB_WhenFind5Samples_ThenReturn5Samples(Item[] items)
+    {
+        // prepare
+        await GetCollection().InsertManyAsync(items);
+
+        // act
+        var results = await _repository.Find(_ => true, items.Length - 1);
+
+        // verify
+        Assert.AreEqual(items.Length - 1, results.Length);
     }
 }
 
