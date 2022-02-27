@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using AutoFixture.Xunit2;
 using Bhasha.Web.Domain;
 using Bhasha.Web.Interfaces;
@@ -31,13 +32,48 @@ namespace Bhasha.Web.Tests.Services
 
 			// act & verify
 			Assert.ThrowsAsync<ArgumentException>(async () =>
-				await _translationManager.AddOrUpdate(translation, default));
+				await _translationManager.AddOrUpdate(translationNoRef, default));
         }
 
-		/*
-		 * ToDo:
-		 * - unit tests for AddOrUpdate method
-		 */
+		[Theory, AutoData]
+		public async Task GivenOnlyReferenceTranslation_WhenAddOrUpdate_ThenAddTranslation(Translation translation, Expression expression)
+		{
+			// setup
+			var translationRef = translation with { Language = Language.Reference };
+
+			_translations.Find(default!).ReturnsForAnyArgs(Array.Empty<Translation>());
+			_translations.Add(translationRef).Returns(translationRef);
+
+			_expressionFactory.Create().Returns(expression);
+			_expressions.Add(expression).Returns(expression);
+
+			// act
+			await _translationManager.AddOrUpdate(translationRef, default);
+
+			// verify
+			await _translations.Received(1).Add(translationRef with { ExpressionId = expression.Id });
+		}
+
+		[Theory, AutoData]
+		public async Task GivenTranslationAndReference_WhenAddOrUpdate_ThenAddTranslation(Translation translation, Expression expression)
+		{
+			// setup
+			var translationRef = translation with { Language = Language.Reference };
+			var translationNoRef = translation with { Language = Language.Bengali };
+
+			_translations.Find(default!).ReturnsForAnyArgs(Array.Empty<Translation>());
+			_translations.Add(translationRef with { ExpressionId = expression.Id }).Returns(translationRef);
+			_translations.Add(translationNoRef).Returns(translationNoRef);
+
+			_expressionFactory.Create().Returns(expression);
+			_expressions.Add(expression).Returns(expression);
+
+			// act
+			await _translationManager.AddOrUpdate(translationNoRef, translationRef);
+
+			// verify
+			await _translations.Received(1).Add(translationNoRef with { ExpressionId = translationRef.ExpressionId });
+		}
 	}
 }
 
