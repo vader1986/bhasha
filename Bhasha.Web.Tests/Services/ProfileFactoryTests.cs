@@ -25,7 +25,7 @@ public class ProfileFactoryTests
         Assert.Equal(profile.Progress.ChapterId, Guid.Empty);
         Assert.Equal(profile.Progress.CompletedChapters, Array.Empty<Guid>());
         Assert.Equal(0, profile.Progress.PageIndex);
-        Assert.Equal(profile.Progress.CompletedPages, Array.Empty<int>());
+        Assert.Equal(profile.Progress.Pages, Array.Empty<ValidationResultType>());
     }
 }
 

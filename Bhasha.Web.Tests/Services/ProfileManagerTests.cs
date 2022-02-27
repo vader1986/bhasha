@@ -21,7 +21,7 @@ public class ProfileManagerTests
         _factory = Substitute.For<IFactory<Profile>>();
         _profileManager = new ProfileManager(_repository, _factory);
 
-        var progress = new Progress(1, Guid.Empty, Array.Empty<Guid>(), 0, Array.Empty<int>());
+        var progress = new Progress(1, Guid.Empty, Array.Empty<Guid>(), 0, Array.Empty<ValidationResultType>());
         var profile = new Profile(Guid.NewGuid(), "user-123", Language.English, Language.Bengali, progress);
 
         _factory.Create().Returns(profile);

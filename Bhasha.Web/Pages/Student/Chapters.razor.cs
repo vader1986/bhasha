@@ -6,7 +6,7 @@ namespace Bhasha.Web.Pages.Student
 {
 	public partial class Chapters : UserPage
 	{
-		[Inject] public IProfileManager ProfileManager { get; set; } = default!;
+        [Inject] public IProgressManager ProgressManager { get; set; } = default!;
 		[Inject] public IChapterProvider ChapterProvider { get; set; } = default!;
 		[Inject] public NavigationManager NavigationManager { get; set; } = default!;
 
@@ -18,12 +18,12 @@ namespace Bhasha.Web.Pages.Student
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
-
             _chapters = await ChapterProvider.GetChapters(ProfileId);
         }
 
-        internal void OnSelectChapter(ChapterDescription chapter)
+        internal async Task OnSelectChapter(ChapterDescription chapter)
         {
+            await ProgressManager.StartChapter(ProfileId, chapter.ChapterId);
             NavigationManager.NavigateTo($"chapter/{chapter.ChapterId}");
         }
     }

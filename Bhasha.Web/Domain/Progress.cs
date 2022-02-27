@@ -5,5 +5,5 @@
 		Guid ChapterId,
 		Guid[] CompletedChapters,
 		int PageIndex,
-		int[] CompletedPages);
+		ValidationResultType[] Pages);
 }
