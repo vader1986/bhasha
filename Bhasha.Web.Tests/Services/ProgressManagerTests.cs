@@ -12,11 +12,6 @@ namespace Bhasha.Web.Tests.Services
 {
 	public class ProgressManagerTests
 	{
-		/*
-		 * TODO
-		 * - cover Update method with tests
-		 */
-
 		private readonly ProgressManager _progressManager;
 		private readonly IRepository<Chapter> _chapters;
 		private readonly IRepository<Profile> _profiles;
@@ -84,7 +79,122 @@ namespace Bhasha.Web.Tests.Services
 			Assert.True(updatedProfile.Progress.Pages.All(x => x == ValidationResultType.Wrong));
 		}
 
+		[Theory, AutoData]
+		public void GivenMissingChapter_WhenProfileUpdated_ThenThrowException(Profile profile, ValidationResult result)
+		{
+			// setup
+			_chapters.Get(profile.Progress.ChapterId).Returns(default(Chapter));
 
+			// act & verify
+			Assert.ThrowsAsync<ArgumentOutOfRangeException>(
+				async () => await _progressManager.Update(profile, result));
+		}
+
+		[Theory, AutoData]
+		public void GivenProfile_WhenUpdateFails_ThenThrowException(
+			Profile profile, ValidationResult result, Chapter chapter)
+		{
+			// setup
+			_chapters.Get(profile.Progress.ChapterId).Returns(chapter);
+			_profiles.Update(default, default!).ReturnsForAnyArgs(false);
+
+			// act & verify
+			Assert.ThrowsAsync<InvalidOperationException>(
+				async () => await _progressManager.Update(profile, result));
+		}
+
+		[Theory, AutoData]
+		public async Task GivenCorrectResultForProfile_WhenUpdated_ThenUpdateProfile(
+			Profile profile, ValidationResult result, Chapter chapter)
+        {
+			// setup
+			result = result with { Result = ValidationResultType.Correct };
+			profile = profile with { Progress = profile.Progress with
+			{
+				ChapterId = chapter.Id,
+				CompletedChapters = Array.Empty<Guid>(),
+				Level = 1,
+				PageIndex = 0,
+				Pages = chapter.Pages.Select(_ => ValidationResultType.Wrong).ToArray()
+			}};
+
+			_chapters.Get(profile.Progress.ChapterId).Returns(chapter);
+			_profiles.Update(default, default!).ReturnsForAnyArgs(true);
+
+			// act
+			await _progressManager.Update(profile, result);
+
+			// verify
+			await _profiles
+				.Received(1)
+				.Update(profile.Id, Arg.Is<Profile>(
+					x => x.Progress.PageIndex == 1 &&
+						 x.Progress.Pages[0] == ValidationResultType.Correct));
+		}
+
+		[Theory, AutoData]
+		public async Task GivenFinishedChapterForProfile_WhenUpdated_ThenUpdateProfile(
+			Profile profile, ValidationResult result, Chapter chapter)
+		{
+			// setup
+			result = result with { Result = ValidationResultType.Correct };
+			profile = profile with
+			{
+				Progress = profile.Progress with
+				{
+					ChapterId = chapter.Id,
+					CompletedChapters = Array.Empty<Guid>(),
+					Level = 1,
+					PageIndex = chapter.Pages.Length - 1,
+					Pages = chapter.Pages.Select(_ => ValidationResultType.Correct).ToArray()
+				}
+			};
+
+			_chapters.Get(profile.Progress.ChapterId).Returns(chapter);
+			_profiles.Update(default, default!).ReturnsForAnyArgs(true);
+
+			// act
+			await _progressManager.Update(profile, result);
+
+			// verify
+			await _profiles
+				.Received(1)
+				.Update(profile.Id, Arg.Is<Profile>(
+					x => x.Progress.ChapterId == Guid.Empty &&
+						 x.Progress.CompletedChapters.Contains(chapter.Id)));
+		}
+
+		[Theory, AutoData]
+		public async Task GivenWrongResultForProfile_WhenUpdated_ThenUpdateProfile(
+			Profile profile, ValidationResult result, Chapter chapter)
+		{
+			// setup
+			result = result with { Result = ValidationResultType.Wrong };
+			profile = profile with
+			{
+				Progress = profile.Progress with
+				{
+					ChapterId = chapter.Id,
+					CompletedChapters = Array.Empty<Guid>(),
+					Level = 1,
+					PageIndex = 0,
+					Pages = chapter.Pages.Select(_ => ValidationResultType.PartiallyCorrect).ToArray()
+				}
+			};
+
+			_chapters.Get(profile.Progress.ChapterId).Returns(chapter);
+			_profiles.Update(default, default!).ReturnsForAnyArgs(true);
+
+			// act
+			await _progressManager.Update(profile, result);
+
+			// verify
+			await _profiles
+				.Received(1)
+				.Update(profile.Id, Arg.Is<Profile>(
+					x => x.Progress.PageIndex == 1 &&
+						 x.Progress.Pages[0] == ValidationResultType.Wrong));
+		}
 	}
 }
 

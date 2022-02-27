@@ -67,11 +67,14 @@ namespace Bhasha.Web.Services
             }
             else
             {
-                progress = progress with {
-                    PageIndex = progress.Pages
+                var nextPage = progress.Pages
                         .Select((status, index) => (status, index))
-                        .First(x => x.status != ValidationResultType.Correct).index
-                };
+                        .FirstOrDefault(x => x.index != progress.PageIndex && x.status != ValidationResultType.Correct);
+
+                if (nextPage != default)
+                {
+                    progress = progress with { PageIndex = nextPage.index };
+                }
             }
 
             var updatedProfile = profile with { Progress = progress };
