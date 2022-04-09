@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture.Xunit2;
 using Bhasha.Web.Mongo;
+using FluentAssertions;
 using Mongo2Go;
 using MongoDB.Driver;
 using Xunit;
@@ -103,7 +104,7 @@ public class MongoRepositoryTests : IDisposable
         var result = await _repository.GetMany(items.Select(x => x.Id).ToArray());
 
         // assert
-        Assert.Equal(items, result);
+        result.Should().BeEquivalentTo(items);
     }
 
     [Fact]

@@ -14,11 +14,11 @@ namespace Bhasha.Web.Services
 
         public async Task<Translation?> Find(Guid expressionId, Language language)
         {
-            var expressions = await _repository.Find(
+            var translations = await _repository.Find(
                 x => x.ExpressionId == expressionId &&
                      x.Language == language);
 
-            return expressions?.FirstOrDefault();
+            return translations?.FirstOrDefault();
         }
 
         public async Task<IDictionary<Guid, Translation>> FindAll(Language language, params Guid[] expressionIds)

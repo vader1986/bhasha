@@ -13,14 +13,14 @@ namespace Bhasha.Web.Tests.Services.Pages
 	public class MultipleChoicePageFactoryTests
 	{
 		private readonly MultipleChoicePageFactory _factory;
-		private readonly ITranslationProvider _translationProvider;
 		private readonly IRepository<Expression> _expressions;
+		private readonly IRepository<Translation> _translations;
 
 		public MultipleChoicePageFactoryTests()
 		{
-			_translationProvider = Substitute.For<ITranslationProvider>();
 			_expressions = Substitute.For<IRepository<Expression>>();
-			_factory = new MultipleChoicePageFactory(_translationProvider, _expressions);
+			_translations = Substitute.For<IRepository<Translation>>();
+			_factory = new MultipleChoicePageFactory(_expressions, _translations);
 		}
 
 		[Theory, AutoData]
@@ -43,8 +43,7 @@ namespace Bhasha.Web.Tests.Services.Pages
 
 			_expressions.Get(page.ExpressionId).Returns(expression);
 			_expressions.Find(default!, 3).ReturnsForAnyArgs(expressions);
-			_translationProvider.FindAll(profile.Target, default!).ReturnsForAnyArgs(translations);
-			_translationProvider.Find(page.ExpressionId, profile.Native).Returns(translation);
+            _translations.Find(default!).ReturnsForAnyArgs(new[] {translation});
 
 			// act
 			var displayedPage = await _factory.CreateAsync(page, profile);

@@ -23,8 +23,12 @@ namespace Bhasha.Web.Pages.Student
 
         internal async Task OnSelectChapter(ChapterDescription chapter)
         {
-            await ProgressManager.StartChapter(ProfileId, chapter.ChapterId);
-            NavigationManager.NavigateTo($"chapter/{chapter.ChapterId}");
+            var profile = await ProgressManager.StartChapter(ProfileId, chapter.ChapterId);
+
+            var chapterId = profile.Progress.ChapterId;
+            var pageIndex = profile.Progress.PageIndex;
+
+            NavigationManager.NavigateTo($"pages/{ProfileId}/{chapterId}/{pageIndex}");
         }
     }
 }

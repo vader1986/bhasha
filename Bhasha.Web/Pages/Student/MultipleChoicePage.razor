@@ -1,0 +1,14 @@
+﻿@if (Data != null)
+{
+    <MudText>@Data.Word.Native</MudText>
+}
+@if (_arguments != null)
+{
+    <MudChipSet @bind-SelectedChip="_selectedChoice" Filter="true">
+        @foreach (var choice in _arguments.Choices)
+        {
+            <MudChip Value="@choice" Text="grey">@choice.Native</MudChip>
+        }
+    </MudChipSet>
+}
+<MudButton OnClick="OnSubmit" Disabled="_selectedChoice == null" Variant="Variant.Filled">Submit</MudButton>

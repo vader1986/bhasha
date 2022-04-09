@@ -63,9 +63,11 @@ builder.Services.AddSingleton<IFactory<Profile>, ProfileFactory>();
 builder.Services.AddSingleton<IFactory<Expression>, ExpressionFactory>();
 builder.Services.AddSingleton<IProfileManager, ProfileManager>();
 builder.Services.AddSingleton<IProgressManager, ProgressManager>();
+builder.Services.AddSingleton<ISubmissionManager, SubmissionManager>();
 builder.Services.AddSingleton<ITranslationManager, TranslationManager>();
 builder.Services.AddSingleton<ITranslationProvider, TranslationProvider>();
 builder.Services.AddSingleton<IChapterProvider, ChapterProvider>();
+builder.Services.AddSingleton<IValidator, Validator>();
 builder.Services.AddSingleton<IAsyncFactory<Page, Profile, DisplayedPage>, PageFactory>();
 builder.Services.AddSingleton<IAsyncFactory<Page, Profile, DisplayedPage<MultipleChoice>>, MultipleChoicePageFactory>();
 
