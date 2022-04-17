@@ -1,32 +1,8 @@
 version: '3.4'
 
 services:
-  bhasha-author-api:
+  bhasha:
     build:
       context: .
-      dockerfile: Bhasha.Author.Api/Dockerfile
-    image: bhasha-author-api
-
-  bhasha-author-web:
-    build:
-      context: .
-      dockerfile: Bhasha.Author.Web/Dockerfile
-    image: bhasha-author-web
-
-  bhasha-student-api:
-    build:
-      context: .
-      dockerfile: Bhasha.Student.Api/Dockerfile
-    image: bhasha-student-api
-
-  bhasha-student-web:
-    build:
-      context: .
-      dockerfile: Bhasha.Student.Web/Dockerfile
-    image: bhasha-student-web
-
-  bhasha-identity:
-    build:
-      context: .
-      dockerfile: Bhasha.Identity/Dockerfile
-    image: bhasha-identity    
+      dockerfile: Bhasha.Web/Dockerfile
+    image: bhasha
