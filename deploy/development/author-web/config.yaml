@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: bhasha-author-web-config
-data:
-  config.json: |
-    {
-      "AuthorApi": "https://localhost:5010/"
-    }

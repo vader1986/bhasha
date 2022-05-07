@@ -16,6 +16,12 @@ using MongoDB.Driver;
 using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.ConfigureAppConfiguration(c =>
+{
+    c.AddJsonFile("config/appsettings.json", optional: true, reloadOnChange: true);
+});
+
 var mongoSettings = MongoSettings.From(builder.Configuration);
 
 builder.Services

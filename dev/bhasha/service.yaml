@@ -1,11 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: bhasha-author-web
+  name: bhasha-service
 spec:
   type: LoadBalancer
   selector:
-    service: bhasha-author-web
+    service: bhasha
   ports:
-    - port: 5004 # exposed port (access website)
+    - name: http
+      protocol: TCP
+      port: 80 # exposed port (access website)
       targetPort: 80 # container port of pod hosting website

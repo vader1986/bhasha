@@ -1,8 +1,0 @@
-version: '3.4'
-
-services:
-  bhasha:
-    build:
-      context: .
-      dockerfile: Bhasha.Web/Dockerfile
-    image: bhasha

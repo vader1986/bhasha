@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: bhasha-student-web-config
-data:
-  config.json: |
-    {
-      "StudentApi": "https://localhost:5020/"
-    }

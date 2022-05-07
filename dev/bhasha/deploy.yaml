@@ -1,41 +1,30 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: bhasha-identity
+  name: bhasha
 spec:
   replicas: 1
   selector:
     matchLabels:
-      service: bhasha-identity
+      service: bhasha
   template:
     metadata:
       labels:
-        app: bhasha-identity
-        service: bhasha-identity
+        app: bhasha
+        service: bhasha
     spec:
       containers:
-        - name: bhasha-identity
-          image: bhasha-identity:latest
+        - name: bhasha
+          image: bhasha:latest
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
               containerPort: 80
               protocol: TCP
-            - name: https
-              containerPort: 443
-              protocol: TCP
           volumeMounts:
-            - name: identity-settings-volume
+            - name: bhasha-config-volume
               mountPath: /app/config
-            - name: cert-volume
-              mountPath: /app/https
-              readOnly: true
           env:
-            - name: ASPNETCORE_Kestrel__Certificates__Default__Password
-              valueFrom: 
-                secretKeyRef:
-                  name: identity-secrets
-                  key: cert-password
             - name: ASPNETCORE_Database__User
               valueFrom: 
                 secretKeyRef:
@@ -47,9 +36,6 @@ spec:
                   name: mongodb-secrets
                   key: mongodb-password
       volumes:
-      - name: identity-settings-volume
+      - name: bhasha-config-volume
         configMap:
-          name: identity-config
-      - name: cert-volume
-        secret:
-          secretName: cert-secret
+          name: bhasha-config

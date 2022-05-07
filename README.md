@@ -16,42 +16,26 @@ The VS solution contains multiple folders:
 * [Docker](https://docs.docker.com/engine/install/)
 * Kubernetes (incl. `kubectl`, can be [enabled in docker](https://docs.docker.com/desktop/kubernetes/))
 
-### Build
+### Docker
+Make sure you started docker on your local machine. 
+Then create a local docker image for bhasha:
 ```bash
-docker-compose build --no-cache
+cd /path/to/repository
+docker build -f Bhasha.Web/Dockerfile --force-rm -t bhasha . --no-cache
 ```
 
-### Deployment for Development
+### Kubernetes
 
 #### MAC OS
-Assuming you've got docker installed on your machine with kubernetes enabled, you can deploy required infrastructure for a local development environment:
+Deploy MongoDB, which is required by Bhasha, to your local k8s cluster:
 ```bash
-kubectl apply -f deploy/infrastructure -R
+kubectl apply -f dev/mongo
 ```
 
-First, we need to create an HTTPS certificate for the identity server and both Web APIs. Create a [self-signing HTTPS certificate](https://docs.microsoft.com/en-us/aspnet/core/security/docker-https?view=aspnetcore-5.0):
+Now, deploy Bhasha to your local k8s cluster:
 ```bash
-dotnet dev-certs https -ep ${HOME}/.aspnet/https/aspnetapp.pfx -p password
-dotnet dev-certs https --trust
+kubectl apply -f dev/bhasha
 ```
 
-In case you already got a developer certificate, you have to remove and re-create it:
-```bash
-dotnet dev-certs https --clean
-dotnet dev-certs https -ep ${HOME}/.aspnet/https/aspnetapp.pfx -p password
-dotnet dev-certs https --trust
-```
-
-Deploy the HTTPS certificate as a secret to kubernetes:
-```bash
-kubectl create secret generic cert-secret --from-file=cert.pfx=${HOME}/.aspnet/https/aspnetapp.pfx
-```
-
-Now you can deploy all services to your local kubernetes cluster:
-```bash
-kubectl apply -f deploy/development -R
-```
-
-### Deployment for Production
-
-TODO
+Now you should be able to access Bhasha via:
+http://localhost
