@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [ master ]
 
+env:
+  DOTNET_VERSION: '6.0.202'
+
 jobs:
   build:
 
@@ -13,33 +16,16 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [12.x]
+        os: [ubuntu-latest, windows-latest, macOS-latest]
 
     steps:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Install Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-
-    - name: NPM Install
-      run: npm install
-      working-directory: Bhasha.Web.Client
-
-    - name: NPM Test
-      run: npm test
-      working-directory: Bhasha.Web.Client
-
-    - name: NPM Build
-      run: npm run build
-      working-directory: Bhasha.Web.Client
-
     - name: Install .NET
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 5.0.100
+        dotnet-version: ${{ env.DOTNET_VERSION }}
 
     - name: .NET Restore
       run: dotnet restore

@@ -7,36 +7,35 @@ There's no reason for this project to limit itself for a specific language, it's
 ## Project Structure
 
 The VS solution contains multiple folders:
-* `Bhasha.Common` - general collection of model classes used across the entire project
-* `Bhasha.Common.MongoDb` - MongoDB layer to access, add, update and delete user and language data
-* `Bhasha.Web` - .NET backend hosting the client app and web api to access data
-
-There's also a _react-app_ named `Bhasha.Web.Client`. 
+* `Bhasha.Web` - back- and front-end service based on Blazor Server
+* `Bhasha.Web.Tests` - unit tests for front- and back-end components
 
 ## Build & Deployment
 
 ### Prerequisites
-* [NPM](https://www.npmjs.com/get-npm)
 * [Docker](https://docs.docker.com/engine/install/)
 * Kubernetes (incl. `kubectl`, can be [enabled in docker](https://docs.docker.com/desktop/kubernetes/))
 
-### Build
+### Docker
+Make sure you started docker on your local machine. 
+Then create a local docker image for bhasha:
 ```bash
-cd Bhasha.Web.Client
-npm install
-npm run build
-cd ..
-docker-compose build
+cd /path/to/repository
+docker build -f Bhasha.Web/Dockerfile --force-rm -t bhasha . --no-cache
 ```
 
-### Deployment
+### Kubernetes
 
-Assuming you've got docker installed on your machine with kubernetes enabled, you can deploy all required infrastructure for a local development environment:
+#### MAC OS
+Deploy MongoDB, which is required by Bhasha, to your local k8s cluster:
 ```bash
-kubectl apply -f deploy/dev
+kubectl apply -f dev/mongo
 ```
 
-And finally deploy the actual Bhasha system:
+Now, deploy Bhasha to your local k8s cluster:
 ```bash
-kubectl apply -f deploy
+kubectl apply -f dev/bhasha
 ```
+
+Now you should be able to access Bhasha via:
+http://localhost

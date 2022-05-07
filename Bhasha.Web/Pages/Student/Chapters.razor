@@ -1,0 +1,24 @@
+﻿@page "/chapters/{ProfileId:guid}"
+@inherits UserPage
+
+<AuthorizeView Roles="Student">
+    <MudPaper Style="text-align: center">
+        <MudList Clickable="true">
+            @foreach (var chapter in _chapters)
+            {
+                @if (chapter.Completed)
+                {
+                    <MudListItem Avatar="@Icons.Material.Filled.Image" OnClick="() => OnSelectChapter(chapter)">
+                        @chapter.Name
+                    </MudListItem>
+                }
+                else
+                {
+                    <MudListItem Avatar="@Icons.Material.Outlined.Image" OnClick="() => OnSelectChapter(chapter)">
+                        @chapter.Name
+                    </MudListItem>
+                }
+            }
+        </MudList>
+    </MudPaper>
+</AuthorizeView>

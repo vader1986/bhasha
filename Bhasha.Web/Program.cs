@@ -1,20 +1,110 @@
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
+﻿using AspNetCore.Identity.Mongo;
+using Bhasha.Web;
+using Bhasha.Web.Areas.Identity;
+using Bhasha.Web.Domain;
+using Bhasha.Web.Domain.Pages;
+using Bhasha.Web.Identity;
+using Bhasha.Web.Interfaces;
+using Bhasha.Web.Mongo;
+using Bhasha.Web.Services;
+using Bhasha.Web.Services.Pages;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Mongo.Migration.Startup;
+using Mongo.Migration.Startup.DotNetCore;
+using MongoDB.Driver;
+using MudBlazor.Services;
 
-namespace Bhasha.Web
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.ConfigureAppConfiguration(c =>
 {
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            CreateHostBuilder(args).Build().Run();
-        }
+    c.AddJsonFile("config/appsettings.json", optional: true, reloadOnChange: true);
+});
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
-    }
+var mongoSettings = MongoSettings.From(builder.Configuration);
+
+builder.Services
+    .AddIdentityMongoDbProvider<AppUser, AppRole, Guid>(
+    identity => {
+        // identity server settings
+    },
+    mongo => {
+        mongo.ConnectionString = mongoSettings.ConnectionString;
+    });
+
+builder.Services
+    .AddDatabaseDeveloperPageExceptionFilter();
+
+builder.Services
+    .AddIdentityCore<AppUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddDefaultUI()
+    .AddRoles<AppRole>()
+    .AddMongoDbStores<AppUser, AppRole, Guid>(mongo =>
+    {
+        mongo.ConnectionString = mongoSettings.ConnectionString;
+    })
+    .AddDefaultTokenProviders();;
+
+builder.Services.AddRazorPages();
+builder.Services.AddServerSideBlazor();
+builder.Services.AddSingleton<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<AppUser>>();
+builder.Services.AddMudServices();
+
+// MongoDB
+builder.Services.AddSingleton(mongoSettings);
+builder.Services.AddSingleton<IMongoClient>(_ => new MongoClient(mongoSettings.ConnectionString));
+builder.Services.AddMigration(new MongoMigrationSettings
+{
+    Database = mongoSettings.DatabaseName,
+    ConnectionString = mongoSettings.ConnectionString
+});
+
+// Bhasha services
+builder.Services.AddSingleton<IRepository<Profile>, MongoRepository<Profile>>();
+builder.Services.AddSingleton<IRepository<Chapter>, MongoRepository<Chapter>>();
+builder.Services.AddSingleton<IRepository<Expression>, MongoRepository<Expression>>();
+builder.Services.AddSingleton<IRepository<Translation>, MongoRepository<Translation>>();
+builder.Services.AddSingleton<IFactory<Profile>, ProfileFactory>();
+builder.Services.AddSingleton<IFactory<Expression>, ExpressionFactory>();
+builder.Services.AddSingleton<IProfileManager, ProfileManager>();
+builder.Services.AddSingleton<IProgressManager, ProgressManager>();
+builder.Services.AddSingleton<ISubmissionManager, SubmissionManager>();
+builder.Services.AddSingleton<ITranslationManager, TranslationManager>();
+builder.Services.AddSingleton<ITranslationProvider, TranslationProvider>();
+builder.Services.AddSingleton<IChapterProvider, ChapterProvider>();
+builder.Services.AddSingleton<IValidator, Validator>();
+builder.Services.AddSingleton<IAsyncFactory<Page, Profile, DisplayedPage>, PageFactory>();
+builder.Services.AddSingleton<IAsyncFactory<Page, Profile, DisplayedPage<MultipleChoice>>, MultipleChoicePageFactory>();
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseMigrationsEndPoint();
 }
+else
+{
+    app.UseExceptionHandler("/Error");
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
+}
+
+app.UseHttpsRedirection();
+
+app.UseStaticFiles();
+
+app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+await app.UseDefaultIdentitySetup();
+
+app.MapControllers();
+app.MapBlazorHub();
+app.MapFallbackToPage("/_Host");
+
+app.Run();
+

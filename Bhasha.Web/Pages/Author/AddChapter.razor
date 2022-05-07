@@ -1,0 +1,59 @@
+﻿@page "/addchapter"
+@inherits UserPage
+
+<AuthorizeView Roles="Author">
+
+    <PageTitle>Create Chapter</PageTitle>
+
+    <MudPaper Width="100%">
+        <MudContainer MaxWidth="MaxWidth.Small">
+            <MudCard Outlined="true">
+                <MudCardContent Style="text-align: center">
+                    <MudTextField @bind-Value="@_state.Name" Label="Name" Variant="Variant.Outlined" />
+                    <MudTextField @bind-Value="@_state.ReferenceName" Label="Name (English)" Variant="Variant.Outlined" />
+                    <MudTextField @bind-Value="@_state.Description" Label="Description" Variant="Variant.Outlined" Lines="3" />
+                    <MudTextField @bind-Value="@_state.ReferenceDescription" Label="Description (English)" Variant="Variant.Outlined" />
+
+                    <MudDivider DividerType="DividerType.Middle" Class="my-3" />
+                    <MudNumericField Label="Required Level" @bind-Value="@_state.RequiredLevel" Variant="Variant.Text" Min="0" Max="100" />
+
+                    <MudText>Native Language</MudText>
+                    <MudChipSet Filter="true" SelectedChipChanged="OnSelectedNative">
+                        @foreach (var language in Language.Supported.Values)
+                        {
+                            <MudChip Value="language">@language.Pretty()</MudChip>
+                        }
+                    </MudChipSet>
+                    <MudDivider DividerType="DividerType.Middle" Class="my-3" />
+                    <MudText>Target Language</MudText>
+                    <MudChipSet Filter="true" SelectedChipChanged="OnSelectedTarget">
+                        @foreach (var language in Language.Supported.Values)
+                        {
+                            <MudChip Value="language">@language.Pretty()</MudChip>
+                        }
+                    </MudChipSet>
+
+                    <MudButton OnClick="OpenCreatePage" Disabled="@_state.DisableCreatePage" Variant="Variant.Outlined" Color="Color.Primary">
+                        Add Page
+                    </MudButton>
+
+                    <MudChipSet>
+                        @foreach (var addedPage in _state.Pages)
+                        {
+                            <MudChip Value="addedPage">@_state.GetPageTitle(addedPage)</MudChip>
+                        }
+                    </MudChipSet>
+
+                    @if (!string.IsNullOrWhiteSpace(_state.Error))
+                    {
+                        <MudDivider DividerType="DividerType.Middle" Class="my-3" />
+                        <MudText Color="Color.Error">@_state.Error</MudText>
+                    }
+
+                    <MudDivider DividerType="DividerType.Middle" Class="my-3" />
+                    <MudButton Variant="Variant.Outlined" OnClick="_state.Submit">Create</MudButton>
+                </MudCardContent>
+            </MudCard>
+        </MudContainer>
+    </MudPaper>
+</AuthorizeView>

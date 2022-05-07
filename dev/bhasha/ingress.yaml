@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: bhasha-ingress
+spec:
+  rules:
+  - host: bhasha.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: bhasha-service
+            port:
+              number: 80

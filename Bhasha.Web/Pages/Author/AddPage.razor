@@ -1,0 +1,19 @@
+﻿<MudDialog>
+    <DialogContent>
+        <MudSelect T="PageType" @bind-Value="_state.PageType" Label="Page Type" AnchorOrigin="Origin.BottomCenter">
+            @foreach (var pageType in Enum.GetValues<PageType>())
+            {
+                <MudSelectItem Value="pageType" />
+            }
+        </MudSelect>
+        <MudTextField T="string" @bind-Text="_state.NativeReference" Label="English" />
+        <MudTextField T="string" @bind-Text="_state.Native" Label="Native" />
+        <MudTextField T="string" @bind-Text="_state.NativeSpoken" Label="Native Spoken" />
+        <MudTextField T="string" @bind-Text="_state.Target" Label="Target" />
+        <MudTextField T="string" @bind-Text="_state.TargetSpoken" Label="Target Spoken" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" Disabled="_state.CannotCreatePage" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
