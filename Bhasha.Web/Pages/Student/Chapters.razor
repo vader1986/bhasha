@@ -20,5 +20,13 @@
                 }
             }
         </MudList>
+
+        <MudList>
+            @foreach (var item in _items)
+            {
+                <MudListItem>@item</MudListItem>
+            }
+        </MudList>
+
     </MudPaper>
 </AuthorizeView>

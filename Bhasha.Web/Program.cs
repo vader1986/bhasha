@@ -3,6 +3,7 @@ using Bhasha.Web;
 using Bhasha.Web.Areas.Identity;
 using Bhasha.Web.Domain;
 using Bhasha.Web.Domain.Pages;
+using Bhasha.Web.Grains;
 using Bhasha.Web.Identity;
 using Bhasha.Web.Interfaces;
 using Bhasha.Web.Mongo;
@@ -15,6 +16,10 @@ using Mongo.Migration.Startup.DotNetCore;
 using MongoDB.Driver;
 using MudBlazor.Services;
 
+using Orleans;
+using Orleans.Configuration;
+using Orleans.Hosting;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.ConfigureAppConfiguration(c =>
@@ -22,64 +27,100 @@ builder.Host.ConfigureAppConfiguration(c =>
     c.AddJsonFile("config/appsettings.json", optional: true, reloadOnChange: true);
 });
 
-var mongoSettings = MongoSettings.From(builder.Configuration);
-
-builder.Services
-    .AddIdentityMongoDbProvider<AppUser, AppRole, Guid>(
-    identity => {
-        // identity server settings
-    },
-    mongo => {
-        mongo.ConnectionString = mongoSettings.ConnectionString;
-    });
-
-builder.Services
-    .AddDatabaseDeveloperPageExceptionFilter();
-
-builder.Services
-    .AddIdentityCore<AppUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddDefaultUI()
-    .AddRoles<AppRole>()
-    .AddMongoDbStores<AppUser, AppRole, Guid>(mongo =>
-    {
-        mongo.ConnectionString = mongoSettings.ConnectionString;
-    })
-    .AddDefaultTokenProviders();;
-
-builder.Services.AddRazorPages();
-builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<AppUser>>();
-builder.Services.AddMudServices();
-
-// MongoDB
-builder.Services.AddSingleton(mongoSettings);
-builder.Services.AddSingleton<IMongoClient>(_ => new MongoClient(mongoSettings.ConnectionString));
-builder.Services.AddMigration(new MongoMigrationSettings
+var hostBuilder = builder.Host.UseOrleans(siloBuilder =>
 {
-    Database = mongoSettings.DatabaseName,
-    ConnectionString = mongoSettings.ConnectionString
+    ////////////////////
+    // Orleans
+    ////////////////////
+
+    siloBuilder
+        .UseLocalhostClustering()
+        .Configure<ClusterOptions>(options =>
+        {
+            options.ClusterId = "dev";
+            options.ServiceId = "bhasha";
+        })
+        .ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(FakeGrain).Assembly).WithReferences())
+        .ConfigureLogging(logging => logging.AddConsole())
+        .AddSimpleMessageStreamProvider("SMSProvider")
+        .AddMemoryGrainStorage("PubSubStore");
 });
 
-// Bhasha services
-builder.Services.AddSingleton<IRepository<Profile>, MongoRepository<Profile>>();
-builder.Services.AddSingleton<IRepository<Chapter>, MongoRepository<Chapter>>();
-builder.Services.AddSingleton<IRepository<Expression>, MongoRepository<Expression>>();
-builder.Services.AddSingleton<IRepository<Translation>, MongoRepository<Translation>>();
-builder.Services.AddSingleton<IFactory<Profile>, ProfileFactory>();
-builder.Services.AddSingleton<IFactory<Expression>, ExpressionFactory>();
-builder.Services.AddSingleton<IProfileManager, ProfileManager>();
-builder.Services.AddSingleton<IProgressManager, ProgressManager>();
-builder.Services.AddSingleton<ISubmissionManager, SubmissionManager>();
-builder.Services.AddSingleton<ITranslationManager, TranslationManager>();
-builder.Services.AddSingleton<ITranslationProvider, TranslationProvider>();
-builder.Services.AddSingleton<IChapterProvider, ChapterProvider>();
-builder.Services.AddSingleton<IValidator, Validator>();
-builder.Services.AddSingleton<IAsyncFactory<Page, Profile, DisplayedPage>, PageFactory>();
-builder.Services.AddSingleton<IAsyncFactory<Page, Profile, DisplayedPage<MultipleChoice>>, MultipleChoicePageFactory>();
+var mongoSettings = MongoSettings.From(builder.Configuration);
+
+hostBuilder.ConfigureServices(services =>
+{
+    ////////////////////
+    // Identity Server
+    ////////////////////
+
+    services
+        .AddIdentityMongoDbProvider<AppUser, AppRole, Guid>(
+        identity => {
+            // identity server settings
+        },
+        mongo => {
+            mongo.ConnectionString = mongoSettings.ConnectionString;
+        });
+
+    services
+        .AddDatabaseDeveloperPageExceptionFilter();
+
+    services
+        .AddIdentityCore<AppUser>(options => options.SignIn.RequireConfirmedAccount = true)
+        .AddDefaultUI()
+        .AddRoles<AppRole>()
+        .AddMongoDbStores<AppUser, AppRole, Guid>(mongo =>
+        {
+            mongo.ConnectionString = mongoSettings.ConnectionString;
+        })
+        .AddDefaultTokenProviders(); ;
+
+    services.AddRazorPages();
+    services.AddServerSideBlazor();
+    services.AddSingleton<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<AppUser>>();
+    services.AddMudServices();
+
+    ////////////////////
+    // MongoDB
+    ////////////////////
+
+    services.AddSingleton(mongoSettings);
+    services.AddSingleton<IMongoClient>(_ => new MongoClient(mongoSettings.ConnectionString));
+    services.AddMigration(new MongoMigrationSettings
+    {
+        Database = mongoSettings.DatabaseName,
+        ConnectionString = mongoSettings.ConnectionString
+    });
+
+    ////////////////////
+    // Application
+    ////////////////////
+
+    services.AddSingleton<IRepository<Profile>, MongoRepository<Profile>>();
+    services.AddSingleton<IRepository<Chapter>, MongoRepository<Chapter>>();
+    services.AddSingleton<IRepository<Expression>, MongoRepository<Expression>>();
+    services.AddSingleton<IRepository<Translation>, MongoRepository<Translation>>();
+    services.AddSingleton<IFactory<Profile>, ProfileFactory>();
+    services.AddSingleton<IFactory<Expression>, ExpressionFactory>();
+    services.AddSingleton<IProfileManager, ProfileManager>();
+    services.AddSingleton<IProgressManager, ProgressManager>();
+    services.AddSingleton<ISubmissionManager, SubmissionManager>();
+    services.AddSingleton<ITranslationManager, TranslationManager>();
+    services.AddSingleton<ITranslationProvider, TranslationProvider>();
+    services.AddSingleton<IChapterProvider, ChapterProvider>();
+    services.AddSingleton<IValidator, Validator>();
+    services.AddSingleton<IAsyncFactory<Page, Profile, DisplayedPage>, PageFactory>();
+    services.AddSingleton<IAsyncFactory<Page, Profile, DisplayedPage<MultipleChoice>>, MultipleChoicePageFactory>();
+
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+////////////////////
+// HTTP pipeline
+////////////////////
+
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
@@ -87,14 +128,11 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
-
 app.UseStaticFiles();
-
 app.UseRouting();
 
 app.UseAuthentication();
@@ -107,4 +145,3 @@ app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 
 app.Run();
-
