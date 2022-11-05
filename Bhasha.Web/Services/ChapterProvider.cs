@@ -8,13 +8,13 @@ public class ChapterProvider : IChapterProvider
     private readonly IRepository<Chapter> _chapterRepository;
     private readonly IRepository<Profile> _profileRepository;
     private readonly ITranslationProvider _translationProvider;
-    private readonly IAsyncFactory<Page, Profile, DisplayedPage> _pageFactory;
+    private readonly IAsyncFactory<Page, LangKey, DisplayedPage> _pageFactory;
 
     public ChapterProvider(
         IRepository<Chapter> chapterRepository,
         IRepository<Profile> profileRepository,
         ITranslationProvider translationProvider,
-        IAsyncFactory<Page, Profile, DisplayedPage> pageFactory)
+        IAsyncFactory<Page, LangKey, DisplayedPage> pageFactory)
     {
         _chapterRepository = chapterRepository;
         _profileRepository = profileRepository;
@@ -50,7 +50,7 @@ public class ChapterProvider : IChapterProvider
         if (chapter == null) throw new ArgumentOutOfRangeException(nameof(chapterId));
 
         var pages = await Task.WhenAll(chapter.Pages.Select(
-            async page => await _pageFactory.CreateAsync(page, profile)));
+            async page => await _pageFactory.CreateAsync(page, profile.Languages)));
 
         var name = await _translationProvider.Find(chapter.NameId, profile.Languages.Native)
             ?? throw new InvalidOperationException($"Translation for {chapter.NameId} to {profile.Languages.Native} not found");

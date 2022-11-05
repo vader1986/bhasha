@@ -16,7 +16,7 @@ public class ChapterProviderTests
 	private readonly IRepository<Chapter> _chapterRepository;
 	private readonly IRepository<Profile> _profileRepository;
 	private readonly ITranslationProvider _translationProvider;
-	private readonly IAsyncFactory<Page, Profile, DisplayedPage> _pageFactory;
+	private readonly IAsyncFactory<Page, LangKey, DisplayedPage> _pageFactory;
 	private readonly ChapterProvider _chapterProvider;
 
 	public ChapterProviderTests()
@@ -24,7 +24,7 @@ public class ChapterProviderTests
 		_chapterRepository = Substitute.For<IRepository<Chapter>>();
 		_profileRepository = Substitute.For<IRepository<Profile>>();
 		_translationProvider = Substitute.For<ITranslationProvider>();
-		_pageFactory = Substitute.For<IAsyncFactory<Page, Profile, DisplayedPage>>();
+		_pageFactory = Substitute.For<IAsyncFactory<Page, LangKey, DisplayedPage>>();
 		_chapterProvider = new ChapterProvider(_chapterRepository, _profileRepository, _translationProvider, _pageFactory);
 	}
 
@@ -88,7 +88,7 @@ public class ChapterProviderTests
 		// setup
 		_profileRepository.Get(profile.Id).Returns(profile);
 		_chapterRepository.Get(chapter.Id).Returns(chapter);
-		_pageFactory.CreateAsync(Arg.Any<Page>(), profile).Returns(page);
+		_pageFactory.CreateAsync(Arg.Any<Page>(), profile.Languages).Returns(page);
 		_translationProvider.Find(chapter.DescriptionId, profile.Languages.Native).Returns(description);
 
 		// act & verify
@@ -103,7 +103,7 @@ public class ChapterProviderTests
 		// setup
 		_profileRepository.Get(profile.Id).Returns(profile);
 		_chapterRepository.Get(chapter.Id).Returns(chapter);
-		_pageFactory.CreateAsync(Arg.Any<Page>(), profile).Returns(page);
+		_pageFactory.CreateAsync(Arg.Any<Page>(), profile.Languages).Returns(page);
 		_translationProvider.Find(chapter.NameId, profile.Languages.Native).Returns(name);
 
 		// act & verify
@@ -118,7 +118,7 @@ public class ChapterProviderTests
 		// setup
 		_profileRepository.Get(profile.Id).Returns(profile);
 		_chapterRepository.Get(chapter.Id).Returns(chapter);
-		_pageFactory.CreateAsync(Arg.Any<Page>(), profile).Returns(page);
+		_pageFactory.CreateAsync(Arg.Any<Page>(), profile.Languages).Returns(page);
 		_translationProvider.Find(chapter.NameId, profile.Languages.Native).Returns(name);
 		_translationProvider.Find(chapter.DescriptionId, profile.Languages.Native).Returns(description);
 
