@@ -1,10 +1,9 @@
-﻿namespace Bhasha.Web.Domain
+﻿namespace Bhasha.Web.Domain;
+
+public enum ValidationResultType
 {
-    public enum ValidationResultType
-    {
-        Correct,
-        PartiallyCorrect,
-        Wrong
-    }
+    Correct,
+    PartiallyCorrect,
+    Wrong
 }
 

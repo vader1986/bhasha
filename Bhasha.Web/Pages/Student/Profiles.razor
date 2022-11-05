@@ -10,7 +10,9 @@
                 <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" VerticalAlign="true">
                     @foreach (var profile in _profiles)
                     {
-                        <MudButton OnClick="() => OnSelectProfile(profile)">@Language.Parse(@profile.Native).Pretty() - @Language.Parse(@profile.Target).Pretty()</MudButton>
+                        <MudButton OnClick="() => OnSelectProfile(profile)">
+                            @Language.Parse(@profile.Languages.Native).Pretty() -
+                            @Language.Parse(@profile.Languages.Target).Pretty()</MudButton>
                     }
                 </MudButtonGroup>
                 <MudDivider DividerType="DividerType.Middle" Class="my-3" />

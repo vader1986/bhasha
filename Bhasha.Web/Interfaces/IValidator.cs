@@ -1,9 +1,8 @@
 ﻿using Bhasha.Web.Domain;
 
-namespace Bhasha.Web.Interfaces
+namespace Bhasha.Web.Interfaces;
+
+public interface IValidator
 {
-	public interface IValidator
-	{
-		Task<ValidationResult> Validate(ValidationInput input);
-	}
+	Task<ValidationResult> Validate(ValidationInput input);
 }

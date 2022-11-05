@@ -1,9 +1,8 @@
-﻿namespace Bhasha.Web.Domain
+﻿namespace Bhasha.Web.Domain;
+
+public enum PageType
 {
-	public enum PageType
-	{
-		MultipleChoice,
-		ClozeChoice,
-		ClozeFillout
-	}
+	MultipleChoice,
+	ClozeChoice,
+	ClozeFillout
 }

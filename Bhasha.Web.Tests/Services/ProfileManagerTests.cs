@@ -22,7 +22,7 @@ public class ProfileManagerTests
         _profileManager = new ProfileManager(_repository, _factory);
 
         var progress = new Progress(1, Guid.Empty, Array.Empty<Guid>(), 0, Array.Empty<ValidationResultType>());
-        var profile = new Profile(Guid.NewGuid(), "user-123", Language.English, Language.Bengali, progress);
+        var profile = new Profile(Guid.NewGuid(), "user-123", new LangKey(Language.English, Language.Bengali), progress);
 
         _factory.Create().Returns(profile);
     }
@@ -31,42 +31,42 @@ public class ProfileManagerTests
     public void GivenCreateCall_WhenUserIdIsNullOrEmpty_ThenThrowException()
     {
         Assert.ThrowsAsync<ArgumentNullException>(async () =>
-            await _profileManager.Create(null!, Language.English, Language.Bengali));
+            await _profileManager.Create(null!, new LangKey(Language.English, Language.Bengali)));
         Assert.ThrowsAsync<ArgumentNullException>(async () =>
-            await _profileManager.Create("", Language.English, Language.Bengali));
+            await _profileManager.Create("", new LangKey(Language.English, Language.Bengali)));
         Assert.ThrowsAsync<ArgumentNullException>(async () =>
-            await _profileManager.Create(" ", Language.English, Language.Bengali));
+            await _profileManager.Create(" ", new LangKey(Language.English, Language.Bengali)));
     }
 
     [Fact]
     public void GivenCreateCall_WhenNativeLanguageNotSupported_ThenThrowException()
     {
         Assert.ThrowsAsync<ArgumentException>(async () =>
-            await _profileManager.Create("user-123", Language.Unknown, Language.Bengali));
+            await _profileManager.Create("user-123", new LangKey(Language.Unknown, Language.Bengali)));
     }
 
     [Fact]
     public void GivenCreateCall_WhenTargetLanguageNotSupported_ThenThrowException()
     {
         Assert.ThrowsAsync<ArgumentException>(async () =>
-            await _profileManager.Create("user-123", Language.Bengali, Language.Unknown));
+            await _profileManager.Create("user-123", new LangKey(Language.Bengali, Language.Unknown)));
     }
 
     [Fact]
     public void GivenCreateCall_WhenTargetAndNativeLanguagesAreEqual_ThenThrowException()
     {
         Assert.ThrowsAsync<ArgumentException>(async () =>
-            await _profileManager.Create("user-123", Language.Bengali, Language.Bengali));
+            await _profileManager.Create("user-123", new LangKey(Language.Bengali, Language.Bengali)));
     }
 
     [Theory, AutoData]
     public void GivenCreateCall_WhenProfileAlreadyExists_ThenThrowException(Profile profile)
     {
-        profile = profile with { UserId = "user-123", Native = Language.English, Target = Language.Bengali };
+        profile = profile with { UserId = "user-123", Languages = new LangKey(Language.English, Language.Bengali) };
         _repository.Find(default!).ReturnsForAnyArgs(new[] { profile });
 
         Assert.ThrowsAsync<InvalidOperationException>(async () =>
-            await _profileManager.Create(profile.UserId, profile.Native, profile.Target));
+            await _profileManager.Create(profile.UserId, new LangKey(profile.Languages.Native, profile.Languages.Target)));
     }
 
     [Fact]
@@ -76,7 +76,7 @@ public class ProfileManagerTests
         _repository.Find(default!).ReturnsForAnyArgs(Array.Empty<Profile>());
 
         // act
-        await _profileManager.Create("user-123", Language.English, Language.Bengali);
+        await _profileManager.Create("user-123", new LangKey(Language.English, Language.Bengali));
 
         // verify
         await _repository.Received(1).Add(Arg.Any<Profile>());

@@ -110,8 +110,8 @@ hostBuilder.ConfigureServices(services =>
     services.AddSingleton<ITranslationProvider, TranslationProvider>();
     services.AddSingleton<IChapterProvider, ChapterProvider>();
     services.AddSingleton<IValidator, Validator>();
-    services.AddSingleton<IAsyncFactory<Page, Profile, DisplayedPage>, PageFactory>();
-    services.AddSingleton<IAsyncFactory<Page, Profile, DisplayedPage<MultipleChoice>>, MultipleChoicePageFactory>();
+    services.AddSingleton<IAsyncFactory<Page, LangKey, DisplayedPage>, PageFactory>();
+    services.AddSingleton<IAsyncFactory<Page, LangKey, DisplayedPage<MultipleChoice>>, MultipleChoicePageFactory>();
 
 });
 

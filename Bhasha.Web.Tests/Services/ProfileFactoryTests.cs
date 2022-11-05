@@ -19,8 +19,7 @@ public class ProfileFactoryTests
         // verify
         Assert.Equal(profile.Id, Guid.Empty);
         Assert.Equal(profile.UserId, string.Empty);
-        Assert.Equal(profile.Native, Language.Unknown.ToString());
-        Assert.Equal(profile.Target, Language.Unknown.ToString());
+        Assert.Equal(profile.Languages, LangKey.Unknown);
         Assert.Equal(1, profile.Progress.Level);
         Assert.Equal(profile.Progress.ChapterId, Guid.Empty);
         Assert.Equal(profile.Progress.CompletedChapters, Array.Empty<Guid>());

@@ -1,12 +1,11 @@
-﻿namespace Bhasha.Web.Domain
+﻿namespace Bhasha.Web.Domain;
+
+public enum ExpressionType
 {
-	public enum ExpressionType
-	{
-        Word,
-        Expression,
-        Phrase,
-        Text,
-        Punctuation
-    }
+    Word,
+    Expression,
+    Phrase,
+    Text,
+    Punctuation
 }
 

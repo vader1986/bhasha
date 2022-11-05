@@ -1,7 +1,6 @@
-﻿namespace Bhasha.Web.Interfaces
+﻿namespace Bhasha.Web.Interfaces;
+
+public interface IFactory<TProduct>
 {
-	public interface IFactory<TProduct>
-	{
-		TProduct Create();
-	}
+	TProduct Create();
 }

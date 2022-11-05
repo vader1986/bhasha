@@ -2,49 +2,49 @@
 using Bhasha.Web.Interfaces;
 using Microsoft.AspNetCore.Components;
 
-namespace Bhasha.Web.Pages.Student
+namespace Bhasha.Web.Pages.Student;
+
+public partial class Pages : UserPage
 {
-	public partial class Pages : UserPage
-	{
-        [Inject] public ISubmissionManager SubmissionManager { get; set; } = default!;
-        [Inject] public IChapterProvider ChapterProvider { get; set; } = default!;
-        [Inject] public NavigationManager NavigationManager { get; set; } = default!;
+    [Inject] public ISubmissionManager SubmissionManager { get; set; } = default!;
+    [Inject] public IChapterProvider ChapterProvider { get; set; } = default!;
+    [Inject] public NavigationManager NavigationManager { get; set; } = default!;
 
-        [Parameter] public Guid ProfileId { get; set; }
-        [Parameter] public Guid ChapterId { get; set; }
-        [Parameter] public int Index { get; set; }
+    [Parameter] public Guid ProfileId { get; set; }
+    [Parameter] public Guid ChapterId { get; set; }
+    [Parameter] public int Index { get; set; }
 
-        private DisplayedChapter? _chapter;
-        private DisplayedPage? _page;
+    private DisplayedChapter? _chapter;
+    private DisplayedPage? _page;
 
-        protected override async Task OnParametersSetAsync()
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        _chapter = await ChapterProvider.GetChapter(ProfileId, ChapterId);
+        _page = _chapter.Pages[Index];
+    }
+
+    internal async Task OnSubmit(Translation translation)
+    {
+        if (_page == null)
+            return;
+
+        var expressionId = _page.Word.ExpressionId;
+        var submission = new Submission(ProfileId, expressionId, translation);
+
+        var feedback = await SubmissionManager.Accept(submission);
+        var progress = feedback.Profile.Progress;
+
+        if (progress.ChapterId == Guid.Empty)
         {
-            await base.OnParametersSetAsync();
-
-            _chapter = await ChapterProvider.GetChapter(ProfileId, ChapterId);
-            _page = _chapter.Pages[Index];
+            NavigationManager.NavigateTo($"chapters/{ProfileId}");
         }
-
-        internal async Task OnSubmit(Translation translation)
+        else
         {
-            if (_page == null)
-                return;
-
-            var expressionId = _page.Word.ExpressionId;
-            var submission = new Submission(ProfileId, expressionId, translation);
-
-            var feedback = await SubmissionManager.Accept(submission);
-            var progress = feedback.Profile.Progress;
-
-            if (progress.ChapterId == Guid.Empty)
-            {
-                NavigationManager.NavigateTo($"chapters/{ProfileId}");
-            }
-            else
-            {
-                NavigationManager.NavigateTo($"pages/{ProfileId}/{ChapterId}/{progress.PageIndex}");
-            }
+            NavigationManager.NavigateTo($"pages/{ProfileId}/{ChapterId}/{progress.PageIndex}");
         }
     }
 }
+
 

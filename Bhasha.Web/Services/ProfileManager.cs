@@ -14,8 +14,11 @@ public class ProfileManager : IProfileManager
         _factory = factory;
     }
 
-    public async Task<Profile> Create(string userId, Language native, Language target)
+    public async Task<Profile> Create(string userId, LangKey languages)
     {
+        var native = (Language)languages.Native;
+        var target = (Language)languages.Target;
+
         if (string.IsNullOrWhiteSpace(userId))
             throw new ArgumentNullException(nameof(userId));
 
@@ -29,12 +32,12 @@ public class ProfileManager : IProfileManager
             throw new ArgumentException("Native and target language cannot be equal", nameof(native));
 
         var existingProfile = await _repository.Find(
-            x => x.UserId == userId && x.Native == native && x.Target == target);
+            x => x.UserId == userId && x.Languages.Native == native && x.Languages.Target == target);
 
         if (existingProfile.Any())
             throw new InvalidOperationException($"Profile {native} - {target} for user {userId} already exists");
 
-        var profile = _factory.Create() with { UserId = userId, Native = native, Target = target };
+        var profile = _factory.Create() with { UserId = userId, Languages = new LangKey(native, target) };
         return await _repository.Add(profile);
     }
 

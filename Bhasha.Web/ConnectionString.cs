@@ -1,10 +1,9 @@
-﻿namespace Bhasha.Web
+﻿namespace Bhasha.Web;
+
+public static class ConnectionString
 {
-    public static class ConnectionString
+    public static string ForMongoDB(string hostname, string username, string password, string database = "admin")
     {
-        public static string ForMongoDB(string hostname, string username, string password, string database = "admin")
-        {
-            return $"mongodb://{username}:{password}@{hostname}/{database}";
-        }
+        return $"mongodb://{username}:{password}@{hostname}/{database}";
     }
 }

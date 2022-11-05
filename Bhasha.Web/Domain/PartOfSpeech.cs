@@ -1,15 +1,14 @@
-﻿namespace Bhasha.Web.Domain
+﻿namespace Bhasha.Web.Domain;
+
+public enum PartOfSpeech
 {
-	public enum PartOfSpeech
-	{
-		Noun,
-		Pronoun,
-		Adjective,
-		Verb,
-		Adverb,
-		Preposition,
-		Conjunction,
-		Article
-	}
+	Noun,
+	Pronoun,
+	Adjective,
+	Verb,
+	Adverb,
+	Preposition,
+	Conjunction,
+	Article
 }
 
