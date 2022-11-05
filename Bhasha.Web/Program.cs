@@ -74,8 +74,12 @@ hostBuilder.ConfigureServices(services =>
         {
             mongo.ConnectionString = mongoSettings.ConnectionString;
         })
-        .AddDefaultTokenProviders(); ;
+        .AddDefaultTokenProviders();
 
+    ////////////////////
+    // Blazor
+    ////////////////////
+    
     services.AddRazorPages();
     services.AddServerSideBlazor();
     services.AddSingleton<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<AppUser>>();
