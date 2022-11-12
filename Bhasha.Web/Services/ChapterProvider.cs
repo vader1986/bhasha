@@ -22,7 +22,7 @@ public class ChapterProvider : IChapterProvider
         _pageFactory = pageFactory;
     }
 
-    public async Task<ChapterDescription[]> GetChapters(Guid profileId)
+    public async Task<DisplayedSummary[]> GetChapters(Guid profileId)
     {
         var profile = await _profileRepository.Get(profileId);
         if (profile == null) throw new ArgumentOutOfRangeException(nameof(profileId));
@@ -34,7 +34,7 @@ public class ChapterProvider : IChapterProvider
         var expressions = await _translationProvider.FindAll(profile.Languages.Native, expressionIds.ToArray());
 
         return chapters.Select(x =>
-            new ChapterDescription(
+            new DisplayedSummary(
                 x.Id,
                 expressions[x.NameId].Native,
                 expressions[x.DescriptionId].Native,

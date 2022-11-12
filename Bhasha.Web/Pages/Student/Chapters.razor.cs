@@ -16,7 +16,7 @@ public partial class Chapters : UserPage, IAsyncObserver<int>
     [Parameter]
     public Guid ProfileId { get; set; }
 
-    private ChapterDescription[] _chapters = Array.Empty<ChapterDescription>();
+    private DisplayedSummary[] _chapters = Array.Empty<DisplayedSummary>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -25,7 +25,7 @@ public partial class Chapters : UserPage, IAsyncObserver<int>
         await LoadStream();
     }
 
-    internal async Task OnSelectChapter(ChapterDescription chapter)
+    internal async Task OnSelectChapter(DisplayedSummary chapter)
     {
         var profile = await ProgressManager.StartChapter(ProfileId, chapter.ChapterId);
 
