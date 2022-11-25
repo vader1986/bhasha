@@ -2,6 +2,9 @@
 
 public record Profile(
 	Guid Id,
-	string UserId,
-	LangKey Languages,
-	Progress Progress);
+	ProfileKey Key,
+    int Level,
+	Guid? ChapterId,
+	Guid[] CompletedChapters,
+	int PageIndex,
+	ValidationResultType[] Pages);

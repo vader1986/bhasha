@@ -2,13 +2,13 @@
 
 public record LangKey(string Native, string Target)
 {
-    public static LangKey Unknown => new(Language.Unknown, Language.Unknown);
-
-    public static LangKey From(string value)
+    public const string Separator = ">";
+    
+    public static LangKey Parse(string value)
     {
-        var args = value.Split('>');
+        var args = value.Split(Separator);
 
-        if (args == null || args.Length != 2)
+        if (args.Length != 2)
         {
             throw new ArgumentException($"Invalid representation of LangKey: {value}");
         }
@@ -28,7 +28,7 @@ public record LangKey(string Native, string Target)
 
     public override string ToString()
     {
-        return $"{Native}>{Target}";
+        return $"{Native}{Separator}{Target}";
     }
 }
 

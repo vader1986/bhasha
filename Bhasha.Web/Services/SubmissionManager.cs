@@ -23,7 +23,7 @@ public class SubmissionManager : ISubmissionManager
 		if (profile == null)
 			throw new ArgumentOutOfRangeException($"profile {submission.ProfileId} not found");
 
-		var input = new ValidationInput(profile.Languages, submission.ExpressionId, submission.Translation);
+		var input = new ValidationInput(profile.Key.LangId, submission.ExpressionId, submission.Translation);
 		var output = await _validator.Validate(input);
 		var updatedProfile = await _progressManager.Update(profile, output);
 

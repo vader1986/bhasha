@@ -3,6 +3,7 @@ using AutoFixture.Xunit2;
 using Bhasha.Web.Domain;
 using Bhasha.Web.Interfaces;
 using Bhasha.Web.Services;
+using Bhasha.Web.Tests.Support;
 using NSubstitute;
 using Xunit;
 
@@ -23,7 +24,7 @@ public class ValidatorTests
 	public async Task GivenCorrectInput_WhenValidated_ThenReturnCorrectResult(ValidationInput input)
 	{
 		// setup
-		var consolidatedInputs = input with { Languages = LangKey.Unknown with { Target = input.Translation.Language } };
+		var consolidatedInputs = input with { Languages = SupportedLanguageKey.Create() with { Target = input.Translation.Language } };
 		_translations.Get(input.Translation.Id).Returns(input.Translation);
 
 		// act
@@ -37,7 +38,7 @@ public class ValidatorTests
 	public async Task GivenWrongInput_WhenValidated_ThenReturnWrongResult(ValidationInput input, Translation solution)
 	{
 		// setup
-		var consolidatedInputs = input with { Languages = LangKey.Unknown with { Target = input.Translation.Language } };
+		var consolidatedInputs = input with { Languages = SupportedLanguageKey.Create() with { Target = input.Translation.Language } };
 		_translations.Get(input.Translation.Id).Returns(solution);
 
 		// act
@@ -54,7 +55,7 @@ public class ValidatorTests
 		// setup
 		var wrongInputs = input with
 		{
-        Languages = LangKey.Unknown with
+			Languages = SupportedLanguageKey.Create() with
 			{
 				Target = Language.Bengali
 			},

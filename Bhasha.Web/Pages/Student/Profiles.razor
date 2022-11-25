@@ -1,5 +1,5 @@
 ﻿@page "/profiles"
-@inherits UserPage
+@inherits Bhasha.Web.Pages.UserPage
 
 <AuthorizeView Roles="Student">
     <MudCard>
@@ -11,8 +11,8 @@
                     @foreach (var profile in _profiles)
                     {
                         <MudButton OnClick="() => OnSelectProfile(profile)">
-                            @Language.Parse(@profile.Languages.Native).Pretty() -
-                            @Language.Parse(@profile.Languages.Target).Pretty()</MudButton>
+                            @Language.Parse(@profile.Key.LangId.Native).Pretty() -
+                            @Language.Parse(@profile.Key.LangId.Target).Pretty()</MudButton>
                     }
                 </MudButtonGroup>
                 <MudDivider DividerType="DividerType.Middle" Class="my-3" />

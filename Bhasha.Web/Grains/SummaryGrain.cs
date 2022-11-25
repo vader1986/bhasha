@@ -5,11 +5,6 @@ using Orleans;
 
 namespace Bhasha.Web.Grains;
 
-public interface ISummaryGrain : IGrainWithStringKey
-{
-    ValueTask<ImmutableList<Summary>> GetSummaries();
-}
-
 public class SummaryGrain : Grain, ISummaryGrain
 {
     private readonly IRepository<Chapter> _chapterRepository;
@@ -24,12 +19,10 @@ public class SummaryGrain : Grain, ISummaryGrain
 
     public override async Task OnActivateAsync()
     {
-        var args = this.GetPrimaryKeyString().Split("-");
-        var level = int.Parse(args[0]);
-        var language = Language.Parse(args[1]);
+        var key = SummaryCollectionKey.Parse(this.GetPrimaryKeyString());
 
         var chapters = await _chapterRepository
-            .Find(chapter => chapter.RequiredLevel == level);
+            .Find(chapter => chapter.RequiredLevel == key.Level);
 
         var translationIds = chapters
             .Select(chapter => chapter.DescriptionId)
@@ -38,7 +31,7 @@ public class SummaryGrain : Grain, ISummaryGrain
             .ToArray();
 
         var translations = await _translationProvider
-            .FindAll(language, translationIds);
+            .FindAll(key.LangId.Native, translationIds);
 
         foreach (var chapter in chapters)
         {

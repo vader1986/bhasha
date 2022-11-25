@@ -5,6 +5,7 @@ using AutoFixture.Xunit2;
 using Bhasha.Web.Domain;
 using Bhasha.Web.Interfaces;
 using Bhasha.Web.Services;
+using Bhasha.Web.Tests.Support;
 using FluentAssertions;
 using NSubstitute;
 using Xunit;
@@ -43,7 +44,14 @@ public class ChapterProviderTests
 	public async Task GivenProfileAndChapter_WhenGetChapters_ThenReturnChapterDescriptions(Profile profile, Chapter[] chapters, Translation translation)
     {
 		// setup
-		profile = profile with { Languages = LangKey.Unknown with { Native = Language.Bengali } };
+		profile = profile with
+		{
+			Key = profile.Key with
+			{
+				LangId = SupportedLanguageKey.Create() with { Native = Language.Bengali }
+			}
+		};
+
 		var translations = chapters
 			.Select(x => x.NameId).Concat(chapters.Select(x => x.DescriptionId))
 			.ToDictionary(x => x, _ => translation);
@@ -88,8 +96,8 @@ public class ChapterProviderTests
 		// setup
 		_profileRepository.Get(profile.Id).Returns(profile);
 		_chapterRepository.Get(chapter.Id).Returns(chapter);
-		_pageFactory.CreateAsync(Arg.Any<Page>(), profile.Languages).Returns(page);
-		_translationProvider.Find(chapter.DescriptionId, profile.Languages.Native).Returns(description);
+		_pageFactory.CreateAsync(Arg.Any<Page>(), profile.Key.LangId).Returns(page);
+		_translationProvider.Find(chapter.DescriptionId, profile.Key.LangId.Native).Returns(description);
 
 		// act & verify
 		Assert.ThrowsAsync<InvalidOperationException>(
@@ -103,8 +111,8 @@ public class ChapterProviderTests
 		// setup
 		_profileRepository.Get(profile.Id).Returns(profile);
 		_chapterRepository.Get(chapter.Id).Returns(chapter);
-		_pageFactory.CreateAsync(Arg.Any<Page>(), profile.Languages).Returns(page);
-		_translationProvider.Find(chapter.NameId, profile.Languages.Native).Returns(name);
+		_pageFactory.CreateAsync(Arg.Any<Page>(), profile.Key.LangId).Returns(page);
+		_translationProvider.Find(chapter.NameId, profile.Key.LangId.Native).Returns(name);
 
 		// act & verify
 		Assert.ThrowsAsync<InvalidOperationException>(
@@ -118,9 +126,9 @@ public class ChapterProviderTests
 		// setup
 		_profileRepository.Get(profile.Id).Returns(profile);
 		_chapterRepository.Get(chapter.Id).Returns(chapter);
-		_pageFactory.CreateAsync(Arg.Any<Page>(), profile.Languages).Returns(page);
-		_translationProvider.Find(chapter.NameId, profile.Languages.Native).Returns(name);
-		_translationProvider.Find(chapter.DescriptionId, profile.Languages.Native).Returns(description);
+		_pageFactory.CreateAsync(Arg.Any<Page>(), profile.Key.LangId).Returns(page);
+		_translationProvider.Find(chapter.NameId, profile.Key.LangId.Native).Returns(name);
+		_translationProvider.Find(chapter.DescriptionId, profile.Key.LangId.Native).Returns(description);
 
 		// act
 		var displayedChapter = await _chapterProvider.GetChapter(profile.Id, chapter.Id);

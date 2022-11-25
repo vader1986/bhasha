@@ -1,4 +1,5 @@
-﻿using Bhasha.Web.Domain;
+﻿using System;
+using Bhasha.Web.Domain;
 using Bhasha.Web.Interfaces;
 
 namespace Bhasha.Web.Services;
@@ -28,12 +29,10 @@ public class ProgressManager : IProgressManager
 
         var updatedProfile = profile with
         {
-            Progress = profile.Progress with
-            {
-                ChapterId = chapterId,
-                PageIndex = 0,
-                Pages = Enumerable.Repeat(ValidationResultType.Wrong, chapter.Pages.Length).ToArray()
-            }
+            
+            ChapterId = chapterId,
+            PageIndex = 0,
+            Pages = Enumerable.Repeat(ValidationResultType.Wrong, chapter.Pages.Length).ToArray()
         };
 
         var updated = await _profiles.Update(profileId, updatedProfile);
@@ -46,20 +45,22 @@ public class ProgressManager : IProgressManager
 
     public async Task<Profile> Update(Profile profile, ValidationResult result)
     {
-        var progress = profile.Progress;
-        var chapter = await _chapters.Get(progress.ChapterId);
+        var chapterId = profile.ChapterId;
+        if (chapterId == null)
+            throw new ArgumentOutOfRangeException($"no chapter selected for profile {profile.Id}");
 
+        var chapter = await _chapters.Get(chapterId.Value);
         if (chapter == null)
-            throw new ArgumentOutOfRangeException($"chapter {progress.ChapterId} not found");
+            throw new ArgumentOutOfRangeException($"chapter {chapterId} not found");
 
-        progress.Pages[progress.PageIndex] = result.Result;
+        profile.Pages[profile.PageIndex] = result.Result;
 
-        if (progress.Pages.All(x => x == ValidationResultType.Correct))
+        if (profile.Pages.All(x => x == ValidationResultType.Correct))
         {
-            var completedChapters = progress.CompletedChapters.Append(chapter.Id).ToArray();
-            progress = progress with
+            var completedChapters = profile.CompletedChapters.Append(chapter.Id).ToArray();
+            profile = profile with
             {
-                ChapterId = Guid.Empty,
+                ChapterId = null,
                 CompletedChapters = completedChapters,
                 Pages = Array.Empty<ValidationResultType>(),
                 Level = completedChapters.Length % 5 + 1 // TODO - improve level calculation
@@ -67,22 +68,21 @@ public class ProgressManager : IProgressManager
         }
         else
         {
-            var nextPage = progress.Pages
+            var nextPage = profile.Pages
                     .Select((status, index) => (status, index))
-                    .FirstOrDefault(x => x.index != progress.PageIndex && x.status != ValidationResultType.Correct);
+                    .FirstOrDefault(x => x.index != profile.PageIndex && x.status != ValidationResultType.Correct);
 
             if (nextPage != default)
             {
-                progress = progress with { PageIndex = nextPage.index };
+                profile = profile with { PageIndex = nextPage.index };
             }
         }
 
-        var updatedProfile = profile with { Progress = progress };
-        var updated = await _profiles.Update(profile.Id, updatedProfile);
+        var updated = await _profiles.Update(profile.Id, profile);
 
         if (!updated)
             throw new InvalidOperationException($"failed to updated profile {profile.Id}");
 
-        return updatedProfile;
+        return profile;
     }
 }

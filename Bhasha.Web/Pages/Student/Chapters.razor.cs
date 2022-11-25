@@ -29,8 +29,8 @@ public partial class Chapters : UserPage, IAsyncObserver<int>
     {
         var profile = await ProgressManager.StartChapter(ProfileId, chapter.ChapterId);
 
-        var chapterId = profile.Progress.ChapterId;
-        var pageIndex = profile.Progress.PageIndex;
+        var chapterId = profile.ChapterId;
+        var pageIndex = profile.PageIndex;
 
         NavigationManager.NavigateTo($"pages/{ProfileId}/{chapterId}/{pageIndex}");
     }

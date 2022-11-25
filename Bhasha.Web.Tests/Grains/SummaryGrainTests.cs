@@ -6,7 +6,6 @@ using AutoFixture.Xunit2;
 using Bhasha.Web.Domain;
 using Bhasha.Web.Grains;
 using Bhasha.Web.Interfaces;
-using Bhasha.Web.Services;
 using FluentAssertions;
 using NSubstitute;
 using Orleans.TestKit;
@@ -60,7 +59,7 @@ public class SummaryGrainTests : TestKitBase
             .Returns(translationMap);
 
         // act
-        var grain = await Silo.CreateGrainAsync<SummaryGrain>($"2-{Language.English}");
+        var grain = await Silo.CreateGrainAsync<SummaryGrain>($"2-{Language.English}>{Language.Bengali}");
         var result = await grain.GetSummaries();
 
         // verify

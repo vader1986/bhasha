@@ -2,11 +2,13 @@
 
 public record ChapterKey(Guid ChapterId, LangKey LangId)
 {
-    public static ChapterKey From(string value)
-    {
-        var args = value.Split('-');
+    public const string Separator = ":";
 
-        if (args == null || args.Length != 2)
+    public static ChapterKey Parse(string value)
+    {
+        var args = value.Split(Separator);
+
+        if (args.Length != 2)
         {
             throw new ArgumentException($"Invalid representation of ChapterKey: {value}");
         }
@@ -16,11 +18,11 @@ public record ChapterKey(Guid ChapterId, LangKey LangId)
             throw new ArgumentException($"Invalid representation of ChapterKey: {value}");
         }
 
-        return new ChapterKey(chapterId, LangKey.From(args[1]));
+        return new ChapterKey(chapterId, LangKey.Parse(args[1]));
     }
 
     public override string ToString()
     {
-        return $"{ChapterId}-{LangId}";
+        return $"{ChapterId}{Separator}{LangId}";
     }
 }

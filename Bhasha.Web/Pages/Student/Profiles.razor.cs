@@ -43,7 +43,7 @@ public partial class Profiles : UserPage
     {
         if (_selectedNative != null && _selectedTarget != null && _profiles != null)
         {
-            var alreadyExists = _profiles.Any(x => x.Languages.Native == _selectedNative && x.Languages.Target == _selectedTarget);
+            var alreadyExists = _profiles.Any(x => x.Key.LangId.Native == _selectedNative && x.Key.LangId.Target == _selectedTarget);
             var invalidSelection = _selectedNative == _selectedTarget;
 
             _disableCreateButton = alreadyExists || invalidSelection;

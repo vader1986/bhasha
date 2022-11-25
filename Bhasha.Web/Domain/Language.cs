@@ -11,7 +11,8 @@ public class Language : IEquatable<Language>
 
     public readonly static LanguageSet Supported = new()
     {
-        { English.ToString(), English }, { Bengali.ToString(), Bengali }
+        [English.ToString()] = English,
+        [Bengali.ToString()] = Bengali
     };
 
     public string Id { get; }

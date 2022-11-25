@@ -13,18 +13,11 @@ public class ProfileManagerTests
 {
     private readonly ProfileManager _profileManager;
     private readonly IRepository<Profile> _repository;
-    private readonly IFactory<Profile> _factory;
 
     public ProfileManagerTests()
     {
         _repository = Substitute.For<IRepository<Profile>>();
-        _factory = Substitute.For<IFactory<Profile>>();
-        _profileManager = new ProfileManager(_repository, _factory);
-
-        var progress = new Progress(1, Guid.Empty, Array.Empty<Guid>(), 0, Array.Empty<ValidationResultType>());
-        var profile = new Profile(Guid.NewGuid(), "user-123", new LangKey(Language.English, Language.Bengali), progress);
-
-        _factory.Create().Returns(profile);
+        _profileManager = new ProfileManager(_repository);
     }
 
     [Fact]
@@ -62,11 +55,15 @@ public class ProfileManagerTests
     [Theory, AutoData]
     public void GivenCreateCall_WhenProfileAlreadyExists_ThenThrowException(Profile profile)
     {
-        profile = profile with { UserId = "user-123", Languages = new LangKey(Language.English, Language.Bengali) };
+        profile = profile with
+        {
+            Key = new ProfileKey("user-123", new LangKey(Language.English, Language.Bengali))
+        };
+
         _repository.Find(default!).ReturnsForAnyArgs(new[] { profile });
 
         Assert.ThrowsAsync<InvalidOperationException>(async () =>
-            await _profileManager.Create(profile.UserId, new LangKey(profile.Languages.Native, profile.Languages.Target)));
+            await _profileManager.Create(profile.Key.UserId, new LangKey(profile.Key.LangId.Native, profile.Key.LangId.Target)));
     }
 
     [Fact]

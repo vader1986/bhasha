@@ -4,11 +4,6 @@ using Orleans;
 
 namespace Bhasha.Web.Grains;
 
-public interface IDisplayChapterGrain : IGrainWithStringKey
-{
-    ValueTask<DisplayedChapter> Display();
-}
-
 public class DisplayChapterGrain : Grain, IDisplayChapterGrain
 {
     private readonly IRepository<Chapter> _chapterRepository;
@@ -26,10 +21,10 @@ public class DisplayChapterGrain : Grain, IDisplayChapterGrain
 
     public override async Task OnActivateAsync()
     {
-        var key = ChapterKey.From(this.GetPrimaryKeyString());
+        var key = ChapterKey.Parse(this.GetPrimaryKeyString());
 
         var chapter = await _chapterRepository.Get(key.ChapterId);
-        if (chapter == null) throw new ArgumentOutOfRangeException(nameof(key.ChapterId));
+        if (chapter == null) throw new InvalidOperationException($"Chapter with ID {key.ChapterId} not found");
 
         var pages = await Task.WhenAll(chapter.Pages.Select(
             async page => await _pageFactory.CreateAsync(page, key.LangId)));

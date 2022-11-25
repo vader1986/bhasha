@@ -18,7 +18,7 @@ public class AddSchemasAndIndices : DatabaseMigration
         db.CreateCollection(nameof(Translation));
 
         var profiles = db.GetCollection<Profile>(nameof(Profile));
-        profiles.CreateIndices(x => x.UserId);
+        profiles.CreateIndices(x => x.Key.UserId);
 
         var chapters = db.GetCollection<Chapter>(nameof(Chapter));
         chapters.CreateIndices(x => x.RequiredLevel);

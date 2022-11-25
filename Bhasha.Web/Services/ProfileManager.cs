@@ -6,12 +6,10 @@ namespace Bhasha.Web.Services;
 public class ProfileManager : IProfileManager
 {
     private readonly IRepository<Profile> _repository;
-    private readonly IFactory<Profile> _factory;
-
-    public ProfileManager(IRepository<Profile> repository, IFactory<Profile> factory)
+    
+    public ProfileManager(IRepository<Profile> repository)
     {
         _repository = repository;
-        _factory = factory;
     }
 
     public async Task<Profile> Create(string userId, LangKey languages)
@@ -32,12 +30,14 @@ public class ProfileManager : IProfileManager
             throw new ArgumentException("Native and target language cannot be equal", nameof(native));
 
         var existingProfile = await _repository.Find(
-            x => x.UserId == userId && x.Languages.Native == native && x.Languages.Target == target);
+            x => x.Key.UserId == userId && x.Key.LangId.Native == native && x.Key.LangId.Target == target);
 
         if (existingProfile.Any())
             throw new InvalidOperationException($"Profile {native} - {target} for user {userId} already exists");
 
-        var profile = _factory.Create() with { UserId = userId, Languages = new LangKey(native, target) };
+        var key = new ProfileKey(userId, new LangKey(native, target));
+        var profile = new Profile(Guid.Empty, key, 1, default, Array.Empty<Guid>(), 0, Array.Empty<ValidationResultType>());
+
         return await _repository.Add(profile);
     }
 
@@ -46,7 +46,7 @@ public class ProfileManager : IProfileManager
         if (string.IsNullOrWhiteSpace(userId))
             throw new ArgumentNullException(nameof(userId));
 
-        var userProfiles = await _repository.Find(x => x.UserId == userId);
+        var userProfiles = await _repository.Find(x => x.Key.UserId == userId);
         return userProfiles.ToArray();
     }
 }

@@ -34,15 +34,15 @@ public partial class Pages : UserPage
         var submission = new Submission(ProfileId, expressionId, translation);
 
         var feedback = await SubmissionManager.Accept(submission);
-        var progress = feedback.Profile.Progress;
+        var profile = feedback.Profile;
 
-        if (progress.ChapterId == Guid.Empty)
+        if (profile.ChapterId == null)
         {
             NavigationManager.NavigateTo($"chapters/{ProfileId}");
         }
         else
         {
-            NavigationManager.NavigateTo($"pages/{ProfileId}/{ChapterId}/{progress.PageIndex}");
+            NavigationManager.NavigateTo($"pages/{ProfileId}/{ChapterId}/{profile.PageIndex}");
         }
     }
 }

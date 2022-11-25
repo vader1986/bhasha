@@ -24,4 +24,10 @@
     <ProjectReference Include="..\Bhasha.Web\Bhasha.Web.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Support\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Support\" />
+  </ItemGroup>
 </Project>
