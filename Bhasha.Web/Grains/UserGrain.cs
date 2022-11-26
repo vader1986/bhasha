@@ -7,22 +7,20 @@ namespace Bhasha.Web.Grains;
 
 public class UserGrain : Grain, IUserGrain
 {
-    private readonly IRepository<Profile> _profileRepository;
+    private readonly IProfileLookup _profileLookup;
     private readonly IDictionary<LangKey, Profile> _profiles;
 
-    public UserGrain(IRepository<Profile> profileRepository)
+    public UserGrain(IProfileLookup profileLookup)
 	{
-        _profileRepository = profileRepository;
+        _profileLookup = profileLookup;
         _profiles = new Dictionary<LangKey, Profile>();
     }
 
     public override async Task OnActivateAsync()
     {
         var userId = this.GetPrimaryKeyString();
-        var profiles = await _profileRepository
-            .Find(profile => profile.Key.UserId == userId);
-
-        foreach (var profile in profiles)
+        
+        await foreach (var profile in _profileLookup.GetProfiles(userId))
         {
             _profiles[profile.Key.LangId] = profile;
         }

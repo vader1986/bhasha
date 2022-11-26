@@ -1,42 +1,50 @@
 ﻿using System.Collections.Immutable;
 using Bhasha.Web.Domain;
 using Bhasha.Web.Interfaces;
+using Bhasha.Web.Pages.Student;
 using Orleans;
 
 namespace Bhasha.Web.Grains;
 
 public class SummaryGrain : Grain, ISummaryGrain
 {
-    private readonly IRepository<Chapter> _chapterRepository;
+    private readonly IChapterLookup _chapterLookup;
     private readonly ITranslationProvider _translationProvider;
     private readonly IList<Summary> _summaries = new List<Summary>();
 
-    public SummaryGrain(IRepository<Chapter> chapterRepository, ITranslationProvider translationProvider)
+    public SummaryGrain(IChapterLookup chapterLookup, ITranslationProvider translationProvider)
     {
-        _chapterRepository = chapterRepository;
+        _chapterLookup = chapterLookup;
         _translationProvider = translationProvider;
     }
 
     public override async Task OnActivateAsync()
     {
         var key = SummaryCollectionKey.Parse(this.GetPrimaryKeyString());
+        var translations = new Dictionary<Guid, string>();
+        var native = key.LangId.Native;
 
-        var chapters = await _chapterRepository
-            .Find(chapter => chapter.RequiredLevel == key.Level);
-
-        var translationIds = chapters
-            .Select(chapter => chapter.DescriptionId)
-            .Concat(chapters.Select(chapter => chapter.NameId))
-            .Distinct()
-            .ToArray();
-
-        var translations = await _translationProvider
-            .FindAll(key.LangId.Native, translationIds);
-
-        foreach (var chapter in chapters)
+        async Task<string> Translate(Guid expressionId)
         {
-            var name = translations[chapter.NameId].Native;
-            var description = translations[chapter.DescriptionId].Native;
+            if (translations.TryGetValue(expressionId, out var name))
+            {
+                return name;
+            }
+
+            var translation = await _translationProvider.Find(expressionId, native);
+            if (translation == null)
+            {
+                throw new InvalidOperationException($"Translation for {expressionId} to {native} not found");
+            }
+
+            translations[expressionId] = translation.Native;
+            return translation.Native;
+        }
+
+        await foreach (var chapter in _chapterLookup.GetChapters(key.Level))
+        {
+            var name = await Translate(chapter.NameId);
+            var description = await Translate(chapter.DescriptionId);
 
             _summaries.Add(new Summary(chapter.Id, name, description));
         }

@@ -107,11 +107,13 @@ hostBuilder.ConfigureServices(services =>
     services.AddSingleton<IRepository<Translation>, MongoRepository<Translation>>();
     services.AddSingleton<IFactory<Expression>, ExpressionFactory>();
     services.AddSingleton<IProfileManager, ProfileManager>();
+    services.AddSingleton<IProfileLookup, ProfileLookup>();
     services.AddSingleton<IProgressManager, ProgressManager>();
     services.AddSingleton<ISubmissionManager, SubmissionManager>();
     services.AddSingleton<ITranslationManager, TranslationManager>();
     services.AddSingleton<ITranslationProvider, TranslationProvider>();
     services.AddSingleton<IChapterProvider, ChapterProvider>();
+    services.AddSingleton<IChapterLookup, ChapterLookup>();
     services.AddSingleton<IValidator, Validator>();
     services.AddSingleton<IAsyncFactory<Page, LangKey, DisplayedPage>, PageFactory>();
     services.AddSingleton<IAsyncFactory<Page, LangKey, DisplayedPage<MultipleChoice>>, MultipleChoicePageFactory>();
