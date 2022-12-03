@@ -2,8 +2,9 @@
 
 namespace Bhasha.Web.Interfaces;
 
-public interface IProfileLookup
+public interface IProfileRepository
 {
     IAsyncEnumerable<Profile> GetProfiles(string userId);
+    Task<Profile> Add(Profile profile);
 }
 

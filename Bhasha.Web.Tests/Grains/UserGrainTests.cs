@@ -18,20 +18,23 @@ namespace Bhasha.Web.Tests.Grains;
 
 public class UserGrainTests : TestKitBase
 {
-    private readonly IProfileLookup _profileLookup;
+    private readonly IProfileRepository _repository;
 
     public UserGrainTests()
 	{
-        _profileLookup = Substitute.For<IProfileLookup>();
+        _repository = Substitute.For<IProfileRepository>();
+        _repository
+            .GetProfiles("user-123")
+            .Returns(Array.Empty<Profile>().ToAsyncEnumerable());
 
-        Silo.AddService(_profileLookup);
+        Silo.AddService(_repository);
     }
 
     [Theory, AutoData]
     public async Task GivenUserProfileForLanguages_WhenGetProfile_ThenReturnProfile(Profile profile)
     {
         // setup
-        _profileLookup
+        _repository
             .GetProfiles("user-123")
             .Returns(new[] { profile }.ToAsyncEnumerable());
 
@@ -47,7 +50,7 @@ public class UserGrainTests : TestKitBase
     public async Task GivenNoUserProfile_WhenGetProfile_ThenThrowException()
     {
         // setup
-        _profileLookup
+        _repository
             .GetProfiles("user-123")
             .Returns(Array.Empty<Profile>().ToAsyncEnumerable());
 
@@ -64,9 +67,9 @@ public class UserGrainTests : TestKitBase
     public async Task GivenUserProfileWithoutChapterId_WhenGetCurrentChapter_ThenReturnNull(Profile profile)
     {
         // setup
-        _profileLookup
+        _repository
             .GetProfiles("user-123")
-            .Returns(new[] { profile with { ChapterId = null } }.ToAsyncEnumerable());
+            .Returns(new[] { profile with { CurrentChapter = null } }.ToAsyncEnumerable());
 
         // act
         var grain = await Silo.CreateGrainAsync<UserGrain>("user-123");
@@ -80,13 +83,13 @@ public class UserGrainTests : TestKitBase
     public async Task GivenUserProfileWithChapterId_WhenGetCurrentChapter_ThenReturnDisplayedChapter(Profile profile, DisplayedChapter chapter, ChapterKey chapterKey)
     {
         // setup
-        _profileLookup
+        _repository
             .GetProfiles("user-123")
             .Returns(new[]
             {
                 profile with
                 {
-                    ChapterId = chapterKey.ChapterId,
+                    CurrentChapter = new ChapterSelection(chapterKey.ChapterId, 0, Array.Empty<ValidationResultType>()),
                     Key = profile.Key with { LangId = chapterKey.LangId }
                 }
             }.ToAsyncEnumerable());
@@ -108,9 +111,9 @@ public class UserGrainTests : TestKitBase
     public async Task GivenUserProfile_WhenGetSummaries_ThenReturnSummariesOfUncompletedChapters(Profile profile, Summary summary)
     {
         // setup
-        _profileLookup
+        _repository
             .GetProfiles("user-123")
-            .Returns(new[] { profile with { ChapterId = null } }.ToAsyncEnumerable());
+            .Returns(new[] { profile with { CurrentChapter = null } }.ToAsyncEnumerable());
 
         var expectedKey = new SummaryCollectionKey(profile.Level, profile.Key.LangId);
         var chapterGrain = Silo.AddProbe<ISummaryGrain>(expectedKey.ToString());
@@ -128,6 +131,99 @@ public class UserGrainTests : TestKitBase
 
         // verify
         result.Should().BeEquivalentTo(new[] {summary});
+    }
+
+    [Fact]
+    public async Task GivenProfileDoesntExist_WhenCreateProfile_ThenAddProfileToRepository()
+    {
+        // setup
+        var languages = new LangKey(Language.English, Language.Bengali);
+
+        _repository
+            .GetProfiles("user-123")
+            .Returns(Array.Empty<Profile>().ToAsyncEnumerable());
+
+        // act
+        var grain = await Silo.CreateGrainAsync<UserGrain>("user-123");
+        await grain.CreateProfile(languages);
+
+        // verify
+        var expectedProfile = Profile.Empty(new ProfileKey("user-123", languages));
+        await _repository.Received(1).Add(expectedProfile);
+    }
+
+    [Fact]
+    public async Task GivenSameNativeAndTargetLanguageSelected_WhenCreateProfile_ThenThrow()
+    {
+        // setup
+        var languages = new LangKey(Language.English, Language.English);
+        var grain = await Silo.CreateGrainAsync<UserGrain>("user-123");
+
+        // act
+        var exception = await Assert.ThrowsAsync<ArgumentException>(
+            async () => await grain.CreateProfile(languages));
+
+        // verify
+        exception.Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task GivenNativeLanguageNotSupported_WhenCreateProfile_ThenThrow()
+    {
+        // setup
+        var languages = new LangKey("test", Language.English);
+        var grain = await Silo.CreateGrainAsync<UserGrain>("user-123");
+
+        // act
+        var exception = await Assert.ThrowsAsync<ArgumentException>(
+            async () => await grain.CreateProfile(languages));
+
+        // verify
+        exception.Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task GivenTargetLanguageNotSupported_WhenCreateProfile_ThenThrow()
+    {
+        // setup
+        var languages = new LangKey(Language.English, "test");
+        var grain = await Silo.CreateGrainAsync<UserGrain>("user-123");
+
+        // act
+        var exception = await Assert.ThrowsAsync<ArgumentException>(
+            async () => await grain.CreateProfile(languages));
+
+        // verify
+        exception.Should().NotBeNull();
+    }
+
+    [Theory, AutoData]
+    public async Task GivenProfileAlreadyExists_WhenCreateProfile_ThenThrow(Profile profile)
+    {
+        // setup
+        var languages = new LangKey(Language.English, Language.Bengali);
+
+        _repository
+            .GetProfiles("user-123")
+            .Returns(new[]
+            {
+                profile with
+                {
+                    Key = profile.Key with
+                    {
+                        LangId = languages
+                    }
+                }
+            }.ToAsyncEnumerable());
+
+        var grain = await Silo.CreateGrainAsync<UserGrain>("user-123");
+
+        // act
+        var exception = await Assert.ThrowsAsync<ArgumentException>(
+            async () => await grain.CreateProfile(languages));
+
+        // verify
+        exception.Should().NotBeNull();
     }
 }
 

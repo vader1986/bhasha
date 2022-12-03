@@ -35,14 +35,15 @@ public partial class Pages : UserPage
 
         var feedback = await SubmissionManager.Accept(submission);
         var profile = feedback.Profile;
+        var currentChapter = profile.CurrentChapter;
 
-        if (profile.ChapterId == null)
+        if (currentChapter == null)
         {
             NavigationManager.NavigateTo($"chapters/{ProfileId}");
         }
         else
         {
-            NavigationManager.NavigateTo($"pages/{ProfileId}/{ChapterId}/{profile.PageIndex}");
+            NavigationManager.NavigateTo($"pages/{ProfileId}/{currentChapter.ChapterId}/{currentChapter.PageIndex}");
         }
     }
 }

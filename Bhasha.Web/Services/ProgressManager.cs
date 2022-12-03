@@ -27,12 +27,14 @@ public class ProgressManager : IProgressManager
         if (chapter == null)
             throw new ArgumentOutOfRangeException($"chapter {chapterId} not found");
 
+        var defaultResults = Enumerable.Repeat(ValidationResultType.Wrong, chapter.Pages.Length).ToArray();
+
         var updatedProfile = profile with
         {
-            
-            ChapterId = chapterId,
-            PageIndex = 0,
-            Pages = Enumerable.Repeat(ValidationResultType.Wrong, chapter.Pages.Length).ToArray()
+            CurrentChapter = new ChapterSelection(
+                ChapterId: chapterId,
+                PageIndex: 0,
+                Pages: defaultResults)
         };
 
         var updated = await _profiles.Update(profileId, updatedProfile);
@@ -45,44 +47,48 @@ public class ProgressManager : IProgressManager
 
     public async Task<Profile> Update(Profile profile, ValidationResult result)
     {
-        var chapterId = profile.ChapterId;
-        if (chapterId == null)
+        var currentChapter = profile.CurrentChapter;
+        if (currentChapter == null)
             throw new ArgumentOutOfRangeException($"no chapter selected for profile {profile.Id}");
 
-        var chapter = await _chapters.Get(chapterId.Value);
+        var chapterId = currentChapter.ChapterId;
+        var chapter = await _chapters.Get(chapterId);
+
         if (chapter == null)
             throw new ArgumentOutOfRangeException($"chapter {chapterId} not found");
 
-        profile.Pages[profile.PageIndex] = result.Result;
+        currentChapter.Pages[currentChapter.PageIndex] = result.Result;
 
-        if (profile.Pages.All(x => x == ValidationResultType.Correct))
+        if (currentChapter.Pages.All(x => x == ValidationResultType.Correct))
         {
             var completedChapters = profile.CompletedChapters.Append(chapter.Id).ToArray();
             profile = profile with
             {
-                ChapterId = null,
-                CompletedChapters = completedChapters,
-                Pages = Array.Empty<ValidationResultType>(),
-                Level = completedChapters.Length % 5 + 1 // TODO - improve level calculation
+                Level = completedChapters.Length % 5 + 1, // TODO - improve level calculation
+                CompletedChapters = completedChapters
             };
+
+            currentChapter = null;
         }
         else
         {
-            var nextPage = profile.Pages
+            var nextPage = currentChapter.Pages
                     .Select((status, index) => (status, index))
-                    .FirstOrDefault(x => x.index != profile.PageIndex && x.status != ValidationResultType.Correct);
+                    .FirstOrDefault(x => x.index != currentChapter.PageIndex &&
+                                         x.status != ValidationResultType.Correct);
 
             if (nextPage != default)
             {
-                profile = profile with { PageIndex = nextPage.index };
+                currentChapter = currentChapter with { PageIndex = nextPage.index };
             }
         }
 
-        var updated = await _profiles.Update(profile.Id, profile);
+        var updatedProfile = profile with { CurrentChapter = currentChapter };
+        var updated = await _profiles.Update(profile.Id, updatedProfile);
 
         if (!updated)
             throw new InvalidOperationException($"failed to updated profile {profile.Id}");
 
-        return profile;
+        return updatedProfile;
     }
 }

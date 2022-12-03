@@ -4,6 +4,11 @@ using Orleans;
 
 namespace Bhasha.Web.Grains;
 
+public interface IDisplayChapterGrain : IGrainWithStringKey
+{
+    ValueTask<DisplayedChapter> Display();
+}
+
 public class DisplayChapterGrain : Grain, IDisplayChapterGrain
 {
     private readonly IRepository<Chapter> _chapterRepository;

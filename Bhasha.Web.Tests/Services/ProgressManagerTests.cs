@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AutoFixture.Xunit2;
 using Bhasha.Web.Domain;
 using Bhasha.Web.Interfaces;
+using Bhasha.Web.Pages.Student;
 using Bhasha.Web.Services;
 using NSubstitute;
 using Xunit;
@@ -73,18 +74,23 @@ public class ProgressManagerTests
 		var updatedProfile = await _progressManager.StartChapter(profileId, chapterId);
 
 		// verify
-		Assert.Equal(chapterId, updatedProfile.ChapterId);
-		Assert.Equal(0, updatedProfile.PageIndex);
-		Assert.Equal(chapter.Pages.Length, updatedProfile.Pages.Length);
-		Assert.True(updatedProfile.Pages.All(x => x == ValidationResultType.Wrong));
+		Assert.Equal(chapterId, updatedProfile.CurrentChapter?.ChapterId);
+		Assert.Equal(0, updatedProfile.CurrentChapter?.PageIndex);
+		Assert.Equal(chapter.Pages.Length, updatedProfile.CurrentChapter?.Pages.Length);
+		Assert.True(updatedProfile.CurrentChapter?.Pages.All(x => x == ValidationResultType.Wrong));
 	}
 
 	[Theory, AutoData]
 	public void GivenMissingChapter_WhenProfileUpdated_ThenThrowException(Profile profile, ValidationResult result)
 	{
 		// setup
-		profile = profile with { ChapterId = Guid.NewGuid() };
-		_chapters.Get(profile.ChapterId.Value).Returns(default(Chapter));
+		var chapterId = Guid.NewGuid();
+        profile = profile with
+		{
+			CurrentChapter = new ChapterSelection(chapterId, 0, Array.Empty<ValidationResultType>())
+		};
+
+		_chapters.Get(chapterId).Returns(default(Chapter));
 
 		// act & verify
 		Assert.ThrowsAsync<ArgumentOutOfRangeException>(
@@ -96,8 +102,13 @@ public class ProgressManagerTests
 		Profile profile, ValidationResult result, Chapter chapter)
 	{
         // setup
-        profile = profile with { ChapterId = Guid.NewGuid() };
-        _chapters.Get(profile.ChapterId.Value).Returns(chapter);
+        var chapterId = Guid.NewGuid();
+        profile = profile with
+        {
+            CurrentChapter = new ChapterSelection(chapterId, 0, Array.Empty<ValidationResultType>())
+        };
+
+        _chapters.Get(chapterId).Returns(chapter);
 		_profiles.Update(default, default!).ReturnsForAnyArgs(false);
 
 		// act & verify
@@ -110,17 +121,19 @@ public class ProgressManagerTests
 		Profile profile, ValidationResult result, Chapter chapter)
     {
 		// setup
-		result = result with { Result = ValidationResultType.Correct };
-		profile = profile with
+		result = result with
 		{
-			ChapterId = chapter.Id,
-			CompletedChapters = Array.Empty<Guid>(),
-			Level = 1,
-			PageIndex = 0,
-			Pages = chapter.Pages.Select(_ => ValidationResultType.Wrong).ToArray()
+			Result = ValidationResultType.Correct
 		};
 
-		_chapters.Get(profile.ChapterId.Value).Returns(chapter);
+        profile = profile with
+        {
+            CurrentChapter = new ChapterSelection(chapter.Id, 0, chapter.Pages.Select(_ => ValidationResultType.Wrong).ToArray()),
+            CompletedChapters = Array.Empty<Guid>(),
+            Level = 1
+        };
+
+		_chapters.Get(chapter.Id).Returns(chapter);
 		_profiles.Update(default, default!).ReturnsForAnyArgs(true);
 
 		// act
@@ -130,8 +143,8 @@ public class ProgressManagerTests
 		await _profiles
 			.Received(1)
 			.Update(profile.Id, Arg.Is<Profile>(
-				x => x.PageIndex == 1 &&
-						x.Pages[0] == ValidationResultType.Correct));
+				x => x.CurrentChapter!.PageIndex == 1 &&
+					 x.CurrentChapter.Pages[0] == ValidationResultType.Correct));
 	}
 
 	[Theory, AutoData]
@@ -139,17 +152,19 @@ public class ProgressManagerTests
 		Profile profile, ValidationResult result, Chapter chapter)
 	{
 		// setup
-		result = result with { Result = ValidationResultType.Correct };
-		profile = profile with
+		result = result with
 		{
-			ChapterId = chapter.Id,
-			CompletedChapters = Array.Empty<Guid>(),
-			Level = 1,
-			PageIndex = chapter.Pages.Length - 1,
-			Pages = chapter.Pages.Select(_ => ValidationResultType.Correct).ToArray()
+			Result = ValidationResultType.Correct
 		};
 
-		_chapters.Get(profile.ChapterId.Value).Returns(chapter);
+        profile = profile with
+        {
+            CurrentChapter = new ChapterSelection(chapter.Id, chapter.Pages.Length - 1, chapter.Pages.Select(_ => ValidationResultType.Correct).ToArray()),
+            CompletedChapters = Array.Empty<Guid>(),
+            Level = 1
+        };
+
+		_chapters.Get(chapter.Id).Returns(chapter);
 		_profiles.Update(default, default!).ReturnsForAnyArgs(true);
 
 		// act
@@ -159,26 +174,28 @@ public class ProgressManagerTests
 		await _profiles
 			.Received(1)
 			.Update(profile.Id, Arg.Is<Profile>(
-				x => x.ChapterId == null &&
-						x.CompletedChapters.Contains(chapter.Id)));
+				x => x.CurrentChapter == null &&
+					 x.CompletedChapters.Contains(chapter.Id)));
 	}
 
 	[Theory, AutoData]
 	public async Task GivenWrongResultForProfile_WhenUpdated_ThenUpdateProfile(
 		Profile profile, ValidationResult result, Chapter chapter)
 	{
-		// setup
-		result = result with { Result = ValidationResultType.Wrong };
-		profile = profile with
-		{
-			ChapterId = chapter.Id,
-			CompletedChapters = Array.Empty<Guid>(),
-			Level = 1,
-			PageIndex = 0,
-			Pages = chapter.Pages.Select(_ => ValidationResultType.PartiallyCorrect).ToArray()
-		};
+        // setup
+        result = result with
+        {
+            Result = ValidationResultType.Wrong
+        };
 
-		_chapters.Get(profile.ChapterId.Value).Returns(chapter);
+        profile = profile with
+        {
+            CurrentChapter = new ChapterSelection(chapter.Id, 0, chapter.Pages.Select(_ => ValidationResultType.PartiallyCorrect).ToArray()),
+            CompletedChapters = Array.Empty<Guid>(),
+            Level = 1
+        };
+
+		_chapters.Get(chapter.Id).Returns(chapter);
 		_profiles.Update(default, default!).ReturnsForAnyArgs(true);
 
 		// act
@@ -188,8 +205,8 @@ public class ProgressManagerTests
 		await _profiles
 			.Received(1)
 			.Update(profile.Id, Arg.Is<Profile>(
-				x => x.PageIndex == 1 &&
-						x.Pages[0] == ValidationResultType.Wrong));
+				x => x.CurrentChapter!.PageIndex == 1 &&
+					 x.CurrentChapter.Pages[0] == ValidationResultType.Wrong));
 	}
 }
 

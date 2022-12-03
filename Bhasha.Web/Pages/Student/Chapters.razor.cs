@@ -29,20 +29,24 @@ public partial class Chapters : UserPage, IAsyncObserver<int>
     {
         var profile = await ProgressManager.StartChapter(ProfileId, chapter.ChapterId);
 
-        var chapterId = profile.ChapterId;
-        var pageIndex = profile.PageIndex;
-
-        NavigationManager.NavigateTo($"pages/{ProfileId}/{chapterId}/{pageIndex}");
+        var currentChapter = profile.CurrentChapter;
+        if (currentChapter != null)
+        {
+            NavigationManager.NavigateTo($"pages/{ProfileId}/{currentChapter.ChapterId}/{currentChapter.PageIndex}");
+        }
     }
 
     #region TODO REMOVE
     [Inject]
-    public IClusterClient ClusterClient { get; set; }
+    public IClusterClient? ClusterClient { get; set; }
 
     private async Task LoadStream()
     {
         try
         {
+            if (ClusterClient == null)
+                return;
+
             var grain = ClusterClient.GetGrain<IFakeGrain>("123");
             var shit = await grain.CreateShit();
             _items.Add($"{shit}");
@@ -61,9 +65,10 @@ public partial class Chapters : UserPage, IAsyncObserver<int>
         }
     }
 
-    public async Task OnNextAsync(int item, StreamSequenceToken token = null)
+    public Task OnNextAsync(int item, StreamSequenceToken token)
     {
         _items.Add($"{item}");
+        return Task.CompletedTask;
     }
 
     public Task OnCompletedAsync()

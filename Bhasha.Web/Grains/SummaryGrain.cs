@@ -6,6 +6,11 @@ using Orleans;
 
 namespace Bhasha.Web.Grains;
 
+public interface ISummaryGrain : IGrainWithStringKey
+{
+    ValueTask<ImmutableList<Summary>> GetSummaries();
+}
+
 public class SummaryGrain : Grain, ISummaryGrain
 {
     private readonly IChapterLookup _chapterLookup;

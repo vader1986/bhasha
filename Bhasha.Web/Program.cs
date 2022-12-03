@@ -107,7 +107,7 @@ hostBuilder.ConfigureServices(services =>
     services.AddSingleton<IRepository<Translation>, MongoRepository<Translation>>();
     services.AddSingleton<IFactory<Expression>, ExpressionFactory>();
     services.AddSingleton<IProfileManager, ProfileManager>();
-    services.AddSingleton<IProfileLookup, ProfileLookup>();
+    services.AddSingleton<IProfileRepository, ProfileRepository>();
     services.AddSingleton<IProgressManager, ProgressManager>();
     services.AddSingleton<ISubmissionManager, SubmissionManager>();
     services.AddSingleton<ITranslationManager, TranslationManager>();

@@ -36,9 +36,8 @@ public class ProfileManager : IProfileManager
             throw new InvalidOperationException($"Profile {native} - {target} for user {userId} already exists");
 
         var key = new ProfileKey(userId, new LangKey(native, target));
-        var profile = new Profile(Guid.Empty, key, 1, default, Array.Empty<Guid>(), 0, Array.Empty<ValidationResultType>());
 
-        return await _repository.Add(profile);
+        return await _repository.Add(Profile.Empty(key));
     }
 
     public async Task<Profile[]> GetProfiles(string userId)
