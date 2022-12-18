@@ -1,7 +1,7 @@
 ﻿using System.Collections.Immutable;
 using Bhasha.Web.Domain;
 using Bhasha.Web.Interfaces;
-using Orleans;
+using Orleans.Streams;
 
 namespace Bhasha.Web.Grains;
 
@@ -40,27 +40,48 @@ public interface IUserGrain : IGrainWithStringKey
     /// </summary>
     /// <param name="langId">Language combination of the profile</param>
     /// <returns>A list of uncompleted chapter summaries.</returns>
-    Task<ImmutableList<Summary>> GetSummaries(LangKey langId);
+    Task<ImmutableList<DisplayedSummary>> GetSummaries(LangKey langId);
+
+    /// <summary>
+    /// User selects a chapter for the selected languages to continue learn a
+    /// set of new words. 
+    /// </summary>
+    /// <param name="chapterId">Unique identifier of the chapter.</param>
+    /// <param name="langId">Native language of the user and target language to learn.</param>
+    /// <returns>The next chapter to be displayed to the user.</returns>
+    Task<DisplayedChapter> SelectChapter(Guid chapterId, LangKey langId);
 
     /// <summary>
     /// Gets a list of profiles created for the user.
     /// </summary>
     /// <returns>An immutable list of all user profiles.</returns>
     Task<ImmutableList<Profile>> GetProfiles();
+
+    /// <summary>
+    /// Submit user input for validating. Updates the corresponding user profile
+    /// after validation of the input. 
+    /// </summary>
+    /// <param name="input">Input for validation.</param>
+    /// <returns></returns>
+    Task<Validation> Submit(ValidationInput input);
 }
 
 public class UserGrain : Grain, IUserGrain
 {
     private readonly IProfileRepository _repository;
+    private readonly IValidator _validator;
     private readonly IDictionary<LangKey, Profile> _profiles;
+    private IAsyncStream<Profile>? _stream;
 
-    public UserGrain(IProfileRepository repository)
+
+    public UserGrain(IProfileRepository repository, IValidator validator)
 	{
         _repository = repository;
+        _validator = validator;
         _profiles = new Dictionary<LangKey, Profile>();
     }
 
-    public override async Task OnActivateAsync()
+    public override async Task OnActivateAsync(CancellationToken cancellationToken)
     {
         var userId = this.GetPrimaryKeyString();
         
@@ -68,6 +89,11 @@ public class UserGrain : Grain, IUserGrain
         {
             _profiles[profile.Key.LangId] = profile;
         }
+
+        var streamProvider = this.GetStreamProvider(Orleans.StreamProvider);
+        var stream = streamProvider.GetStream<Profile>(Orleans.Streams.UserProfile);
+
+        _stream = stream;
     }
 
     public ValueTask<Profile> GetProfile(LangKey langId)
@@ -91,14 +117,12 @@ public class UserGrain : Grain, IUserGrain
         }
 
         var chapterKey = new ChapterKey(chapterId.Value, langId);
-        var chapterGrain = GrainFactory
-            .GetGrain<IDisplayChapterGrain>(chapterKey.ToString());
+        var chapterGrain = GrainFactory.GetGrain<IDisplayChapterGrain>(chapterKey.ToString());
 
-        return await chapterGrain
-            .Display();
+        return await chapterGrain.Display();
     }
 
-    public async Task<ImmutableList<Summary>> GetSummaries(LangKey langId)
+    public async Task<ImmutableList<DisplayedSummary>> GetSummaries(LangKey langId)
     {
         var profile = await GetProfile(langId);
 
@@ -109,8 +133,38 @@ public class UserGrain : Grain, IUserGrain
         var summaries = await summaryGrain.GetSummaries();
 
         return summaries
-            .Where(summary => !profile.CompletedChapters.Contains(summary.ChapterId))
+            .Select(summary => new DisplayedSummary(
+                summary.ChapterId,
+                summary.Name,
+                summary.Description,
+                profile.CompletedChapters.Contains(summary.ChapterId)))
             .ToImmutableList();
+    }
+
+    public async Task<DisplayedChapter> SelectChapter(Guid chapterId, LangKey langId)
+    {
+        if (!_profiles.TryGetValue(langId, out var profile))
+            throw new ArgumentException($"Profile for {langId} not found", nameof(langId));
+
+        var chapterKey = new ChapterKey(chapterId, langId);
+        var chapterGrain = GrainFactory.GetGrain<IDisplayChapterGrain>(chapterKey.ToString());
+        var chapter = await chapterGrain.Display();
+
+        var defaultPageIndex = 0;
+        var defaultPages = Enumerable
+            .Range(0, chapter.Pages.Length)
+            .Select(_ => ValidationResult.Wrong).ToArray();
+
+        profile = profile with
+        {
+            CurrentChapter = new ChapterSelection(chapterId, defaultPageIndex, defaultPages)
+        };
+
+        await _repository.Update(profile);
+
+        _profiles[langId] = profile;
+
+        return chapter;
     }
 
     public Task<ImmutableList<Profile>> GetProfiles()
@@ -139,6 +193,73 @@ public class UserGrain : Grain, IUserGrain
         _profiles[langId] = profile;
 
         return profile;
+    }
+
+    private static int? GetNextPageIndex(ChapterSelection selection)
+    {
+        var pages = selection.Pages.Length;
+
+        for (var i = 0; i < pages; i++)
+        {
+            var index = (selection.PageIndex + 1 + i) % pages;
+            if (selection.Pages[index] != ValidationResult.Correct)
+            {
+                return index;
+            }
+        }
+
+        return null;
+    }
+
+    public async Task<Validation> Submit(ValidationInput input)
+    {
+        var key = input.Languages;
+
+        if (!_profiles.TryGetValue(key, out var profile))
+        {
+            throw new ArgumentException($"User profile for inputs {key} does not exist", nameof(input));
+        }
+
+        var validation = await _validator.Validate(input);
+        var chapter = profile.CurrentChapter ??
+            throw new InvalidOperationException($"No chapter selected for user profile {key}");
+
+        chapter.Pages[chapter.PageIndex] = validation.Result;
+
+        var nextPageIndex = GetNextPageIndex(chapter);
+
+        if (nextPageIndex == null)
+        {
+            var completedChapters = profile.CompletedChapters
+                    .Append(chapter.ChapterId)
+                    .Distinct()
+                    .ToArray();
+
+            profile = profile with
+            {
+                CompletedChapters = completedChapters,
+                CurrentChapter = null,
+                Level = completedChapters.Length / 5 + 1
+            };
+        }
+        else
+        {
+            profile = profile with
+            {
+                CurrentChapter = chapter with { PageIndex = nextPageIndex.Value }
+            };
+        }
+
+        _profiles[key] = profile;
+
+        await _repository.Update(profile);
+
+        if (_stream != null)
+        {
+            await _stream.OnNextAsync(profile);
+        }
+
+        return validation;
     }
 }
 

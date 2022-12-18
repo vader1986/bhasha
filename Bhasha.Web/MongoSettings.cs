@@ -21,10 +21,10 @@ public class MongoSettings
     {
         var section = config.GetSection("Database");
 
-        var dbName = section.GetValue<string>("Name");
-        var hostname = section.GetValue<string>("Hostname");
-        var username = section.GetValue<string>("User");
-        var password = section.GetValue<string>("Password");
+        var dbName = section.GetValue<string>("Name") ?? throw new ArgumentException("'Name' for MongoDB not set");
+        var hostname = section.GetValue<string>("Hostname") ?? throw new ArgumentException("'Hostname' for MongoDB not set");
+        var username = section.GetValue<string>("User") ?? throw new ArgumentException("'User' for MongoDB not set");
+        var password = section.GetValue<string>("Password") ?? throw new ArgumentException("'Password' for MongoDB not set");
 
         return new MongoSettings
         {

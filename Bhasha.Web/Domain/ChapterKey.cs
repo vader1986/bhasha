@@ -1,5 +1,6 @@
 ﻿namespace Bhasha.Web.Domain;
 
+[GenerateSerializer]
 public record ChapterKey(Guid ChapterId, LangKey LangId)
 {
     public const string Separator = ":";

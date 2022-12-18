@@ -1,0 +1,41 @@
+﻿@inherits ComponentBase
+
+<MudCard>
+    <MudCardContent Style="text-align: center">
+
+        @if (Profiles?.Any() ?? false)
+        {
+            <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" VerticalAlign="true">
+                @foreach (var profile in Profiles)
+                {
+                    <MudButton OnClick="() => OnSelection(profile)">
+                        @Language.Parse(@profile.Key.LangId.Native).Pretty() -
+                        @Language.Parse(@profile.Key.LangId.Target).Pretty()
+                    </MudButton>
+                }
+            </MudButtonGroup>
+            <MudDivider DividerType="DividerType.Middle" Class="my-3" />
+        }
+
+        <MudText>Please select your native language</MudText>
+        <MudChipSet Filter="true" SelectedChipChanged="OnSelectedNative">
+            @foreach (var language in Language.Supported.Values)
+            {
+                <MudChip Value="language">@language.Pretty()</MudChip>
+            }
+        </MudChipSet>
+
+        <MudDivider DividerType="DividerType.Middle" Class="my-3" />
+        <MudText>... and select your target language</MudText>
+        <MudChipSet Filter="true" SelectedChipChanged="OnSelectedTarget">
+            @foreach (var language in Language.Supported.Values)
+            {
+                <MudChip Value="language">@language.Pretty()</MudChip>
+            }
+        </MudChipSet>
+
+        <MudDivider DividerType="DividerType.Middle" Class="my-3" />
+        <MudButton Disabled="@_disableCreateButton" Variant="Variant.Outlined" OnClick="OnCreate">Create</MudButton>
+
+    </MudCardContent>
+</MudCard>

@@ -12,7 +12,7 @@ public class Validator : IValidator
         _translations = translations;
     }
 
-    public async Task<ValidationResult> Validate(ValidationInput input)
+    public async Task<Validation> Validate(ValidationInput input)
     {
         var languages = input.Languages;
         var translation = input.Translation;
@@ -22,12 +22,12 @@ public class Validator : IValidator
             throw new ArgumentOutOfRangeException($"translation {translation.Id} not found");
 
         if (translation.Language != languages.Target)
-            return new ValidationResult(ValidationResultType.Wrong, "Translation was submit in the wrong language!");
+            return new Validation(ValidationResult.Wrong, "Translation was submit in the wrong language!");
 
         if (translation.Native != solution.Native)
-            return new ValidationResult(ValidationResultType.Wrong);
+            return new Validation(ValidationResult.Wrong);
 
-        return new ValidationResult(ValidationResultType.Correct);
+        return new Validation(ValidationResult.Correct);
     }
 }
 

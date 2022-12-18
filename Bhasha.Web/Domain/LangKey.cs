@@ -1,5 +1,6 @@
 ﻿namespace Bhasha.Web.Domain;
 
+[GenerateSerializer]
 public record LangKey(string Native, string Target)
 {
     public const string Separator = ">";

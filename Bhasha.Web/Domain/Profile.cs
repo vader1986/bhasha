@@ -1,5 +1,6 @@
 ﻿namespace Bhasha.Web.Domain;
 
+[GenerateSerializer]
 public record Profile(
 	Guid Id,
 	ProfileKey Key,

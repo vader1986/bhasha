@@ -16,11 +16,14 @@ public static class Setup
 
 		foreach (var role in roles)
 		{
-				if (await roleManager.RoleExistsAsync(role.Name) == false)
+			if (role.Name != null)
 			{
-					await roleManager.CreateAsync(role);
-			}
-		}				
+                if (await roleManager.RoleExistsAsync(role.Name) == false)
+                {
+                    await roleManager.CreateAsync(role);
+                }
+            }
+        }				
 	}
 
 	public static async Task AddAdminUser(this IServiceProvider serviceProvider, IConfiguration config)

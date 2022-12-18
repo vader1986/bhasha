@@ -1,8 +1,6 @@
 ﻿using System.Collections.Immutable;
 using Bhasha.Web.Domain;
 using Bhasha.Web.Interfaces;
-using Bhasha.Web.Pages.Student;
-using Orleans;
 
 namespace Bhasha.Web.Grains;
 
@@ -23,7 +21,7 @@ public class SummaryGrain : Grain, ISummaryGrain
         _translationProvider = translationProvider;
     }
 
-    public override async Task OnActivateAsync()
+    public override async Task OnActivateAsync(CancellationToken cancellationToken)
     {
         var key = SummaryCollectionKey.Parse(this.GetPrimaryKeyString());
         var translations = new Dictionary<Guid, string>();
@@ -53,8 +51,6 @@ public class SummaryGrain : Grain, ISummaryGrain
 
             _summaries.Add(new Summary(chapter.Id, name, description));
         }
-
-        await base.OnActivateAsync();
     }
 
     public ValueTask<ImmutableList<Summary>> GetSummaries()

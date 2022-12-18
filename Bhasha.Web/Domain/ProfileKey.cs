@@ -1,5 +1,6 @@
 ﻿namespace Bhasha.Web.Domain;
 
+[GenerateSerializer]
 public record ProfileKey(string UserId, LangKey LangId)
 {
     public const string Separator = ":";

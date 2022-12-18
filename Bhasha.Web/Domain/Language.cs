@@ -2,6 +2,7 @@
 
 using LanguageSet = Dictionary<string, Language>;
 
+[GenerateSerializer]
 public class Language : IEquatable<Language>
 {
     public readonly static Language Unknown = new (string.Empty, string.Empty);

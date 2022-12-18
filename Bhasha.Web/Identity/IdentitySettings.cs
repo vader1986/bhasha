@@ -19,7 +19,7 @@ public class IdentitySettings
 	public static IdentitySettings From(IConfiguration configuration)
 	{
 		var section = configuration.GetSection("Identity:DefaultUsers");
-		var defaultUsers = section.Get<DefaultUser[]>();
+		var defaultUsers = section.Get<DefaultUser[]>() ?? Array.Empty<DefaultUser>();
 
 		return new IdentitySettings(defaultUsers);
 	}

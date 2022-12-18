@@ -1,31 +1,22 @@
 ﻿using Bhasha.Web.Domain;
-using Bhasha.Web.Interfaces;
+using Bhasha.Web.Grains;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using Orleans;
 
-namespace Bhasha.Web.Pages.Student;
+namespace Bhasha.Web.Shared.Components;
 
-public partial class Profiles : UserPage
+public partial class SelectProfile : ComponentBase
 {
-	[Inject] public IProfileManager ProfileManager { get; set; } = default!;
-    [Inject] public NavigationManager NavigationManager { get; set; } = default!;
+    [Inject] public IClusterClient ClusterClient { get; set; } = default!;
 
-    private List<Profile> _profiles = new List<Profile>();
+    [Parameter] public Action<Profile> OnSelection { get; set; }
+    [Parameter] public string UserId { get; set; }
+    [Parameter] public IEnumerable<Profile> Profiles { get; set; }
+
     private bool _disableCreateButton = true;
     private Language? _selectedNative;
     private Language? _selectedTarget;
-
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-
-        _profiles.AddRange(await ProfileManager.GetProfiles(UserId!));
-    }
-
-    internal void OnSelectProfile(Profile profile)
-    {
-        NavigationManager.NavigateTo($"chapters/{profile.Id}");
-    }
 
     internal void OnSelectedNative(MudChip chip)
     {
@@ -41,9 +32,9 @@ public partial class Profiles : UserPage
 
     private void ValidateParameters()
     {
-        if (_selectedNative != null && _selectedTarget != null && _profiles != null)
+        if (_selectedNative != null && _selectedTarget != null && Profiles != null)
         {
-            var alreadyExists = _profiles.Any(x => x.Key.LangId.Native == _selectedNative && x.Key.LangId.Target == _selectedTarget);
+            var alreadyExists = Profiles.Any(x => x.Key.LangId.Native == _selectedNative && x.Key.LangId.Target == _selectedTarget);
             var invalidSelection = _selectedNative == _selectedTarget;
 
             _disableCreateButton = alreadyExists || invalidSelection;
@@ -62,11 +53,12 @@ public partial class Profiles : UserPage
         if (_selectedTarget == null)
             throw new InvalidOperationException("No target language selected");
 
-        _profiles.Add(
-            await ProfileManager.Create(UserId!,
-            new LangKey(_selectedNative, _selectedTarget)));
+        var grain = ClusterClient.GetGrain<IUserGrain>(UserId);
+        var profile = await grain.CreateProfile(new LangKey(_selectedNative, _selectedTarget));
 
-        ValidateParameters();
+        _disableCreateButton = true;
+
+        OnSelection(profile);
     }
 }
 

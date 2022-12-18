@@ -1,5 +1,6 @@
 ﻿namespace Bhasha.Web.Domain;
 
+[GenerateSerializer]
 public record SummaryCollectionKey(int Level, LangKey LangId)
 {
 	public static SummaryCollectionKey Parse(string value)

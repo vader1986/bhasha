@@ -1,6 +1,5 @@
 ﻿using Bhasha.Web.Domain;
 using Bhasha.Web.Interfaces;
-using Orleans;
 
 namespace Bhasha.Web.Grains;
 
@@ -24,7 +23,7 @@ public class DisplayChapterGrain : Grain, IDisplayChapterGrain
         _pageFactory = pageFactory;
     }
 
-    public override async Task OnActivateAsync()
+    public override async Task OnActivateAsync(CancellationToken cancellationToken)
     {
         var key = ChapterKey.Parse(this.GetPrimaryKeyString());
 
@@ -41,8 +40,6 @@ public class DisplayChapterGrain : Grain, IDisplayChapterGrain
             ?? throw new InvalidOperationException($"Translation for {chapter.DescriptionId} to {key.LangId.Native} not found");
 
         _state = new DisplayedChapter(key.ChapterId, name.Native, description.Native, pages, chapter.ResourceId);
-
-        await base.OnActivateAsync();
     }
 
     public ValueTask<DisplayedChapter> Display()

@@ -1,5 +1,6 @@
 ﻿namespace Bhasha.Web.Domain;
 
+[GenerateSerializer]
 public record Translation(
 	Guid Id,
 	Guid ExpressionId,

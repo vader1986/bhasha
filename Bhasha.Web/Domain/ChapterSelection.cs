@@ -1,7 +1,8 @@
 ﻿namespace Bhasha.Web.Domain;
 
+[GenerateSerializer]
 public record ChapterSelection(
     Guid ChapterId,
     int PageIndex,
-    ValidationResultType[] Pages);
+    ValidationResult[] Pages);
 

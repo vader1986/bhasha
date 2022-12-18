@@ -1,5 +1,6 @@
 ﻿namespace Bhasha.Web.Domain;
 
+[GenerateSerializer]
 public record Chapter(
 	Guid Id,
 	int RequiredLevel,

@@ -1,5 +1,6 @@
 ﻿namespace Bhasha.Web.Domain;
 
+[GenerateSerializer]
 public record Expression(
 	Guid Id,
 	ExpressionType? ExpressionType,

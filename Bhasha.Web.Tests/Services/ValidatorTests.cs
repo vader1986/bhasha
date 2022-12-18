@@ -31,7 +31,7 @@ public class ValidatorTests
 		var result = await _validator.Validate(consolidatedInputs);
 
 		// verify
-		Assert.Equal(ValidationResultType.Correct, result.Result);
+		Assert.Equal(ValidationResult.Correct, result.Result);
 	}
 
 	[Theory, AutoData]
@@ -45,7 +45,7 @@ public class ValidatorTests
 		var result = await _validator.Validate(consolidatedInputs);
 
 		// verify
-		Assert.Equal(ValidationResultType.Wrong, result.Result);
+		Assert.Equal(ValidationResult.Wrong, result.Result);
 		Assert.Null(result.Reason);
 	}
 
@@ -70,7 +70,7 @@ public class ValidatorTests
 		var result = await _validator.Validate(wrongInputs);
 
 		// verify
-		Assert.Equal(ValidationResultType.Wrong, result.Result);
+		Assert.Equal(ValidationResult.Wrong, result.Result);
 		Assert.NotNull(result.Reason);
 	}
 }

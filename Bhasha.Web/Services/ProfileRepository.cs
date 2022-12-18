@@ -27,5 +27,10 @@ public class ProfileRepository : IProfileRepository
             yield return profile;
         }
     }
+
+    public async Task Update(Profile profile)
+    {
+        await _repository.Update(profile.Id, profile);
+    }
 }
 
