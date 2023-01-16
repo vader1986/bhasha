@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 using Bhasha.Web.Domain;
-using Bhasha.Web.Interfaces;
+using Bhasha.Web.Domain.Interfaces;
 
 namespace Bhasha.Web.Grains;
 
@@ -11,13 +11,13 @@ public interface ISummaryGrain : IGrainWithStringKey
 
 public class SummaryGrain : Grain, ISummaryGrain
 {
-    private readonly IChapterLookup _chapterLookup;
-    private readonly ITranslationProvider _translationProvider;
+    private readonly IChapterRepository _chapterRepository;
+    private readonly ITranslationRepository _translationProvider;
     private readonly IList<Summary> _summaries = new List<Summary>();
 
-    public SummaryGrain(IChapterLookup chapterLookup, ITranslationProvider translationProvider)
+    public SummaryGrain(IChapterRepository chapterRepository, ITranslationRepository translationProvider)
     {
-        _chapterLookup = chapterLookup;
+        _chapterRepository = chapterRepository;
         _translationProvider = translationProvider;
     }
 
@@ -40,11 +40,11 @@ public class SummaryGrain : Grain, ISummaryGrain
                 throw new InvalidOperationException($"Translation for {expressionId} to {native} not found");
             }
 
-            translations[expressionId] = translation.Native;
-            return translation.Native;
+            translations[expressionId] = translation.Text;
+            return translation.Text;
         }
 
-        await foreach (var chapter in _chapterLookup.GetChapters(key.Level))
+        await foreach (var chapter in _chapterRepository.GetChapters(key.Level))
         {
             var name = await Translate(chapter.NameId);
             var description = await Translate(chapter.DescriptionId);

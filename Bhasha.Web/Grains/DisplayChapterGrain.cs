@@ -1,5 +1,5 @@
 ﻿using Bhasha.Web.Domain;
-using Bhasha.Web.Interfaces;
+using Bhasha.Web.Domain.Interfaces;
 
 namespace Bhasha.Web.Grains;
 
@@ -10,13 +10,13 @@ public interface IDisplayChapterGrain : IGrainWithStringKey
 
 public class DisplayChapterGrain : Grain, IDisplayChapterGrain
 {
-    private readonly IRepository<Chapter> _chapterRepository;
-    private readonly ITranslationProvider _translationProvider;
+    private readonly IChapterRepository _chapterRepository;
+    private readonly ITranslationRepository _translationProvider;
     private readonly IAsyncFactory<Page, LangKey, DisplayedPage> _pageFactory;
 
     private DisplayedChapter? _state;
     
-    public DisplayChapterGrain(IRepository<Chapter> chapterRepository, ITranslationProvider translationProvider, IAsyncFactory<Page, LangKey, DisplayedPage> pageFactory)
+    public DisplayChapterGrain(IChapterRepository chapterRepository, ITranslationRepository translationProvider, IAsyncFactory<Page, LangKey, DisplayedPage> pageFactory)
     {
         _chapterRepository = chapterRepository;
         _translationProvider = translationProvider;
@@ -27,7 +27,7 @@ public class DisplayChapterGrain : Grain, IDisplayChapterGrain
     {
         var key = ChapterKey.Parse(this.GetPrimaryKeyString());
 
-        var chapter = await _chapterRepository.Get(key.ChapterId);
+        var chapter = await _chapterRepository.Find(key.ChapterId);
         if (chapter == null) throw new InvalidOperationException($"Chapter with ID {key.ChapterId} not found");
 
         var pages = await Task.WhenAll(chapter.Pages.Select(
@@ -39,7 +39,7 @@ public class DisplayChapterGrain : Grain, IDisplayChapterGrain
         var description = await _translationProvider.Find(chapter.DescriptionId, key.LangId.Native)
             ?? throw new InvalidOperationException($"Translation for {chapter.DescriptionId} to {key.LangId.Native} not found");
 
-        _state = new DisplayedChapter(key.ChapterId, name.Native, description.Native, pages, chapter.ResourceId);
+        _state = new DisplayedChapter(key.ChapterId, name.Text, description.Text, pages, chapter.ResourceId);
     }
 
     public ValueTask<DisplayedChapter> Display()

@@ -1,7 +1,4 @@
 ﻿namespace Bhasha.Web.Domain;
 
 [GenerateSerializer]
-public record Page(
-	PageType PageType,
-	Guid ExpressionId,
-	string[] Leads);
+public record Page(PageType PageType, Guid ExpressionId);

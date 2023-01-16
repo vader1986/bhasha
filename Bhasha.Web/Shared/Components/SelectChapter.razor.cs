@@ -19,7 +19,7 @@ public partial class SelectChapter : ComponentBase
     {
         await base.OnInitializedAsync();
 
-        var grain = ClusterClient.GetGrain<IUserGrain>(UserId);
+        var grain = ClusterClient.GetGrain<IStudentGrain>(UserId);
         var summaries = await grain.GetSummaries(Languages);
 
         foreach (var chapter in summaries)

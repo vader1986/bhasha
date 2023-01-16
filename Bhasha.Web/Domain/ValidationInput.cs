@@ -3,6 +3,6 @@
 [GenerateSerializer]
 public record ValidationInput(
 	LangKey Languages,
-	Guid ExpressionId,
+    Guid ExpressionId,
 	Translation Translation);
 

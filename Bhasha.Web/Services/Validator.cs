@@ -1,13 +1,13 @@
 ﻿using Bhasha.Web.Domain;
-using Bhasha.Web.Interfaces;
+using Bhasha.Web.Domain.Interfaces;
 
 namespace Bhasha.Web.Services;
 
 public class Validator : IValidator
 {
-    private readonly IRepository<Translation> _translations;
+    private readonly ITranslationRepository _translations;
 
-    public Validator(IRepository<Translation> translations)
+    public Validator(ITranslationRepository translations)
     {
         _translations = translations;
     }
@@ -24,7 +24,7 @@ public class Validator : IValidator
         if (translation.Language != languages.Target)
             return new Validation(ValidationResult.Wrong, "Translation was submit in the wrong language!");
 
-        if (translation.Native != solution.Native)
+        if (translation.Text != solution.Text)
             return new Validation(ValidationResult.Wrong);
 
         return new Validation(ValidationResult.Correct);

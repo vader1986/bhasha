@@ -2,16 +2,19 @@
 using Bhasha.Web;
 using Bhasha.Web.Areas.Identity;
 using Bhasha.Web.Domain;
+using Bhasha.Web.Domain.Interfaces;
 using Bhasha.Web.Domain.Pages;
 using Bhasha.Web.Identity;
-using Bhasha.Web.Interfaces;
-using Bhasha.Web.Mongo;
+using Bhasha.Web.Infrastructure.Mongo;
 using Bhasha.Web.Services;
 using Bhasha.Web.Services.Pages;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Mongo.Migration.Startup;
 using Mongo.Migration.Startup.DotNetCore;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 using MudBlazor.Services;
 using Orleans.Configuration;
@@ -42,6 +45,9 @@ try
     });
 
     var mongoSettings = MongoSettings.From(builder.Configuration);
+
+    BsonDefaults.GuidRepresentationMode = GuidRepresentationMode.V3;
+    BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
 
     hostBuilder.ConfigureServices(services =>
     {
@@ -96,17 +102,11 @@ try
         // Application
         ////////////////////
 
-        services.AddSingleton<IRepository<Profile>, MongoRepository<Profile>>();
-        services.AddSingleton<IRepository<Chapter>, MongoRepository<Chapter>>();
-        services.AddSingleton<IRepository<Expression>, MongoRepository<Expression>>();
-        services.AddSingleton<IRepository<Translation>, MongoRepository<Translation>>();
+        services.AddSingleton<ITranslationRepository, MongoTranslationRepository>();
+        services.AddSingleton<IChapterRepository, MongoChapterRepository>();
+        services.AddSingleton<IExpressionRepository, MongoExpressionRepository>();
+        services.AddSingleton<IProfileRepository, MongoProfileRepository>();
         services.AddSingleton<IFactory<Expression>, ExpressionFactory>();
-        services.AddSingleton<IProfileManager, ProfileManager>();
-        services.AddSingleton<IProfileRepository, ProfileRepository>();
-        services.AddSingleton<ITranslationManager, TranslationManager>();
-        services.AddSingleton<ITranslationProvider, TranslationProvider>();
-        services.AddSingleton<IChapterProvider, ChapterProvider>();
-        services.AddSingleton<IChapterLookup, ChapterLookup>();
         services.AddSingleton<IValidator, Validator>();
         services.AddSingleton<IAsyncFactory<Page, LangKey, DisplayedPage>, PageFactory>();
         services.AddSingleton<IAsyncFactory<Page, LangKey, DisplayedPage<MultipleChoice>>, MultipleChoicePageFactory>();

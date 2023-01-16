@@ -1,13 +1,13 @@
 ﻿@if (Data != null)
 {
-    <MudText>@Data.Word.Native</MudText>
+    <MudText>@Data.Word.Text</MudText>
 }
 @if (_arguments != null)
 {
     <MudChipSet @bind-SelectedChip="_selectedChoice" Filter="true">
         @foreach (var choice in _arguments.Choices)
         {
-            <MudChip Value="@choice" Text="grey">@choice.Native</MudChip>
+            <MudChip Value="@choice" Text="grey">@choice.Text</MudChip>
         }
     </MudChipSet>
 }

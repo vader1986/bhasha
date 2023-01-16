@@ -53,7 +53,7 @@ public partial class SelectProfile : ComponentBase
         if (_selectedTarget == null)
             throw new InvalidOperationException("No target language selected");
 
-        var grain = ClusterClient.GetGrain<IUserGrain>(UserId);
+        var grain = ClusterClient.GetGrain<IStudentGrain>(UserId);
         var profile = await grain.CreateProfile(new LangKey(_selectedNative, _selectedTarget));
 
         _disableCreateButton = true;

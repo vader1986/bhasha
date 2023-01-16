@@ -26,7 +26,7 @@ public partial class StudentPage : UserPage, IAsyncObserver<Profile>, IDisposabl
     {
         await base.OnInitializedAsync();
 
-        var grain = ClusterClient.GetGrain<IUserGrain>(UserId);
+        var grain = ClusterClient.GetGrain<IStudentGrain>(UserId);
         var profiles = await grain.GetProfiles();
 
         foreach (var profile in profiles)
@@ -62,7 +62,7 @@ public partial class StudentPage : UserPage, IAsyncObserver<Profile>, IDisposabl
 
             var expressionId = _selectedPage.Word.ExpressionId;
             var userInput = new ValidationInput(_selectedLanguages, expressionId, translation);
-            var grain = ClusterClient.GetGrain<IUserGrain>(UserId);
+            var grain = ClusterClient.GetGrain<IStudentGrain>(UserId);
 
             await grain.Submit(userInput);
         }
@@ -81,7 +81,7 @@ public partial class StudentPage : UserPage, IAsyncObserver<Profile>, IDisposabl
                 throw new InvalidOperationException("No profile selected");
 
             var key = _selectedProfile.Key.LangId;
-            var grain = ClusterClient.GetGrain<IUserGrain>(UserId);
+            var grain = ClusterClient.GetGrain<IStudentGrain>(UserId);
             var chapter = await grain.SelectChapter(summary.ChapterId, key);
             var profile = await grain.GetProfile(key);
 

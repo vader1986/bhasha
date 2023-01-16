@@ -1,18 +1,17 @@
 ﻿using Bhasha.Web.Domain;
+using Bhasha.Web.Domain.Interfaces;
 using Bhasha.Web.Domain.Pages;
-using Bhasha.Web.Interfaces;
 
 namespace Bhasha.Web.Services.Pages;
 
 public class MultipleChoicePageFactory : IAsyncFactory<Page, LangKey, DisplayedPage<MultipleChoice>>
 {
-    private const int ExpressionSamples = 10;
     private const int MaxNumberOfChoices = 3;
 
-    private readonly IRepository<Expression> _expressions;
-    private readonly IRepository<Translation> _translations;
+    private readonly IExpressionRepository _expressions;
+    private readonly ITranslationRepository _translations;
 
-    public MultipleChoicePageFactory(IRepository<Expression> expressions, IRepository<Translation> translations)
+    public MultipleChoicePageFactory(IExpressionRepository expressions, ITranslationRepository translations)
 	{
         _expressions = expressions;
         _translations = translations;
@@ -26,31 +25,19 @@ public class MultipleChoicePageFactory : IAsyncFactory<Page, LangKey, DisplayedP
             throw new InvalidOperationException(
                 $"Expression for {page.ExpressionId} not found");
 
-        var expressions = await _expressions.Find(
-            x => x.Level == expression.Level && x.Id != expression.Id,
-            ExpressionSamples);
+        var expressions = await _expressions.Find(expression.Level, MaxNumberOfChoices - 1).ToListAsync();
 
         var translations = await Task.WhenAll(expressions
+            .Where(x => x.Id != expression.Id)
             .Append(expression)
-            .Select(async x => await _translations.Find(
-                t => t.ExpressionId == x.Id && t.Language == languages.Target)));
+            .Select(async x => await _translations.Find(x.Id, languages.Target)));
 
-        var choicesMap = translations
-            .SelectMany(x => x)
-            .Where(x => x.Language == languages.Target)
-            .Take(MaxNumberOfChoices)
-            .ToDictionary(x => x.ExpressionId, x => x);
-
-        var choices = choicesMap
-            .Values
-            .Select(x => x with { ExpressionId = Guid.Empty }) // hide expression id to avoid cheating
+        var choices = translations
+            .Where(x => x != null)
+            .Select(x => x! with { ExpressionId = default }) // hide expression id to avoid cheating
             .ToArray();
 
-
-        var currentTranslations = await _translations.Find(
-            x => x.ExpressionId == page.ExpressionId && x.Language == languages.Native);
-
-        var word = currentTranslations.FirstOrDefault();
+        var word = await _translations.Find(page.ExpressionId, languages.Native);
         if (word == null)
             throw new InvalidOperationException(
                 $"Translation for {page.ExpressionId} to {languages.Native} not found");
@@ -58,8 +45,7 @@ public class MultipleChoicePageFactory : IAsyncFactory<Page, LangKey, DisplayedP
         return new DisplayedPage<MultipleChoice>(
             page.PageType,
             word,
-            default,
-            page.Leads.Any(),
+            Lead: default,
             new MultipleChoice(choices));
     }
 }

@@ -2,10 +2,16 @@
 
 [GenerateSerializer]
 public record Translation(
-	Guid Id,
-	Guid ExpressionId,
+    Guid Id,
+    Guid ExpressionId,
 	string Language,
-	string Native,
+	string Text,
 	string? Spoken,
-	string? AudioId);
+	string? AudioId)
+{
+	public static Translation Create(Guid expressionId, Language language, string text)
+	{
+		return new Translation(Guid.Empty, expressionId, language, text, default, default);
+	}
+}
 

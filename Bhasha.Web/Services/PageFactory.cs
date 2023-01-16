@@ -1,6 +1,6 @@
 ﻿using Bhasha.Web.Domain;
+using Bhasha.Web.Domain.Interfaces;
 using Bhasha.Web.Domain.Pages;
-using Bhasha.Web.Interfaces;
 
 namespace Bhasha.Web.Services;
 

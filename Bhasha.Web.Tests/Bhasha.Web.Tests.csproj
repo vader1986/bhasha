@@ -26,8 +26,12 @@
 
   <ItemGroup>
     <None Remove="Support\" />
+    <None Remove="Infrastructure\" />
+    <None Remove="Infrastructure\Mongo\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Support\" />
+    <Folder Include="Infrastructure\" />
+    <Folder Include="Infrastructure\Mongo\" />
   </ItemGroup>
 </Project>
