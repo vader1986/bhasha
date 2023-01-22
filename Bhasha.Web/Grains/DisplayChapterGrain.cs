@@ -27,7 +27,7 @@ public class DisplayChapterGrain : Grain, IDisplayChapterGrain
     {
         var key = ChapterKey.Parse(this.GetPrimaryKeyString());
 
-        var chapter = await _chapterRepository.Find(key.ChapterId);
+        var chapter = await _chapterRepository.FindById(key.ChapterId);
         if (chapter == null) throw new InvalidOperationException($"Chapter with ID {key.ChapterId} not found");
 
         var pages = await Task.WhenAll(chapter.Pages.Select(

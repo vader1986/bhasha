@@ -21,12 +21,14 @@
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Generator.Equals" Version="2.7.6" />
   </ItemGroup>
   
   <ItemGroup>
     <None Remove="Infrastructure\" />
     <None Remove="Infrastructure\Mongo\" />
     <None Remove="Domain\Interfaces\" />
+    <None Remove="Generator.Equals" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Infrastructure\" />

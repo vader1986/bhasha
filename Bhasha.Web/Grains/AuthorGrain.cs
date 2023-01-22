@@ -47,7 +47,7 @@ public class AuthorGrain : Grain, IAuthorGrain
 
     public async Task AddOrUpdateChapter(Chapter chapter)
     {
-        await _chapterRepository.Upsert(chapter);
+        await _chapterRepository.AddOrReplace(chapter);
     }
 
     public async Task AddOrUpdateTranslation(string language, Guid expressionId, string text, string? spoken = null, string? audioId = null)

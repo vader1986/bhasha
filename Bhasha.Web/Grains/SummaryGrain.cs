@@ -44,7 +44,7 @@ public class SummaryGrain : Grain, ISummaryGrain
             return translation.Text;
         }
 
-        await foreach (var chapter in _chapterRepository.GetChapters(key.Level))
+        await foreach (var chapter in _chapterRepository.FindByLevel(key.Level))
         {
             var name = await Translate(chapter.NameId);
             var description = await Translate(chapter.DescriptionId);

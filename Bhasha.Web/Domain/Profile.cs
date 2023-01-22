@@ -1,10 +1,14 @@
-﻿namespace Bhasha.Web.Domain;
+﻿using Generator.Equals;
 
+namespace Bhasha.Web.Domain;
+
+[Equatable]
 [GenerateSerializer]
-public record Profile(
+public partial record Profile(
 	Guid Id,
 	ProfileKey Key,
     int Level,
+    [property: OrderedEquality]
     Guid[] CompletedChapters,
     ChapterSelection? CurrentChapter)
 {

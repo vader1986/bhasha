@@ -31,7 +31,7 @@ public class MongoProfileRepository : IProfileRepository
         return profile;
     }
 
-    public async IAsyncEnumerable<Profile> GetProfiles(string userId)
+    public async IAsyncEnumerable<Profile> FindByUser(string userId)
     {
         var results = _client
             .GetCollection<Profile>(_databaseName)

@@ -85,7 +85,7 @@ public class StudentGrain : Grain, IStudentGrain
     {
         var userId = this.GetPrimaryKeyString();
         
-        await foreach (var profile in _repository.GetProfiles(userId))
+        await foreach (var profile in _repository.FindByUser(userId))
         {
             _profiles[profile.Key.LangId] = profile;
         }

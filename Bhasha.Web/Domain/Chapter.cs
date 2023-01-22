@@ -1,15 +1,18 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using Generator.Equals;
+using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson.Serialization.IdGenerators;
 
 namespace Bhasha.Web.Domain;
 
+[Equatable]
 [GenerateSerializer]
-public record Chapter(
+public partial record Chapter(
 	[property:BsonId(IdGenerator = typeof(GuidGenerator))]
 	Guid Id,
 	int RequiredLevel,
     Guid NameId,
     Guid DescriptionId,
+	[property: OrderedEquality]
 	Page[] Pages,
 	string? ResourceId,
 	string AuthorId)

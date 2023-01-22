@@ -16,7 +16,7 @@ public class MongoChapterRepository : IChapterRepository
         _databaseName = settings.DatabaseName;
     }
 
-    public async Task<Chapter> Upsert(Chapter chapter)
+    public async Task<Chapter> AddOrReplace(Chapter chapter)
     {
         var collection = _client.GetCollection<Chapter>(_databaseName);
 
@@ -27,13 +27,14 @@ public class MongoChapterRepository : IChapterRepository
         }
         else
         {
-            await collection.ReplaceOneAsync(x => x.Id == chapter.Id, chapter);
+            await collection.ReplaceOneAsync(x => x.Id == chapter.Id, chapter,
+                new ReplaceOptions { IsUpsert = true });
         }
 
         return chapter;
     }
 
-    public ValueTask<Chapter?> Find(Guid chapterId)
+    public ValueTask<Chapter?> FindById(Guid chapterId)
     {
         var collection = _client
             .GetCollection<Chapter>(_databaseName);
@@ -46,7 +47,7 @@ public class MongoChapterRepository : IChapterRepository
         return new ValueTask<Chapter?>(result);
     }
 
-    public async IAsyncEnumerable<Chapter> GetChapters(int level)
+    public async IAsyncEnumerable<Chapter> FindByLevel(int level)
     {
         var collection = _client
             .GetCollection<Chapter>(_databaseName);
