@@ -1,14 +1,18 @@
-﻿namespace Bhasha.Domain;
+﻿using Generator.Equals;
 
-[GenerateSerializer]
-public record Expression(
+namespace Bhasha.Domain;
+
+[Equatable]
+public partial record Expression(
     Guid Id,
 	ExpressionType? ExpressionType,
 	PartOfSpeech? PartOfSpeech,
 	CEFR? Cefr,
 	string? ResourceId,
-	string[] Labels,
-    string[] Synonyms,
+    [property: OrderedEquality]
+    string[] Labels,
+    [property: OrderedEquality]
+	string[] Synonyms,
     int Level)
 {
 	public static Expression Create(int level)

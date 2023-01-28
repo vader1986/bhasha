@@ -9,13 +9,13 @@ using Mongo2Go;
 using MongoDB.Driver;
 using Xunit;
 
-namespace Bhasha.Tests.Mongo;
+namespace Bhasha.Tests.Infrastructure.Mongo;
 
 public class MongoChapterRepositoryTests : IDisposable
 {
     private const string DbName = "TestDB";
-    private readonly MongoDbRunner _runner;
     private readonly MongoChapterRepository _repository;
+    private readonly MongoDbRunner _runner;
     private readonly MongoClient _client;
 
     public MongoChapterRepositoryTests()
