@@ -30,11 +30,12 @@ public partial class EditChapter : ComponentBase
 
             if (!result.Canceled)
             {
-                var (language, expression, translation) = ((string Language, string Expression, string Translation))result.Data;
+                var (language, expression, text) = ((string Language, string Expression, string Translation))result.Data;
                 var grain = ClusterClient.GetGrain<IAuthorGrain>(UserId);
-                var reference = await grain.GetOrAddExpressionId(expression);
+                var expressionId = await grain.GetOrAddExpressionId(expression);
+                var translation = Translation.Create(expressionId, language, text);
 
-                await grain.AddOrUpdateTranslation(language, reference, translation);
+                await grain.AddOrUpdateTranslation(translation);
             }
         }
         catch (Exception e)

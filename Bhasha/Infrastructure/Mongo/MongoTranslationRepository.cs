@@ -16,7 +16,7 @@ public class MongoTranslationRepository : ITranslationRepository
         _databaseName = settings.DatabaseName;
     }
 
-    public async Task AddOrUpdate(Translation translation)
+    public async Task AddOrReplace(Translation translation)
     {
         var collection = _client
             .GetCollection<Translation>(_databaseName);

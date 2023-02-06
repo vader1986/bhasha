@@ -40,7 +40,7 @@ public class MongoTranslationRepositoryTests : IDisposable
     public async Task GivenRepository_WhenAddOrUpdateNewTranslationWithoutId_ThenAddTranslationWithIdToDatabase(Translation translation)
     {
         // act
-        await _repository.AddOrUpdate(translation);
+        await _repository.AddOrReplace(translation);
 
         // verify
         var result = await _client
@@ -60,7 +60,7 @@ public class MongoTranslationRepositoryTests : IDisposable
             .InsertOneAsync(translation with { Text = translation.Text + "[OLD]" });
 
         // act
-        await _repository.AddOrUpdate(translation);
+        await _repository.AddOrReplace(translation);
 
         // verify
         var result = await _client

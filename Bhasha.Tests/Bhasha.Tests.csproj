@@ -13,7 +13,7 @@
     <PackageReference Include="NSubstitute" Version="4.4.0" />
     <PackageReference Include="xunit" Version="2.4.2" />
     <PackageReference Include="FluentAssertions" Version="6.9.0" />
-    <PackageReference Include="OrleansTestKit" Version="3.1.8" />
+    <PackageReference Include="OrleansTestKit" Version="4.0.0-beta.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
@@ -24,4 +24,10 @@
     <ProjectReference Include="..\Bhasha\Bhasha.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Grains\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Grains\" />
+  </ItemGroup>
 </Project>
