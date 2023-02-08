@@ -4,7 +4,7 @@ using Bhasha.Domain.Pages;
 
 namespace Bhasha.Services.Pages;
 
-public class MultipleChoicePageFactory : IAsyncFactory<Page, LangKey, DisplayedPage<MultipleChoice>>
+public class MultipleChoicePageFactory : IMultipleChoicePageFactory
 {
     private const int MaxNumberOfChoices = 3;
 

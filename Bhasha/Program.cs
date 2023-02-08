@@ -109,8 +109,8 @@ try
         services.AddSingleton<IProfileRepository, MongoProfileRepository>();
         services.AddSingleton<IFactory<Expression>, ExpressionFactory>();
         services.AddSingleton<IValidator, Validator>();
-        services.AddSingleton<IAsyncFactory<Bhasha.Domain.Page, LangKey, DisplayedPage>, PageFactory>();
-        services.AddSingleton<IAsyncFactory<Bhasha.Domain.Page, LangKey, DisplayedPage<MultipleChoice>>, MultipleChoicePageFactory>();
+        services.AddSingleton<IPageFactory, PageFactory>();
+        services.AddSingleton<IMultipleChoicePageFactory, MultipleChoicePageFactory>();
 
     });
 

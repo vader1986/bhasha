@@ -26,4 +26,9 @@ public record ChapterKey(Guid ChapterId, LangKey LangId)
     {
         return $"{ChapterId}{Separator}{LangId}";
     }
+
+    public static implicit operator string(ChapterKey key)
+    {
+        return key.ToString();
+    }
 }

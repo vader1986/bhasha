@@ -4,11 +4,11 @@ using Bhasha.Domain.Pages;
 
 namespace Bhasha.Services;
 
-public class PageFactory : IAsyncFactory<Page, LangKey, DisplayedPage>
+public class PageFactory : IPageFactory
 {
-    private readonly IAsyncFactory<Page, LangKey, DisplayedPage<MultipleChoice>> _multipleChoiceFactory;
+    private readonly IMultipleChoicePageFactory _multipleChoiceFactory;
 
-    public PageFactory(IAsyncFactory<Page, LangKey, DisplayedPage<MultipleChoice>> multipleChoiceFactory)
+    public PageFactory(IMultipleChoicePageFactory multipleChoiceFactory)
     {
         _multipleChoiceFactory = multipleChoiceFactory;
     }
