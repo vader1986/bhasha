@@ -1,6 +1,5 @@
 ﻿namespace Bhasha.Domain;
 
-[GenerateSerializer]
 public record SummaryCollectionKey(int Level, LangKey LangId)
 {
 	public static SummaryCollectionKey Parse(string value)
@@ -23,6 +22,11 @@ public record SummaryCollectionKey(int Level, LangKey LangId)
     public override string ToString()
     {
         return $"{Level}-{LangId}";
+    }
+
+    public static implicit operator string(SummaryCollectionKey key)
+    {
+        return key.ToString();
     }
 }
 
