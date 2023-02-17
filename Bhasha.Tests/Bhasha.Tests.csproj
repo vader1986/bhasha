@@ -24,10 +24,4 @@
     <ProjectReference Include="..\Bhasha\Bhasha.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Remove="Grains\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Grains\" />
-  </ItemGroup>
 </Project>

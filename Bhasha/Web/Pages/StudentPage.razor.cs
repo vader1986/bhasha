@@ -35,7 +35,7 @@ public partial class StudentPage : UserPage, IAsyncObserver<Profile>, IDisposabl
         }
 
         var streamProvider = ClusterClient.GetStreamProvider(Orleans.StreamProvider);
-        var stream = streamProvider.GetStream<Profile>(Orleans.Streams.UserProfile);
+        var stream = streamProvider.GetStream<Profile>(Orleans.Streams.UserProfile, UserId);
 
         _subscription = await stream.SubscribeAsync(this);
 
@@ -106,12 +106,15 @@ public partial class StudentPage : UserPage, IAsyncObserver<Profile>, IDisposabl
         }
     }
 
-    public Task OnNextAsync(Profile profile, StreamSequenceToken? token = null)
+    public async Task OnNextAsync(Profile profile, StreamSequenceToken? token = null)
     {
         try
         {
-            if (_selectedChapter == null)
-                throw new InvalidOperationException("Invalid profile update (no chapter selected)");
+            if (_selectedChapter is null)
+                return;
+
+            if (_selectedProfile is null || _selectedProfile.Id != profile.Id)
+                return;
 
             var selection = profile.CurrentChapter;
 
@@ -131,7 +134,7 @@ public partial class StudentPage : UserPage, IAsyncObserver<Profile>, IDisposabl
             _error = error.Message;
         }
 
-        return InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged);
     }
 
     public Task OnErrorAsync(Exception ex)

@@ -24,14 +24,4 @@
     </PackageReference>
   </ItemGroup>
   
-  <ItemGroup>
-    <None Remove="Web\" />
-    <None Remove="Web\Shared\" />
-    <None Remove="Web\Pages\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Web\" />
-    <Folder Include="Web\Shared\" />
-    <Folder Include="Web\Pages\" />
-  </ItemGroup>
 </Project>

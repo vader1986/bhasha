@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using Bhasha.Domain;
+using Bhasha.Domain.Extensions;
 using Bhasha.Domain.Interfaces;
 using Orleans.Streams;
 
@@ -15,6 +16,12 @@ public interface IStudentGrain : IGrainWithStringKey
     /// <returns>User profile for the specified language combination.</returns>
     /// <exception cref="InvalidOperationException">profile does not exist</exception>
     ValueTask<Profile> GetProfile(LangKey langId);
+
+    /// <summary>
+    /// Gets a list of profiles created for the user.
+    /// </summary>
+    /// <returns>An immutable list of all user profiles.</returns>
+    ValueTask<ImmutableList<Profile>> GetProfiles();
 
     /// <summary>
     /// Creates a new user profile for the specified languages.
@@ -52,12 +59,6 @@ public interface IStudentGrain : IGrainWithStringKey
     Task<DisplayedChapter> SelectChapter(Guid chapterId, LangKey langId);
 
     /// <summary>
-    /// Gets a list of profiles created for the user.
-    /// </summary>
-    /// <returns>An immutable list of all user profiles.</returns>
-    Task<ImmutableList<Profile>> GetProfiles();
-
-    /// <summary>
     /// Submit user input for validating. Updates the corresponding user profile
     /// after validation of the input. 
     /// </summary>
@@ -91,14 +92,14 @@ public class StudentGrain : Grain, IStudentGrain
         }
 
         var streamProvider = this.GetStreamProvider(Orleans.StreamProvider);
-        var stream = streamProvider.GetStream<Profile>(Orleans.Streams.UserProfile);
+        var stream = streamProvider.GetStream<Profile>(Orleans.Streams.UserProfile, userId);
 
         _stream = stream;
     }
 
     public ValueTask<Profile> GetProfile(LangKey langId)
     {
-        if (!_profiles.TryGetValue(langId, out var profile))
+        if (_profiles.TryGetValue(langId, out var profile) is false)
         {
             throw new InvalidOperationException("profile does not exist");
         }
@@ -106,70 +107,9 @@ public class StudentGrain : Grain, IStudentGrain
         return new ValueTask<Profile>(profile);
     }
 
-    public async Task<DisplayedChapter?> GetCurrentChapter(LangKey langId)
+    public ValueTask<ImmutableList<Profile>> GetProfiles()
     {
-        var profile = await GetProfile(langId);
-        var chapterId = profile.CurrentChapter?.ChapterId;
-
-        if (chapterId == null)
-        {
-            return null;
-        }
-
-        var chapterKey = new ChapterKey(chapterId.Value, langId);
-        var chapterGrain = GrainFactory.GetGrain<IDisplayChapterGrain>(chapterKey.ToString());
-
-        return await chapterGrain.Display();
-    }
-
-    public async Task<ImmutableList<DisplayedSummary>> GetSummaries(LangKey langId)
-    {
-        var profile = await GetProfile(langId);
-
-        var summariesKey = new SummaryCollectionKey(profile.Level, langId);
-        var summaryGrain = GrainFactory
-            .GetGrain<ISummaryGrain>(summariesKey.ToString());
-
-        var summaries = await summaryGrain.GetSummaries();
-
-        return summaries
-            .Select(summary => new DisplayedSummary(
-                summary.ChapterId,
-                summary.Name,
-                summary.Description,
-                profile.CompletedChapters.Contains(summary.ChapterId)))
-            .ToImmutableList();
-    }
-
-    public async Task<DisplayedChapter> SelectChapter(Guid chapterId, LangKey langId)
-    {
-        if (!_profiles.TryGetValue(langId, out var profile))
-            throw new ArgumentException($"Profile for {langId} not found", nameof(langId));
-
-        var chapterKey = new ChapterKey(chapterId, langId);
-        var chapterGrain = GrainFactory.GetGrain<IDisplayChapterGrain>(chapterKey.ToString());
-        var chapter = await chapterGrain.Display();
-
-        var defaultPageIndex = 0;
-        var defaultPages = Enumerable
-            .Range(0, chapter.Pages.Length)
-            .Select(_ => ValidationResult.Wrong).ToArray();
-
-        profile = profile with
-        {
-            CurrentChapter = new ChapterSelection(chapterId, defaultPageIndex, defaultPages)
-        };
-
-        await _repository.Update(profile);
-
-        _profiles[langId] = profile;
-
-        return chapter;
-    }
-
-    public Task<ImmutableList<Profile>> GetProfiles()
-    {
-        return Task.FromResult(_profiles.Values.ToImmutableList());
+        return new ValueTask<ImmutableList<Profile>>(_profiles.Values.ToImmutableList());
     }
 
     public async Task<Profile> CreateProfile(LangKey langId)
@@ -195,20 +135,56 @@ public class StudentGrain : Grain, IStudentGrain
         return profile;
     }
 
-    private static int? GetNextPageIndex(ChapterSelection selection)
+    public async Task<DisplayedChapter?> GetCurrentChapter(LangKey langId)
     {
-        var pages = selection.Pages.Length;
+        var profile = await GetProfile(langId);
+        var chapterId = profile.CurrentChapter?.ChapterId;
 
-        for (var i = 0; i < pages; i++)
+        if (chapterId == null)
         {
-            var index = (selection.PageIndex + 1 + i) % pages;
-            if (selection.Pages[index] != ValidationResult.Correct)
-            {
-                return index;
-            }
+            return null;
         }
 
-        return null;
+        var chapterKey = new ChapterKey(chapterId.Value, langId);
+        var chapterGrain = GrainFactory.GetGrain<IDisplayChapterGrain>(chapterKey.ToString());
+
+        return await chapterGrain.Display();
+    }
+
+    public async Task<ImmutableList<DisplayedSummary>> GetSummaries(LangKey langId)
+    {
+        var profile = await GetProfile(langId);
+
+        var summariesKey = new SummaryCollectionKey(profile.Level, langId);
+        var summaryGrain = GrainFactory.GetGrain<ISummaryGrain>(summariesKey);
+
+        var summaries = await summaryGrain.GetSummaries();
+
+        return summaries
+            .Select(summary => new DisplayedSummary(
+                summary.ChapterId,
+                summary.Name,
+                summary.Description,
+                profile.CompletedChapters.Contains(summary.ChapterId)))
+            .ToImmutableList();
+    }
+
+    public async Task<DisplayedChapter> SelectChapter(Guid chapterId, LangKey langId)
+    {
+        if (!_profiles.TryGetValue(langId, out var profile))
+            throw new ArgumentException($"Profile for {langId} not found", nameof(langId));
+
+        var chapterKey = new ChapterKey(chapterId, langId);
+        var chapterGrain = GrainFactory.GetGrain<IDisplayChapterGrain>(chapterKey.ToString());
+        var chapter = await chapterGrain.Display();
+
+        var updatedProfile = profile.Select(chapter);
+
+        await _repository.Update(updatedProfile);
+
+        _profiles[langId] = updatedProfile;
+
+        return chapter;
     }
 
     public async Task<Validation> Submit(ValidationInput input)
@@ -221,42 +197,15 @@ public class StudentGrain : Grain, IStudentGrain
         }
 
         var validation = await _validator.Validate(input);
-        var chapter = profile.CurrentChapter ??
-            throw new InvalidOperationException($"No chapter selected for user profile {key}");
+        var updatedProfile = profile.Submit(validation.Result);
 
-        chapter.Pages[chapter.PageIndex] = validation.Result;
+        await _repository.Update(updatedProfile);
 
-        var nextPageIndex = GetNextPageIndex(chapter);
-
-        if (nextPageIndex == null)
-        {
-            var completedChapters = profile.CompletedChapters
-                    .Append(chapter.ChapterId)
-                    .Distinct()
-                    .ToArray();
-
-            profile = profile with
-            {
-                CompletedChapters = completedChapters,
-                CurrentChapter = null,
-                Level = completedChapters.Length / 5 + 1
-            };
-        }
-        else
-        {
-            profile = profile with
-            {
-                CurrentChapter = chapter with { PageIndex = nextPageIndex.Value }
-            };
-        }
-
-        _profiles[key] = profile;
-
-        await _repository.Update(profile);
+        _profiles[key] = updatedProfile;
 
         if (_stream != null)
         {
-            await _stream.OnNextAsync(profile);
+            await _stream.OnNextAsync(updatedProfile);
         }
 
         return validation;
