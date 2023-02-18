@@ -36,6 +36,3 @@ jobs:
 
     - name: .NET Test
       run: dotnet test --no-restore --verbosity normal
-
-    - name: .NET Pack
-      run: dotnet pack -c Release -o . --no-build  
