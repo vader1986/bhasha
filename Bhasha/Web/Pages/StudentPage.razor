@@ -1,0 +1,27 @@
+﻿@page "/student"
+@using Bhasha.Web.Shared.Components
+@inherits Bhasha.Web.Pages.UserPage
+
+<AuthorizeView Roles="Student">
+
+    @if (_error != null)
+    {
+        <MudAlert Severity="Severity.Error">@_error</MudAlert>
+    }
+
+    @if (DisplayProfileSelection)
+    {
+        <SelectProfile UserId="@UserId" Profiles="@_profiles" OnSelection="OnSelectProfile" />
+    }
+
+    @if (DisplayChapterSelection)
+    {
+        <SelectChapter UserId="@UserId" Languages="_selectedLanguages" OnSelection="OnSelectChapter" />
+    }
+
+    @if (DisplayPage)
+    {
+        <ChapterPage Chapter="@_selectedChapter" Page="_selectedPage" Submit="OnSubmit" />
+    }
+
+</AuthorizeView>

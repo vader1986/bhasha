@@ -1,0 +1,8 @@
+﻿@page "/author"
+@using Bhasha.Web.Shared.Components
+@inherits Bhasha.Web.Pages.UserPage
+
+<AuthorizeView Roles="Author">
+    <PageTitle>Create Chapter</PageTitle>
+    <EditChapter UserId="@UserId"/>
+</AuthorizeView>

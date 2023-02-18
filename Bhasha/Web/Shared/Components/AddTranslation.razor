@@ -1,0 +1,16 @@
+﻿<MudDialog>
+    <DialogContent>
+        <MudSelect T="string" @bind-Value="Language" Label="Language" AnchorOrigin="Origin.BottomCenter">
+            @foreach (var language in Domain.Language.Supported.Values.Where(x => x != Domain.Language.Reference))
+            {
+                <MudSelectItem Value="language.ToString()" />
+            }
+        </MudSelect>
+        <MudTextField T="string" @bind-Text="Expression" Label="Expression (English)" />
+        <MudTextField T="string" @bind-Text="Translation" Label="Translation" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" Disabled="DisableCreate" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
