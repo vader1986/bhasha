@@ -142,7 +142,6 @@ try
     app.MapControllers();
     app.MapBlazorHub();
     app.MapFallbackToPage("/_Host");
-
     app.Run();
 }
 catch (Exception e)

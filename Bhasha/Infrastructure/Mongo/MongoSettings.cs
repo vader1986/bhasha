@@ -21,14 +21,20 @@ public class MongoSettings
     {
         var section = config.GetSection("Database");
 
-        var dbName = section.GetValue<string>("Name") ?? throw new ArgumentException("'Name' for MongoDB not set");
+        var dbPrefix = section.GetValue<string?>("Prefix") ?? "mongodb";
+        var dbName = section.GetValue<string>("Name") ?? "admin";
+        var dbParams = section.GetValue<string>("Params");
+
         var hostname = section.GetValue<string>("Hostname") ?? throw new ArgumentException("'Hostname' for MongoDB not set");
+
         var username = section.GetValue<string>("User") ?? throw new ArgumentException("'User' for MongoDB not set");
         var password = section.GetValue<string>("Password") ?? throw new ArgumentException("'Password' for MongoDB not set");
 
+        var connectionString = Bhasha.ConnectionString.ForMongoDB(hostname, username, password, dbName, dbPrefix, dbParams);
+
         return new MongoSettings
         {
-            ConnectionString = Bhasha.ConnectionString.ForMongoDB(hostname, username, password, dbName),
+            ConnectionString = connectionString,
             DatabaseName = dbName
         };
     }

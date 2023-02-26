@@ -3,6 +3,7 @@
 namespace Bhasha.Domain;
 
 [Equatable]
+[GenerateSerializer]
 public partial record Expression(
     Guid Id,
 	ExpressionType? ExpressionType,
