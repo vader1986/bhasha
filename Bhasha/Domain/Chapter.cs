@@ -5,6 +5,7 @@ using MongoDB.Bson.Serialization.IdGenerators;
 namespace Bhasha.Domain;
 
 [Equatable]
+[GenerateSerializer]
 public partial record Chapter(
 	Guid Id,
 	int RequiredLevel,

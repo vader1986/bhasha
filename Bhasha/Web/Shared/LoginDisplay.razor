@@ -1,13 +1,9 @@
 ﻿<AuthorizeView>
     <Authorized>
-        <div id="container">
-            <MudButton Variant="Variant.Outlined" Link="Identity/Account/Manage">Hello, @context.User.Identity?.Name!</MudButton>
-        </div>
+        <MudIconButton Icon="@Icons.Material.Outlined.ManageAccounts" Link="Identity/Account/Manage">@context.User.Identity?.Name</MudIconButton>
     </Authorized>
     <NotAuthorized>
-        <div id="container">
-            <MudButton Variant="Variant.Outlined" Disabled="true" Link="Identity/Account/Register">Register</MudButton>
-            <MudButton Variant="Variant.Outlined" Link="Identity/Account/Login">Log in</MudButton>
-        </div>
+        <MudIconButton Icon="@Icons.Material.Outlined.AppRegistration" Disabled="true" Link="Identity/Account/Register">Register</MudIconButton>
+        <MudIconButton Icon="@Icons.Material.Outlined.Login" Link="Identity/Account/Login">Log in</MudIconButton>
     </NotAuthorized>
 </AuthorizeView>
