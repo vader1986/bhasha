@@ -111,7 +111,7 @@ try
         services.AddSingleton<IValidator, Validator>();
         services.AddSingleton<IPageFactory, PageFactory>();
         services.AddSingleton<IMultipleChoicePageFactory, MultipleChoicePageFactory>();
-
+        services.AddSingleton<IChapterSummariesProvider, ChapterSummariesProvider>();
     });
 
     var app = builder.Build();
