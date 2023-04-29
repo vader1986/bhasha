@@ -35,6 +35,7 @@ public class MultipleChoicePageFactory : IMultipleChoicePageFactory
         var choices = translations
             .Where(x => x != null)
             .Select(x => x! with { ExpressionId = default }) // hide expression id to avoid cheating
+            .OrderBy(_ => Guid.NewGuid()) // randomize list
             .ToArray();
 
         var word = await _translations.Find(page.ExpressionId, languages.Native);
