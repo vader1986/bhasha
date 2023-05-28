@@ -71,14 +71,16 @@ public class StudentGrain : Grain, IStudentGrain
 {
     private readonly IProfileRepository _repository;
     private readonly IValidator _validator;
+    private readonly IChapterSummariesProvider _summariesProvider;
     private readonly IDictionary<LangKey, Profile> _profiles;
     private IAsyncStream<Profile>? _stream;
 
 
-    public StudentGrain(IProfileRepository repository, IValidator validator)
+    public StudentGrain(IProfileRepository repository, IValidator validator, IChapterSummariesProvider summariesProvider)
 	{
         _repository = repository;
         _validator = validator;
+        _summariesProvider = summariesProvider;
         _profiles = new Dictionary<LangKey, Profile>();
     }
 
@@ -154,11 +156,7 @@ public class StudentGrain : Grain, IStudentGrain
     public async Task<ImmutableList<DisplayedSummary>> GetSummaries(LangKey langId)
     {
         var profile = await GetProfile(langId);
-
-        var summariesKey = new SummaryCollectionKey(profile.Level, langId);
-        var summaryGrain = GrainFactory.GetGrain<ISummaryGrain>(summariesKey);
-
-        var summaries = await summaryGrain.GetSummaries();
+        var summaries = await _summariesProvider.GetSummaries(profile.Level, langId);
 
         return summaries
             .Select(summary => new DisplayedSummary(

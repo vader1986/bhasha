@@ -7,7 +7,6 @@ using Bhasha.Domain;
 using Bhasha.Domain.Interfaces;
 using Bhasha.Grains;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using NSubstitute;
 using Orleans.TestKit;
 using Orleans.TestKit.Streams;
@@ -19,12 +18,14 @@ public class StudentGrainTests : TestKitBase
 {
     private readonly IProfileRepository _repository = Substitute.For<IProfileRepository>();
     private readonly IValidator _validator = Substitute.For<IValidator>();
+    private readonly IChapterSummariesProvider _summariesProvider = Substitute.For<IChapterSummariesProvider>();
     private readonly TestStream<Profile> _stream;
 
     public StudentGrainTests()
 	{
         Silo.AddService(_repository);
         Silo.AddService(_validator);
+        Silo.AddService(_summariesProvider);
 
         _stream = Silo.AddStreamProbe<Profile>();
     }
@@ -264,12 +265,9 @@ public class StudentGrainTests : TestKitBase
             .FindByUser(userId)
             .Returns(profiles.ToAsyncEnumerable());
 
-        var summariesKey = new SummaryCollectionKey(5, languageKey);
-        var probe = Silo.AddProbe<ISummaryGrain>(summariesKey);
-
-        probe
-            .Setup(g => g.GetSummaries())
-            .Returns(Task.FromResult(summaries.ToImmutableList()));
+        _summariesProvider
+            .GetSummaries(5, languageKey)
+            .Returns(summaries);
 
         var grain = await Silo.CreateGrainAsync<StudentGrain>(userId);
 
@@ -277,8 +275,8 @@ public class StudentGrainTests : TestKitBase
         var result = await grain.GetSummaries(languageKey);
 
         // verify
-        result.Should().BeEquivalentTo(
-            summaries.Select(x => new DisplayedSummary(x.ChapterId, x.Name, x.Description, false)));
+        var expectedChapters = summaries.Select(x => new DisplayedSummary(x.ChapterId, x.Name, x.Description, false));
+        result.Should().BeEquivalentTo(expectedChapters);
     }
 
     #endregion

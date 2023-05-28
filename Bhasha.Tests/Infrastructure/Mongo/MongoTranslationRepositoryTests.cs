@@ -112,7 +112,7 @@ public class MongoTranslationRepositoryTests : IDisposable
             .InsertOneAsync(translation);
 
         // act
-        var result = await _repository.Find(translation.Text);
+        var result = await _repository.Find(translation.Text, Language.Bengali);
 
         // verify
         result.Should().Be(translation);
@@ -122,7 +122,7 @@ public class MongoTranslationRepositoryTests : IDisposable
     public async Task GivenEmptyDatabase_WhenFindByText_ThenReturnNull(string text)
     {
         // act
-        var result = await _repository.Find(text);
+        var result = await _repository.Find(text, Language.Bengali);
 
         // verify
         result.Should().BeNull();

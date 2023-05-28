@@ -7,8 +7,8 @@ There's no reason for this project to limit itself for a specific language, it's
 ## Project Structure
 
 The VS solution contains multiple folders:
-* `Bhasha.Web` - back- and front-end service based on Blazor Server
-* `Bhasha.Web.Tests` - unit tests for front- and back-end components
+* `Bhasha` - back- and front-end service (IdentityServer, Blazor Server, Orleans)
+* `Bhasha.Tests` - unit tests for front- and back-end components
 
 ## Build & Deployment
 
@@ -21,7 +21,7 @@ Make sure you started docker on your local machine.
 Then create a local docker image for bhasha:
 ```bash
 cd /path/to/repository
-docker build -f Bhasha.Web/Dockerfile --force-rm -t bhasha . --no-cache
+docker build -f Bhasha/Dockerfile --force-rm -t bhasha . --no-cache
 ```
 
 ### Kubernetes

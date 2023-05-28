@@ -47,14 +47,15 @@ public class MongoTranslationRepository : ITranslationRepository
         return new ValueTask<Translation?>(result);
     }
 
-    public ValueTask<Translation?> Find(string expression)
+    public ValueTask<Translation?> Find(string expression, Language language)
     {
         var collection = _client
             .GetCollection<Translation>(_databaseName);
 
         var result = collection
             .AsQueryable()
-            .Where(translation => translation.Text == expression)
+            .Where(translation => translation.Text == expression &&
+                                  translation.Language == language)
             .SingleOrDefault();
 
         return new ValueTask<Translation?>(result);

@@ -50,7 +50,7 @@ public class AuthorGrain : Grain, IAuthorGrain
 
     public async Task<Guid> GetOrAddExpressionId(string expression)
     {
-        var reference = await _translationRepository.Find(expression);
+        var reference = await _translationRepository.Find(expression, Language.Reference);
 
         if (reference != null)
         {

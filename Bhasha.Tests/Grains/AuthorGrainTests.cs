@@ -68,7 +68,7 @@ public class AuthorGrainTests : TestKitBase
     {
         // setup
         _translationRepository
-            .Find("test")
+            .Find("test", Language.Reference)
             .Returns(translation);
 
         var grain = await Silo.CreateGrainAsync<AuthorGrain>("test");
@@ -85,7 +85,7 @@ public class AuthorGrainTests : TestKitBase
     {
         // setup
         _translationRepository
-            .Find("test")
+            .Find("test", Language.Reference)
             .Returns(default(Translation?));
 
         _expressionRepository
@@ -110,7 +110,7 @@ public class AuthorGrainTests : TestKitBase
     {
         // setup
         _translationRepository
-            .Find("test")
+            .Find("test", Language.Reference)
             .Returns(default(Translation?));
 
         _expressionRepository
