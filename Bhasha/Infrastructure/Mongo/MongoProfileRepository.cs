@@ -1,7 +1,6 @@
-﻿using System;
-using Bhasha.Domain;
+﻿using Bhasha.Domain;
 using Bhasha.Domain.Interfaces;
-using Bhasha.Infrastructure.Mongo.Extensions;
+using Bhasha.Infrastructure.Mongo.Dtos;
 using MongoDB.Driver;
 
 namespace Bhasha.Infrastructure.Mongo;
@@ -17,39 +16,41 @@ public class MongoProfileRepository : IProfileRepository
         _databaseName = settings.DatabaseName;
     }
 
+    private IMongoCollection<ProfileDto> GetCollection()
+    {
+        return _client
+            .GetDatabase(_databaseName)
+            .GetCollection<ProfileDto>("profiles");
+    }
+    
     public async Task<Profile> Add(Profile profile)
     {
-        var collection = _client.GetCollection<Profile>(_databaseName);
-
         if (profile.Id == Guid.Empty)
         {
             profile = profile with { Id = Guid.NewGuid() };
         }
 
-        await collection.InsertOneAsync(profile);
+        await GetCollection().InsertOneAsync(profile.Convert());
 
         return profile;
     }
 
     public async IAsyncEnumerable<Profile> FindByUser(string userId)
     {
-        var results = _client
-            .GetCollection<Profile>(_databaseName)
+        var results = GetCollection()
             .AsQueryable()
             .Where(profile => profile.Key.UserId == userId)
             .ToAsyncEnumerable();
 
         await foreach (var profile in results)
         {
-            yield return profile;
+            yield return profile.Convert();
         }
     }
 
     public async Task Update(Profile profile)
     {
-        await _client
-            .GetCollection<Profile>(_databaseName)
-            .ReplaceOneAsync(x => x.Id == profile.Id, profile);
+        await GetCollection().ReplaceOneAsync(x => x.Id == profile.Id, profile.Convert());
     }
 }
 

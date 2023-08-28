@@ -30,7 +30,7 @@ public class MongoSettings
         var username = section.GetValue<string>("User") ?? throw new ArgumentException("'User' for MongoDB not set");
         var password = section.GetValue<string>("Password") ?? throw new ArgumentException("'Password' for MongoDB not set");
 
-        var connectionString = Bhasha.ConnectionString.ForMongoDB(hostname, username, password, dbName, dbPrefix, dbParams);
+        var connectionString = Bhasha.ConnectionString.ForMongoDb(hostname, username, password, dbName, dbPrefix, dbParams);
 
         return new MongoSettings
         {

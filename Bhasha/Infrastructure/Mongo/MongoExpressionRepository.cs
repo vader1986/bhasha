@@ -1,7 +1,6 @@
-﻿using System;
-using Bhasha.Domain;
+﻿using Bhasha.Domain;
 using Bhasha.Domain.Interfaces;
-using Bhasha.Infrastructure.Mongo.Extensions;
+using Bhasha.Infrastructure.Mongo.Dtos;
 using MongoDB.Driver;
 
 namespace Bhasha.Infrastructure.Mongo;
@@ -17,42 +16,46 @@ public class MongoExpressionRepository : IExpressionRepository
         _databaseName = settings.DatabaseName;
     }
 
+    private IMongoCollection<ExpressionDto> GetCollection()
+    {
+        return _client
+            .GetDatabase(_databaseName)
+            .GetCollection<ExpressionDto>("expressions");
+    }
+
     public async Task<Expression> Add(Expression expression)
     {
-        var collection = _client.GetCollection<Expression>(_databaseName);
-
         if (expression.Id == Guid.Empty)
         {
             expression = expression with { Id = Guid.NewGuid() };
         }
 
-        await collection.InsertOneAsync(expression);
+        await GetCollection().InsertOneAsync(expression.Convert());
 
         return expression;
     }
 
     public async IAsyncEnumerable<Expression> Find(int level, int samples)
     {
-        var collection = _client.GetCollection<Expression>(_databaseName);
-        var options = new FindOptions<Expression, Expression>
+        var options = new FindOptions<ExpressionDto, ExpressionDto>
         {
             BatchSize = samples
         };
 
-        var curser = await collection.FindAsync(x => x.Level == level, options);
+        var cursor = await GetCollection()
+            .FindAsync(x => x.Level == level, options);
 
-        foreach (var expression in await curser.ToListAsync())
+        foreach (var expression in await cursor.ToListAsync())
         {
-            yield return expression;
+            yield return expression.Convert();
         }
     }
 
     public async Task<Expression> Get(Guid expressionId)
     {
-        var collection = _client.GetCollection<Expression>(_databaseName);
-        var result = await collection.FindAsync(x => x.Id == expressionId);
-
-        return await result.FirstAsync();
+        var result = await GetCollection().FindAsync(x => x.Id == expressionId);
+        var item = await result.FirstAsync();
+        return item.Convert();
     }
 }
 

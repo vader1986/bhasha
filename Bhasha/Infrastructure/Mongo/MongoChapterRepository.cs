@@ -1,6 +1,6 @@
 ﻿using Bhasha.Domain;
 using Bhasha.Domain.Interfaces;
-using Bhasha.Infrastructure.Mongo.Extensions;
+using Bhasha.Infrastructure.Mongo.Dtos;
 using MongoDB.Driver;
 
 namespace Bhasha.Infrastructure.Mongo;
@@ -16,50 +16,56 @@ public class MongoChapterRepository : IChapterRepository
         _databaseName = settings.DatabaseName;
     }
 
+    private IMongoCollection<ChapterDto> GetCollection()
+    {
+        return _client
+            .GetDatabase(_databaseName)
+            .GetCollection<ChapterDto>("chapters");
+    }
+
     public async Task<Chapter> AddOrReplace(Chapter chapter)
     {
-        var collection = _client.GetCollection<Chapter>(_databaseName);
-
-        if (chapter.Id == Guid.Empty)
+        var collection = GetCollection();
+        var dto = chapter.Convert();
+        
+        if (dto.Id == Guid.Empty)
         {
-            chapter = chapter with { Id = Guid.NewGuid() };
-            await collection.InsertOneAsync(chapter);
+            dto = dto with { Id = Guid.NewGuid() };
+            await collection.InsertOneAsync(dto);
         }
         else
         {
-            await collection.ReplaceOneAsync(x => x.Id == chapter.Id, chapter,
-                new ReplaceOptions { IsUpsert = true });
+            var options = new ReplaceOptions { IsUpsert = true };
+            await collection.ReplaceOneAsync(x => x.Id == dto.Id, dto, options);
         }
 
-        return chapter;
+        return dto.Convert();
     }
 
     public ValueTask<Chapter?> FindById(Guid chapterId)
     {
-        var collection = _client
-            .GetCollection<Chapter>(_databaseName);
-
-        var result = collection
+        var result = GetCollection()
             .AsQueryable()
-            .Where(chapter => chapter.Id == chapterId)
-            .SingleOrDefault();
+            .SingleOrDefault(chapter => chapter.Id == chapterId);
 
-        return new ValueTask<Chapter?>(result);
+        if (result is null)
+        {
+            return new ValueTask<Chapter?>();
+        }
+        
+        return new ValueTask<Chapter?>(result.Convert());
     }
 
     public async IAsyncEnumerable<Chapter> FindByLevel(int level)
     {
-        var collection = _client
-            .GetCollection<Chapter>(_databaseName);
-
-        var results = collection
+        var results = GetCollection()
             .AsQueryable()
             .Where(chapter => chapter.RequiredLevel == level)
             .ToAsyncEnumerable();
 
         await foreach (var chapter in results)
         {
-            yield return chapter;
+            yield return chapter.Convert();
         }
     }
 }

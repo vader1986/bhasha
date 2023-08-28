@@ -4,7 +4,7 @@ namespace Bhasha;
 
 public static class ConnectionString
 {
-    public static string ForMongoDB(string hostname, string username, string password, string database = "admin", string prefix = "mongodb", string? args = default)
+    public static string ForMongoDb(string hostname, string username, string password, string database = "admin", string prefix = "mongodb", string? args = default)
     {
         var builder = new StringBuilder();
 

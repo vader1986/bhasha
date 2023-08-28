@@ -1,9 +1,7 @@
 ﻿using AspNetCore.Identity.Mongo;
-using Bhasha;
 using Bhasha.Areas.Identity;
 using Bhasha.Domain;
 using Bhasha.Domain.Interfaces;
-using Bhasha.Domain.Pages;
 using Bhasha.Identity;
 using Bhasha.Infrastructure.Mongo;
 using Bhasha.Services;
@@ -13,13 +11,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Mongo.Migration.Startup;
 using Mongo.Migration.Startup.DotNetCore;
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization;
-using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 using MudBlazor.Services;
 using Orleans.Configuration;
-using Orleans.Providers;
 
 try
 {
@@ -57,7 +51,7 @@ try
 
         services
             .AddIdentityMongoDbProvider<AppUser, AppRole, Guid>(
-            identity => {
+            _ => {
                 // identity server settings
             },
             mongo => {

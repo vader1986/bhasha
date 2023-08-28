@@ -4,7 +4,7 @@ namespace Bhasha.Identity;
 
 public static class Setup
 {
-	public static async Task AddRoles(this IServiceProvider serviceProvider)
+	private static async Task AddRoles(this IServiceProvider serviceProvider)
 	{
 		var roleManager = serviceProvider.GetRequiredService<RoleManager<AppRole>>();
 		var roles = new[]
@@ -26,7 +26,7 @@ public static class Setup
         }				
 	}
 
-	public static async Task AddAdminUser(this IServiceProvider serviceProvider, IConfiguration config)
+	private static async Task AddDefaultUsers(this IServiceProvider serviceProvider, IConfiguration config)
 	{
 		var settings = IdentitySettings.From(config);
 		var userManager = serviceProvider.GetRequiredService<UserManager<AppUser>>();
@@ -55,7 +55,7 @@ public static class Setup
 			result = await userManager.AddToRoleAsync(user, defaultUser.Role);
 			if (!result.Succeeded)
 			{
-				throw new InvalidOperationException($"Failed to add Admin role to default user {user.Email}: {result}");
+				throw new InvalidOperationException($"Failed to add role {defaultUser.Role} to default user {user.Email}: {result}");
 			}
 		}
 	}
@@ -65,7 +65,7 @@ public static class Setup
 		using var scope = app.Services.CreateScope();
 
 		await scope.ServiceProvider.AddRoles();
-		await scope.ServiceProvider.AddAdminUser(app.Configuration);
+		await scope.ServiceProvider.AddDefaultUsers(app.Configuration);
 	}
 }
 
