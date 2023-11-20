@@ -7,21 +7,20 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Linq.Async" Version="6.0.1" />
-    <PackageReference Include="IdentityServer4.EntityFramework" Version="4.1.2" />
+    <PackageReference Include="Microsoft.NET.Build.Containers" Version="7.0.401" />
+    <PackageReference Include="MudBlazor" Version="6.9.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="7.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="7.0.10" />
-    <PackageReference Include="AspNetCore.Identity.Mongo" Version="8.3.3" />
-    <PackageReference Include="Generator.Equals" Version="3.0.0" />
-    <PackageReference Include="MudBlazor" Version="6.9.0" />
-    <PackageReference Include="Mongo.Migration" Version="3.1.4" />
-    <PackageReference Include="Microsoft.Orleans.Server" Version="7.2.1" />
-    <PackageReference Include="Microsoft.Orleans.Streaming" Version="7.2.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.10">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.11">
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Bhasha.MongoDb\Bhasha.MongoDb.csproj" />
+    <ProjectReference Include="..\Bhasha.Shared\Bhasha.Shared.csproj" />
   </ItemGroup>
   
 </Project>

@@ -3,6 +3,7 @@ using System.Linq;
 using AutoFixture.Xunit2;
 using Bhasha.Domain;
 using Bhasha.Domain.Extensions;
+using Bhasha.Shared.Domain;
 using FluentAssertions;
 using Xunit;
 

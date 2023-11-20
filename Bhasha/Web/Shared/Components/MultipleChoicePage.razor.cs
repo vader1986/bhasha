@@ -1,5 +1,6 @@
 ﻿using Bhasha.Domain;
-using Bhasha.Domain.Pages;
+using Bhasha.Shared.Domain;
+using Bhasha.Shared.Domain.Pages;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
@@ -7,8 +8,8 @@ namespace Bhasha.Web.Shared.Components;
 
 public partial class MultipleChoicePage : ComponentBase
 {
-    [Parameter] public DisplayedPage<MultipleChoice> Data { get; set; }
-    [Parameter] public Action<Translation> Submit { get; set; }
+    [Parameter] public required DisplayedPage<MultipleChoice> Data { get; set; }
+    [Parameter] public required Func<Translation, Task> Submit { get; set; }
 
     private bool DisableSubmit => _selectedChoice == null;
 

@@ -1,5 +1,4 @@
 ﻿@page "/student"
-@using Bhasha.Web.Shared.Components
 @inherits Bhasha.Web.Pages.UserPage
 
 <AuthorizeView Roles="Student">
@@ -16,7 +15,7 @@
 
     @if (DisplayChapterSelection)
     {
-        <SelectChapter UserId="@UserId" Languages="_selectedLanguages" OnSelection="OnSelectChapter" />
+        <SelectChapter UserId="@UserId" Languages="_selectedProfile!.Key" OnSelection="OnChapterSelected" />
     }
 
     @if (DisplayPage)

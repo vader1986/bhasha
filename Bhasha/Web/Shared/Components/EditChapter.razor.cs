@@ -1,22 +1,25 @@
 ﻿using Bhasha.Domain;
-using Bhasha.Grains;
+using Bhasha.Services;
+using Bhasha.Shared.Domain;
 using Bhasha.Web.Pages.Author;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using Page = Bhasha.Shared.Domain.Page;
 
 namespace Bhasha.Web.Shared.Components;
 
 public partial class EditChapter : ComponentBase
 {
-    [Inject] public IDialogService DialogService { get; set; }
-    [Inject] public IClusterClient ClusterClient { get; set; }
-    [Parameter] public string UserId { get; set; }
+    [Inject] public required IDialogService DialogService { get; set; }
+    [Inject] public required IAuthoringService AuthoringService { get; set; }
+    
+    [Parameter] public required string UserId { get; set; }
 
     public string? Error { get; set; }
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public int RequiredLevel { get; set; } = 1;
-    public List<(PageType PageType, string Expression)> Pages { get; } = new List<(PageType, string)>();
+    public List<(PageType PageType, string Expression)> Pages { get; } = new();
 
     private bool DisableSave =>
         string.IsNullOrWhiteSpace(Name) || string.IsNullOrWhiteSpace(Description) || Pages.Count < 3 || Error != null;
@@ -31,11 +34,10 @@ public partial class EditChapter : ComponentBase
             if (!result.Canceled)
             {
                 var (language, expression, text) = ((string Language, string Expression, string Translation))result.Data;
-                var grain = ClusterClient.GetGrain<IAuthorGrain>(UserId);
-                var expressionId = await grain.GetOrAddExpressionId(expression);
+                var expressionId = await AuthoringService.GetExpressionId(expression, RequiredLevel);
                 var translation = Translation.Create(expressionId, language, text);
 
-                await grain.AddOrUpdateTranslation(translation);
+                await AuthoringService.AddOrUpdateTranslation(translation);
             }
         }
         catch (Exception e)
@@ -67,22 +69,19 @@ public partial class EditChapter : ComponentBase
     {
         try
         {
-            var grain = ClusterClient.GetGrain<IAuthorGrain>(UserId);
+            var nameId = await AuthoringService.GetExpressionId(Name, RequiredLevel);
+            var descriptionId = await AuthoringService.GetExpressionId(Description, RequiredLevel);
 
-            
-            var nameId = await grain.GetOrAddExpressionId(Name);
-            var descriptionId = await grain.GetOrAddExpressionId(Description);
-
-            var pages = new List<Domain.Page>();
+            var pages = new List<Page>();
 
             foreach (var page in Pages)
             {
-                var expressionId = await grain.GetOrAddExpressionId(page.Expression);
-                pages.Add(new Domain.Page(page.PageType, expressionId));
+                var expressionId = await AuthoringService.GetExpressionId(page.Expression, RequiredLevel);
+                pages.Add(new Page(page.PageType, expressionId));
             }
 
             var chapter = Chapter.Create(RequiredLevel, nameId, descriptionId, pages, UserId);
-            await grain.AddOrUpdateChapter(chapter);
+            await AuthoringService.AddOrUpdateChapter(chapter);
         }
         catch (Exception e)
         {

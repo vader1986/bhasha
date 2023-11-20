@@ -1,7 +1,7 @@
 ﻿<MudDialog>
     <DialogContent>
         <MudSelect T="string" @bind-Value="Language" Label="Language" AnchorOrigin="Origin.BottomCenter">
-            @foreach (var language in Domain.Language.Supported.Values.Where(x => x != Domain.Language.Reference))
+            @foreach (var language in Bhasha.Shared.Domain.Language.Supported.Values.Where(x => x != Bhasha.Shared.Domain.Language.Reference))
             {
                 <MudSelectItem Value="language.ToString()" />
             }

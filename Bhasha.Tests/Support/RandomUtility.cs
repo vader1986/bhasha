@@ -7,7 +7,7 @@ namespace Bhasha.Tests.Support;
 
 public static class RandomUtility
 {
-    private static readonly Fixture _rog = new();
+    private static Fixture Rog => new();
 
     public static T Random<T>(this IEnumerable<T> source)
     {
@@ -15,7 +15,7 @@ public static class RandomUtility
         if (elements.Length == 0)
             throw new ArgumentOutOfRangeException(nameof(source));
 
-        var index = Math.Abs(_rog.Create<int>()) % elements.Length;
+        var index = Math.Abs(Rog.Create<int>()) % elements.Length;
         return elements[index];
     }
 

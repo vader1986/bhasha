@@ -1,6 +1,6 @@
 ﻿using Bhasha.Domain;
 using Bhasha.Domain.Interfaces;
-using Bhasha.Domain.Pages;
+using Bhasha.Shared.Domain;
 
 namespace Bhasha.Services;
 
@@ -13,7 +13,7 @@ public class PageFactory : IPageFactory
         _multipleChoiceFactory = multipleChoiceFactory;
     }
 
-    public async Task<DisplayedPage> CreateAsync(Page page, LangKey languages)
+    public async Task<DisplayedPage> CreateAsync(Page page, ProfileKey languages)
     {
         if (page.PageType == PageType.MultipleChoice)
         {

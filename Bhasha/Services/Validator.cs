@@ -1,5 +1,7 @@
 ﻿using Bhasha.Domain;
 using Bhasha.Domain.Interfaces;
+using Bhasha.Shared.Domain;
+using Bhasha.Shared.Domain.Interfaces;
 
 namespace Bhasha.Services;
 
@@ -14,7 +16,7 @@ public class Validator : IValidator
 
     public async Task<Validation> Validate(ValidationInput input)
     {
-        var languages = input.Languages;
+        var languages = input.Key;
         var translation = input.Translation;
         var solution = await _translations.Get(translation.Id);
 

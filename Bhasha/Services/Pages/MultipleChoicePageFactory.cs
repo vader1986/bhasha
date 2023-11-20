@@ -1,6 +1,8 @@
 ﻿using Bhasha.Domain;
 using Bhasha.Domain.Interfaces;
-using Bhasha.Domain.Pages;
+using Bhasha.Shared.Domain;
+using Bhasha.Shared.Domain.Interfaces;
+using Bhasha.Shared.Domain.Pages;
 
 namespace Bhasha.Services.Pages;
 
@@ -17,7 +19,7 @@ public class MultipleChoicePageFactory : IMultipleChoicePageFactory
         _translations = translations;
     }
 
-    public async Task<DisplayedPage<MultipleChoice>> CreateAsync(Page page, LangKey languages)
+    public async Task<DisplayedPage<MultipleChoice>> CreateAsync(Page page, ProfileKey languages)
     {
         var expression = await _expressions.Get(page.ExpressionId);
 

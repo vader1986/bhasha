@@ -1,4 +1,6 @@
-﻿namespace Bhasha.Domain.Interfaces;
+﻿using Bhasha.Shared.Domain;
+
+namespace Bhasha.Domain.Interfaces;
 
 public interface IValidator
 {

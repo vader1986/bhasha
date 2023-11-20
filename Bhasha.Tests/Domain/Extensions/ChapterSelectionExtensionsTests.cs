@@ -1,6 +1,7 @@
 ﻿using System;
 using Bhasha.Domain;
 using Bhasha.Domain.Extensions;
+using Bhasha.Shared.Domain;
 using FluentAssertions;
 using Xunit;
 

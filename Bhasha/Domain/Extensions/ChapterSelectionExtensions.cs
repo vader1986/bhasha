@@ -1,4 +1,6 @@
-﻿namespace Bhasha.Domain.Extensions;
+﻿using Bhasha.Shared.Domain;
+
+namespace Bhasha.Domain.Extensions;
 
 public static class ChapterSelectionExtensions
 {
