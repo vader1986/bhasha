@@ -1,7 +1,7 @@
 ﻿namespace Bhasha.Shared.Domain;
 
 public record Summary(
-    Guid ChapterId,
+    int ChapterId,
     string Name,
     string Description);
 

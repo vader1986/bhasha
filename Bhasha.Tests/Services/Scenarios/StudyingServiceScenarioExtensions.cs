@@ -14,10 +14,10 @@ public static class StudyingServiceScenarioExtensions
             .FindByUser(userId)
             .Returns(profileKeys
                 .Select(key => new Profile(
-                    Id: Guid.NewGuid(),
+                    Id: Random.Shared.Next(),
                     Key: key,
                     Level: 1,
-                    CompletedChapters: Array.Empty<Guid>(),
+                    CompletedChapters: Array.Empty<int>(),
                     CurrentChapter: default))
                 .ToAsyncEnumerable());
 
@@ -32,10 +32,10 @@ public static class StudyingServiceScenarioExtensions
             .Returns(new []
                 {
                     new Profile(
-                        Id: Guid.NewGuid(),
+                        Id: Random.Shared.Next(),
                         Key: key,
                         Level: 1,
-                        CompletedChapters: Array.Empty<Guid>(),
+                        CompletedChapters: Array.Empty<int>(),
                         CurrentChapter: currentChapter)
                 }
                 .ToAsyncEnumerable());
@@ -53,7 +53,7 @@ public static class StudyingServiceScenarioExtensions
         return scenario;
     }
     
-    public static StudyingServiceScenario WithCompletedChapters(this StudyingServiceScenario scenario, ProfileKey key, params Guid[] completedChapters)
+    public static StudyingServiceScenario WithCompletedChapters(this StudyingServiceScenario scenario, ProfileKey key, params int[] completedChapters)
     {
         scenario
             .Repository
@@ -61,7 +61,7 @@ public static class StudyingServiceScenarioExtensions
             .Returns(new []
                 {
                     new Profile(
-                        Id: Guid.NewGuid(),
+                        Id: Random.Shared.Next(),
                         Key: key,
                         Level: 1,
                         CompletedChapters: completedChapters,
@@ -72,7 +72,7 @@ public static class StudyingServiceScenarioExtensions
         return scenario;
     }
 
-    public static StudyingServiceScenario WithSummaries(this StudyingServiceScenario scenario, ProfileKey key, params Guid[] chapterIds)
+    public static StudyingServiceScenario WithSummaries(this StudyingServiceScenario scenario, ProfileKey key, params int[] chapterIds)
     {
         scenario
             .SummariesProvider

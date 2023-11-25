@@ -4,17 +4,17 @@ namespace Bhasha.Shared.Domain;
 
 [Equatable]
 public partial record Chapter(
-	Guid Id,
+	int Id,
 	int RequiredLevel,
-    Guid NameId,
-    Guid DescriptionId,
+	Expression Name,
+	Expression Description,
 	[property: OrderedEquality]
-	Page[] Pages,
+	Expression[] Pages,
 	string? ResourceId,
 	string AuthorId)
 {
-	public static Chapter Create(int requiredLevel, Guid nameId, Guid descriptionId, IEnumerable<Page> pages, string authorId)
+	public static Chapter Create(int requiredLevel, Expression name, Expression description, IEnumerable<Expression> pages, string authorId)
 	{
-		return new Chapter(Guid.Empty, requiredLevel, nameId, descriptionId, pages.ToArray(), default, authorId);
+		return new Chapter(default, requiredLevel, name, description, pages.ToArray(), default, authorId);
 	}
 }

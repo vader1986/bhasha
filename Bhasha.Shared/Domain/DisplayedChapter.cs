@@ -1,7 +1,7 @@
 ﻿namespace Bhasha.Shared.Domain;
 
 public record DisplayedChapter(
-    Guid Id,
+    int Id,
     string Name,
     string Description,
     DisplayedPage[] Pages,

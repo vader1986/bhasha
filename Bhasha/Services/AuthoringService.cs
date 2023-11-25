@@ -5,9 +5,9 @@ namespace Bhasha.Services;
 
 public interface IAuthoringService
 {
-    Task<Guid> GetExpressionId(string text, int level);
-    Task AddOrUpdateTranslation(Translation translation);
-    Task AddOrUpdateChapter(Chapter chapter);
+    Task<Expression> GetOrCreateExpression(string text, int level, CancellationToken token = default);
+    Task AddOrUpdateTranslation(Translation translation, CancellationToken token= default);
+    Task AddOrUpdateChapter(Chapter chapter, CancellationToken token = default);
 }
 
 public class AuthoringService : IAuthoringService
@@ -23,30 +23,34 @@ public class AuthoringService : IAuthoringService
         _translationRepository = translationRepository;
     }
     
-    public async Task<Guid> GetExpressionId(string text, int level)
+    public async Task<Expression> GetOrCreateExpression(string text, int level, CancellationToken token = default)
     {
         var reference = await _translationRepository.Find(text, Language.Reference);
 
         if (reference != null)
         {
-            return reference.ExpressionId;
+            return reference.Expression;
         }
 
-        var expr = await _expressionRepository.Add(Expression.Create(level));
-        var translation = Translation.Create(expr.Id, Language.Reference, text);
+        var expression = await _expressionRepository
+            .Add(Expression.Create(level));
+        
+        var translation = Translation
+            .Create(expression, Language.Reference, text);
 
-        await _translationRepository.AddOrReplace(translation);
+        await _translationRepository
+            .AddOrReplace(translation);
 
-        return expr.Id;
+        return expression;
     }
 
-    public async Task AddOrUpdateTranslation(Translation translation)
+    public async Task AddOrUpdateTranslation(Translation translation, CancellationToken token = default)
     {
         await _translationRepository.AddOrReplace(translation);
     }
 
-    public async Task AddOrUpdateChapter(Chapter chapter)
+    public async Task AddOrUpdateChapter(Chapter chapter, CancellationToken token = default)
     {
-        await _chapterRepository.AddOrReplace(chapter);
+        await _chapterRepository.AddOrReplace(chapter, token);
     }
 }

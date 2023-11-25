@@ -12,8 +12,8 @@ public static class AuthoringServiceScenarioExtensions
             .TranslationRepository
             .Find(text, Language.Reference)
             .Returns(new Translation(
-                Id: Guid.NewGuid(),
-                ExpressionId: scenario.ExpressionId,
+                Id: Random.Shared.Next(),
+                Expression: scenario.Expression,
                 Language: language ?? Language.Reference,
                 Text: text,
                 Spoken: default,

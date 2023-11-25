@@ -6,7 +6,7 @@ namespace Bhasha.Services;
 
 public interface IChapterProvider
 {
-    Task<DisplayedChapter> Load(ChapterKey key);
+    Task<DisplayedChapter> Load(ChapterKey key, CancellationToken token = default);
 }
 
 public class ChapterProvider : IChapterProvider
@@ -22,19 +22,19 @@ public class ChapterProvider : IChapterProvider
         _pageFactory = pageFactory;
     }
     
-    public async Task<DisplayedChapter> Load(ChapterKey key)
+    public async Task<DisplayedChapter> Load(ChapterKey key, CancellationToken token)
     {
-        var chapter = await _chapterRepository.FindById(key.ChapterId);
+        var chapter = await _chapterRepository.FindById(key.ChapterId, token);
         if (chapter == null) throw new InvalidOperationException($"Chapter with ID {key.ChapterId} not found");
 
         var pages = await Task.WhenAll(chapter.Pages.Select(
             async page => await _pageFactory.CreateAsync(page, key.ProfileKey)));
 
-        var name = await _translationProvider.Find(chapter.NameId, key.ProfileKey.Native)
-                   ?? throw new InvalidOperationException($"Translation for {chapter.NameId} to {key.ProfileKey.Native} not found");
+        var name = await _translationProvider.Find(chapter.Name.Id, key.ProfileKey.Native)
+            ?? throw new InvalidOperationException($"Translation for {chapter.Name.Id} to {key.ProfileKey.Native} not found");
 
-        var description = await _translationProvider.Find(chapter.DescriptionId, key.ProfileKey.Native)
-                          ?? throw new InvalidOperationException($"Translation for {chapter.DescriptionId} to {key.ProfileKey.Native} not found");
+        var description = await _translationProvider.Find(chapter.Description.Id, key.ProfileKey.Native)
+            ?? throw new InvalidOperationException($"Translation for {chapter.Description.Id} to {key.ProfileKey.Native} not found");
 
         return new DisplayedChapter(key.ChapterId, name.Text, description.Text, pages, chapter.ResourceId);
     }

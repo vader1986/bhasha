@@ -2,7 +2,7 @@
 
 public interface IProfileRepository
 {
-    Task<Profile> Add(Profile profile);
-    Task Update(Profile profile);
-    IAsyncEnumerable<Profile> FindByUser(string userId);
+    Task<Profile> Add(Profile profile, CancellationToken token = default);
+    Task Update(Profile profile, CancellationToken token = default);
+    IAsyncEnumerable<Profile> FindByUser(string userId, CancellationToken token = default);
 }

@@ -15,23 +15,23 @@ public class ChapterSummariesProvider : IChapterSummariesProvider
         _translationRepository = translationRepository;
     }
 
-    public async Task<IReadOnlyList<Summary>> GetSummaries(int level, ProfileKey key)
+    public async Task<IReadOnlyList<Summary>> GetSummaries(int level, ProfileKey key, CancellationToken token = default)
     {
         var summaries = new List<Summary>();
-        var translations = new Dictionary<Guid, string>();
+        var translations = new Dictionary<int, string>();
         var native = key.Native;
 
-        await foreach (var chapter in _chapterRepository.FindByLevel(level))
+        await foreach (var chapter in _chapterRepository.FindByLevel(level, token))
         {
-            var name = await Translate(chapter.NameId);
-            var description = await Translate(chapter.DescriptionId);
+            var name = await Translate(chapter.Name.Id);
+            var description = await Translate(chapter.Description.Id);
 
             summaries.Add(new Summary(chapter.Id, name, description));
         }
 
         return summaries;
 
-        async Task<string> Translate(Guid expressionId)
+        async Task<string> Translate(int expressionId)
         {
             if (translations.TryGetValue(expressionId, out var name))
             {

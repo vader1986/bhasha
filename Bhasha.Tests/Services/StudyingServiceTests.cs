@@ -129,10 +129,10 @@ public class StudyingServiceTests
         await scenario.Repository
             .Received(1)
             .Add(new Profile(
-                Id: Guid.Empty,
+                Id: default,
                 Key: key,
                 Level: 1,
-                CompletedChapters: Array.Empty<Guid>(),
+                CompletedChapters: Array.Empty<int>(),
                 CurrentChapter: null));
     }
 
@@ -171,7 +171,7 @@ public class StudyingServiceTests
     }
 
     [Theory, AutoData]
-    public async Task GetSummariesWithCompletedAndUncompletedChapters(Guid[] chapterIds)
+    public async Task GetSummariesWithCompletedAndUncompletedChapters(int[] chapterIds)
     {
         // arrange
         var key = SupportedProfileKey

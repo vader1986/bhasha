@@ -1,5 +1,4 @@
-﻿using Bhasha.Domain;
-using Bhasha.Domain.Interfaces;
+﻿using Bhasha.Domain.Interfaces;
 using Bhasha.Shared.Domain;
 using Bhasha.Shared.Domain.Interfaces;
 using Bhasha.Shared.Domain.Pages;
@@ -19,15 +18,15 @@ public class MultipleChoicePageFactory : IMultipleChoicePageFactory
         _translations = translations;
     }
 
-    public async Task<DisplayedPage<MultipleChoice>> CreateAsync(Page page, ProfileKey languages)
+    public async Task<DisplayedPage<MultipleChoice>> CreateAsync(Expression page, ProfileKey languages)
     {
-        var expression = await _expressions.Get(page.ExpressionId);
+        var expression = await _expressions.Get(page.Id);
 
         if (expression == null)
-            throw new InvalidOperationException(
-                $"Expression for {page.ExpressionId} not found");
+            throw new InvalidOperationException($"Expression for {page.Id} not found");
 
-        var expressions = await _expressions.Find(expression.Level, MaxNumberOfChoices - 1).ToListAsync();
+        var expressions = await _expressions
+            .Find(expression.Level, MaxNumberOfChoices - 1).ToListAsync();
 
         var translations = await Task.WhenAll(expressions
             .Where(x => x.Id != expression.Id)
@@ -36,17 +35,17 @@ public class MultipleChoicePageFactory : IMultipleChoicePageFactory
 
         var choices = translations
             .Where(x => x != null)
-            .Select(x => x! with { ExpressionId = default }) // hide expression id to avoid cheating
+            .Select(x => x! with { Expression = Expression.Create(x.Expression.Level) }) // hide expression id to avoid cheating
             .OrderBy(_ => Guid.NewGuid()) // randomize list
             .ToArray();
 
-        var word = await _translations.Find(page.ExpressionId, languages.Native);
+        var word = await _translations.Find(page.Id, languages.Native);
         if (word == null)
             throw new InvalidOperationException(
-                $"Translation for {page.ExpressionId} to {languages.Native} not found");
+                $"Translation for {page.Id} to {languages.Native} not found");
 
         return new DisplayedPage<MultipleChoice>(
-            page.PageType,
+            PageType.MultipleChoice,
             word,
             Lead: default,
             new MultipleChoice(choices));

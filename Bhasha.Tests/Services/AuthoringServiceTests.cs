@@ -11,7 +11,7 @@ namespace Bhasha.Tests.Services;
 public class AuthoringServiceTests
 {
     [Theory, AutoData]
-    public async Task GetExpressionIdForNewExpression(string text, int level, Expression expression)
+    public async Task GetOrCreateExpressionForNewExpression(string text, int level, Expression expression)
     {
         // arrange
         var scenario = new AuthoringServiceScenario();
@@ -21,34 +21,34 @@ public class AuthoringServiceTests
             .Returns(expression);
         
         // act
-        var result = await scenario.Sut.GetExpressionId(text, level);
+        var result = await scenario.Sut.GetOrCreateExpression(text, level);
         
         // assert
         result
             .Should()
-            .Be(expression.Id);
+            .Be(expression);
 
         await scenario.TranslationRepository
             .Received(1)
             .AddOrReplace(Arg.Is<Translation>(
-                x => x.ExpressionId == expression.Id &&
+                x => x.Expression == expression &&
                      x.Text == text &&
                      x.Language == Language.Reference));
     }
 
     [Theory, AutoData]
-    public async Task GetExpressionIdForExistingTranslation(string text, int level)
+    public async Task GetOrCreateExpressionForExistingTranslation(string text, int level)
     {
         // arrange
         var scenario = new AuthoringServiceScenario()
             .WithTranslation(text);
 
         // act
-        var result = await scenario.Sut.GetExpressionId(text, level);
+        var result = await scenario.Sut.GetOrCreateExpression(text, level);
         
         // assert
         result
             .Should()
-            .Be(scenario.ExpressionId);
+            .Be(scenario.Expression);
     }
 }

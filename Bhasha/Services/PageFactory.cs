@@ -1,5 +1,4 @@
-﻿using Bhasha.Domain;
-using Bhasha.Domain.Interfaces;
+﻿using Bhasha.Domain.Interfaces;
 using Bhasha.Shared.Domain;
 
 namespace Bhasha.Services;
@@ -13,14 +12,9 @@ public class PageFactory : IPageFactory
         _multipleChoiceFactory = multipleChoiceFactory;
     }
 
-    public async Task<DisplayedPage> CreateAsync(Page page, ProfileKey languages)
+    public async Task<DisplayedPage> CreateAsync(Expression page, ProfileKey languages)
     {
-        if (page.PageType == PageType.MultipleChoice)
-        {
-            return await _multipleChoiceFactory.CreateAsync(page, languages);
-        }
-
-        throw new ArgumentException($"{page.PageType} is not supported", nameof(page));
+        return await _multipleChoiceFactory.CreateAsync(page, languages);
     }
 }
 

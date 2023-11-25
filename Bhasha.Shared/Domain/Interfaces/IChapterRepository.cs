@@ -2,8 +2,8 @@
 
 public interface IChapterRepository
 {
-    Task<Chapter> AddOrReplace(Chapter chapter);
-    ValueTask<Chapter?> FindById(Guid chapterId);
-    IAsyncEnumerable<Chapter> FindByLevel(int level);
+    Task<Chapter> AddOrReplace(Chapter chapter, CancellationToken token);
+    Task<Chapter?> FindById(int chapterId, CancellationToken token);
+    IAsyncEnumerable<Chapter> FindByLevel(int level, CancellationToken token);
 }
 

@@ -65,8 +65,8 @@ public partial class StudentPage : UserPage
             if (_selectedPage == null)
                 throw new InvalidOperationException("no page selected");
 
-            var expressionId = _selectedPage.Word.ExpressionId;
-            var userInput = new ValidationInput(key, expressionId, translation);
+            var expression = _selectedPage.Word.Expression;
+            var userInput = new ValidationInput(key, expression.Id, translation);
 
             var validation = await StudyingService.Submit(userInput);
 

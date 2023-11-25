@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Bhasha.Services;
 using Bhasha.Shared.Domain.Interfaces;
@@ -8,12 +7,12 @@ namespace Bhasha.Tests.Services.Scenarios;
 
 public class ChapterSummariesProviderScenario
 {
-    public Dictionary<string, Guid> ExpressionIds => new()
+    public Dictionary<string, int> ExpressionIds => new()
     {
-        ["Name"] = Guid.Parse("11111111-1111-1111-1111-111111111111"),
-        ["Description"] = Guid.Parse("11111111-1111-1111-1111-111111111112"),
-        ["FirstPage"] = Guid.Parse("11111111-1111-1111-1111-111111111113"),
-        ["SecondPage"] = Guid.Parse("11111111-1111-1111-1111-111111111114")
+        ["Name"] = 1,
+        ["Description"] = 2,
+        ["FirstPage"] = 3,
+        ["SecondPage"] = 4
     };
         
     public IChapterRepository ChapterRepository { get; } = Substitute.For<IChapterRepository>();

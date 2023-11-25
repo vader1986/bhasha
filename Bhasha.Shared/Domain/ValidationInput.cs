@@ -2,6 +2,6 @@
 
 public record ValidationInput(
 	ProfileKey Key,
-    Guid ExpressionId,
+	int ExpressionId,
 	Translation Translation);
 

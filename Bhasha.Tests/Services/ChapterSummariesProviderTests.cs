@@ -12,9 +12,12 @@ namespace Bhasha.Tests.Services;
 public class ChapterSummariesProviderTests
 {
     [Theory, AutoData]
-    public async Task GetSummariesForChaptersAndTranslations(int level, Guid chapterOneId, Guid chapterTwoId)
+    public async Task GetSummariesForChaptersAndTranslations(int level)
     {
         // setup
+        var chapterOneId = 1;
+        var chapterTwoId = 2;
+        
         var profileKey = SupportedProfileKey
             .Create();
         
@@ -36,7 +39,7 @@ public class ChapterSummariesProviderTests
     }
 
     [Theory, AutoData]
-    public async Task GetSummariesForMissingTranslations(int level, Guid chapterId)
+    public async Task GetSummariesForMissingTranslations(int level, int chapterId)
     {
         // setup
         var profileKey = SupportedProfileKey

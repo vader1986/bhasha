@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading;
 using Bhasha.Shared.Domain;
 using NSubstitute;
 
@@ -7,26 +8,22 @@ namespace Bhasha.Tests.Services.Scenarios;
 
 public static class ChapterSummariesProviderScenarioExtensions
 {
-    public static ChapterSummariesProviderScenario WithChapters(this ChapterSummariesProviderScenario scenario, int level, params Guid[] chapterIds)
+    public static ChapterSummariesProviderScenario WithChapters(this ChapterSummariesProviderScenario scenario, int level, params int[] chapterIds)
     {
         scenario
             .ChapterRepository
-            .FindByLevel(Arg.Any<int>())
+            .FindByLevel(Arg.Any<int>(), Arg.Any<CancellationToken>())
             .Returns(
                 chapterIds
                     .Select(chapterId => new Chapter(
                         Id: chapterId,
                         RequiredLevel: level,
-                        NameId: scenario.ExpressionIds["Name"],
-                        DescriptionId: scenario.ExpressionIds["Description"],
+                        Name: Expression.Create() with { Id = scenario.ExpressionIds["Name"] },
+                        Description: Expression.Create() with { Id = scenario.ExpressionIds["Description"] },
                         Pages: new []
                         {
-                            new Page(
-                                PageType.MultipleChoice,
-                                ExpressionId: scenario.ExpressionIds["FirstPage"]),
-                            new Page(
-                                PageType.MultipleChoice,
-                                ExpressionId: scenario.ExpressionIds["SecondPage"])
+                            Expression.Create() with { Id = scenario.ExpressionIds["FirstPage"] },
+                            Expression.Create() with { Id = scenario.ExpressionIds["SecondPage"] },
                         },
                         ResourceId: default,
                         AuthorId: "UUID-125632-2415-3453"))
@@ -43,8 +40,8 @@ public static class ChapterSummariesProviderScenarioExtensions
                 .TranslationRepository
                 .Find(expressionId, language)
                 .Returns(new Translation(
-                    Id: Guid.NewGuid(),
-                    ExpressionId: expressionId,
+                    Id: Random.Shared.Next(),
+                    Expression: Expression.Create() with { Id = expressionId },
                     Language: language,
                     Text: expression,
                     Spoken: default,

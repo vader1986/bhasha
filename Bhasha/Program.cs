@@ -1,15 +1,17 @@
 ﻿using Bhasha.Areas.Identity;
 using Bhasha.Domain.Interfaces;
-using Bhasha.MongoDb.Extensions;
-using Bhasha.MongoDb.Identity;
-using Bhasha.MongoDb.Infrastructure.Mongo;
+using Bhasha.Identity;
+using Bhasha.Identity.Extensions;
+using Bhasha.Infrastructure.EntityFramework;
 using Bhasha.Services;
 using Bhasha.Services.Pages;
 using Bhasha.Shared.Domain;
+using Bhasha.Shared.Domain.Interfaces;
 using Bhasha.Shared.Identity;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
 
 try
@@ -20,15 +22,33 @@ try
     builder
         .Configuration
         .AddJsonFile("config/appsettings.json", optional: true, reloadOnChange: true);
-
-    MongoSetup.Configure();
-
+    
+    ////////////////////
+    // DB & Identity
+    ////////////////////
+    
     var services = builder.Services;
+    var connectionString = builder.Configuration.GetConnectionString("Postgres");
+
+    services.AddAuthentication();
+    services.AddAuthorizationBuilder();
+    services.AddDbContext<AppDbContext>(db => db.UseNpgsql(connectionString));
+
+    services.AddScoped<IChapterRepository, EntityFrameworkChapterRepository>();
+    services.AddScoped<IExpressionRepository, EntityFrameworkExpressionRepository>();
+    services.AddScoped<IProfileRepository, EntityFrameworkProfileRepository>();
+    services.AddScoped<ITranslationRepository, EntityFrameworkTranslationRepository>();
+    
     services
-        .AddMongoDb(builder.Configuration)
-        .AddMongoDbIdentityServer(builder.Configuration)
+        .AddIdentity<AppUser, AppRole>()
+        .AddEntityFrameworkStores<AppDbContext>()
+        .AddApiEndpoints()
+        .AddDefaultTokenProviders()
         .AddDefaultUI();
     
+    services
+        .AddSingleton<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<AppUser>>();
+
     ////////////////////
     // Blazor
     ////////////////////
@@ -36,18 +56,20 @@ try
     services.Configure<RazorPagesOptions>(options => options.RootDirectory = "/Web/Pages");
     services.AddRazorPages();
     services.AddServerSideBlazor();
-    services.AddSingleton<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<AppUser>>();
     services.AddMudServices();
 
     ////////////////////
     // Application
     ////////////////////
 
-    services.AddSingleton<IFactory<Expression>, ExpressionFactory>();
-    services.AddSingleton<IValidator, Validator>();
-    services.AddSingleton<IPageFactory, PageFactory>();
-    services.AddSingleton<IMultipleChoicePageFactory, MultipleChoicePageFactory>();
-    services.AddSingleton<IChapterSummariesProvider, ChapterSummariesProvider>();
+    services.AddScoped<IFactory<Expression>, ExpressionFactory>();
+    services.AddScoped<IValidator, Validator>();
+    services.AddScoped<IPageFactory, PageFactory>();
+    services.AddScoped<IMultipleChoicePageFactory, MultipleChoicePageFactory>();
+    services.AddScoped<IChapterSummariesProvider, ChapterSummariesProvider>();
+    services.AddScoped<IChapterProvider, ChapterProvider>();
+    services.AddScoped<IAuthoringService, AuthoringService>();
+    services.AddScoped<IStudyingService, StudyingService>();
 
     var app = builder.Build();
 
@@ -71,14 +93,18 @@ try
 
     app.UseAuthentication();
     app.UseAuthorization();
-
-    var identitySettings = IdentitySettings.From(app.Configuration);
     
-    await app.UseMongoDbSetup(identitySettings);
+    var identitySettings = IdentitySettings.From(app.Configuration);
+    var scope = ((IApplicationBuilder)app).ApplicationServices.CreateScope();
+    var serviceProvider = scope.ServiceProvider;
 
+    await serviceProvider.UseIdentitySettings(identitySettings);
+
+    app.MapIdentityApi<AppUser>();
     app.MapControllers();
     app.MapBlazorHub();
     app.MapFallbackToPage("/_Host");
+
     app.Run();
 }
 catch (Exception e)

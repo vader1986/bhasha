@@ -4,7 +4,6 @@ using Bhasha.Shared.Domain;
 using Bhasha.Web.Pages.Author;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
-using Page = Bhasha.Shared.Domain.Page;
 
 namespace Bhasha.Web.Shared.Components;
 
@@ -28,16 +27,21 @@ public partial class EditChapter : ComponentBase
     {
         try
         {
-            var dialog = DialogService.Show<AddTranslation>("Add Translation");
+            var dialog = await DialogService.ShowAsync<AddTranslation>("Add Translation");
             var result = await dialog.Result;
 
             if (!result.Canceled)
             {
-                var (language, expression, text) = ((string Language, string Expression, string Translation))result.Data;
-                var expressionId = await AuthoringService.GetExpressionId(expression, RequiredLevel);
-                var translation = Translation.Create(expressionId, language, text);
+                var (dlgLanguage, dlgExpression, dlgTranslation) = ((string Language, string Expression, string Translation))result.Data;
 
-                await AuthoringService.AddOrUpdateTranslation(translation);
+                var expression = await AuthoringService
+                    .GetOrCreateExpression(dlgExpression, RequiredLevel);
+                
+                var translation = Translation
+                    .Create(expression, dlgLanguage, dlgTranslation);
+
+                await AuthoringService
+                    .AddOrUpdateTranslation(translation);
             }
         }
         catch (Exception e)
@@ -69,19 +73,24 @@ public partial class EditChapter : ComponentBase
     {
         try
         {
-            var nameId = await AuthoringService.GetExpressionId(Name, RequiredLevel);
-            var descriptionId = await AuthoringService.GetExpressionId(Description, RequiredLevel);
+            var name = await AuthoringService.GetOrCreateExpression(Name, RequiredLevel);
+            var description = await AuthoringService.GetOrCreateExpression(Description, RequiredLevel);
 
-            var pages = new List<Page>();
+            var pages = new List<Expression>();
 
             foreach (var page in Pages)
             {
-                var expressionId = await AuthoringService.GetExpressionId(page.Expression, RequiredLevel);
-                pages.Add(new Page(page.PageType, expressionId));
+                var expression = await AuthoringService
+                    .GetOrCreateExpression(page.Expression, RequiredLevel);
+                
+                pages.Add(expression);
             }
 
-            var chapter = Chapter.Create(RequiredLevel, nameId, descriptionId, pages, UserId);
-            await AuthoringService.AddOrUpdateChapter(chapter);
+            var chapter = Chapter
+                .Create(RequiredLevel, name, description, pages, UserId);
+            
+            await AuthoringService
+                .AddOrUpdateChapter(chapter);
         }
         catch (Exception e)
         {
