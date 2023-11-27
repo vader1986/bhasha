@@ -28,7 +28,7 @@ public class ChapterProvider : IChapterProvider
         if (chapter == null) throw new InvalidOperationException($"Chapter with ID {key.ChapterId} not found");
 
         var pages = await Task.WhenAll(chapter.Pages.Select(
-            async page => await _pageFactory.CreateAsync(page, key.ProfileKey)));
+            async page => await _pageFactory.Create(chapter, page, key.ProfileKey)));
 
         var name = await _translationProvider.Find(chapter.Name.Id, key.ProfileKey.Native)
             ?? throw new InvalidOperationException($"Translation for {chapter.Name.Id} to {key.ProfileKey.Native} not found");

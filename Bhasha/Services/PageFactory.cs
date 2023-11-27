@@ -12,9 +12,9 @@ public class PageFactory : IPageFactory
         _multipleChoiceFactory = multipleChoiceFactory;
     }
 
-    public async Task<DisplayedPage> CreateAsync(Expression page, ProfileKey languages)
+    public async Task<DisplayedPage> Create(Chapter chapter, Expression page, ProfileKey languages)
     {
-        return await _multipleChoiceFactory.CreateAsync(page, languages);
+        return await _multipleChoiceFactory.Create(chapter, page, languages);
     }
 }
 

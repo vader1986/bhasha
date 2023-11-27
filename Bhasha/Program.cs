@@ -4,8 +4,6 @@ using Bhasha.Identity;
 using Bhasha.Identity.Extensions;
 using Bhasha.Infrastructure.EntityFramework;
 using Bhasha.Services;
-using Bhasha.Services.Pages;
-using Bhasha.Shared.Domain;
 using Bhasha.Shared.Domain.Interfaces;
 using Bhasha.Shared.Identity;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -62,7 +60,6 @@ try
     // Application
     ////////////////////
 
-    services.AddScoped<IFactory<Expression>, ExpressionFactory>();
     services.AddScoped<IValidator, Validator>();
     services.AddScoped<IPageFactory, PageFactory>();
     services.AddScoped<IMultipleChoicePageFactory, MultipleChoicePageFactory>();

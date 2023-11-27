@@ -6,15 +6,6 @@ namespace Bhasha.Infrastructure.EntityFramework;
 
 public class EntityFrameworkExpressionRepository(AppDbContext context) : IExpressionRepository
 {
-    public IAsyncEnumerable<Expression> Find(int level, int samples, CancellationToken token = default)
-    {
-        return context.Expressions
-            .Where(x => x.Level == level)
-            .Take(samples)
-            .Select(x => Converter.Convert(x))
-            .ToAsyncEnumerable();
-    }
-
     public async Task<Expression> Add(Expression expression, CancellationToken token = default)
     {
         var result = await context.Expressions
