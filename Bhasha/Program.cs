@@ -29,9 +29,7 @@ try
 
     services.AddAuthentication();
     services.AddAuthorizationBuilder();
-    services.AddDbContext<AppDbContext>(db => db
-        .EnableSensitiveDataLogging()
-        .UseNpgsql(connectionString)); 
+    services.AddDbContext<AppDbContext>(db => db.UseNpgsql(connectionString)); 
 
     services.AddScoped<IChapterRepository, EntityFrameworkChapterRepository>();
     services.AddScoped<IExpressionRepository, EntityFrameworkExpressionRepository>();
