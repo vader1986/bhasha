@@ -20,24 +20,29 @@ public class EntityFrameworkProfileRepository(AppDbContext context) : IProfileRe
 
     public async Task Update(Profile profile, CancellationToken token = default)
     {
-        var result = await context.Profiles
-            .FirstAsync(x => x.Id == profile.Id, token);
+        var dto = await context.Profiles
+            .SingleAsync(x => x.Id == profile.Id, token);
 
-        context
-            .Remove(result);
-
-        await context
-            .AddAsync(Converter.Convert(profile), token);
-
+        var updated = Converter.Convert(profile);
+        
+        dto.Level = updated.Level;
+        dto.CompletedChapters = updated.CompletedChapters;
+        dto.CurrentChapterId = updated.CurrentChapterId;
+        dto.CurrentPageIndex = updated.CurrentPageIndex;
+        dto.ValidationResults = updated.ValidationResults;
+        
+        context.Profiles
+            .Update(dto);
+        
         await context
             .SaveChangesAsync(token);
     }
 
-    public IAsyncEnumerable<Profile> FindByUser(string userId, CancellationToken token = default)
+    public async Task<IEnumerable<Profile>> FindByUser(string userId, CancellationToken token = default)
     {
-        return context.Profiles
+        return await context.Profiles
             .Where(x => x.UserId == userId)
             .Select(x => Converter.Convert(x))
-            .ToAsyncEnumerable();
+            .ToListAsync(token);
     }
 }

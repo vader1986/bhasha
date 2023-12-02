@@ -1,24 +1,9 @@
 {
-  "iisSettings": {
-    "windowsAuthentication": false,
-    "anonymousAuthentication": true,
-    "iisExpress": {
-      "applicationUrl": "http://localhost:39639",
-      "sslPort": 44348
-    }
-  },
   "profiles": {
-    "IIS Express": {
-      "commandName": "IISExpress",
-      "launchBrowser": true,
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
-    },
     "Bhasha": {
       "commandName": "Project",
       "launchBrowser": true,
-      "applicationUrl": "http://localhost:48263",
+      "applicationUrl": "https://localhost:1111",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

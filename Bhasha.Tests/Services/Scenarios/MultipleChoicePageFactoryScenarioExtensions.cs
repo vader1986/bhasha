@@ -31,7 +31,7 @@ public static class MultipleChoicePageFactoryScenarioExtensions
         scenario.Repository
             .Find(
                 Arg.Any<int>(),
-                Arg.Any<Language>(),
+                Arg.Any<string>(),
                 Arg.Any<CancellationToken>())
             .Returns(ci => new Translation(
                 Id: ci.ArgAt<int>(0),

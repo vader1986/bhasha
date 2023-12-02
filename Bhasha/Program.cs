@@ -26,11 +26,13 @@ try
     ////////////////////
     
     var services = builder.Services;
-    var connectionString = builder.Configuration.GetConnectionString("Postgres");
+    var connectionString = builder.Configuration.GetConnectionString("postgres");
 
     services.AddAuthentication();
     services.AddAuthorizationBuilder();
-    services.AddDbContext<AppDbContext>(db => db.UseNpgsql(connectionString));
+    services.AddDbContext<AppDbContext>(db => db
+        .EnableSensitiveDataLogging()
+        .UseNpgsql(connectionString)); 
 
     services.AddScoped<IChapterRepository, EntityFrameworkChapterRepository>();
     services.AddScoped<IExpressionRepository, EntityFrameworkExpressionRepository>();

@@ -19,7 +19,7 @@ public static class StudyingServiceScenarioExtensions
                     Level: 1,
                     CompletedChapters: Array.Empty<int>(),
                     CurrentChapter: default))
-                .ToAsyncEnumerable());
+                .ToList());
 
         return scenario;
     }
@@ -38,7 +38,7 @@ public static class StudyingServiceScenarioExtensions
                         CompletedChapters: Array.Empty<int>(),
                         CurrentChapter: currentChapter)
                 }
-                .ToAsyncEnumerable());
+                .ToList());
 
         scenario
             .ChapterProvider
@@ -67,7 +67,7 @@ public static class StudyingServiceScenarioExtensions
                         CompletedChapters: completedChapters,
                         CurrentChapter: default)
                 }
-                .ToAsyncEnumerable());
+                .ToList());
         
         return scenario;
     }

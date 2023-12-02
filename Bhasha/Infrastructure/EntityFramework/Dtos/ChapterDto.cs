@@ -13,5 +13,5 @@ public class ChapterDto
 	public string AuthorId { get; set; }
 	public ExpressionDto Name { get; set; }
 	public ExpressionDto Description{ get; set; }
-	public ExpressionDto[] Expressions { get; set; }
+	public ICollection<ExpressionDto> Expressions { get; set; }
 }

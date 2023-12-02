@@ -27,7 +27,7 @@ public static class ChapterSummariesProviderScenarioExtensions
                         },
                         ResourceId: default,
                         AuthorId: "UUID-125632-2415-3453"))
-                    .ToAsyncEnumerable());
+                    .ToList());
         
         return scenario;
     }

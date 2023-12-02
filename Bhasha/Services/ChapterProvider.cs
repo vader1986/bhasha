@@ -27,15 +27,18 @@ public class ChapterProvider : IChapterProvider
         var chapter = await _chapterRepository.FindById(key.ChapterId, token);
         if (chapter == null) throw new InvalidOperationException($"Chapter with ID {key.ChapterId} not found");
 
-        var pages = await Task.WhenAll(chapter.Pages.Select(
-            async page => await _pageFactory.Create(chapter, page, key.ProfileKey)));
+        var displayedPages = new List<DisplayedPage>(capacity: chapter.Pages.Length);
+        foreach (var page in chapter.Pages)
+        {
+            displayedPages.Add(await _pageFactory.Create(chapter, page, key.ProfileKey));
+        }
+        
+        var name = await _translationProvider.Find(chapter.Name.Id, key.ProfileKey.Native, token)
+                   ?? throw new InvalidOperationException($"Translation for {chapter.Name.Id} to {key.ProfileKey.Native} not found");
 
-        var name = await _translationProvider.Find(chapter.Name.Id, key.ProfileKey.Native)
-            ?? throw new InvalidOperationException($"Translation for {chapter.Name.Id} to {key.ProfileKey.Native} not found");
-
-        var description = await _translationProvider.Find(chapter.Description.Id, key.ProfileKey.Native)
+        var description = await _translationProvider.Find(chapter.Description.Id, key.ProfileKey.Native, token)
             ?? throw new InvalidOperationException($"Translation for {chapter.Description.Id} to {key.ProfileKey.Native} not found");
 
-        return new DisplayedChapter(key.ChapterId, name.Text, description.Text, pages, chapter.ResourceId);
+        return new DisplayedChapter(key.ChapterId, name.Text, description.Text, displayedPages.ToArray(), chapter.ResourceId);
     }
 }

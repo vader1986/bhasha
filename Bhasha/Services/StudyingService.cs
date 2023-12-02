@@ -38,7 +38,7 @@ public class StudyingService : IStudyingService
     {
         if (_cache.TryGetValue<Profile>(key, out var profile) is false)
         {
-            await foreach (var userProfile in _repository.FindByUser(key.UserId))
+            foreach (var userProfile in await _repository.FindByUser(key.UserId))
             {
                 if (userProfile.Key == key)
                     profile = userProfile;
@@ -64,7 +64,7 @@ public class StudyingService : IStudyingService
     {
         var result = new List<Profile>();
         
-        await foreach (var profile in _repository.FindByUser(userId))
+        foreach (var profile in await _repository.FindByUser(userId))
         {
             _cache.Set(profile.Key, profile);
             

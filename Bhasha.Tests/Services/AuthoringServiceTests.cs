@@ -30,7 +30,7 @@ public class AuthoringServiceTests
 
         await scenario.TranslationRepository
             .Received(1)
-            .AddOrReplace(Arg.Is<Translation>(
+            .AddOrUpdate(Arg.Is<Translation>(
                 x => x.Expression == expression &&
                      x.Text == text &&
                      x.Language == Language.Reference));

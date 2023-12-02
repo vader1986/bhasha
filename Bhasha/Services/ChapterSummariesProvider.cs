@@ -21,7 +21,7 @@ public class ChapterSummariesProvider : IChapterSummariesProvider
         var translations = new Dictionary<int, string>();
         var native = key.Native;
 
-        await foreach (var chapter in _chapterRepository.FindByLevel(level, token))
+        foreach (var chapter in await _chapterRepository.FindByLevel(level, token))
         {
             var name = await Translate(chapter.Name.Id);
             var description = await Translate(chapter.Description.Id);
