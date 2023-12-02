@@ -3,14 +3,14 @@
 <MudCard>
     <MudCardContent Style="text-align: center">
 
-        @if (Profiles?.Any() ?? false)
+        @if (Profiles.Any())
         {
             <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" VerticalAlign="true">
                 @foreach (var profile in Profiles)
                 {
                     <MudButton OnClick="() => OnSelection(profile)">
-                        @Language.Parse(@profile.Key.LangId.Native).Pretty() -
-                        @Language.Parse(@profile.Key.LangId.Target).Pretty()
+                        @Language.Parse(@profile.Key.Native).Pretty() -
+                        @Language.Parse(@profile.Key.Target).Pretty()
                     </MudButton>
                 }
             </MudButtonGroup>

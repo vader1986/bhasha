@@ -1,8 +1,7 @@
 ﻿namespace Bhasha.Domain;
 
-[GenerateSerializer]
 public record Summary(
-    Guid ChapterId,
+    int ChapterId,
     string Name,
     string Description);
 

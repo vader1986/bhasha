@@ -2,15 +2,14 @@
 
 using LanguageSet = Dictionary<string, Language>;
 
-[GenerateSerializer]
 public class Language : IEquatable<Language>
 {
-    public readonly static Language Unknown = new (string.Empty, string.Empty);
-    public readonly static Language English = new ("en", "English", "UK");
-    public readonly static Language Bengali = new ("bn", "Bengali");
-    public readonly static Language Reference = English;
+    public static readonly Language Unknown = new (string.Empty, string.Empty);
+    public static readonly Language English = new ("en", "English", "UK");
+    public static readonly Language Bengali = new ("bn", "Bengali");
+    public static readonly Language Reference = English;
 
-    public readonly static LanguageSet Supported = new()
+    public static readonly LanguageSet Supported = new()
     {
         [English.ToString()] = English,
         [Bengali.ToString()] = Bengali

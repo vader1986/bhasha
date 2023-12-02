@@ -1,6 +1,7 @@
 ﻿using Bhasha.Domain;
 using Bhasha.Domain.Interfaces;
-using Bhasha.Domain.Pages;
+using Chapter = Bhasha.Domain.Chapter;
+using Expression = Bhasha.Domain.Expression;
 
 namespace Bhasha.Services;
 
@@ -13,14 +14,9 @@ public class PageFactory : IPageFactory
         _multipleChoiceFactory = multipleChoiceFactory;
     }
 
-    public async Task<DisplayedPage> CreateAsync(Page page, LangKey languages)
+    public async Task<DisplayedPage> Create(Chapter chapter, Expression page, ProfileKey languages)
     {
-        if (page.PageType == PageType.MultipleChoice)
-        {
-            return await _multipleChoiceFactory.CreateAsync(page, languages);
-        }
-
-        throw new ArgumentException($"{page.PageType} is not supported", nameof(page));
+        return await _multipleChoiceFactory.Create(chapter, page, languages);
     }
 }
 

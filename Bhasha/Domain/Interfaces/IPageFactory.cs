@@ -1,8 +1,13 @@
 ﻿using Bhasha.Domain.Pages;
-using Bhasha.Services.Pages;
 
 namespace Bhasha.Domain.Interfaces;
 
-public interface IPageFactory : IAsyncFactory<Page, LangKey, DisplayedPage>{}
+public interface IPageFactory
+{
+    Task<DisplayedPage> Create(Chapter chapter, Expression expression, ProfileKey key);
+}
 
-public interface IMultipleChoicePageFactory : IAsyncFactory<Page, LangKey, DisplayedPage<MultipleChoice>> { }
+public interface IMultipleChoicePageFactory
+{
+    Task<DisplayedPage<MultipleChoice>> Create(Chapter chapter, Expression expression, ProfileKey key);
+}

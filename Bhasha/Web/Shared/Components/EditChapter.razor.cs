@@ -1,22 +1,24 @@
 ﻿using Bhasha.Domain;
-using Bhasha.Grains;
-using Bhasha.Web.Pages.Author;
+using Bhasha.Services;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using Chapter = Bhasha.Domain.Chapter;
+using Expression = Bhasha.Domain.Expression;
 
 namespace Bhasha.Web.Shared.Components;
 
 public partial class EditChapter : ComponentBase
 {
-    [Inject] public IDialogService DialogService { get; set; }
-    [Inject] public IClusterClient ClusterClient { get; set; }
-    [Parameter] public string UserId { get; set; }
+    [Inject] public required IDialogService DialogService { get; set; }
+    [Inject] public required IAuthoringService AuthoringService { get; set; }
+    
+    [Parameter] public required string UserId { get; set; }
 
     public string? Error { get; set; }
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public int RequiredLevel { get; set; } = 1;
-    public List<(PageType PageType, string Expression)> Pages { get; } = new List<(PageType, string)>();
+    public List<(PageType PageType, string Expression)> Pages { get; } = new();
 
     private bool DisableSave =>
         string.IsNullOrWhiteSpace(Name) || string.IsNullOrWhiteSpace(Description) || Pages.Count < 3 || Error != null;
@@ -25,17 +27,21 @@ public partial class EditChapter : ComponentBase
     {
         try
         {
-            var dialog = DialogService.Show<AddTranslation>("Add Translation");
+            var dialog = await DialogService.ShowAsync<AddTranslation>("Add Translation");
             var result = await dialog.Result;
 
             if (!result.Canceled)
             {
-                var (language, expression, text) = ((string Language, string Expression, string Translation))result.Data;
-                var grain = ClusterClient.GetGrain<IAuthorGrain>(UserId);
-                var expressionId = await grain.GetOrAddExpressionId(expression);
-                var translation = Translation.Create(expressionId, language, text);
+                var (dlgLanguage, dlgExpression, dlgTranslation) = ((string Language, string Expression, string Translation))result.Data;
 
-                await grain.AddOrUpdateTranslation(translation);
+                var expression = await AuthoringService
+                    .GetOrCreateExpression(dlgExpression, RequiredLevel);
+                
+                var translation = Translation
+                    .Create(expression, dlgLanguage, dlgTranslation);
+
+                await AuthoringService
+                    .AddOrUpdateTranslation(translation);
             }
         }
         catch (Exception e)
@@ -67,22 +73,24 @@ public partial class EditChapter : ComponentBase
     {
         try
         {
-            var grain = ClusterClient.GetGrain<IAuthorGrain>(UserId);
+            var name = await AuthoringService.GetOrCreateExpression(Name, RequiredLevel);
+            var description = await AuthoringService.GetOrCreateExpression(Description, RequiredLevel);
 
-            
-            var nameId = await grain.GetOrAddExpressionId(Name);
-            var descriptionId = await grain.GetOrAddExpressionId(Description);
-
-            var pages = new List<Domain.Page>();
+            var pages = new List<Expression>();
 
             foreach (var page in Pages)
             {
-                var expressionId = await grain.GetOrAddExpressionId(page.Expression);
-                pages.Add(new Domain.Page(page.PageType, expressionId));
+                var expression = await AuthoringService
+                    .GetOrCreateExpression(page.Expression, RequiredLevel);
+                
+                pages.Add(expression);
             }
 
-            var chapter = Chapter.Create(RequiredLevel, nameId, descriptionId, pages, UserId);
-            await grain.AddOrUpdateChapter(chapter);
+            var chapter = Chapter
+                .Create(RequiredLevel, name, description, pages, UserId);
+            
+            await AuthoringService
+                .AddOrUpdateChapter(chapter);
         }
         catch (Exception e)
         {

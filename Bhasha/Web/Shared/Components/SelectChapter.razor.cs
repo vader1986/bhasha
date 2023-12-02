@@ -1,33 +1,33 @@
 ﻿using Bhasha.Domain;
-using Bhasha.Grains;
+using Bhasha.Services;
 using Microsoft.AspNetCore.Components;
-using Orleans;
 
 namespace Bhasha.Web.Shared.Components;
 
 public partial class SelectChapter : ComponentBase
 {
-    [Inject] public IClusterClient ClusterClient { get; set; } = default!;
+    [Inject] 
+    public IStudyingService StudyingService { get; set; } = default!;
 
-    [Parameter] public Action<DisplayedSummary> OnSelection { get; set; }
-    [Parameter] public string UserId { get; set; }
-    [Parameter] public LangKey Languages { get; set; }
+    [Parameter] public Func<DisplayedSummary, Task> OnSelection { get; set; } = default!;
+    [Parameter] public string UserId { get; set; } = default!;
+    [Parameter] public ProfileKey Languages { get; set; } = default!;
 
-    private IList<DisplayedSummary> _chapters = new List<DisplayedSummary>();
+    private IList<DisplayedSummary> Chapters { get; } = new List<DisplayedSummary>();
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
 
-        var grain = ClusterClient.GetGrain<IStudentGrain>(UserId);
-        var summaries = await grain.GetSummaries(Languages);
+        Chapters.Clear();
+        
+        var summaries = await StudyingService.GetSummaries(Languages);
 
         foreach (var chapter in summaries)
         {
-            _chapters.Add(chapter);
+            Chapters.Add(chapter);
         }
 
-        StateHasChanged();
+        await InvokeAsync(StateHasChanged);
     }
 }
-

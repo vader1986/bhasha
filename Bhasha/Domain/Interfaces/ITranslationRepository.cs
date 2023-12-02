@@ -2,9 +2,9 @@
 
 public interface ITranslationRepository
 {
-    ValueTask<Translation?> Find(Guid expressionId, Language language);
-    ValueTask<Translation?> Find(string expression, Language language);
-    Task AddOrReplace(Translation translation);
-    Task<Translation> Get(Guid translationId);
+    Task<Translation?> Find(int expressionId, string language, CancellationToken token = default);
+    Task<Translation?> Find(string text, string language, CancellationToken token = default);
+    Task<Translation> AddOrUpdate(Translation translation, CancellationToken token = default);
+    Task<Translation> Get(int translationId, CancellationToken token = default);
 }
 

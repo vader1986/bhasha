@@ -1,6 +1,5 @@
-﻿using AspNetCore.Identity.Mongo.Model;
+using Microsoft.AspNetCore.Identity;
 
 namespace Bhasha.Identity;
 
-public class AppUser : MongoUser<Guid>{}
-
+public sealed class AppUser : IdentityUser;

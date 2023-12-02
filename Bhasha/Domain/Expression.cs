@@ -3,9 +3,8 @@
 namespace Bhasha.Domain;
 
 [Equatable]
-[GenerateSerializer]
 public partial record Expression(
-    Guid Id,
+	int Id,
 	ExpressionType? ExpressionType,
 	PartOfSpeech? PartOfSpeech,
 	CEFR? Cefr,
@@ -16,8 +15,8 @@ public partial record Expression(
 	string[] Synonyms,
     int Level)
 {
-	public static Expression Create(int level)
+	public static Expression Create(int level = 1)
 	{
-		return new Expression(Guid.Empty, default, default, default, default, Array.Empty<string>(), Array.Empty<string>(), level);
+		return new Expression(default, default, default, default, default, Array.Empty<string>(), Array.Empty<string>(), level);
 	}
 }

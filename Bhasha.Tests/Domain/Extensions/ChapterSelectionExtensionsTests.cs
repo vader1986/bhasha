@@ -1,5 +1,4 @@
-﻿using System;
-using Bhasha.Domain;
+﻿using Bhasha.Domain;
 using Bhasha.Domain.Extensions;
 using FluentAssertions;
 using Xunit;
@@ -12,7 +11,7 @@ public class ChapterSelectionExtensionsTests
     public void GivenChapterSelection_WhenGetNextPageIndexForFinishedChapter_ThenReturnNull()
     {
         // setup
-        var selection = new ChapterSelection(Guid.Empty, 0, new[]
+        var selection = new ChapterSelection(default, 0, new[]
         {
             ValidationResult.Correct,
             ValidationResult.Correct,
@@ -30,7 +29,7 @@ public class ChapterSelectionExtensionsTests
     public void GivenChapterSelect_WhenGetNextPageIndex_ThenReturnNextIndexWithWrongResult()
     {
         // setup
-        var selection = new ChapterSelection(Guid.Empty, 1, new[]
+        var selection = new ChapterSelection(default, 1, new[]
         {
             ValidationResult.Wrong,
             ValidationResult.Wrong,
@@ -49,7 +48,7 @@ public class ChapterSelectionExtensionsTests
     public void GivenChapterSelect_WhenGetNextPageIndexStartingFromEnd_ThenReturnNextIndexWithWrongResult()
     {
         // setup
-        var selection = new ChapterSelection(Guid.Empty, 1, new[]
+        var selection = new ChapterSelection(default, 1, new[]
         {
             ValidationResult.Wrong,
             ValidationResult.Wrong,

@@ -1,14 +1,12 @@
-﻿using Bhasha.Domain;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
-using Orleans;
 
 namespace Bhasha.Web.Shared.Components;
 
 public partial class AddTranslation : ComponentBase
 {
     [CascadingParameter]
-    private MudDialogInstance MudDialog { get; set; }
+    public required MudDialogInstance MudDialog { get; set; }
 
     public string Language { get; set; } = Domain.Language.Bengali;
     public string Expression { get; set; } = string.Empty;

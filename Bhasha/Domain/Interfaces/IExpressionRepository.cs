@@ -2,8 +2,7 @@
 
 public interface IExpressionRepository
 {
-    IAsyncEnumerable<Expression> Find(int level, int samples);
-    Task<Expression> Add(Expression expression);
-    Task<Expression> Get(Guid expressionId);
+    Task<Expression> Add(Expression expression, CancellationToken token = default);
+    Task<Expression> Get(int expressionId, CancellationToken token = default);
 }
 

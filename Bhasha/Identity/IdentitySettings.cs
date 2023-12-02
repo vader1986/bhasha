@@ -1,4 +1,6 @@
-﻿namespace Bhasha.Identity;
+﻿using Microsoft.Extensions.Configuration;
+
+namespace Bhasha.Shared.Identity;
 
 public class DefaultUser
 {

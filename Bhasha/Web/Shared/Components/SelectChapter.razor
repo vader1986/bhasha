@@ -2,17 +2,17 @@
 
 <MudPaper Style="text-align: center">
     <MudList Clickable="true">
-        @foreach (var chapter in _chapters)
+        @foreach (var chapter in Chapters)
         {
             @if (chapter.Completed)
             {
-                <MudListItem Avatar="@Icons.Material.Filled.Image" OnClick="() => OnSelection(chapter)">
+                <MudListItem Avatar="@Icons.Material.Filled.Image" OnClick="async () => await OnSelection(chapter)">
                     @chapter.Name
                 </MudListItem>
             }
             else
             {
-                <MudListItem Avatar="@Icons.Material.Outlined.Image" OnClick="() => OnSelection(chapter)">
+                <MudListItem Avatar="@Icons.Material.Outlined.Image" OnClick="async () => await OnSelection(chapter)">
                     @chapter.Name
                 </MudListItem>
             }

@@ -3,9 +3,8 @@
 namespace Bhasha.Domain;
 
 [Equatable]
-[GenerateSerializer]
 public partial record ChapterSelection(
-    Guid ChapterId,
+    int ChapterId,
     int PageIndex,
     [property:OrderedEquality]
     ValidationResult[] Pages);

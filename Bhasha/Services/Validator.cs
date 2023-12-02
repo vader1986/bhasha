@@ -14,7 +14,7 @@ public class Validator : IValidator
 
     public async Task<Validation> Validate(ValidationInput input)
     {
-        var languages = input.Languages;
+        var languages = input.Key;
         var translation = input.Translation;
         var solution = await _translations.Get(translation.Id);
 

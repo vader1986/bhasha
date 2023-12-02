@@ -1,6 +1,5 @@
-﻿using AspNetCore.Identity.Mongo.Model;
+using Microsoft.AspNetCore.Identity;
 
 namespace Bhasha.Identity;
 
-public class AppRole : MongoRole<Guid>{}
-
+public sealed class AppRole : IdentityRole;

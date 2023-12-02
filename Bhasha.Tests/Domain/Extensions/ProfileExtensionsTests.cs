@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using AutoFixture.Xunit2;
 using Bhasha.Domain;
 using Bhasha.Domain.Extensions;
@@ -41,8 +40,8 @@ public class ProfileExtensionsTests
     public void GivenProfile_WhenSubmitCorrectResultWhichCompletesChapter_ThenProfileWithEmptyCurrentChapter(Profile profile)
     {
         // setup
-        var completedChapters = new[] { Guid.NewGuid() };
-        var currentChapter = new ChapterSelection(Guid.NewGuid(), 0, new[]
+        var completedChapters = new[] { 1 };
+        var currentChapter = new ChapterSelection(2, 0, new[]
         {
             ValidationResult.Wrong,
             ValidationResult.Correct,
@@ -72,8 +71,8 @@ public class ProfileExtensionsTests
     public void GivenProfile_WhenSubmitCorrectResult_ThenProfileWithNextPageIndex(Profile profile)
     {
         // setup
-        var completedChapters = new[] { Guid.NewGuid() };
-        var currentChapter = new ChapterSelection(Guid.NewGuid(), 0, new[]
+        var completedChapters = new[] { 1 };
+        var currentChapter = new ChapterSelection(2, 0, new[]
         {
             ValidationResult.Wrong,
             ValidationResult.Correct,

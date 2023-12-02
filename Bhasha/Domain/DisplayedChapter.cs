@@ -1,8 +1,7 @@
 ﻿namespace Bhasha.Domain;
 
-[GenerateSerializer]
 public record DisplayedChapter(
-    Guid Id,
+    int Id,
     string Name,
     string Description,
     DisplayedPage[] Pages,

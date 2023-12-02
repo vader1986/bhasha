@@ -3,22 +3,21 @@
 namespace Bhasha.Domain;
 
 [Equatable]
-[GenerateSerializer]
 public partial record Profile(
-	Guid Id,
+    int Id,
 	ProfileKey Key,
     int Level,
     [property: OrderedEquality]
-    Guid[] CompletedChapters,
+    int[] CompletedChapters,
     ChapterSelection? CurrentChapter)
 {
-    public static Profile Empty(ProfileKey key)
+    public static Profile Create(ProfileKey key)
     {
         return new Profile(
-            Id: Guid.Empty,
+            Id: default,
             Key: key,
             Level: 1,
-            CompletedChapters: Array.Empty<Guid>(),
+            CompletedChapters: Array.Empty<int>(),
             CurrentChapter: null);
     }
 }

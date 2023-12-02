@@ -1,118 +1,71 @@
-﻿using AspNetCore.Identity.Mongo;
-using Bhasha;
-using Bhasha.Areas.Identity;
-using Bhasha.Domain;
+﻿using Bhasha.Areas.Identity;
 using Bhasha.Domain.Interfaces;
-using Bhasha.Domain.Pages;
 using Bhasha.Identity;
-using Bhasha.Infrastructure.Mongo;
+using Bhasha.Identity.Extensions;
+using Bhasha.Infrastructure.EntityFramework;
 using Bhasha.Services;
-using Bhasha.Services.Pages;
+using Bhasha.Shared.Identity;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Mongo.Migration.Startup;
-using Mongo.Migration.Startup.DotNetCore;
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization;
-using MongoDB.Bson.Serialization.Serializers;
-using MongoDB.Driver;
+using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
-using Orleans.Configuration;
-using Orleans.Providers;
 
 try
 {
-    var builder = WebApplication.CreateBuilder(args);
+    var builder = WebApplication
+        .CreateBuilder(args);
 
-    builder.Configuration.AddJsonFile("config/appsettings.json", optional: true, reloadOnChange: true);
+    builder
+        .Configuration
+        .AddJsonFile("config/appsettings.json", optional: true, reloadOnChange: true);
+    
+    ////////////////////
+    // DB & Identity
+    ////////////////////
+    
+    var services = builder.Services;
+    var connectionString = builder.Configuration.GetConnectionString("postgres");
+
+    services.AddAuthentication();
+    services.AddAuthorizationBuilder();
+    services.AddDbContext<AppDbContext>(db => db.UseNpgsql(connectionString)); 
+
+    services.AddScoped<IChapterRepository, EntityFrameworkChapterRepository>();
+    services.AddScoped<IExpressionRepository, EntityFrameworkExpressionRepository>();
+    services.AddScoped<IProfileRepository, EntityFrameworkProfileRepository>();
+    services.AddScoped<ITranslationRepository, EntityFrameworkTranslationRepository>();
+    
+    services
+        .AddIdentity<AppUser, AppRole>()
+        .AddEntityFrameworkStores<AppDbContext>()
+        .AddApiEndpoints()
+        .AddDefaultTokenProviders()
+        .AddDefaultUI();
+    
+    services
+        .AddSingleton<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<AppUser>>();
 
     ////////////////////
-    // Orleans
+    // Blazor
     ////////////////////
 
-    var hostBuilder = builder.Host.UseOrleans(siloBuilder =>
-    {
-        siloBuilder
-            .UseLocalhostClustering()
-            .Configure<ClusterOptions>(options =>
-            {
-                options.ClusterId = "dev";
-                options.ServiceId = "bhasha";
-            })
-            .ConfigureLogging(logging => logging.AddConsole())
-            .AddMemoryGrainStorage(Bhasha.Orleans.StorageProvider)
-            .AddMemoryStreams(Bhasha.Orleans.StreamProvider);
-    });
+    services.Configure<RazorPagesOptions>(options => options.RootDirectory = "/Web/Pages");
+    services.AddRazorPages();
+    services.AddServerSideBlazor();
+    services.AddMudServices();
 
-    var mongoSettings = MongoSettings.From(builder.Configuration);
+    ////////////////////
+    // Application
+    ////////////////////
 
-    MongoSetup.Configure();
-
-    hostBuilder.ConfigureServices(services =>
-    {
-        ////////////////////
-        // Identity Server
-        ////////////////////
-
-        services
-            .AddIdentityMongoDbProvider<AppUser, AppRole, Guid>(
-            identity => {
-                // identity server settings
-            },
-            mongo => {
-                mongo.ConnectionString = mongoSettings.ConnectionString;
-            });
-
-        services
-            .AddDatabaseDeveloperPageExceptionFilter();
-
-        services
-            .AddIdentityCore<AppUser>(options => options.SignIn.RequireConfirmedAccount = true)
-            .AddDefaultUI()
-            .AddRoles<AppRole>()
-            .AddMongoDbStores<AppUser, AppRole, Guid>(mongo =>
-            {
-                mongo.ConnectionString = mongoSettings.ConnectionString;
-            })
-            .AddDefaultTokenProviders();
-
-        ////////////////////
-        // Blazor
-        ////////////////////
-
-        services.Configure<RazorPagesOptions>(options => options.RootDirectory = "/Web/Pages");
-        services.AddRazorPages();
-        services.AddServerSideBlazor();
-        services.AddSingleton<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<AppUser>>();
-        services.AddMudServices();
-
-        ////////////////////
-        // MongoDB
-        ////////////////////
-
-        services.AddSingleton(mongoSettings);
-        services.AddSingleton<IMongoClient>(_ => new MongoClient(mongoSettings.ConnectionString));
-        services.AddMigration(new MongoMigrationSettings
-        {
-            Database = mongoSettings.DatabaseName,
-            ConnectionString = mongoSettings.ConnectionString
-        });
-
-        ////////////////////
-        // Application
-        ////////////////////
-
-        services.AddSingleton<ITranslationRepository, MongoTranslationRepository>();
-        services.AddSingleton<IChapterRepository, MongoChapterRepository>();
-        services.AddSingleton<IExpressionRepository, MongoExpressionRepository>();
-        services.AddSingleton<IProfileRepository, MongoProfileRepository>();
-        services.AddSingleton<IFactory<Expression>, ExpressionFactory>();
-        services.AddSingleton<IValidator, Validator>();
-        services.AddSingleton<IPageFactory, PageFactory>();
-        services.AddSingleton<IMultipleChoicePageFactory, MultipleChoicePageFactory>();
-        services.AddSingleton<IChapterSummariesProvider, ChapterSummariesProvider>();
-    });
+    services.AddScoped<IValidator, Validator>();
+    services.AddScoped<IPageFactory, PageFactory>();
+    services.AddScoped<IMultipleChoicePageFactory, MultipleChoicePageFactory>();
+    services.AddScoped<IChapterSummariesProvider, ChapterSummariesProvider>();
+    services.AddScoped<IChapterProvider, ChapterProvider>();
+    services.AddScoped<IAuthoringService, AuthoringService>();
+    services.AddScoped<IStudyingService, StudyingService>();
 
     var app = builder.Build();
 
@@ -136,12 +89,18 @@ try
 
     app.UseAuthentication();
     app.UseAuthorization();
+    
+    var identitySettings = IdentitySettings.From(app.Configuration);
+    var scope = ((IApplicationBuilder)app).ApplicationServices.CreateScope();
+    var serviceProvider = scope.ServiceProvider;
 
-    await app.UseDefaultIdentitySetup();
+    await serviceProvider.UseIdentitySettings(identitySettings);
 
+    app.MapIdentityApi<AppUser>();
     app.MapControllers();
     app.MapBlazorHub();
     app.MapFallbackToPage("/_Host");
+
     app.Run();
 }
 catch (Exception e)

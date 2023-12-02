@@ -1,13 +1,9 @@
 ﻿using AutoFixture.Xunit2;
-using Bhasha.Domain;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
-using Bhasha.Domain.Interfaces;
-using Bhasha.Grains;
-using Bhasha.Services;
-using NSubstitute;
-using Orleans.Runtime;
+using Bhasha.Domain;
+using Bhasha.Tests.Services.Scenarios;
+using Bhasha.Tests.Support;
 using Xunit;
 using FluentAssertions;
 
@@ -15,53 +11,51 @@ namespace Bhasha.Tests.Services;
 
 public class ChapterSummariesProviderTests
 {
-    private readonly IChapterRepository _chapterRepository = Substitute.For<IChapterRepository>();
-    private readonly ITranslationRepository _translationProvider = Substitute.For<ITranslationRepository>();
-    private readonly ChapterSummariesProvider _provider;
-
-    public ChapterSummariesProviderTests()
-	{
-        _provider = new ChapterSummariesProvider(_chapterRepository, _translationProvider);
-    }
-
     [Theory, AutoData]
-    public async Task GivenGetSummariesCall_WhenAllDataAvailable_ThenReturnExpectedSummaries(int level, Chapter[] chapters, Translation translation)
+    public async Task GetSummariesForChaptersAndTranslations(int level)
     {
         // setup
-        var languages = new LangKey(Language.English, Language.Bengali);
-
-        _chapterRepository
-            .FindByLevel(level)
-            .Returns(chapters.ToAsyncEnumerable());
-
-        _translationProvider
-            .Find(Arg.Any<Guid>(), Language.English)
-            .Returns(translation);
+        var chapterOneId = 1;
+        var chapterTwoId = 2;
+        
+        var profileKey = SupportedProfileKey
+            .Create();
+        
+        var scenario = new ChapterSummariesProviderScenario()
+            .WithChapters(level, chapterOneId, chapterTwoId)
+            .WithTranslations(profileKey.Native);
 
         // act
-        var result = await _provider.GetSummaries(level, languages);
+        var result = await scenario.Sut.GetSummaries(level, profileKey);
 
         // verify
-        var expectedSummaries = chapters.Select(x => new Summary(x.Id, translation.Text, translation.Text));
-        result.Should().BeEquivalentTo(expectedSummaries);
+        result
+            .Should()
+            .BeEquivalentTo(new[]
+            {
+                new Summary(chapterOneId, "Name", "Description"),
+                new Summary(chapterTwoId, "Name", "Description")
+            });
     }
 
     [Theory, AutoData]
-    public async Task GivenGetSummariesCall_WhenMissingTranslation_ThenThrowException(int level, Chapter[] chapters)
+    public async Task GetSummariesForMissingTranslations(int level, int chapterId)
     {
         // setup
-        var languages = new LangKey(Language.English, Language.Bengali);
-
-        _chapterRepository
-            .FindByLevel(level)
-            .Returns(chapters.ToAsyncEnumerable());
+        var profileKey = SupportedProfileKey
+            .Create();
+        
+        var scenario = new ChapterSummariesProviderScenario()
+            .WithChapters(level, chapterId);
 
         // act
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(
-            async () => await _provider.GetSummaries(level, languages));
+            async () => await scenario.Sut.GetSummaries(level, profileKey));
 
         // verify
-        exception.Should().NotBeNull();
+        exception
+            .Should()
+            .NotBeNull();
     }
 }
 

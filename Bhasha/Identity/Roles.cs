@@ -1,4 +1,4 @@
-﻿namespace Bhasha.Identity;
+﻿namespace Bhasha.Shared.Identity;
 
 public static class Roles
 {
