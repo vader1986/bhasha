@@ -1,5 +1,4 @@
-﻿@using Bhasha.Shared.Domain
-<MudDialog>
+﻿<MudDialog>
     <DialogContent>
         <MudSelect T="PageType" @bind-Value="PageType" Label="Page Type" AnchorOrigin="Origin.BottomCenter">
             @foreach (var pageType in Enum.GetValues<PageType>())

@@ -1,9 +1,9 @@
 ﻿using Bhasha.Domain;
 using Bhasha.Services;
-using Bhasha.Shared.Domain;
-using Bhasha.Web.Pages.Author;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using Chapter = Bhasha.Domain.Chapter;
+using Expression = Bhasha.Domain.Expression;
 
 namespace Bhasha.Web.Shared.Components;
 

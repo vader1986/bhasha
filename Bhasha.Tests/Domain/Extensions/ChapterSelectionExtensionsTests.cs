@@ -1,5 +1,5 @@
-﻿using Bhasha.Domain.Extensions;
-using Bhasha.Shared.Domain;
+﻿using Bhasha.Domain;
+using Bhasha.Domain.Extensions;
 using FluentAssertions;
 using Xunit;
 

@@ -1,8 +1,8 @@
 ﻿using Bhasha.Domain;
 using Bhasha.Services;
-using Bhasha.Shared.Domain;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using Profile = Bhasha.Domain.Profile;
 
 namespace Bhasha.Web.Shared.Components;
 

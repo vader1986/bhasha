@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 using AutoFixture.Xunit2;
-using Bhasha.Shared.Domain;
+using Bhasha.Domain;
 using Bhasha.Tests.Services.Scenarios;
 using FluentAssertions;
 using Xunit;

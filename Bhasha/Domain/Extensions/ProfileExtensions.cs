@@ -1,6 +1,4 @@
-﻿using Bhasha.Shared.Domain;
-
-namespace Bhasha.Domain.Extensions;
+﻿namespace Bhasha.Domain.Extensions;
 
 public static class ProfileExtensions
 {

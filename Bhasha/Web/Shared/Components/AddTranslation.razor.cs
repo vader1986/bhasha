@@ -8,7 +8,7 @@ public partial class AddTranslation : ComponentBase
     [CascadingParameter]
     public required MudDialogInstance MudDialog { get; set; }
 
-    public string Language { get; set; } = Bhasha.Shared.Domain.Language.Bengali;
+    public string Language { get; set; } = Domain.Language.Bengali;
     public string Expression { get; set; } = string.Empty;
     public string Translation { get; set; } = string.Empty;
 

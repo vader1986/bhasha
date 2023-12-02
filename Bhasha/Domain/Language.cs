@@ -1,4 +1,4 @@
-﻿namespace Bhasha.Shared.Domain;
+﻿namespace Bhasha.Domain;
 
 using LanguageSet = Dictionary<string, Language>;
 

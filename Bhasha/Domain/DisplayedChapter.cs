@@ -1,4 +1,4 @@
-﻿namespace Bhasha.Shared.Domain;
+﻿namespace Bhasha.Domain;
 
 public record DisplayedChapter(
     int Id,

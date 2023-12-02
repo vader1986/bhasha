@@ -1,6 +1,6 @@
+using Bhasha.Domain;
+using Bhasha.Domain.Interfaces;
 using Bhasha.Services;
-using Bhasha.Shared.Domain;
-using Bhasha.Shared.Domain.Interfaces;
 using NSubstitute;
 
 namespace Bhasha.Tests.Services.Scenarios;

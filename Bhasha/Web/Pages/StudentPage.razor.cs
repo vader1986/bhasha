@@ -1,6 +1,7 @@
-﻿using Bhasha.Services;
-using Bhasha.Shared.Domain;
+﻿using Bhasha.Domain;
+using Bhasha.Services;
 using Microsoft.AspNetCore.Components;
+using Profile = Bhasha.Domain.Profile;
 
 namespace Bhasha.Web.Pages;
 

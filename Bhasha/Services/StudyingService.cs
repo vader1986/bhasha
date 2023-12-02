@@ -1,8 +1,8 @@
+using Bhasha.Domain;
 using Bhasha.Domain.Extensions;
 using Bhasha.Domain.Interfaces;
-using Bhasha.Shared.Domain;
-using Bhasha.Shared.Domain.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
+using Profile = Bhasha.Domain.Profile;
 
 namespace Bhasha.Services;
 

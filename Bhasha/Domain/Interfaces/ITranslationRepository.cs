@@ -1,4 +1,4 @@
-﻿namespace Bhasha.Shared.Domain.Interfaces;
+﻿namespace Bhasha.Domain.Interfaces;
 
 public interface ITranslationRepository
 {

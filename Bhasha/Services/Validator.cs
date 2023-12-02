@@ -1,7 +1,5 @@
 ﻿using Bhasha.Domain;
 using Bhasha.Domain.Interfaces;
-using Bhasha.Shared.Domain;
-using Bhasha.Shared.Domain.Interfaces;
 
 namespace Bhasha.Services;
 

@@ -1,6 +1,6 @@
 ﻿using Generator.Equals;
 
-namespace Bhasha.Shared.Domain;
+namespace Bhasha.Domain;
 
 [Equatable]
 public partial record Expression(

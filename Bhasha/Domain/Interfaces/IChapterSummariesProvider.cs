@@ -1,6 +1,4 @@
-﻿using Bhasha.Shared.Domain;
-
-namespace Bhasha.Domain.Interfaces;
+﻿namespace Bhasha.Domain.Interfaces;
 
 public interface IChapterSummariesProvider
 {

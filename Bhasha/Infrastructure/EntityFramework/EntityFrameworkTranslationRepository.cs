@@ -1,5 +1,5 @@
-using Bhasha.Shared.Domain;
-using Bhasha.Shared.Domain.Interfaces;
+using Bhasha.Domain;
+using Bhasha.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace Bhasha.Infrastructure.EntityFramework;

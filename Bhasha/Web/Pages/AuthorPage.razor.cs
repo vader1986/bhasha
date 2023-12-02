@@ -1,8 +1,4 @@
-﻿using Bhasha.Domain;
-using Microsoft.AspNetCore.Components;
-using MudBlazor;
-
-namespace Bhasha.Web.Pages.Author;
+﻿namespace Bhasha.Web.Pages;
 
 public partial class AuthorPage : UserPage
 {

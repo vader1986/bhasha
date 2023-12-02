@@ -1,6 +1,6 @@
 using System;
 using System.Linq;
-using Bhasha.Shared.Domain;
+using Bhasha.Domain;
 using NSubstitute;
 
 namespace Bhasha.Tests.Services.Scenarios;

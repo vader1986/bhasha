@@ -1,5 +1,4 @@
-﻿using Bhasha.Shared.Domain;
-using Bhasha.Shared.Domain.Pages;
+﻿using Bhasha.Domain.Pages;
 
 namespace Bhasha.Domain.Interfaces;
 

@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading;
-using Bhasha.Shared.Domain;
+using Bhasha.Domain;
 using NSubstitute;
 
 namespace Bhasha.Tests.Services.Scenarios;

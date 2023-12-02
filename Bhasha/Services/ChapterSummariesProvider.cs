@@ -1,6 +1,5 @@
-﻿using Bhasha.Domain.Interfaces;
-using Bhasha.Shared.Domain;
-using Bhasha.Shared.Domain.Interfaces;
+﻿using Bhasha.Domain;
+using Bhasha.Domain.Interfaces;
 
 namespace Bhasha.Services;
 

@@ -1,4 +1,4 @@
-﻿namespace Bhasha.Shared.Domain;
+﻿namespace Bhasha.Domain;
 
 /// <summary>
 /// Common European Framework of Reference (CEFR).

@@ -1,5 +1,7 @@
-﻿using Bhasha.Domain.Interfaces;
-using Bhasha.Shared.Domain;
+﻿using Bhasha.Domain;
+using Bhasha.Domain.Interfaces;
+using Chapter = Bhasha.Domain.Chapter;
+using Expression = Bhasha.Domain.Expression;
 
 namespace Bhasha.Services;
 

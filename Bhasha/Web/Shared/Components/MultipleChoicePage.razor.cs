@@ -1,6 +1,5 @@
 ﻿using Bhasha.Domain;
-using Bhasha.Shared.Domain;
-using Bhasha.Shared.Domain.Pages;
+using Bhasha.Domain.Pages;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 

@@ -1,8 +1,12 @@
+using Bhasha.Domain;
 using Bhasha.Infrastructure.EntityFramework.Dtos;
 using Bhasha.Infrastructure.EntityFramework.Extensions;
-using Bhasha.Shared.Domain;
+using Chapter = Bhasha.Domain.Chapter;
+using ChapterSelection = Bhasha.Domain.ChapterSelection;
+using Expression = Bhasha.Domain.Expression;
 using ExpressionType = Bhasha.Infrastructure.EntityFramework.Dtos.ExpressionType;
 using PartOfSpeech = Bhasha.Infrastructure.EntityFramework.Dtos.PartOfSpeech;
+using Profile = Bhasha.Domain.Profile;
 
 namespace Bhasha.Infrastructure.EntityFramework;
 
@@ -41,23 +45,23 @@ public static class Converter
             Id = expression.Id,
             ExpressionType = expression.ExpressionType switch
             {
-                Shared.Domain.ExpressionType.Word => ExpressionType.Word,
-                Shared.Domain.ExpressionType.Expression => ExpressionType.Expression,
-                Shared.Domain.ExpressionType.Phrase => ExpressionType.Phrase,
-                Shared.Domain.ExpressionType.Text => ExpressionType.Text,
-                Shared.Domain.ExpressionType.Punctuation => ExpressionType.Punctuation,
+                Domain.ExpressionType.Word => ExpressionType.Word,
+                Domain.ExpressionType.Expression => ExpressionType.Expression,
+                Domain.ExpressionType.Phrase => ExpressionType.Phrase,
+                Domain.ExpressionType.Text => ExpressionType.Text,
+                Domain.ExpressionType.Punctuation => ExpressionType.Punctuation,
                 _ => null
             },
             PartOfSpeech = expression.PartOfSpeech switch
             {
-                Shared.Domain.PartOfSpeech.Noun => PartOfSpeech.Noun,
-                Shared.Domain.PartOfSpeech.Pronoun => PartOfSpeech.Pronoun,
-                Shared.Domain.PartOfSpeech.Adjective => PartOfSpeech.Adjective,
-                Shared.Domain.PartOfSpeech.Verb => PartOfSpeech.Verb,
-                Shared.Domain.PartOfSpeech.Adverb => PartOfSpeech.Adverb,
-                Shared.Domain.PartOfSpeech.Preposition => PartOfSpeech.Preposition,
-                Shared.Domain.PartOfSpeech.Conjunction => PartOfSpeech.Conjunction,
-                Shared.Domain.PartOfSpeech.Article => PartOfSpeech.Article,
+                Domain.PartOfSpeech.Noun => PartOfSpeech.Noun,
+                Domain.PartOfSpeech.Pronoun => PartOfSpeech.Pronoun,
+                Domain.PartOfSpeech.Adjective => PartOfSpeech.Adjective,
+                Domain.PartOfSpeech.Verb => PartOfSpeech.Verb,
+                Domain.PartOfSpeech.Adverb => PartOfSpeech.Adverb,
+                Domain.PartOfSpeech.Preposition => PartOfSpeech.Preposition,
+                Domain.PartOfSpeech.Conjunction => PartOfSpeech.Conjunction,
+                Domain.PartOfSpeech.Article => PartOfSpeech.Article,
                 _ => null
             },
             Cefr = expression.Cefr switch
@@ -83,23 +87,23 @@ public static class Converter
             dto.Id,
             dto.ExpressionType switch
             {
-                ExpressionType.Word => Shared.Domain.ExpressionType.Word,
-                ExpressionType.Expression => Shared.Domain.ExpressionType.Expression,
-                ExpressionType.Phrase => Shared.Domain.ExpressionType.Phrase,
-                ExpressionType.Text => Shared.Domain.ExpressionType.Text,
-                ExpressionType.Punctuation => Shared.Domain.ExpressionType.Punctuation,
+                ExpressionType.Word => Domain.ExpressionType.Word,
+                ExpressionType.Expression => Domain.ExpressionType.Expression,
+                ExpressionType.Phrase => Domain.ExpressionType.Phrase,
+                ExpressionType.Text => Domain.ExpressionType.Text,
+                ExpressionType.Punctuation => Domain.ExpressionType.Punctuation,
                 _ => null
             },
             dto.PartOfSpeech switch
             {
-                PartOfSpeech.Noun => Shared.Domain.PartOfSpeech.Noun,
-                PartOfSpeech.Pronoun => Shared.Domain.PartOfSpeech.Pronoun,
-                PartOfSpeech.Adjective => Shared.Domain.PartOfSpeech.Adjective,
-                PartOfSpeech.Verb => Shared.Domain.PartOfSpeech.Verb,
-                PartOfSpeech.Adverb => Shared.Domain.PartOfSpeech.Adverb,
-                PartOfSpeech.Preposition => Shared.Domain.PartOfSpeech.Preposition,
-                PartOfSpeech.Conjunction => Shared.Domain.PartOfSpeech.Conjunction,
-                PartOfSpeech.Article => Shared.Domain.PartOfSpeech.Article,
+                PartOfSpeech.Noun => Domain.PartOfSpeech.Noun,
+                PartOfSpeech.Pronoun => Domain.PartOfSpeech.Pronoun,
+                PartOfSpeech.Adjective => Domain.PartOfSpeech.Adjective,
+                PartOfSpeech.Verb => Domain.PartOfSpeech.Verb,
+                PartOfSpeech.Adverb => Domain.PartOfSpeech.Adverb,
+                PartOfSpeech.Preposition => Domain.PartOfSpeech.Preposition,
+                PartOfSpeech.Conjunction => Domain.PartOfSpeech.Conjunction,
+                PartOfSpeech.Article => Domain.PartOfSpeech.Article,
                 _ => null
             },
             dto.Cefr switch

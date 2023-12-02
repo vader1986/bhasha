@@ -1,7 +1,7 @@
+using Bhasha.Domain.Interfaces;
 using Bhasha.Infrastructure.EntityFramework.Dtos;
-using Bhasha.Shared.Domain;
-using Bhasha.Shared.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Chapter = Bhasha.Domain.Chapter;
 
 namespace Bhasha.Infrastructure.EntityFramework;
 

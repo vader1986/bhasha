@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using Bhasha.Shared.Domain;
+using Bhasha.Domain;
 
 namespace Bhasha.Tests.Support;
 

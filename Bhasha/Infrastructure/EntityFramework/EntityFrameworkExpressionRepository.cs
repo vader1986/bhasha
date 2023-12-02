@@ -1,6 +1,6 @@
-using Bhasha.Shared.Domain;
-using Bhasha.Shared.Domain.Interfaces;
+using Bhasha.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Expression = Bhasha.Domain.Expression;
 
 namespace Bhasha.Infrastructure.EntityFramework;
 

@@ -1,6 +1,5 @@
 ﻿using Bhasha.Domain;
 using Bhasha.Services;
-using Bhasha.Shared.Domain;
 using Microsoft.AspNetCore.Components;
 
 namespace Bhasha.Web.Shared.Components;

@@ -1,4 +1,4 @@
-﻿namespace Bhasha.Shared.Domain;
+﻿namespace Bhasha.Domain;
 
 public record Translation(
     int Id,
