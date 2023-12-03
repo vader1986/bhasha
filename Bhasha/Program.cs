@@ -59,6 +59,7 @@ try
     // Application
     ////////////////////
 
+    services.AddHealthChecks();
     services.AddScoped<IValidator, Validator>();
     services.AddScoped<IPageFactory, PageFactory>();
     services.AddScoped<IMultipleChoicePageFactory, MultipleChoicePageFactory>();
@@ -83,7 +84,6 @@ try
         app.UseHsts();
     }
 
-    app.UseHttpsRedirection();
     app.UseStaticFiles();
     app.UseRouting();
 
