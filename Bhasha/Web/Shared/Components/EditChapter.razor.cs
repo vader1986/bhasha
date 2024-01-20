@@ -54,7 +54,7 @@ public partial class EditChapter : ComponentBase
     {
         try
         {
-            var dialog = DialogService.Show<AddPage>("Add Page");
+            var dialog = await DialogService.ShowAsync<AddPage>("Add Page");
             var result = await dialog.Result;
 
             if (!result.Canceled)
