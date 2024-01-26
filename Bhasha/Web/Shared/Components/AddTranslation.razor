@@ -1,16 +1,15 @@
 ﻿<MudDialog>
     <DialogContent>
-        <MudSelect T="string" @bind-Value="Language" Label="Language" AnchorOrigin="Origin.BottomCenter">
-            @foreach (var language in Domain.Language.Supported.Values.Where(x => x != Domain.Language.Reference))
-            {
-                <MudSelectItem Value="language.ToString()" />
-            }
-        </MudSelect>
-        <MudTextField T="string" @bind-Text="Expression" Label="Expression (English)" />
-        <MudTextField T="string" @bind-Text="Translation" Label="Translation" />
+        @if (_error != null)
+        {
+            <MudText Color="Color.Error">@_error.Message</MudText>
+        }
+        <MudTextField T="int" Disabled="DisableLevel" bind-Value="_level" Label="Level"/>
+        <MudTextField T="string" bind-Value="_reference" Label="@Bhasha.Domain.Language.Reference"/>
+        <MudTextField T="string" bind-Value="_target" Label="@Language"/>
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" Disabled="DisableCreate" OnClick="Submit">Ok</MudButton>
+        <MudButton OnClick="OnCancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" Disabled="DisableSubmit" OnClick="OnSubmit">Submit</MudButton>
     </DialogActions>
 </MudDialog>

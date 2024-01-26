@@ -23,34 +23,12 @@ public partial class EditChapter : ComponentBase
     private bool DisableSave =>
         string.IsNullOrWhiteSpace(Name) || string.IsNullOrWhiteSpace(Description) || Pages.Count < 3 || Error != null;
 
-    internal async Task OpenAddTranslation()
+    private async Task OnAddTranslation()
     {
-        try
-        {
-            var dialog = await DialogService.ShowAsync<AddTranslation>("Add Translation");
-            var result = await dialog.Result;
-
-            if (!result.Canceled)
-            {
-                var (dlgLanguage, dlgExpression, dlgTranslation) = ((string Language, string Expression, string Translation))result.Data;
-
-                var expression = await AuthoringService
-                    .GetOrCreateExpression(dlgExpression, RequiredLevel);
-                
-                var translation = Translation
-                    .Create(expression, dlgLanguage, dlgTranslation);
-
-                await AuthoringService
-                    .AddOrUpdateTranslation(translation);
-            }
-        }
-        catch (Exception e)
-        {
-            Error = e.Message;
-        }
+        await DialogService.ShowAsync<AddTranslation>("Add Translation");
     }
 
-    internal async Task OpenAddPage()
+    private async Task OnAddPage()
     {
         try
         {
@@ -69,7 +47,7 @@ public partial class EditChapter : ComponentBase
         }
     }
 
-    internal async Task Submit()
+    private async Task OnSubmit()
     {
         try
         {
