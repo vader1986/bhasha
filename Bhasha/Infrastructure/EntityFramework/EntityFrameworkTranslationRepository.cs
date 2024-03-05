@@ -38,7 +38,10 @@ public class EntityFrameworkTranslationRepository(AppDbContext context) : ITrans
     public async Task<Translation> AddOrUpdate(Translation translation, CancellationToken token = default)
     {
         var row = await context.Translations
-            .FirstOrDefaultAsync(x => x.Id == translation.Id, token);
+            .Include(x => x.Expression)
+            .FirstOrDefaultAsync(
+                x => x.Expression.Id == translation.Expression.Id && 
+                     x.Language == translation.Language, token);
 
         if (row is not null)
         {

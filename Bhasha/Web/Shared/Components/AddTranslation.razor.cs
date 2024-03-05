@@ -14,32 +14,35 @@ public partial class AddTranslation : ComponentBase
     [Parameter] public int? Level { get; set; }
 
     private bool DisableLevel => Level != null;
-    private bool DisableSubmit => string.IsNullOrWhiteSpace(_target) || string.IsNullOrWhiteSpace(_reference);
+    private bool DisableSubmit => string.IsNullOrWhiteSpace(Target) || string.IsNullOrWhiteSpace(Reference) || Level < 1;
 
     private Exception? _error;
-    private int _level = 1;
-    private string? _target;
-    private string? _reference;
+    
+    private int SelectedLevel { get; set; } = 1;
+    private string Target { get; set; } = "";
+    private string Reference { get; set; } = "";
+
+    private void OnFocusLost()
+    {
+        StateHasChanged();
+    }
     
     protected override void OnParametersSet()
     {
-        _level = Level ?? 1;
+        SelectedLevel = Level ?? 1;
         
         base.OnParametersSet();
     }
 
     private async Task OnSubmit()
     {
-        if (_target is null || _reference is null)
-            return;
-
         try
         {
             var expression = await AuthoringService
-                .GetOrCreateExpression(_reference, _level);
+                .GetOrCreateExpression(Reference, SelectedLevel);
             
             var translation = Translation
-                .Create(expression, Language, _target);
+                .Create(expression, Language, Target);
 
             await AuthoringService
                 .AddOrUpdateTranslation(translation);

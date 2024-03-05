@@ -4,12 +4,12 @@
         {
             <MudText Color="Color.Error">@_error.Message</MudText>
         }
-        <MudTextField T="int" Disabled="DisableLevel" bind-Value="_level" Label="Level"/>
-        <MudTextField T="string" bind-Value="_reference" Label="@Bhasha.Domain.Language.Reference"/>
-        <MudTextField T="string" bind-Value="_target" Label="@Language"/>
+        <MudTextField OnBlur="@OnFocusLost" T="int" Disabled="@DisableLevel" @bind-Value="@SelectedLevel" Label="Level"/>
+        <MudTextField OnBlur="@OnFocusLost" T="string" @bind-Value="@Reference" Label="@Bhasha.Domain.Language.Reference"/>
+        <MudTextField OnBlur="@OnFocusLost" T="string" @bind-Value="@Target" Label="@Language"/>
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="OnCancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" Disabled="DisableSubmit" OnClick="OnSubmit">Submit</MudButton>
+        <MudButton OnClick="@OnCancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" Disabled="@DisableSubmit" OnClick="@OnSubmit">Submit</MudButton>
     </DialogActions>
 </MudDialog>
