@@ -20,6 +20,7 @@
 
     @if (DisplayPage)
     {
+        <MudProgressLinear Color="Color.Primary" Value="GetProgress" Class="my-7" />
         <ChapterPage Chapter="@_selectedChapter" Page="_selectedPage" Submit="OnSubmit" />
     }
 

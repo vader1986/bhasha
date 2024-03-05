@@ -16,10 +16,10 @@ public class Validator : IValidator
     {
         var languages = input.Key;
         var translation = input.Translation;
-        var solution = await _translations.Get(translation.Id);
+        var solution = await _translations.Find(input.ExpressionId, languages.Target);
 
         if (solution == null)
-            throw new ArgumentOutOfRangeException($"translation {translation.Id} not found");
+            throw new ArgumentOutOfRangeException($"translation {languages.Target} for expression {input.ExpressionId} not found");
 
         if (translation.Language != languages.Target)
             return new Validation(ValidationResult.Wrong, "Translation was submit in the wrong language!");

@@ -21,6 +21,23 @@ public partial class StudentPage : UserPage
 
     private readonly IList<Profile> _profiles = new List<Profile>();
 
+    private int GetProgress
+    {
+        get
+        {
+            if (_selectedChapter is null)
+                return -1;
+
+            if (_selectedProfile?.CurrentChapter is null)
+                return -1;
+
+            var totalPages = _selectedChapter.Pages.Length;
+            var correctResults = _selectedProfile.CurrentChapter.Pages.Count(x => x == ValidationResult.Correct);
+            
+            return (int)Math.Round(100 * (double)correctResults / totalPages);
+        }
+    }
+    
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
@@ -93,10 +110,11 @@ public partial class StudentPage : UserPage
                 throw new InvalidOperationException("no profile selected");
 
             var profileKey = _selectedProfile.Key;
-            var profile = await StudyingService.GetProfile(profileKey);
             
             var chapterKey = new ChapterKey(summary.ChapterId, profileKey);
             var chapter = await StudyingService.SelectChapter(chapterKey);
+            
+            var profile = await StudyingService.GetProfile(profileKey);
 
             var selection = profile.CurrentChapter;
 
