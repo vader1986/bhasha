@@ -52,6 +52,25 @@ namespace Bhasha.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Expressions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    ExpressionType = table.Column<int>(type: "integer", nullable: true),
+                    PartOfSpeech = table.Column<int>(type: "integer", nullable: true),
+                    Cefr = table.Column<int>(type: "integer", nullable: true),
+                    ResourceId = table.Column<string>(type: "text", nullable: true),
+                    Labels = table.Column<string[]>(type: "text[]", nullable: false),
+                    Synonyms = table.Column<string[]>(type: "text[]", nullable: false),
+                    Level = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Expressions", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Profiles",
                 columns: table => new
                 {
@@ -192,31 +211,18 @@ namespace Bhasha.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Chapters", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Expressions",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    ExpressionType = table.Column<int>(type: "integer", nullable: true),
-                    PartOfSpeech = table.Column<int>(type: "integer", nullable: true),
-                    Cefr = table.Column<int>(type: "integer", nullable: true),
-                    ResourceId = table.Column<string>(type: "text", nullable: true),
-                    Labels = table.Column<string[]>(type: "text[]", nullable: false),
-                    Synonyms = table.Column<string[]>(type: "text[]", nullable: false),
-                    Level = table.Column<int>(type: "integer", nullable: false),
-                    ChapterDtoId = table.Column<int>(type: "integer", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Expressions", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Expressions_Chapters_ChapterDtoId",
-                        column: x => x.ChapterDtoId,
-                        principalTable: "Chapters",
-                        principalColumn: "Id");
+                        name: "FK_Chapters_Expressions_DescriptionId",
+                        column: x => x.DescriptionId,
+                        principalTable: "Expressions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Chapters_Expressions_NameId",
+                        column: x => x.NameId,
+                        principalTable: "Expressions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -237,6 +243,30 @@ namespace Bhasha.Migrations
                     table.ForeignKey(
                         name: "FK_Translations_Expressions_ExpressionId",
                         column: x => x.ExpressionId,
+                        principalTable: "Expressions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ChapterDtoExpressionDto",
+                columns: table => new
+                {
+                    ChapterDtosId = table.Column<int>(type: "integer", nullable: false),
+                    ExpressionsId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ChapterDtoExpressionDto", x => new { x.ChapterDtosId, x.ExpressionsId });
+                    table.ForeignKey(
+                        name: "FK_ChapterDtoExpressionDto_Chapters_ChapterDtosId",
+                        column: x => x.ChapterDtosId,
+                        principalTable: "Chapters",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ChapterDtoExpressionDto_Expressions_ExpressionsId",
+                        column: x => x.ExpressionsId,
                         principalTable: "Expressions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -280,6 +310,11 @@ namespace Bhasha.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_ChapterDtoExpressionDto_ExpressionsId",
+                table: "ChapterDtoExpressionDto",
+                column: "ExpressionsId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Chapters_DescriptionId",
                 table: "Chapters",
                 column: "DescriptionId");
@@ -290,43 +325,14 @@ namespace Bhasha.Migrations
                 column: "NameId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Expressions_ChapterDtoId",
-                table: "Expressions",
-                column: "ChapterDtoId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Translations_ExpressionId",
                 table: "Translations",
                 column: "ExpressionId");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Chapters_Expressions_DescriptionId",
-                table: "Chapters",
-                column: "DescriptionId",
-                principalTable: "Expressions",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Chapters_Expressions_NameId",
-                table: "Chapters",
-                column: "NameId",
-                principalTable: "Expressions",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Chapters_Expressions_DescriptionId",
-                table: "Chapters");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Chapters_Expressions_NameId",
-                table: "Chapters");
-
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
@@ -343,6 +349,9 @@ namespace Bhasha.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "ChapterDtoExpressionDto");
+
+            migrationBuilder.DropTable(
                 name: "Profiles");
 
             migrationBuilder.DropTable(
@@ -355,10 +364,10 @@ namespace Bhasha.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "Expressions");
+                name: "Chapters");
 
             migrationBuilder.DropTable(
-                name: "Chapters");
+                name: "Expressions");
         }
     }
 }

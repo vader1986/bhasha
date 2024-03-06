@@ -15,5 +15,5 @@ public class ProfileDto
     public int? CurrentChapterId { get; set; }
     public int? CurrentPageIndex { get; set; }
     public string ValidationResults { get; set; }
-    public int[] CompletedChapters { get; set; }
+    public int[] CompletedChapters { get; set; } = [];
 }

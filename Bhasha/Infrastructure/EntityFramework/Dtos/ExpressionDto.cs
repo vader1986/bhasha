@@ -12,9 +12,11 @@ public class ExpressionDto
 	public PartOfSpeech? PartOfSpeech { get; set; }
 	public Cefr? Cefr { get; set; }
 	public string? ResourceId { get; set; }
-	public string[] Labels { get; set; }
-	public string[] Synonyms { get; set; }
+	public string[] Labels { get; set; } = [];
+	public string[] Synonyms { get; set; } = [];
 	public int Level { get; set; }
+	
+	public List<ChapterDto> ChapterDtos = [];
 }
 
 public enum ExpressionType

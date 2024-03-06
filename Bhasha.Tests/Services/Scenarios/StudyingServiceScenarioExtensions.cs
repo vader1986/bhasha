@@ -76,7 +76,7 @@ public static class StudyingServiceScenarioExtensions
     {
         scenario
             .SummariesProvider
-            .GetSummaries(Arg.Any<int>(), key)
+            .GetSummaries(Arg.Any<int>(), key.Native)
             .Returns(chapterIds
                 .Select(id => new Summary(
                     ChapterId: id,

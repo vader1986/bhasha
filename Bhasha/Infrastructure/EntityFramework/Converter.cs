@@ -22,7 +22,7 @@ public static class Converter
             AuthorId = chapter.AuthorId,
             Name = Convert(chapter.Name),
             Description = Convert(chapter.Description),
-            Expressions = chapter.Pages.Select(Convert).ToArray()
+            Expressions = chapter.Pages.Select(Convert).ToList()
         };
     }
 

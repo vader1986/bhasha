@@ -3,20 +3,13 @@ using Bhasha.Domain.Interfaces;
 
 namespace Bhasha.Services;
 
-public class Validator : IValidator
+public class Validator(ITranslationRepository translations) : IValidator
 {
-    private readonly ITranslationRepository _translations;
-
-    public Validator(ITranslationRepository translations)
-    {
-        _translations = translations;
-    }
-
     public async Task<Validation> Validate(ValidationInput input)
     {
         var languages = input.Key;
         var translation = input.Translation;
-        var solution = await _translations.Find(input.ExpressionId, languages.Target);
+        var solution = await translations.Find(input.ExpressionId, languages.Target);
 
         if (solution == null)
             throw new ArgumentOutOfRangeException($"translation {languages.Target} for expression {input.ExpressionId} not found");
