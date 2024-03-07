@@ -33,7 +33,10 @@ public static class Converter
             dto.RequiredLevel,
             Convert(dto.Name),
             Convert(dto.Description),
-            dto.Expressions.Select(Convert).ToArray(),
+            dto.Expressions
+                .Select(Convert)
+                .OrderBy(x => x.Id)
+                .ToArray(),
             dto.ResourceId,
             dto.AuthorId);
     }

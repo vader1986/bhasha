@@ -21,15 +21,15 @@ public partial class StudentPage : UserPage
 
     private readonly IList<Profile> _profiles = new List<Profile>();
 
-    private int GetProgress
+    private int ChapterProgress
     {
         get
         {
             if (_selectedChapter is null)
-                return -1;
+                return 0;
 
             if (_selectedProfile?.CurrentChapter is null)
-                return -1;
+                return 0;
 
             var totalPages = _selectedChapter.Pages.Length;
             var correctResults = _selectedProfile.CurrentChapter.Pages.Count(x => x == ValidationResult.Correct);
@@ -121,6 +121,7 @@ public partial class StudentPage : UserPage
             if (selection == null)
                 throw new InvalidOperationException($"no chapter selected for {profileKey}");
 
+            _selectedProfile = profile;
             _selectedChapter = chapter;
             _selectedPage = chapter.Pages[selection.PageIndex];
         }
