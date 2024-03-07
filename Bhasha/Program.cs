@@ -1,7 +1,9 @@
-﻿using Bhasha.Areas.Identity;
+﻿using Bhasha;
+using Bhasha.Areas.Identity;
 using Bhasha.Domain.Interfaces;
 using Bhasha.Identity;
 using Bhasha.Identity.Extensions;
+using Bhasha.Infrastructure.AzureTranslatorApi;
 using Bhasha.Infrastructure.EntityFramework;
 using Bhasha.Services;
 using Bhasha.Shared.Identity;
@@ -19,6 +21,12 @@ try
     builder
         .Configuration
         .AddJsonFile("config/appsettings.json", optional: true, reloadOnChange: true);
+
+    var translationConfiguration = new TranslationConfiguration();
+    
+    builder.Configuration
+        .GetSection("Translation")
+        .Bind(translationConfiguration);
     
     ////////////////////
     // DB & Identity
@@ -68,6 +76,16 @@ try
     services.AddScoped<IAuthoringService, AuthoringService>();
     services.AddScoped<IStudyingService, StudyingService>();
 
+    if (translationConfiguration.AzureTranslatorApi is null)
+    {
+        services.AddSingleton<ITranslator, NoTranslator>();
+    }
+    else
+    {
+        services.AddSingleton(translationConfiguration.AzureTranslatorApi);
+        services.AddSingleton<ITranslator, AzureTranslatorApiClient>();
+    }
+    
     var app = builder.Build();
 
     ////////////////////

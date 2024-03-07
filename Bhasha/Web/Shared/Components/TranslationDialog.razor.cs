@@ -1,15 +1,19 @@
 ﻿using Bhasha.Domain;
+using Bhasha.Domain.Interfaces;
 using Bhasha.Services;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
 namespace Bhasha.Web.Shared.Components;
 
-public partial class AddTranslation : ComponentBase
+public partial class TranslationDialog : ComponentBase
 {
-    [Inject] public ILogger<AddTranslation> Logger { get; set; } = null!;
-    [Inject] public IAuthoringService AuthoringService { get; set; } = null!;
+    [Inject] public required ILogger<TranslationDialog> Logger { get; set; }
+    [Inject] public required IAuthoringService AuthoringService { get; set; }
+    [Inject] public required ITranslator Translator { get; set; }
+    
     [CascadingParameter] public required MudDialogInstance MudDialog { get; set; }
+    
     [Parameter] public required string Language { get; set; }
     [Parameter] public int? Level { get; set; }
     [Parameter] public string? ReferenceTranslation { get; set; }
@@ -23,18 +27,37 @@ public partial class AddTranslation : ComponentBase
     private int SelectedLevel { get; set; } = 1;
     private string Target { get; set; } = "";
     private string Reference { get; set; } = "";
+    private string Spoken { get; set; } = "";
 
-    private void OnFocusLost()
+    private async Task OnFocusLost()
     {
-        StateHasChanged();
+        if (!string.IsNullOrWhiteSpace(Reference) && string.IsNullOrWhiteSpace(Target))
+        {
+            await AutoFillTranslation(Reference);
+        }
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task AutoFillTranslation(string reference)
+    {
+        var (translation, spoken) = await Translator.Translate(reference, Language);
+
+        Target = translation;
+        Spoken = spoken;
     }
     
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
+        await base.OnParametersSetAsync();
+
         SelectedLevel = Level ?? 1;
         Reference = ReferenceTranslation ?? "";
-        
-        base.OnParametersSet();
+
+        if (!string.IsNullOrWhiteSpace(ReferenceTranslation))
+        {
+            await AutoFillTranslation(ReferenceTranslation);
+        }
     }
 
     private async Task OnSubmit()
@@ -43,9 +66,14 @@ public partial class AddTranslation : ComponentBase
         {
             var expression = await AuthoringService
                 .GetOrCreateExpression(Reference, SelectedLevel);
-            
-            var translation = Translation
-                .Create(expression, Language, Target);
+
+            var translation = new Translation(
+                Id: default,
+                Language: Language,
+                Text: Target,
+                Spoken: string.IsNullOrWhiteSpace(Spoken) ? null : Spoken,
+                AudioId: default,
+                Expression: expression);
 
             await AuthoringService
                 .AddOrUpdateTranslation(translation);

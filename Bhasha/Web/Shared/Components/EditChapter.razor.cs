@@ -91,7 +91,7 @@ public partial class EditChapter : ComponentBase
             { "ReferenceTranslation", reference }
         };
         
-        var dialog = await DialogService.ShowAsync<AddTranslation>(title, args);
+        var dialog = await DialogService.ShowAsync<TranslationDialog>(title, args);
         var result = await dialog.Result;
         if (result.Canceled)
             return false;
