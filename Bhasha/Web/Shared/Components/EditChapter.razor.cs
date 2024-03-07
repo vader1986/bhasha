@@ -17,6 +17,7 @@ public partial class EditChapter : ComponentBase
     [CascadingParameter] public required MudDialogInstance MudDialog { get; set; }
 
     [Parameter] public required string UserId { get; set; }
+    [Parameter] public string TargetLanguage { get; set; } = Language.Bengali;
     [Parameter] public Chapter? Chapter { get; set; }
     
     private string Name { get; set; } = string.Empty;
@@ -57,12 +58,7 @@ public partial class EditChapter : ComponentBase
             }
         }
     }
-
-    private async Task OnAddTranslation()
-    {
-        await DialogService.ShowAsync<AddTranslation>("Add Translation");
-    }
-
+    
     private async Task OnAddPage()
     {
         try
@@ -85,6 +81,23 @@ public partial class EditChapter : ComponentBase
     {
         MudDialog.Cancel();
     }
+
+    private async Task<bool> TryRequestTranslation(string reference)
+    {
+        var title = "Translation";
+        var args = new DialogParameters
+        {
+            { "Language", TargetLanguage },
+            { "ReferenceTranslation", reference }
+        };
+        
+        var dialog = await DialogService.ShowAsync<AddTranslation>(title, args);
+        var result = await dialog.Result;
+        if (result.Canceled)
+            return false;
+        
+        return true;
+    }
     
     private async Task OnSubmit()
     {
@@ -99,6 +112,18 @@ public partial class EditChapter : ComponentBase
             {
                 var expression = await AuthoringService
                     .GetOrCreateExpression(page, RequiredLevel);
+
+                var translation = await TranslationRepository
+                    .Find(expression.Id, TargetLanguage);
+
+                if (translation is null)
+                {
+                    if (await TryRequestTranslation(page) is false)
+                    {
+                        Error = $"Please add a translation for {page}";
+                        return;
+                    }
+                }
                 
                 pages.Add(expression);
             }

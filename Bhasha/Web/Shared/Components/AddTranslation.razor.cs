@@ -10,11 +10,13 @@ public partial class AddTranslation : ComponentBase
     [Inject] public ILogger<AddTranslation> Logger { get; set; } = null!;
     [Inject] public IAuthoringService AuthoringService { get; set; } = null!;
     [CascadingParameter] public required MudDialogInstance MudDialog { get; set; }
-    [Parameter] public string Language { get; set; } = Domain.Language.Bengali;
+    [Parameter] public required string Language { get; set; }
     [Parameter] public int? Level { get; set; }
+    [Parameter] public string? ReferenceTranslation { get; set; }
 
     private bool DisableLevel => Level != null;
     private bool DisableSubmit => string.IsNullOrWhiteSpace(Target) || string.IsNullOrWhiteSpace(Reference) || Level < 1;
+    private bool DisableReference => !string.IsNullOrWhiteSpace(ReferenceTranslation);
 
     private Exception? _error;
     
@@ -30,6 +32,7 @@ public partial class AddTranslation : ComponentBase
     protected override void OnParametersSet()
     {
         SelectedLevel = Level ?? 1;
+        Reference = ReferenceTranslation ?? "";
         
         base.OnParametersSet();
     }
@@ -53,6 +56,7 @@ public partial class AddTranslation : ComponentBase
         {
             _error = e;
             Logger.LogError(e, "failed to submit translation");
+            MudDialog.Cancel();
         }
     }
 

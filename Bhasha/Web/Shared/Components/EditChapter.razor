@@ -6,17 +6,12 @@
             <MudContainer MaxWidth="MaxWidth.Small">
                 <MudCard Outlined="true">
                     <MudCardContent Style="text-align: center">
-                        <MudButton OnClick="OnAddTranslation" Variant="Variant.Outlined" Color="Color.Primary">
-                            Add Translation
-                        </MudButton>
-        
-                        <MudTextField @bind-Value="@Name" Label="Name (Egnlish)" Variant="Variant.Outlined" />
-                        <MudTextField @bind-Value="@Description" Label="Description (Egnlish)" Variant="Variant.Outlined" Lines="3" />
-        
+                        <MudTextField @bind-Value="@Name" Label="Name (English)" Variant="Variant.Outlined" />
+                        <MudTextField @bind-Value="@Description" Label="Description (English)" Variant="Variant.Outlined" Lines="3" />
                         <MudDivider DividerType="DividerType.Middle" Class="my-3" />
                         <MudNumericField Label="Required Level" @bind-Value="@RequiredLevel" Variant="Variant.Text" Min="1" Max="100" />
         
-                        <MudButton OnClick="OnAddPage" Variant="Variant.Outlined" Color="Color.Primary">
+                        <MudButton OnClick="@OnAddPage" Variant="Variant.Outlined" Color="Color.Primary">
                             Add Page
                         </MudButton>
         
