@@ -20,8 +20,7 @@
 
     @if (DisplayPage)
     {
-        <MudProgressLinear Color="Color.Primary" Value="ChapterProgress" Class="my-7" />
-        <ChapterPage Chapter="@_selectedChapter" Page="_selectedPage" Submit="OnSubmit" />
+        <ChapterPage Chapter="@_selectedChapter" Page="_selectedPage" Selection="_selectedProfile!.CurrentChapter" Submit="OnSubmit" />
     }
 
 </AuthorizeView>
