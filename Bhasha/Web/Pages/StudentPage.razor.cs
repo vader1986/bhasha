@@ -1,14 +1,15 @@
 ﻿using Bhasha.Domain;
 using Bhasha.Services;
 using Microsoft.AspNetCore.Components;
+using MudBlazor;
 using Profile = Bhasha.Domain.Profile;
 
 namespace Bhasha.Web.Pages;
 
 public partial class StudentPage : UserPage
 {
-    [Inject] 
-    public IStudyingService StudyingService { get; set; } = null!;
+    [Inject] public required IStudyingService StudyingService { get; set; }
+    [Inject] public required ISnackbar Snackbar { get; set; }
     
     private Profile? _selectedProfile;
     private DisplayedChapter? _selectedChapter;
@@ -88,7 +89,20 @@ public partial class StudentPage : UserPage
 
             var validation = await StudyingService.Submit(userInput);
 
-            // ToDo - display validation result
+            switch (validation.Result)
+            {
+                case ValidationResult.Correct:
+                    Snackbar.Add("Correct!", Severity.Success);
+                    break;
+                
+                case ValidationResult.PartiallyCorrect:
+                    Snackbar.Add("Almost correct!", Severity.Success);
+                    break;
+                
+                case ValidationResult.Wrong:
+                    Snackbar.Add("Wrong!", Severity.Error);
+                    break;
+            }
             
             OnProfileUpdated(await StudyingService.GetProfile(key));
         }
