@@ -10,32 +10,17 @@ The VS solution contains multiple folders:
 * `Bhasha` - back- and front-end service (IdentityServer, Blazor Server, Orleans)
 * `Bhasha.Tests` - unit tests for front- and back-end components
 
-## Build & Deployment
+## Debugging
 
 ### Prerequisites
 * [Docker](https://docs.docker.com/engine/install/)
-* Kubernetes (incl. `kubectl`, can be [enabled in docker](https://docs.docker.com/desktop/kubernetes/))
 
-### Docker
+### PostgreSQL
 Make sure you started docker on your local machine. 
-Then create a local docker image for bhasha:
+Then run the [PostgreSQL docker image](https://hub.docker.com/_/postgres):
 ```bash
-cd /path/to/repository
-docker build -f Bhasha/Dockerfile --force-rm -t bhasha . --no-cache
+docker run --name postgres -e POSTGRES_PASSWORD=mysecretpassword -d postgres
 ```
 
-### Kubernetes
-
-#### MAC OS
-Deploy MongoDB, which is required by Bhasha, to your local k8s cluster:
-```bash
-kubectl apply -f dev/mongo
-```
-
-Now, deploy Bhasha to your local k8s cluster:
-```bash
-kubectl apply -f dev/bhasha
-```
-
-Now you should be able to access Bhasha via:
-http://localhost
+### Bhasha
+Update the *appsettings.Development.json* in the Bhasha project and run it from Rider/VS.

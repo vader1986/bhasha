@@ -109,7 +109,7 @@ public class StudyingService : IStudyingService
     {
         return await RunWithProfile(key, async profile =>
         {
-            var summaries = await _summariesProvider.GetSummaries(profile.Level, key);
+            var summaries = await _summariesProvider.GetSummaries(profile.Level, key.Native);
             
             return summaries
                 .Select(summary => new DisplayedSummary(

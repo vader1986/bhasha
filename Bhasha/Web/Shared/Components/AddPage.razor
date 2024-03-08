@@ -1,11 +1,5 @@
 ﻿<MudDialog>
     <DialogContent>
-        <MudSelect T="PageType" @bind-Value="PageType" Label="Page Type" AnchorOrigin="Origin.BottomCenter">
-            @foreach (var pageType in Enum.GetValues<PageType>())
-            {
-                <MudSelectItem Value="pageType" />
-            }
-        </MudSelect>
         <MudTextField T="string" @bind-Text="Expression" Label="Expression (English)" />
     </DialogContent>
     <DialogActions>

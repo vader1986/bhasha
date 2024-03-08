@@ -1,0 +1,16 @@
+﻿<MudDialog>
+    <DialogContent>
+        @if (_error != null)
+        {
+            <MudText Color="Color.Error">@_error.Message</MudText>
+        }
+        <MudTextField OnBlur="@OnFocusLost" T="int" Disabled="@DisableLevel" @bind-Value="@SelectedLevel" Label="Level"/>
+        <MudTextField OnBlur="@OnFocusLost" T="string" @bind-Value="@Reference" Label="@Bhasha.Domain.Language.Reference" Disabled="@DisableReference"/>
+        <MudTextField OnBlur="@OnFocusLost" T="string" @bind-Value="@Target" Label="@Language"/>
+        <MudTextField OnBlur="@OnFocusLost" T="string" @bind-Value="@Spoken" Label="Transliteration"/>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="@OnCancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" Disabled="@DisableSubmit" OnClick="@OnSubmit">Submit</MudButton>
+    </DialogActions>
+</MudDialog>

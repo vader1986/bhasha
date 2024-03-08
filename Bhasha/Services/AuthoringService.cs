@@ -37,7 +37,7 @@ public class AuthoringService : IAuthoringService
         var expression = await _expressionRepository
             .Add(Expression.Create(level) with
             {
-                Labels = new[] { text }
+                Labels = [text]
             }, token);
         
         await _translationRepository

@@ -1,0 +1,10 @@
+﻿@inherits ComponentBase
+
+<MudPaper Style="text-align: center">
+    <MudList Clickable="true">
+        @foreach (var chapter in Chapters)
+        {
+            <MudListItem Avatar="@Icons.Material.Outlined.Image" OnClick="async () => await ChapterSelected(chapter)">@chapter.Name</MudListItem>
+        }
+    </MudList>
+</MudPaper>

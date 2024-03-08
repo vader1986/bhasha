@@ -15,12 +15,14 @@ public class EntityFrameworkChapterRepository(AppDbContext context) : IChapterRe
         dto.Description = await context.Expressions
             .SingleAsync(x => x.Id == chapter.Description.Id, token);
 
-        var pageIds = chapter.Pages
-            .Select(x => x.Id);
-            
-        dto.Expressions = await context.Expressions
-            .Where(x => pageIds.Contains(x.Id))
-            .ToArrayAsync(token);
+        var pages = new List<ExpressionDto>();
+
+        foreach (var page in chapter.Pages)
+        {
+            pages.Add(await context.Expressions.SingleAsync(x => x.Id == page.Id, token));
+        }
+        
+        dto.Expressions = pages;
     }
     
     public async Task<Chapter> AddOrUpdate(Chapter chapter, CancellationToken token)
@@ -30,16 +32,13 @@ public class EntityFrameworkChapterRepository(AppDbContext context) : IChapterRe
 
         if (row is not null)
         {
-            context.Chapters
-                .Remove(row);
+            await LoadDependencies(row, chapter, token);
             
-            var updatedChapter = Converter
-                .Convert(chapter);
+            var result = context.Chapters
+                .Update(row);
 
-            await LoadDependencies(updatedChapter, chapter, token);
-            
-            var result = await context.Chapters
-                .AddAsync(updatedChapter, token);
+            await context
+                .SaveChangesAsync(token);
 
             return Converter
                 .Convert(result.Entity);
@@ -81,6 +80,18 @@ public class EntityFrameworkChapterRepository(AppDbContext context) : IChapterRe
             .Include(x => x.Description)
             .Include(x => x.Expressions)
             .Where(x => x.RequiredLevel == level)
+            .Select(x => Converter.Convert(x))
+            .ToListAsync(token);
+    }
+
+    public async Task<IEnumerable<Chapter>> FindAll(int offset, int batchSize, CancellationToken token)
+    {
+        return await context.Chapters
+            .Skip(offset)
+            .Take(batchSize)
+            .Include(x => x.Name)
+            .Include(x => x.Description)
+            .Include(x => x.Expressions)
             .Select(x => Converter.Convert(x))
             .ToListAsync(token);
     }

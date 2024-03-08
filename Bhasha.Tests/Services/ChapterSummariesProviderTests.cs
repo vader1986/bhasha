@@ -26,7 +26,7 @@ public class ChapterSummariesProviderTests
             .WithTranslations(profileKey.Native);
 
         // act
-        var result = await scenario.Sut.GetSummaries(level, profileKey);
+        var result = await scenario.Sut.GetSummaries(level, profileKey.Native);
 
         // verify
         result
@@ -50,7 +50,7 @@ public class ChapterSummariesProviderTests
 
         // act
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(
-            async () => await scenario.Sut.GetSummaries(level, profileKey));
+            async () => await scenario.Sut.GetSummaries(level, profileKey.Native));
 
         // verify
         exception

@@ -13,4 +13,3 @@ public record Translation(
 		return new Translation(default, language, text, default, default, expression);
 	}
 }
-

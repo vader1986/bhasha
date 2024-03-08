@@ -22,7 +22,7 @@ public static class Converter
             AuthorId = chapter.AuthorId,
             Name = Convert(chapter.Name),
             Description = Convert(chapter.Description),
-            Expressions = chapter.Pages.Select(Convert).ToArray()
+            Expressions = chapter.Pages.Select(Convert).ToList()
         };
     }
 
@@ -33,7 +33,10 @@ public static class Converter
             dto.RequiredLevel,
             Convert(dto.Name),
             Convert(dto.Description),
-            dto.Expressions.Select(Convert).ToArray(),
+            dto.Expressions
+                .Select(Convert)
+                .OrderBy(x => x.Id)
+                .ToArray(),
             dto.ResourceId,
             dto.AuthorId);
     }

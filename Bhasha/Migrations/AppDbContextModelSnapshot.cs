@@ -156,9 +156,6 @@ namespace Bhasha.Migrations
                     b.Property<int?>("Cefr")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("ChapterDtoId")
-                        .HasColumnType("integer");
-
                     b.Property<int?>("ExpressionType")
                         .HasColumnType("integer");
 
@@ -180,8 +177,6 @@ namespace Bhasha.Migrations
                         .HasColumnType("text[]");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ChapterDtoId");
 
                     b.ToTable("Expressions");
                 });
@@ -258,6 +253,21 @@ namespace Bhasha.Migrations
                     b.HasIndex("ExpressionId");
 
                     b.ToTable("Translations");
+                });
+
+            modelBuilder.Entity("ChapterDtoExpressionDto", b =>
+                {
+                    b.Property<int>("ChapterDtosId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ExpressionsId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ChapterDtosId", "ExpressionsId");
+
+                    b.HasIndex("ExpressionsId");
+
+                    b.ToTable("ChapterDtoExpressionDto");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -385,13 +395,6 @@ namespace Bhasha.Migrations
                     b.Navigation("Name");
                 });
 
-            modelBuilder.Entity("Bhasha.Infrastructure.EntityFramework.Dtos.ExpressionDto", b =>
-                {
-                    b.HasOne("Bhasha.Infrastructure.EntityFramework.Dtos.ChapterDto", null)
-                        .WithMany("Expressions")
-                        .HasForeignKey("ChapterDtoId");
-                });
-
             modelBuilder.Entity("Bhasha.Infrastructure.EntityFramework.Dtos.TranslationDto", b =>
                 {
                     b.HasOne("Bhasha.Infrastructure.EntityFramework.Dtos.ExpressionDto", "Expression")
@@ -401,6 +404,21 @@ namespace Bhasha.Migrations
                         .IsRequired();
 
                     b.Navigation("Expression");
+                });
+
+            modelBuilder.Entity("ChapterDtoExpressionDto", b =>
+                {
+                    b.HasOne("Bhasha.Infrastructure.EntityFramework.Dtos.ChapterDto", null)
+                        .WithMany()
+                        .HasForeignKey("ChapterDtosId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Bhasha.Infrastructure.EntityFramework.Dtos.ExpressionDto", null)
+                        .WithMany()
+                        .HasForeignKey("ExpressionsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -452,11 +470,6 @@ namespace Bhasha.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Bhasha.Infrastructure.EntityFramework.Dtos.ChapterDto", b =>
-                {
-                    b.Navigation("Expressions");
                 });
 #pragma warning restore 612, 618
         }

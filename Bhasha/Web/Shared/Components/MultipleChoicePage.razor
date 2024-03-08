@@ -7,7 +7,7 @@
     <MudChipSet @bind-SelectedChip="_selectedChoice" Filter="true">
         @foreach (var choice in _arguments.Choices)
         {
-            <MudChip Value="@choice" Text="grey">@choice.Text</MudChip>
+            <MudChip Value="@choice" Text="grey">@choice.Text (@choice.Spoken)</MudChip>
         }
     </MudChipSet>
 }

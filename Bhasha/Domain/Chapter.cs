@@ -11,10 +11,4 @@ public partial record Chapter(
 	[property: OrderedEquality]
 	Expression[] Pages,
 	string? ResourceId,
-	string AuthorId)
-{
-	public static Chapter Create(int requiredLevel, Expression name, Expression description, IEnumerable<Expression> pages, string authorId)
-	{
-		return new Chapter(default, requiredLevel, name, description, pages.ToArray(), default, authorId);
-	}
-}
+	string AuthorId);
