@@ -3,6 +3,7 @@ using Bhasha.Areas.Identity;
 using Bhasha.Domain.Interfaces;
 using Bhasha.Identity;
 using Bhasha.Identity.Extensions;
+using Bhasha.Infrastructure.AzureSpeechApi;
 using Bhasha.Infrastructure.AzureTranslatorApi;
 using Bhasha.Infrastructure.EntityFramework;
 using Bhasha.Services;
@@ -84,6 +85,16 @@ try
     {
         services.AddSingleton(translationConfiguration.AzureTranslatorApi);
         services.AddSingleton<ITranslator, AzureTranslatorApiClient>();
+    }
+
+    if (translationConfiguration.AzureSpeechApi is null)
+    {
+        services.AddSingleton<ISpeaker, NoSpeaker>();
+    }
+    else
+    {
+        services.AddSingleton(translationConfiguration.AzureSpeechApi);
+        services.AddSingleton<ISpeaker, AzureSpeaker>();
     }
     
     var app = builder.Build();
