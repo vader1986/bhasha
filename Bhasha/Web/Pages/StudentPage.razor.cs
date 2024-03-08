@@ -21,23 +21,6 @@ public partial class StudentPage : UserPage
     private bool DisplayPage => _selectedProfile != null && _selectedChapter != null && _selectedPage != null;
 
     private readonly IList<Profile> _profiles = new List<Profile>();
-
-    private int ChapterProgress
-    {
-        get
-        {
-            if (_selectedChapter is null)
-                return 0;
-
-            if (_selectedProfile?.CurrentChapter is null)
-                return 0;
-
-            var totalPages = _selectedChapter.Pages.Length;
-            var correctResults = _selectedProfile.CurrentChapter.Pages.Count(x => x == ValidationResult.Correct);
-            
-            return (int)Math.Round(100 * (double)correctResults / totalPages);
-        }
-    }
     
     protected override async Task OnInitializedAsync()
     {

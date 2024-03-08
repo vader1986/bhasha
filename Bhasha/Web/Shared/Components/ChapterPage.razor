@@ -5,6 +5,8 @@
     <MudText Typo="Typo.h6">@Chapter.Name</MudText>
     <MudText Typo="Typo.body2">@Chapter.Description</MudText>
     <MudDivider/>
+    <MudProgressLinear Color="Color.Primary" Value="ChapterProgress" Class="my-7" />
+
     @switch (Page.PageType)
     {
         case PageType.MultipleChoice:
