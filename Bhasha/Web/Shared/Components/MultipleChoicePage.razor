@@ -1,14 +1,25 @@
-﻿@if (Data != null)
-{
-    <MudText>@Data.Word.Text</MudText>
-}
+﻿<br/>
+<MudText>@Data.Word.Text</MudText>
+<MudText Typo="Typo.body2">(@Data.Word.Language)</MudText>
+<br/>
+
 @if (_arguments != null)
 {
     <MudChipSet @bind-SelectedChip="_selectedChoice" Filter="true">
         @foreach (var choice in _arguments.Choices)
         {
-            <MudChip Value="@choice" Text="grey">@choice.Text (@choice.Spoken)</MudChip>
+            @if (string.IsNullOrWhiteSpace(choice.Spoken))
+            {
+                <MudChip OnClick="@StateHasChanged" Value="@choice" Text="grey">@choice.Text</MudChip>
+            }
+            else
+            {
+                <MudChip OnClick="@StateHasChanged" Value="@choice" Text="grey">@choice.Text (@choice.Spoken)</MudChip>
+            }
         }
     </MudChipSet>
 }
-<MudButton OnClick="OnSubmit" Disabled="@DisableSubmit" Variant="Variant.Filled">Submit</MudButton>
+<br/>
+<MudIconButton Icon="@Icons.Material.TwoTone.Send" OnClick="@OnSubmit" Disabled="@DisableSubmit" Variant="Variant.Filled" />
+
+

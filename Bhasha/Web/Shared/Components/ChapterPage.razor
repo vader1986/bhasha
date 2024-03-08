@@ -2,9 +2,9 @@
 @inherits ComponentBase
 
 <MudPaper Style="text-align: center">
-    <MudText>@Chapter.Name</MudText>
+    <MudText Typo="Typo.h6">@Chapter.Name</MudText>
     <MudText Typo="Typo.body2">@Chapter.Description</MudText>
-
+    <MudDivider/>
     @switch (Page.PageType)
     {
         case PageType.MultipleChoice:
