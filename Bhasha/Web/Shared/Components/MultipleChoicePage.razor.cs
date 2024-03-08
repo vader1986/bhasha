@@ -20,7 +20,7 @@ public partial class MultipleChoicePage : ComponentBase
         base.OnParametersSet();
 
         _selectedChoice = null;
-        _arguments = Data?.Arguments;
+        _arguments = Data.Arguments;
     }
 
     internal void OnSubmit()

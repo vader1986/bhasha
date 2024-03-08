@@ -1,7 +1,7 @@
 ﻿@page "/author"
 @inherits Bhasha.Web.Pages.UserPage
 
-<AuthorizeView Roles="Author">
+<AuthorizeView Roles="Admin, Author">
     <PageTitle>Select or create chapter</PageTitle>
 
     @if (_error != null)

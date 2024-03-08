@@ -1,7 +1,7 @@
 ﻿@page "/student"
 @inherits Bhasha.Web.Pages.UserPage
 
-<AuthorizeView Roles="Student">
+<AuthorizeView Roles="Admin, Student">
 
     @if (_error != null)
     {
