@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using MudBlazor;
 using MudBlazor.Services;
 
 try
@@ -62,7 +63,11 @@ try
     services.Configure<RazorPagesOptions>(options => options.RootDirectory = "/Web/Pages");
     services.AddRazorPages();
     services.AddServerSideBlazor();
-    services.AddMudServices();
+    services.AddMudServices(x =>
+    {
+        x.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.TopCenter;
+        x.SnackbarConfiguration.VisibleStateDuration = 500;
+    });
 
     ////////////////////
     // Application

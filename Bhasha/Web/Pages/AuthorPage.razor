@@ -11,8 +11,9 @@
     
     @if (DisplayOverview)
     {
-        <MudButton OnClick="@OnEditChapterClicked">Edit Chapter</MudButton>
-        <MudButton OnClick="@OnCreateChapterClicked">Create Chapter</MudButton>
+        <MudButton FullWidth="true" OnClick="@OnEditChapterClicked">Edit Chapter</MudButton>
+        <br/>
+        <MudButton FullWidth="true" OnClick="@OnCreateChapterClicked">Create Chapter</MudButton>
     }
 
     @if (DisplayChapterList)
