@@ -11,6 +11,7 @@ namespace Bhasha.Web.Shared.Components;
 public partial class MultipleChoicePage : ComponentBase
 {
     [Inject] public required ISpeaker Speaker { get; set; }
+    [Inject] public required ILogger<MultipleChoicePage> Logger { get; set; }
     [Parameter] public required DisplayedPage<MultipleChoice> Data { get; set; }
     [Parameter] public required Func<Translation, Task> Submit { get; set; }
 
@@ -19,6 +20,7 @@ public partial class MultipleChoicePage : ComponentBase
     
     private MultipleChoice? _arguments;
     private MudChip? _selectedChoice;
+    private bool _playAudio;
 
     protected override void OnParametersSet()
     {
@@ -28,21 +30,39 @@ public partial class MultipleChoicePage : ComponentBase
         _arguments = Data.Arguments;
     }
 
-    private async Task OnPlayAudioClicked()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        await base.OnAfterRenderAsync(firstRender);
+        
+        if (!_playAudio)
+            return;
+        
         if (_selectedChoice == null)
             return;
 
         var translation = (Translation)_selectedChoice.Value;
+        
+        try
+        {
+            if (string.IsNullOrWhiteSpace(translation.Spoken) || Speaker.IsLanguageSupported(translation.Language))
+            {
+                await Speaker.Speak(translation.Text, translation.Language);
+            }
+            else
+            {
+                await Speaker.Speak(translation.Spoken, translation.Language);
+            }
+        }
+        catch (Exception e)
+        {
+            Logger.LogError(e, "failed to play audio for {Translation}", translation.Text);
+        }
+    }
 
-        if (string.IsNullOrWhiteSpace(translation.Spoken) || Speaker.IsLanguageSupported(translation.Language))
-        {
-            await Speaker.Speak(translation.Text, translation.Language);
-        }
-        else
-        {
-            await Speaker.Speak(translation.Spoken, translation.Language);
-        }
+    private void OnPlayAudioClicked()
+    {
+        _playAudio = true;
+        StateHasChanged();
     }
 
     private void OnSubmit()

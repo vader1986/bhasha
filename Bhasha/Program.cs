@@ -64,7 +64,10 @@ try
 
     services.Configure<RazorPagesOptions>(options => options.RootDirectory = "/Web/Pages");
     services.AddRazorPages();
-    services.AddServerSideBlazor();
+    services.AddServerSideBlazor(x =>
+    {
+        x.DetailedErrors = true;
+    });
     services.AddMudServices(x =>
     {
         x.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.TopCenter;
