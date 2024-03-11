@@ -5,7 +5,7 @@ namespace Bhasha.Infrastructure.AzureSpeechApi;
 
 public class AzureSpeaker(ILogger<AzureSpeaker> logger, AzureSpeechApiSettings settings) : ISpeaker
 {
-    private string ConvertLanguageForAzure(string language)
+    private static string ConvertLanguageForAzure(string language)
     {
         return language switch
         {
@@ -13,7 +13,12 @@ public class AzureSpeaker(ILogger<AzureSpeaker> logger, AzureSpeechApiSettings s
             _ => language
         };
     }
-    
+
+    public bool IsLanguageSupported(string language)
+    {
+        return true;
+    }
+
     public async Task Speak(string text, string language)
     {
         try

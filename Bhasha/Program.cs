@@ -6,6 +6,7 @@ using Bhasha.Identity.Extensions;
 using Bhasha.Infrastructure.AzureSpeechApi;
 using Bhasha.Infrastructure.AzureTranslatorApi;
 using Bhasha.Infrastructure.EntityFramework;
+using Bhasha.Infrastructure.Toolbelt;
 using Bhasha.Services;
 using Bhasha.Shared.Identity;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -14,6 +15,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor;
 using MudBlazor.Services;
+using Toolbelt.Blazor.Extensions.DependencyInjection;
 
 try
 {
@@ -68,6 +70,7 @@ try
         x.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.TopCenter;
         x.SnackbarConfiguration.VisibleStateDuration = 500;
     });
+    services.AddSpeechSynthesis();
 
     ////////////////////
     // Application
@@ -94,7 +97,7 @@ try
 
     if (translationConfiguration.AzureSpeechApi is null)
     {
-        services.AddSingleton<ISpeaker, NoSpeaker>();
+        services.AddSingleton<ISpeaker, ToolbeltSpeaker>();
     }
     else
     {
