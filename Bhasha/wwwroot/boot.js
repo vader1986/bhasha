@@ -1,5 +1,4 @@
 (() => {
-    const maximumRetryCount = 3;
     const retryIntervalMilliseconds = 5000;
     const reconnectModal = document.getElementById('reconnect-modal');
 
@@ -9,8 +8,9 @@
         let isCanceled = false;
 
         (async () => {
-            for (let i = 0; i < maximumRetryCount; i++) {
-                reconnectModal.innerText = `Attempting to reconnect: ${i + 1} of ${maximumRetryCount}`;
+            while (true) 
+            {
+                //reconnectModal.innerText = `Attempting to reconnect: ${i + 1} of ${maximumRetryCount}`;
 
                 await new Promise(resolve => setTimeout(resolve, retryIntervalMilliseconds));
 
