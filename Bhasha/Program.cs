@@ -100,12 +100,12 @@ try
 
     if (translationConfiguration.AzureSpeechApi is null)
     {
-        services.AddSingleton<ISpeaker, ToolbeltSpeaker>();
+        services.AddScoped<ISpeaker, ToolbeltSpeaker>();
     }
     else
     {
         services.AddSingleton(translationConfiguration.AzureSpeechApi);
-        services.AddSingleton<ISpeaker, AzureSpeaker>();
+        services.AddScoped<ISpeaker, AzureSpeaker>();
     }
     
     var app = builder.Build();

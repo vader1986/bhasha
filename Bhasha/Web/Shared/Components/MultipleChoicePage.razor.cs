@@ -41,21 +41,25 @@ public partial class MultipleChoicePage : ComponentBase
             return;
 
         var translation = (Translation)_selectedChoice.Value;
-        
+
         try
         {
             if (string.IsNullOrWhiteSpace(translation.Spoken) || Speaker.IsLanguageSupported(translation.Language))
             {
-                await Speaker.Speak(translation.Text, translation.Language);
+                await Speaker.SpeakAsync(translation.Text, translation.Language);
             }
             else
             {
-                await Speaker.Speak(translation.Spoken, translation.Language);
+                await Speaker.SpeakAsync(translation.Spoken, translation.Language);
             }
         }
         catch (Exception e)
         {
-            Logger.LogError(e, "failed to play audio for {Translation}", translation.Text);
+            Logger.LogError(e, "Failed to play audio for {Translation}", translation.Text);
+        }
+        finally
+        {
+            _playAudio = false;
         }
     }
 

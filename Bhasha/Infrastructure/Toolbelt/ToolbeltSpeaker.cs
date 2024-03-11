@@ -1,4 +1,3 @@
-using Bhasha.Domain;
 using Bhasha.Domain.Interfaces;
 using Toolbelt.Blazor.SpeechSynthesis;
 
@@ -15,7 +14,7 @@ public class ToolbeltSpeaker(SpeechSynthesis speechSynthesis) : ISpeaker
         };
     }
 
-    public async Task Speak(string text, string language)
+    public async Task SpeakAsync(string text, string language)
     {
         await speechSynthesis.SpeakAsync(new SpeechSynthesisUtterance
         {

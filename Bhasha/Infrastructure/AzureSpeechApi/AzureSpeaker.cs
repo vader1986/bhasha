@@ -19,7 +19,7 @@ public class AzureSpeaker(ILogger<AzureSpeaker> logger, AzureSpeechApiSettings s
         return true;
     }
 
-    public async Task Speak(string text, string language)
+    public async Task SpeakAsync(string text, string language)
     {
         try
         {

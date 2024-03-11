@@ -3,5 +3,5 @@ namespace Bhasha.Domain.Interfaces;
 public interface ISpeaker
 {
     bool IsLanguageSupported(string language);
-    Task Speak(string text, string language);
+    Task SpeakAsync(string text, string language);
 }
