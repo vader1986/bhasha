@@ -2,13 +2,17 @@
 
 public enum PartOfSpeech
 {
-	Noun,
-	Pronoun,
 	Adjective,
-	Verb,
 	Adverb,
+	AuxiliaryVerb,
+	Determiner,
+	Exclamation,
+	ModalVerb,
+	Noun,
+	PhrasalVerb,
+	Phrase,
 	Preposition,
-	Conjunction,
-	Article
+	Pronoun,
+	Verb
 }
 

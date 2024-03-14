@@ -5,7 +5,7 @@ namespace Bhasha.Services;
 
 public class ChapterSummariesProvider(
     IChapterRepository chapterRepository,
-    ITranslationRepository translationRepository)
+    ITranslationProvider translationProvider)
     : IChapterSummariesProvider
 {
     private async IAsyncEnumerable<Summary> LoadSummaries(IEnumerable<Chapter> chapters, Language language)
@@ -27,7 +27,7 @@ public class ChapterSummariesProvider(
                 return name;
             }
 
-            var translation = await translationRepository.Find(expressionId, language);
+            var translation = await translationProvider.Find(expressionId, language);
             if (translation == null)
             {
                 throw new InvalidOperationException($"translation for {expressionId} to {language} not found");

@@ -16,12 +16,12 @@ public class ChapterSummariesProviderScenario
     };
         
     public IChapterRepository ChapterRepository { get; } = Substitute.For<IChapterRepository>();
-    public ITranslationRepository TranslationRepository { get; } = Substitute.For<ITranslationRepository>();
+    public ITranslationProvider TranslationProvider { get; } = Substitute.For<ITranslationProvider>();
 
     public ChapterSummariesProvider Sut { get; }
 
     public ChapterSummariesProviderScenario()
     {
-        Sut = new ChapterSummariesProvider(ChapterRepository, TranslationRepository);
+        Sut = new ChapterSummariesProvider(ChapterRepository, TranslationProvider);
     }
 }

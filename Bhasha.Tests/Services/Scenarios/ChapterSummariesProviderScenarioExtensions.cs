@@ -37,7 +37,7 @@ public static class ChapterSummariesProviderScenarioExtensions
         foreach (var (expression, expressionId) in scenario.ExpressionIds)
         {
             scenario
-                .TranslationRepository
+                .TranslationProvider
                 .Find(expressionId, language)
                 .Returns(new Translation(
                     Id: Random.Shared.Next(),

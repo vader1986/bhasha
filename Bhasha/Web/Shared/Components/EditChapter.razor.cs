@@ -12,7 +12,7 @@ public partial class EditChapter : ComponentBase
 {
     [Inject] public required IDialogService DialogService { get; set; }
     [Inject] public required IAuthoringService AuthoringService { get; set; }
-    [Inject] public required ITranslationRepository TranslationRepository { get; set; }
+    [Inject] public required ITranslationProvider TranslationProvider { get; set; }
   
     [CascadingParameter] public required MudDialogInstance MudDialog { get; set; }
 
@@ -37,8 +37,8 @@ public partial class EditChapter : ComponentBase
         if (Chapter is null)
             return;
         
-        var name = await TranslationRepository.Find(Chapter.Name.Id, Language.Reference);
-        var description = await TranslationRepository.Find(Chapter.Description.Id, Language.Reference);
+        var name = await TranslationProvider.Find(Chapter.Name.Id, Language.Reference);
+        var description = await TranslationProvider.Find(Chapter.Description.Id, Language.Reference);
 
         Name = name?.Text ?? "";
         Description = description?.Text ?? "";
@@ -47,7 +47,7 @@ public partial class EditChapter : ComponentBase
 
         foreach (var page in Chapter.Pages)
         {
-            var translation = await TranslationRepository.Find(page.Id, Language.Reference);
+            var translation = await TranslationProvider.Find(page.Id, Language.Reference);
             if (translation is null)
             {
                 Error = $"Could not find translation for expression {page.Id}";
@@ -113,7 +113,7 @@ public partial class EditChapter : ComponentBase
                 var expression = await AuthoringService
                     .GetOrCreateExpression(page, RequiredLevel);
 
-                var translation = await TranslationRepository
+                var translation = await TranslationProvider
                     .Find(expression.Id, TargetLanguage);
 
                 if (translation is null)

@@ -9,6 +9,7 @@ public class EntityFrameworkTranslationRepository(AppDbContext context) : ITrans
     public async Task<Translation?> Find(int expressionId, string language, CancellationToken token = default)
     {
         var row = await context.Translations
+            .Include(x => x.Expression)
             .FirstOrDefaultAsync(x => x.Language == language && x.Expression.Id == expressionId, token);
 
         if (row is null)
@@ -78,12 +79,5 @@ public class EntityFrameworkTranslationRepository(AppDbContext context) : ITrans
             return Converter
                 .Convert(result.Entity);
         }
-    }
-
-    public async Task<Translation> Get(int translationId, CancellationToken token = default)
-    {
-        return Converter
-            .Convert(await context.Translations
-            .FirstAsync(x => x.Id == translationId, token));
     }
 }

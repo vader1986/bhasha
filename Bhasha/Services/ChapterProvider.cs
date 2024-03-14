@@ -11,10 +11,10 @@ public interface IChapterProvider
 public class ChapterProvider : IChapterProvider
 {
     private readonly IChapterRepository _chapterRepository;
-    private readonly ITranslationRepository _translationProvider;
+    private readonly ITranslationProvider _translationProvider;
     private readonly IPageFactory _pageFactory;
 
-    public ChapterProvider(IChapterRepository chapterRepository, ITranslationRepository translationProvider, IPageFactory pageFactory)
+    public ChapterProvider(IChapterRepository chapterRepository, ITranslationProvider translationProvider, IPageFactory pageFactory)
     {
         _chapterRepository = chapterRepository;
         _translationProvider = translationProvider;

@@ -57,14 +57,18 @@ public static class Converter
             },
             PartOfSpeech = expression.PartOfSpeech switch
             {
-                Domain.PartOfSpeech.Noun => PartOfSpeech.Noun,
-                Domain.PartOfSpeech.Pronoun => PartOfSpeech.Pronoun,
                 Domain.PartOfSpeech.Adjective => PartOfSpeech.Adjective,
-                Domain.PartOfSpeech.Verb => PartOfSpeech.Verb,
                 Domain.PartOfSpeech.Adverb => PartOfSpeech.Adverb,
+                Domain.PartOfSpeech.AuxiliaryVerb => PartOfSpeech.AuxiliaryVerb,
+                Domain.PartOfSpeech.Determiner => PartOfSpeech.Determiner,
+                Domain.PartOfSpeech.Exclamation => PartOfSpeech.Exclamation,
+                Domain.PartOfSpeech.ModalVerb => PartOfSpeech.ModalVerb,
+                Domain.PartOfSpeech.Noun => PartOfSpeech.Noun,
+                Domain.PartOfSpeech.PhrasalVerb => PartOfSpeech.PhrasalVerb,
+                Domain.PartOfSpeech.Phrase => PartOfSpeech.Phrase,
                 Domain.PartOfSpeech.Preposition => PartOfSpeech.Preposition,
-                Domain.PartOfSpeech.Conjunction => PartOfSpeech.Conjunction,
-                Domain.PartOfSpeech.Article => PartOfSpeech.Article,
+                Domain.PartOfSpeech.Pronoun => PartOfSpeech.Pronoun,
+                Domain.PartOfSpeech.Verb => PartOfSpeech.Verb,
                 _ => null
             },
             Cefr = expression.Cefr switch
@@ -99,14 +103,18 @@ public static class Converter
             },
             dto.PartOfSpeech switch
             {
-                PartOfSpeech.Noun => Domain.PartOfSpeech.Noun,
-                PartOfSpeech.Pronoun => Domain.PartOfSpeech.Pronoun,
                 PartOfSpeech.Adjective => Domain.PartOfSpeech.Adjective,
-                PartOfSpeech.Verb => Domain.PartOfSpeech.Verb,
                 PartOfSpeech.Adverb => Domain.PartOfSpeech.Adverb,
+                PartOfSpeech.AuxiliaryVerb => Domain.PartOfSpeech.AuxiliaryVerb,
+                PartOfSpeech.Determiner => Domain.PartOfSpeech.Determiner,
+                PartOfSpeech.Exclamation => Domain.PartOfSpeech.Exclamation,
+                PartOfSpeech.ModalVerb => Domain.PartOfSpeech.ModalVerb,
+                PartOfSpeech.Noun => Domain.PartOfSpeech.Noun,
+                PartOfSpeech.PhrasalVerb => Domain.PartOfSpeech.PhrasalVerb,
+                PartOfSpeech.Phrase => Domain.PartOfSpeech.Phrase,
                 PartOfSpeech.Preposition => Domain.PartOfSpeech.Preposition,
-                PartOfSpeech.Conjunction => Domain.PartOfSpeech.Conjunction,
-                PartOfSpeech.Article => Domain.PartOfSpeech.Article,
+                PartOfSpeech.Pronoun => Domain.PartOfSpeech.Pronoun,
+                PartOfSpeech.Verb => Domain.PartOfSpeech.Verb,
                 _ => null
             },
             dto.Cefr switch

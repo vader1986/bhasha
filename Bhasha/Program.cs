@@ -87,6 +87,7 @@ try
     services.AddScoped<IChapterProvider, ChapterProvider>();
     services.AddScoped<IAuthoringService, AuthoringService>();
     services.AddScoped<IStudyingService, StudyingService>();
+    services.AddSingleton<ITranslationProvider, CachingTranslationProvider>();
 
     if (translationConfiguration.AzureTranslatorApi is null)
     {
