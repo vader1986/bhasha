@@ -41,10 +41,11 @@ public partial class MultipleChoicePage : ComponentBase
             return;
 
         var translation = (Translation)_selectedChoice.Value;
+        var languageSupported = await Speaker.IsLanguageSupported(translation.Language);
 
         try
         {
-            if (string.IsNullOrWhiteSpace(translation.Spoken) || Speaker.IsLanguageSupported(translation.Language))
+            if (string.IsNullOrWhiteSpace(translation.Spoken) || languageSupported)
             {
                 await Speaker.SpeakAsync(translation.Text, translation.Language);
             }
