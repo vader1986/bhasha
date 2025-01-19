@@ -13,6 +13,7 @@ public partial class EditChapter : ComponentBase
     [Inject] public required IDialogService DialogService { get; set; }
     [Inject] public required IAuthoringService AuthoringService { get; set; }
     [Inject] public required ITranslationProvider TranslationProvider { get; set; }
+    [Inject] public required IChapterRepository ChapterRepository { get; set; }
   
     [CascadingParameter] public required MudDialogInstance MudDialog { get; set; }
 
@@ -30,6 +31,8 @@ public partial class EditChapter : ComponentBase
     private bool DisableSave =>
         string.IsNullOrWhiteSpace(Name) || string.IsNullOrWhiteSpace(Description) || Pages.Count < 3 || Error != null;
     
+    private bool DisableDelete => Chapter is null;
+
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
@@ -97,6 +100,22 @@ public partial class EditChapter : ComponentBase
             return false;
         
         return true;
+    }
+
+    private async Task OnDelete()
+    {
+        if (Chapter is null)
+            return;
+
+        try
+        {
+            await ChapterRepository.Delete(Chapter.Id, CancellationToken.None);
+            MudDialog.Close(DialogResult.Cancel());
+        }
+        catch (Exception e)
+        {
+            Error = e.Message;
+        }
     }
     
     private async Task OnSubmit()

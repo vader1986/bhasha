@@ -95,4 +95,12 @@ public class EntityFrameworkChapterRepository(AppDbContext context) : IChapterRe
             .Select(x => Converter.Convert(x))
             .ToListAsync(token);
     }
+
+    public async Task Delete(int chapterId, CancellationToken token)
+    {
+        var deletedChapter = new ChapterDto {Id = chapterId};
+        context.Attach(deletedChapter);
+        context.Chapters.Remove(deletedChapter);
+        await context.SaveChangesAsync(token);
+    }
 }

@@ -37,6 +37,7 @@
 
     <DialogActions>
         <MudButton OnClick="@OnCancel">Cancel</MudButton>
+        <MudButton Disabled="@DisableDelete" OnClick="@OnDelete">Delete</MudButton>
         <MudButton Disabled="@DisableSave" Variant="Variant.Outlined" OnClick="@OnSubmit">Save</MudButton>
     </DialogActions>
 </MudDialog>
