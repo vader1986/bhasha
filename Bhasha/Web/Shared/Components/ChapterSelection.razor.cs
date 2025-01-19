@@ -8,7 +8,7 @@ public partial class ChapterSelection : ComponentBase
 {
     [Inject] public required IChapterSummariesProvider ChapterSummariesProvider { get; set; }
 
-    [Parameter] public Func<Summary, Task> ChapterSelected { get; set; } = default!;
+    [Parameter] public required Func<Summary, Task> ChapterSelected { get; set; }
     [Parameter] public Language Language { get; set; } = Language.Reference;
     [Parameter] public int? RequiredLevel { get; set; }
     

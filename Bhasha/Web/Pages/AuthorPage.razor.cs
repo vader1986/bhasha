@@ -31,7 +31,7 @@ public partial class AuthorPage : UserPage
         _mode = Mode.List;
         await InvokeAsync(StateHasChanged);
     }
-    
+
     private async Task OnCreateChapterClicked()
     {
         try
