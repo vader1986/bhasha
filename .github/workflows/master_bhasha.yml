@@ -31,7 +31,7 @@ jobs:
       with:
         push: true
         tags: bhasha.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_cf03a41da9824976ace90ef4b295d05b }}/bhasha:${{ github.sha }}
-        file: ./Dockerfile
+        file: ./Bhasha/Dockerfile
 
   deploy:
     runs-on: ubuntu-latest
