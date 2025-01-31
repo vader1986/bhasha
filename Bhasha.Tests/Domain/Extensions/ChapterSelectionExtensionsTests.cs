@@ -1,6 +1,5 @@
 ﻿using Bhasha.Domain;
 using Bhasha.Domain.Extensions;
-using FluentAssertions;
 using Xunit;
 
 namespace Bhasha.Tests.Domain.Extensions;
@@ -22,7 +21,7 @@ public class ChapterSelectionExtensionsTests
         var result = selection.GetNextPageIndex();
 
         // verify
-        result.Should().BeNull();
+        Assert.Null(result);
     }
 
     [Fact]
@@ -41,7 +40,7 @@ public class ChapterSelectionExtensionsTests
         var result = selection.GetNextPageIndex();
 
         // verify
-        result.Should().Be(3);
+        Assert.Equal(3, result);
     }
 
     [Fact]
@@ -60,7 +59,7 @@ public class ChapterSelectionExtensionsTests
         var result = selection.GetNextPageIndex();
 
         // verify
-        result.Should().Be(0);
+        Assert.Equal(0, result);
     }
 }
 

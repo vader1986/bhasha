@@ -1,7 +1,7 @@
 ﻿@inherits ComponentBase
 
 <MudPaper Style="text-align: center">
-    <MudList Clickable="true">
+    <MudList T="string" Clickable="true">
         @foreach (var chapter in Chapters)
         {
             @if (chapter.Completed)

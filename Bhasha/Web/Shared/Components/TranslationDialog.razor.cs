@@ -12,7 +12,7 @@ public partial class TranslationDialog : ComponentBase
     [Inject] public required IAuthoringService AuthoringService { get; set; }
     [Inject] public required ITranslator Translator { get; set; }
     
-    [CascadingParameter] public required MudDialogInstance MudDialog { get; set; }
+    [CascadingParameter] public required IMudDialogInstance MudDialog { get; set; }
     
     [Parameter] public required string Language { get; set; }
     [Parameter] public int? Level { get; set; }

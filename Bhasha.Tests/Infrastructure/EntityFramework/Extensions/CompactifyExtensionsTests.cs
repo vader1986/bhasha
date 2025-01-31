@@ -1,6 +1,5 @@
 using Bhasha.Domain;
 using Bhasha.Infrastructure.EntityFramework.Extensions;
-using FluentAssertions;
 using Xunit;
 
 namespace Bhasha.Tests.Infrastructure.EntityFramework.Extensions;
@@ -24,8 +23,6 @@ public class CompactifyExtensionsTests
             .Decompactify(x => (ValidationResult)x);
         
         // assert
-        result
-            .Should()
-            .BeEquivalentTo(array);
+        Assert.Equal(array, result);
     }
 }

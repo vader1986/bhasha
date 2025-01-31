@@ -5,7 +5,6 @@ using AutoFixture.Xunit2;
 using Bhasha.Domain;
 using Bhasha.Tests.Services.Scenarios;
 using Bhasha.Tests.Support;
-using FluentAssertions;
 using NSubstitute;
 using Xunit;
 
@@ -24,9 +23,7 @@ public class StudyingServiceTests
             async () => await scenario.Sut.GetProfile(key));
 
         // assert
-        exception
-            .Should()
-            .NotBeNull();
+        Assert.NotNull(exception);
     }
 
     [Theory, AutoData]
@@ -40,9 +37,7 @@ public class StudyingServiceTests
         var result = await scenario.Sut.GetProfile(key);
         
         // assert
-        result
-            .Should()
-            .NotBeNull();
+        Assert.NotNull(result);
     }
     
     [Theory, AutoData]
@@ -56,9 +51,7 @@ public class StudyingServiceTests
         var result = await scenario.Sut.GetProfiles(userId);
         
         // assert
-        result.Count
-            .Should()
-            .Be(keys.Length);
+        Assert.Equal(keys.Length, result.Count);
     }
 
     [Fact]
@@ -76,9 +69,7 @@ public class StudyingServiceTests
             }));
         
         // assert
-        exception
-            .Should()
-            .NotBeNull();
+        Assert.NotNull(exception);
     }
     
     [Fact]
@@ -93,9 +84,7 @@ public class StudyingServiceTests
             async () => await scenario.Sut.CreateProfile(key));
         
         // assert
-        exception
-            .Should()
-            .NotBeNull();
+        Assert.NotNull(exception);
     }
     
     [Fact]
@@ -110,9 +99,7 @@ public class StudyingServiceTests
             async () => await scenario.Sut.CreateProfile(key));
         
         // assert
-        exception
-            .Should()
-            .NotBeNull();
+        Assert.NotNull(exception);
     }
 
     [Fact]
@@ -148,9 +135,7 @@ public class StudyingServiceTests
         var result = await scenario.Sut.GetCurrentChapter(key);
         
         // assert
-        result
-            .Should()
-            .NotBeNull();
+        Assert.NotNull(result);
     }
 
     [Fact]
@@ -165,9 +150,7 @@ public class StudyingServiceTests
         var result = await scenario.Sut.GetCurrentChapter(key);
         
         // assert
-        result
-            .Should()
-            .BeNull();
+        Assert.Null(result);
     }
 
     [Theory, AutoData]
@@ -189,20 +172,10 @@ public class StudyingServiceTests
         var result = await scenario.Sut.GetSummaries(key);
         
         // assert
-        result
-            .TakeEverySecond()
-            .Should()
-            .AllSatisfy(x => x.Completed
-                .Should()
-                .BeTrue());
+        Assert.All(result
+            .TakeEverySecond(), x => Assert.True(x.Completed));
 
-        result
-            .TakeEverySecond(offset: 1)
-            .Should()
-            .AllSatisfy(x => x.Completed
-                .Should()
-                .BeFalse());
+        Assert.All(result
+            .TakeEverySecond(offset: 1), x => Assert.False(x.Completed));
     }
-    
-    
 }

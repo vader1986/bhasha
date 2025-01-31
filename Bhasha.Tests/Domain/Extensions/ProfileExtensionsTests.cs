@@ -2,7 +2,6 @@
 using AutoFixture.Xunit2;
 using Bhasha.Domain;
 using Bhasha.Domain.Extensions;
-using FluentAssertions;
 using Xunit;
 
 namespace Bhasha.Tests.Domain.Extensions;
@@ -19,8 +18,7 @@ public class ProfileExtensionsTests
         var result = profile.Select(chapter);
 
         // verify
-        result.CurrentChapter.Should().NotBeNull();
-        result.CurrentChapter.Should().Be(expectedResult);
+        Assert.Equal(expectedResult, result.CurrentChapter);
     }
 
     [Theory, AutoData]
@@ -33,7 +31,7 @@ public class ProfileExtensionsTests
         var result = profile.Submit(ValidationResult.Correct);
 
         // verify
-        result.Should().Be(profile);
+        Assert.Equal(profile, result);
     }
 
     [Theory, AutoData]
@@ -56,15 +54,10 @@ public class ProfileExtensionsTests
 
         // act
         var result = profile.Submit(ValidationResult.Correct);
-
+        
         // verify
-        result.CompletedChapters.Should().BeEquivalentTo(new[]
-        {
-            completedChapters[0],
-            currentChapter.ChapterId
-        });
-
-        result.CurrentChapter.Should().BeNull();
+        Assert.Equal(new[] { completedChapters[0], currentChapter.ChapterId }, result.CompletedChapters);
+        Assert.Null(result.CurrentChapter);
     }
 
     [Theory, AutoData]
@@ -89,15 +82,16 @@ public class ProfileExtensionsTests
         var result = profile.Submit(ValidationResult.Correct);
 
         // verify
-        result.CompletedChapters.Should().BeEquivalentTo(completedChapters);
-        result.CurrentChapter.Should().NotBeNull();
-        result.CurrentChapter!.PageIndex.Should().Be(2);
-        result.CurrentChapter!.Pages.Should().BeEquivalentTo(new[]
+        Assert.Equal(completedChapters, result.CompletedChapters);
+        Assert.NotNull(result.CurrentChapter);
+        Assert.Equal(2, result.CurrentChapter!.ChapterId);
+        Assert.Equal(2, result.CurrentChapter!.PageIndex);
+        Assert.Equal(new[]
         {
             ValidationResult.Correct,
             ValidationResult.Correct,
             ValidationResult.Wrong
-        });
+        }, result.CurrentChapter!.Pages);
     }
 }
 

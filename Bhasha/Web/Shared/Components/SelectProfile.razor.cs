@@ -17,15 +17,15 @@ public partial class SelectProfile : ComponentBase
     private Language? _selectedNative;
     private Language? _selectedTarget;
 
-    internal void OnSelectedNative(MudChip chip)
+    internal void OnSelectedNative(MudChip<Language> chip)
     {
-        _selectedNative = chip.Value as Language;
+        _selectedNative = chip.Value;
         ValidateParameters();
     }
 
-    internal void OnSelectedTarget(MudChip chip)
+    internal void OnSelectedTarget(MudChip<Language> chip)
     {
-        _selectedTarget = chip.Value as Language;
+        _selectedTarget = chip.Value;
         ValidateParameters();
     }
 

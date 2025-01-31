@@ -6,7 +6,7 @@ namespace Bhasha.Web.Shared.Components;
 public partial class AddPage : ComponentBase
 {
     [CascadingParameter]
-    private MudDialogInstance? MudDialog { get; set; }
+    private IMudDialogInstance? MudDialog { get; set; }
 
     public string Expression { get; set; } = string.Empty;
 

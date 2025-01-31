@@ -2,7 +2,6 @@ using System.Threading.Tasks;
 using AutoFixture.Xunit2;
 using Bhasha.Domain;
 using Bhasha.Tests.Services.Scenarios;
-using FluentAssertions;
 using Xunit;
 
 namespace Bhasha.Tests.Services;
@@ -21,19 +20,9 @@ public class MultipleChoicePageFactoryTests
             .Create(scenario.Chapter, scenario.CorrectExpression, key);
         
         // assert
-        result.Arguments.Choices.Length
-            .Should()
-            .Be(4);
-
-        result.Arguments.Choices
-            .Should()
-            .AllSatisfy(x => x.Expression
-                .Should()
-                .Be(Expression.Create()));
-        
-        result.Arguments.Choices
-            .Should()
-            .ContainSingle(x => x == scenario.CorrectTranslation);
+        Assert.Equal(4, result.Arguments.Choices.Length);
+        Assert.All(result.Arguments.Choices, x => Assert.Equal(Expression.Create(), x.Expression));
+        Assert.Contains(result.Arguments.Choices, x => x == scenario.CorrectTranslation);
     }
     
     [Theory, AutoData]
@@ -48,19 +37,9 @@ public class MultipleChoicePageFactoryTests
             .Create(scenario.Chapter, scenario.CorrectExpression, key);
         
         // assert
-        result.Arguments.Choices.Length
-            .Should()
-            .Be(2);
-        
-        result.Arguments.Choices
-            .Should()
-            .AllSatisfy(x => x.Expression
-                .Should()
-                .Be(Expression.Create()));
-
-        result.Arguments.Choices
-            .Should()
-            .ContainSingle(x => x == scenario.CorrectTranslation);
+        Assert.Equal(2, result.Arguments.Choices.Length);
+        Assert.All(result.Arguments.Choices, x => Assert.Equal(Expression.Create(), x.Expression));
+        Assert.Contains(result.Arguments.Choices, x => x == scenario.CorrectTranslation);
     }
 
     [Theory, AutoData]
@@ -75,18 +54,8 @@ public class MultipleChoicePageFactoryTests
             .Create(scenario.Chapter, scenario.CorrectExpression, key);
         
         // assert
-        result.Arguments.Choices.Length
-            .Should()
-            .Be(1);
-        
-        result.Arguments.Choices
-            .Should()
-            .AllSatisfy(x => x.Expression
-                .Should()
-                .Be(Expression.Create()));
-        
-        result.Arguments.Choices
-            .Should()
-            .ContainSingle(x => x == scenario.CorrectTranslation);
+        Assert.Single(result.Arguments.Choices);
+        Assert.All(result.Arguments.Choices, x => Assert.Equal(Expression.Create(), x.Expression));
+        Assert.Contains(result.Arguments.Choices, x => x == scenario.CorrectTranslation);
     }
 }

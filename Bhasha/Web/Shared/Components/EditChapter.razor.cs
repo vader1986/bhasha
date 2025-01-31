@@ -15,7 +15,7 @@ public partial class EditChapter : ComponentBase
     [Inject] public required ITranslationProvider TranslationProvider { get; set; }
     [Inject] public required IChapterRepository ChapterRepository { get; set; }
   
-    [CascadingParameter] public required MudDialogInstance MudDialog { get; set; }
+    [CascadingParameter] public required IMudDialogInstance MudDialog { get; set; }
 
     [Parameter] public required string UserId { get; set; }
     [Parameter] public string TargetLanguage { get; set; } = Language.Bengali;

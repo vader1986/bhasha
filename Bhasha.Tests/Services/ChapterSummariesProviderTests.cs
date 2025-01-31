@@ -5,7 +5,6 @@ using Bhasha.Domain;
 using Bhasha.Tests.Services.Scenarios;
 using Bhasha.Tests.Support;
 using Xunit;
-using FluentAssertions;
 
 namespace Bhasha.Tests.Services;
 
@@ -29,13 +28,10 @@ public class ChapterSummariesProviderTests
         var result = await scenario.Sut.GetSummaries(level, profileKey.Native);
 
         // verify
-        result
-            .Should()
-            .BeEquivalentTo(new[]
-            {
-                new Summary(chapterOneId, "Name", "Description"),
-                new Summary(chapterTwoId, "Name", "Description")
-            });
+        Assert.Equal([
+            new Summary(chapterOneId, "Name", "Description"),
+            new Summary(chapterTwoId, "Name", "Description")
+        ], result);
     }
 
     [Theory, AutoData]
@@ -53,9 +49,7 @@ public class ChapterSummariesProviderTests
             async () => await scenario.Sut.GetSummaries(level, profileKey.Native));
 
         // verify
-        exception
-            .Should()
-            .NotBeNull();
+        Assert.NotNull(exception);
     }
 }
 

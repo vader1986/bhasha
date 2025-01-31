@@ -2,7 +2,6 @@ using System.Threading.Tasks;
 using AutoFixture.Xunit2;
 using Bhasha.Domain;
 using Bhasha.Tests.Services.Scenarios;
-using FluentAssertions;
 using NSubstitute;
 using Xunit;
 
@@ -24,9 +23,7 @@ public class AuthoringServiceTests
         var result = await scenario.Sut.GetOrCreateExpression(text, level);
         
         // assert
-        result
-            .Should()
-            .Be(expression);
+        Assert.Equal(expression, result);
 
         await scenario.TranslationRepository
             .Received(1)
@@ -47,8 +44,6 @@ public class AuthoringServiceTests
         var result = await scenario.Sut.GetOrCreateExpression(text, level);
         
         // assert
-        result
-            .Should()
-            .Be(scenario.Expression);
+        Assert.Equal(scenario.Expression, result);
     }
 }
