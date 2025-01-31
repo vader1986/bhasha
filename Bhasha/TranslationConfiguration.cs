@@ -7,4 +7,13 @@ public class TranslationConfiguration
 { 
     public AzureTranslatorApiSettings? AzureTranslatorApi { get; init; }
     public AzureSpeechApiSettings? AzureSpeechApi { get; init; }
+
+    public TranslationProvider Provider { get; init; } = TranslationProvider.BlazorSpeechSynthesis;
+}
+
+public enum TranslationProvider
+{
+    Azure,
+    BlazorSpeechSynthesis,
+    Toolbelt
 }

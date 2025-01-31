@@ -5,6 +5,7 @@ using Bhasha.Identity;
 using Bhasha.Identity.Extensions;
 using Bhasha.Infrastructure.AzureSpeechApi;
 using Bhasha.Infrastructure.AzureTranslatorApi;
+using Bhasha.Infrastructure.BlazorSpeechSynthesis;
 using Bhasha.Infrastructure.EntityFramework;
 using Bhasha.Infrastructure.Toolbelt;
 using Bhasha.Services;
@@ -73,7 +74,6 @@ try
         x.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.TopCenter;
         x.SnackbarConfiguration.VisibleStateDuration = 500;
     });
-    services.AddSpeechSynthesis();
 
     ////////////////////
     // Application
@@ -99,14 +99,24 @@ try
         services.AddSingleton<ITranslator, AzureTranslatorApiClient>();
     }
 
-    if (translationConfiguration.AzureSpeechApi is null)
+    switch (translationConfiguration.Provider)
     {
-        services.AddScoped<ISpeaker, ToolbeltSpeaker>();
-    }
-    else
-    {
-        services.AddSingleton(translationConfiguration.AzureSpeechApi);
-        services.AddScoped<ISpeaker, AzureSpeaker>();
+        case TranslationProvider.Azure when translationConfiguration.AzureSpeechApi is not null:
+            services.AddSingleton(translationConfiguration.AzureSpeechApi);
+            services.AddScoped<ISpeaker, AzureSpeaker>();
+            break;
+        case TranslationProvider.Toolbelt:
+            services.AddSpeechSynthesis();
+            services.AddScoped<ISpeaker, ToolbeltSpeaker>();
+            break;
+        case TranslationProvider.BlazorSpeechSynthesis:
+            services.AddSpeechSynthesisServices();
+            services.AddScoped<ISpeaker, BlazorSpeaker>();
+            break;
+        default:
+            services.AddSpeechSynthesisServices();
+            services.AddScoped<ISpeaker, BlazorSpeaker>();
+            break;
     }
     
     var app = builder.Build();
