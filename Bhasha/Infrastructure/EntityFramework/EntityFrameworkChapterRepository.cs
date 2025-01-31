@@ -98,9 +98,14 @@ public class EntityFrameworkChapterRepository(AppDbContext context) : IChapterRe
 
     public async Task Delete(int chapterId, CancellationToken token)
     {
-        var deletedChapter = new ChapterDto {Id = chapterId};
-        context.Chapters.Attach(deletedChapter);
-        context.Chapters.Remove(deletedChapter);
+        var chapter = await context.Chapters
+            .FirstOrDefaultAsync(x => x.Id == chapterId, token);
+        
+        if (chapter is null)
+            return;
+        
+        context.Chapters.Remove(chapter);
+        
         await context.SaveChangesAsync(token);
     }
 }
