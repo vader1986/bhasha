@@ -1,9 +1,13 @@
 ﻿@page "/"
 
-<AuthorizeView Roles="Admin, Author">
-    <MudButton FullWidth="true" Href="/author">Author</MudButton>
+<AuthorizeView Roles="Author">
+    <ReditectTo Url="/author"/>
 </AuthorizeView>
 
-<AuthorizeView Roles="Admin, Student">
-    <MudButton FullWidth="true" Href="/student">Student</MudButton>
+<AuthorizeView Roles="Student">
+    <ReditectTo Url="/student"/>
+</AuthorizeView>
+
+<AuthorizeView Roles="Admin">
+    <ReditectTo Url="/roles"/>
 </AuthorizeView>

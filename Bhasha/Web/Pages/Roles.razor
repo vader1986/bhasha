@@ -1,0 +1,6 @@
+﻿@page "/roles"
+
+<AuthorizeView Roles="Admin">
+    <MudButton FullWidth="true" Href="/student">Student</MudButton>
+    <MudButton FullWidth="true" Href="/author">Author</MudButton>
+</AuthorizeView>
