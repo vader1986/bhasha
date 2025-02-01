@@ -30,6 +30,22 @@ public partial class SelectProfile : ComponentBase
         ValidateParameters();
     }
 
+    private void ValidateNativeLanguage(Language? language)
+    {
+        _selectedNative = language;
+
+        ValidateParameters();
+        StateHasChanged();
+    }
+    
+    private void ValidateTargetLanguage(Language? language)
+    {
+        _selectedTarget = language;
+
+        ValidateParameters();
+        StateHasChanged();
+    }
+    
     private void ValidateParameters()
     {
         if (_selectedNative != null && _selectedTarget != null)
@@ -43,8 +59,6 @@ public partial class SelectProfile : ComponentBase
         {
             _disableCreateButton = true;
         }
-        
-        StateHasChanged();
     }
 
     private async Task OnCreate()
