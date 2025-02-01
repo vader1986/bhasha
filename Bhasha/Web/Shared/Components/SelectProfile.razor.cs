@@ -72,6 +72,7 @@ public partial class SelectProfile : ComponentBase
         try
         {
             await StudyingService.DeleteProfile(profile.Key);
+            Profiles = Profiles.Where(x => x.Id != profile.Id);
         }
         catch (Exception e)
         {
