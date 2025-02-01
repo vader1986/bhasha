@@ -61,7 +61,7 @@ try
     ////////////////////
     // Blazor
     ////////////////////
-
+    
     services.Configure<RazorPagesOptions>(options => options.RootDirectory = "/Web/Pages");
     services.AddRazorPages();
     services.AddServerSideBlazor(x =>
