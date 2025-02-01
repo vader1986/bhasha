@@ -143,9 +143,12 @@ try
     var identitySettings = IdentitySettings.From(app.Configuration);
     var scope = ((IApplicationBuilder)app).ApplicationServices.CreateScope();
     var serviceProvider = scope.ServiceProvider;
-
+    
     await serviceProvider.UseIdentitySettings(identitySettings);
 
+    var context = serviceProvider.GetRequiredService<AppDbContext>();
+    await context.Database.MigrateAsync();
+    
     app.MapIdentityApi<AppUser>();
     app.MapControllers();
     app.MapBlazorHub();
