@@ -1,6 +1,12 @@
 ﻿@page "/roles"
 
 <AuthorizeView Roles="Admin">
-    <MudButton FullWidth="true" Href="/student">Student</MudButton>
-    <MudButton FullWidth="true" Href="/author">Author</MudButton>
+    <Authorized>
+        <MudButton FullWidth="true" Href="/student">Student</MudButton>
+        <MudButton FullWidth="true" Href="/author">Author</MudButton>
+    </Authorized>
+    <NotAuthorized>
+        <ReditectTo Url="/Identity/Account/Login"/>
+    </NotAuthorized>
 </AuthorizeView>
+
