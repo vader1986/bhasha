@@ -2,7 +2,6 @@
 using Bhasha.Domain.Interfaces;
 using Bhasha.Domain.Pages;
 using Microsoft.AspNetCore.Components;
-using MudBlazor;
 
 namespace Bhasha.Web.Shared.Components;
 
@@ -17,7 +16,7 @@ public partial class MultipleChoicePage : ComponentBase
     private bool DisableSubmit => _selectedChoice == null;
     
     private MultipleChoice? _arguments;
-    private MudChip<Translation>? _selectedChoice;
+    private Translation? _selectedChoice;
     private bool _playAudio;
 
     protected override void OnParametersSet()
@@ -35,10 +34,10 @@ public partial class MultipleChoicePage : ComponentBase
         if (!_playAudio)
             return;
         
-        if (_selectedChoice?.Value == null)
+        if (_selectedChoice == null)
             return;
 
-        var translation = _selectedChoice.Value;
+        var translation = _selectedChoice;
         var languageSupported = await Speaker.IsLanguageSupported(translation.Language);
 
         try
@@ -70,10 +69,10 @@ public partial class MultipleChoicePage : ComponentBase
 
     private void OnSubmit()
     {
-        if (_selectedChoice?.Value == null)
+        if (_selectedChoice == null)
             return;
 
-        Submit(_selectedChoice.Value);
+        Submit(_selectedChoice);
     }
 }
 

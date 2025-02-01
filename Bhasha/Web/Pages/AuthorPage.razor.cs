@@ -43,7 +43,7 @@ public partial class AuthorPage : UserPage
             var dialog = await DialogService.ShowAsync<EditChapter>("Chapter", parameters);
             var result = await dialog.Result;
 
-            if (result.Data is Chapter chapter)
+            if (result?.Data is Chapter chapter)
             {
                 await AuthoringService.AddOrUpdateChapter(chapter);
                 _mode = Mode.Overview;
@@ -76,7 +76,7 @@ public partial class AuthorPage : UserPage
             var dialog = await DialogService.ShowAsync<EditChapter>("Chapter", parameters);
             var result = await dialog.Result;
 
-            if (result.Data is Chapter chapter)
+            if (result?.Data is Chapter chapter)
             {
                 await AuthoringService.AddOrUpdateChapter(chapter);
             }

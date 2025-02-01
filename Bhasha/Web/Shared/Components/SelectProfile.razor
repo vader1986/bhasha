@@ -5,12 +5,12 @@
 
         @if (Profiles.Any())
         {
-            <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" VerticalAlign="true">
+            <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" Vertical="true">
                 @foreach (var profile in Profiles)
                 {
                     <MudButton OnClick="() => OnSelection(profile)">
-                        @Language.Parse(@profile.Key.Native).Pretty() -
-                        @Language.Parse(@profile.Key.Target).Pretty()
+                        @Language.Parse(profile.Key.Native).Pretty() -
+                        @Language.Parse(profile.Key.Target).Pretty()
                     </MudButton>
                 }
             </MudButtonGroup>
@@ -18,24 +18,24 @@
         }
 
         <MudText>Please select your native language</MudText>
-        <MudChipSet T="string" Filter="true" SelectedChipChanged="OnSelectedNative">
+        <MudChipSet T="string">
             @foreach (var language in Language.Supported.Values)
             {
-                <MudChip Value="language">@language.Pretty()</MudChip>
+                <MudChip OnClick="@(() => OnSelectedNative(language))">@language.Pretty()</MudChip>
             }
         </MudChipSet>
 
         <MudDivider DividerType="DividerType.Middle" Class="my-3" />
         <MudText>... and select your target language</MudText>
-        <MudChipSet T="string" Filter="true" SelectedChipChanged="OnSelectedTarget">
+        <MudChipSet T="string">
             @foreach (var language in Language.Supported.Values)
             {
-                <MudChip Value="language">@language.Pretty()</MudChip>
+                <MudChip OnClick="@(() => OnSelectedTarget(language))">@language.Pretty()</MudChip>
             }
         </MudChipSet>
 
         <MudDivider DividerType="DividerType.Middle" Class="my-3" />
-        <MudButton Disabled="@_disableCreateButton" Variant="Variant.Outlined" OnClick="OnCreate">Create</MudButton>
+        <MudButton Disabled="@_disableCreateButton" Variant="Variant.Outlined" OnClick="@OnCreate">Create</MudButton>
 
     </MudCardContent>
 </MudCard>

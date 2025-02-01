@@ -1,10 +1,10 @@
 ﻿@inherits ComponentBase
 
 <MudPaper Style="text-align: center">
-    <MudList T="string" Clickable="true">
+    <MudList T="string">
         @foreach (var chapter in Chapters)
         {
-            <MudListItem Avatar="@Icons.Material.Outlined.Image" OnClick="async () => await ChapterSelected(chapter)">@chapter.Name</MudListItem>
+            <MudListItem Icon="@Icons.Material.Outlined.Image" OnClick="async () => await ChapterSelected(chapter)">@chapter.Name</MudListItem>
         }
     </MudList>
 </MudPaper>

@@ -1,9 +1,9 @@
 ﻿<AuthorizeView>
     <Authorized>
-        <MudIconButton Icon="@Icons.Material.Outlined.ManageAccounts" Link="Identity/Account/Manage">@context.User.Identity?.Name</MudIconButton>
+        <MudIconButton Icon="@Icons.Material.Outlined.ManageAccounts" Href="Identity/Account/Manage">@context.User.Identity?.Name</MudIconButton>
     </Authorized>
     <NotAuthorized>
-        <MudIconButton Icon="@Icons.Material.Outlined.AppRegistration" Disabled="true" Link="Identity/Account/Register">Register</MudIconButton>
-        <MudIconButton Icon="@Icons.Material.Outlined.Login" Link="Identity/Account/Login">Log in</MudIconButton>
+        <MudIconButton Icon="@Icons.Material.Outlined.AppRegistration" Disabled="true" Href="Identity/Account/Register">Register</MudIconButton>
+        <MudIconButton Icon="@Icons.Material.Outlined.Login" Href="Identity/Account/Login">Log in</MudIconButton>
     </NotAuthorized>
 </AuthorizeView>

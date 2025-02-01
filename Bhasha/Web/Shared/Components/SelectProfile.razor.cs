@@ -1,7 +1,6 @@
 ﻿using Bhasha.Domain;
 using Bhasha.Services;
 using Microsoft.AspNetCore.Components;
-using MudBlazor;
 using Profile = Bhasha.Domain.Profile;
 
 namespace Bhasha.Web.Shared.Components;
@@ -17,15 +16,15 @@ public partial class SelectProfile : ComponentBase
     private Language? _selectedNative;
     private Language? _selectedTarget;
 
-    internal void OnSelectedNative(MudChip<Language> chip)
+    internal void OnSelectedNative(Language selectedNative)
     {
-        _selectedNative = chip.Value;
+        _selectedNative = selectedNative;
         ValidateParameters();
     }
 
-    internal void OnSelectedTarget(MudChip<Language> chip)
+    internal void OnSelectedTarget(Language selectedTarget)
     {
-        _selectedTarget = chip.Value;
+        _selectedTarget = selectedTarget;
         ValidateParameters();
     }
 

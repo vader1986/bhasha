@@ -69,7 +69,7 @@ public partial class EditChapter : ComponentBase
             var dialog = await DialogService.ShowAsync<AddPage>("Add Page");
             var result = await dialog.Result;
 
-            if (!result.Canceled)
+            if (result is { Canceled: false, Data: not null })
             {
                 Pages.Add((string)result.Data);
             }
@@ -96,10 +96,8 @@ public partial class EditChapter : ComponentBase
         
         var dialog = await DialogService.ShowAsync<TranslationDialog>(title, args);
         var result = await dialog.Result;
-        if (result.Canceled)
-            return false;
         
-        return true;
+        return result is not null && !result.Canceled;
     }
 
     private async Task OnDelete()
