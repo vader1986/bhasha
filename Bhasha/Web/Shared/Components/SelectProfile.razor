@@ -30,7 +30,7 @@
         <MudChipSet T="Language" SelectedColor="Color.Warning" bind-SelectedValue="@_selectedNative">
             @foreach (var language in Language.Supported.Values)
             {
-                <MudChip Text="@language.Pretty()" />
+                <MudChip Text="@language.Pretty()" Value="@language" />
             }
         </MudChipSet>
 
@@ -39,7 +39,7 @@
         <MudChipSet T="Language" SelectedColor="Color.Warning" bind-SelectedValue="@_selectedTarget">
             @foreach (var language in Language.Supported.Values)
             {
-                <MudChip Text="@language.Pretty()" />
+                <MudChip Text="@language.Pretty()" Value="@language" />
             }
         </MudChipSet>
 
