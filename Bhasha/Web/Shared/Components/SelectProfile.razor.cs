@@ -1,6 +1,7 @@
 ﻿using Bhasha.Domain;
 using Bhasha.Services;
 using Microsoft.AspNetCore.Components;
+using MudBlazor;
 using Profile = Bhasha.Domain.Profile;
 
 namespace Bhasha.Web.Shared.Components;
@@ -15,14 +16,15 @@ public partial class SelectProfile : ComponentBase
     private bool _disableCreateButton = true;
     private Language? _selectedNative;
     private Language? _selectedTarget;
+    private string? _error;
 
-    internal void OnSelectedNative(Language selectedNative)
+    private void OnSelectedNative(Language selectedNative)
     {
         _selectedNative = selectedNative;
         ValidateParameters();
     }
 
-    internal void OnSelectedTarget(Language selectedTarget)
+    private void OnSelectedTarget(Language selectedTarget)
     {
         _selectedTarget = selectedTarget;
         ValidateParameters();
@@ -43,7 +45,7 @@ public partial class SelectProfile : ComponentBase
         }
     }
 
-    internal async Task OnCreate()
+    private async Task OnCreate()
     {
         if (_selectedNative == null)
             throw new InvalidOperationException("No native language selected");
@@ -57,6 +59,25 @@ public partial class SelectProfile : ComponentBase
         _disableCreateButton = true;
 
         OnSelection(profile);
+    }
+
+
+    private EventCallback<MudChip<Profile>> OnDeleteProfile(Profile profile)
+    {
+        return new EventCallback<MudChip<Profile>>(this, async () => await OnDeleteAsync(profile));
+    }
+    
+    private async Task OnDeleteAsync(Profile profile)
+    {
+        try
+        {
+            await StudyingService.DeleteProfile(profile.Key);
+        }
+        catch (Exception e)
+        {
+            _error = $"{e.Message}: {e.StackTrace}";
+        }
+        await InvokeAsync(StateHasChanged);
     }
 }
 

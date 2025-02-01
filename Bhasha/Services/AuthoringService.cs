@@ -12,35 +12,27 @@ public interface IAuthoringService
     Task AddOrUpdateChapter(Chapter chapter, CancellationToken token = default);
 }
 
-public class AuthoringService : IAuthoringService
+public class AuthoringService(
+    IChapterRepository chapterRepository,
+    ITranslationRepository translationRepository,
+    IExpressionRepository expressionRepository) : IAuthoringService
 {
-    private readonly IChapterRepository _chapterRepository;
-    private readonly ITranslationRepository _translationRepository;
-    private readonly IExpressionRepository _expressionRepository;
-
-    public AuthoringService(IChapterRepository chapterRepository, ITranslationRepository translationRepository, IExpressionRepository expressionRepository)
-    {
-        _chapterRepository = chapterRepository;
-        _translationRepository = translationRepository;
-        _expressionRepository = expressionRepository;
-    }
-    
     public async Task<Expression> GetOrCreateExpression(string text, int level, CancellationToken token = default)
     {
-        var reference = await _translationRepository.Find(text, Language.Reference, token);
+        var reference = await translationRepository.Find(text, Language.Reference, token);
 
         if (reference != null)
         {
             return reference.Expression;
         }
 
-        var expression = await _expressionRepository
+        var expression = await expressionRepository
             .Add(Expression.Create(level) with
             {
                 Labels = [text]
             }, token);
         
-        await _translationRepository
+        await translationRepository
             .AddOrUpdate(Translation.Create(expression, Language.Reference, text), token);
 
         return expression;
@@ -48,11 +40,11 @@ public class AuthoringService : IAuthoringService
 
     public async Task AddOrUpdateTranslation(Translation translation, CancellationToken token = default)
     {
-        await _translationRepository.AddOrUpdate(translation, token);
+        await translationRepository.AddOrUpdate(translation, token);
     }
 
     public async Task AddOrUpdateChapter(Chapter chapter, CancellationToken token = default)
     {
-        await _chapterRepository.AddOrUpdate(chapter, token);
+        await chapterRepository.AddOrUpdate(chapter, token);
     }
 }

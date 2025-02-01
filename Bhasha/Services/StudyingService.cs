@@ -11,34 +11,26 @@ public interface IStudyingService
     Task<Profile> GetProfile(ProfileKey key);
     Task<IReadOnlyList<Profile>> GetProfiles(string userId);
     Task<Profile> CreateProfile(ProfileKey key);
+    Task DeleteProfile(ProfileKey key);
     Task<DisplayedChapter?> GetCurrentChapter(ProfileKey key);
     Task<IReadOnlyList<DisplayedSummary>> GetSummaries(ProfileKey key);
     Task<DisplayedChapter> SelectChapter(ChapterKey key);
     Task<Validation> Submit(ValidationInput input);
 }
 
-public class StudyingService : IStudyingService
+public class StudyingService(
+    IProfileRepository repository,
+    IValidator validator,
+    IChapterSummariesProvider summariesProvider,
+    IChapterProvider chapterProvider) : IStudyingService
 {
-    private readonly IProfileRepository _repository;
-    private readonly IValidator _validator;
-    private readonly IChapterSummariesProvider _summariesProvider;
-    private readonly IChapterProvider _chapterProvider;
-    private readonly IMemoryCache _cache;
-    
-    public StudyingService(IProfileRepository repository, IValidator validator, IChapterSummariesProvider summariesProvider, IChapterProvider chapterProvider)
-    {
-        _repository = repository;
-        _validator = validator;
-        _summariesProvider = summariesProvider;
-        _chapterProvider = chapterProvider;
-        _cache = new MemoryCache(new MemoryCacheOptions());
-    }
-    
+    private readonly IMemoryCache _cache = new MemoryCache(new MemoryCacheOptions());
+
     private async Task<T> RunWithProfile<T>(ProfileKey key, Func<Profile, Task<T>> handle)
     {
         if (_cache.TryGetValue<Profile>(key, out var profile) is false)
         {
-            foreach (var userProfile in await _repository.FindByUser(key.UserId))
+            foreach (var userProfile in await repository.FindByUser(key.UserId))
             {
                 if (userProfile.Key == key)
                     profile = userProfile;
@@ -64,7 +56,7 @@ public class StudyingService : IStudyingService
     {
         var result = new List<Profile>();
         
-        foreach (var profile in await _repository.FindByUser(userId))
+        foreach (var profile in await repository.FindByUser(userId))
         {
             _cache.Set(profile.Key, profile);
             
@@ -85,11 +77,17 @@ public class StudyingService : IStudyingService
         if (!Language.Supported.ContainsKey(key.Target))
             throw new ArgumentException("Target language is not supported", nameof(key));
 
-        var profile = await _repository.Add(Profile.Create(key));
+        var profile = await repository.Add(Profile.Create(key));
 
         _cache.Set(key, profile);
 
         return profile;
+    }
+
+    public async Task DeleteProfile(ProfileKey key)
+    {
+        await repository.Delete(key);
+        _cache.Remove(key);
     }
 
     public async Task<DisplayedChapter?> GetCurrentChapter(ProfileKey key)
@@ -101,7 +99,7 @@ public class StudyingService : IStudyingService
                 return null;
 
             var chapterKey = new ChapterKey(chapterId.Value, key);
-            return await _chapterProvider.Load(chapterKey);
+            return await chapterProvider.Load(chapterKey);
         });
     }
 
@@ -109,7 +107,7 @@ public class StudyingService : IStudyingService
     {
         return await RunWithProfile(key, async profile =>
         {
-            var summaries = await _summariesProvider.GetSummaries(profile.Level, key.Native);
+            var summaries = await summariesProvider.GetSummaries(profile.Level, key.Native);
             
             return summaries
                 .Select(summary => new DisplayedSummary(
@@ -125,10 +123,10 @@ public class StudyingService : IStudyingService
     {
         return await RunWithProfile(key.ProfileKey, async profile =>
         {
-            var chapter = await _chapterProvider.Load(key);
+            var chapter = await chapterProvider.Load(key);
             var updatedProfile = profile.Select(chapter);
 
-            await _repository.Update(updatedProfile);
+            await repository.Update(updatedProfile);
 
             _cache.Set(updatedProfile.Key, updatedProfile);
             
@@ -140,10 +138,10 @@ public class StudyingService : IStudyingService
     {
         return await RunWithProfile(input.Key, async profile =>
         {
-            var validation = await _validator.Validate(input);
+            var validation = await validator.Validate(input);
             var updatedProfile = profile.Submit(validation.Result);
 
-            await _repository.Update(updatedProfile);
+            await repository.Update(updatedProfile);
 
             _cache.Set(updatedProfile.Key, updatedProfile);
 

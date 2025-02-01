@@ -1,4 +1,3 @@
-using Bhasha.Shared.Identity;
 using Microsoft.AspNetCore.Identity;
 
 namespace Bhasha.Identity.Extensions;

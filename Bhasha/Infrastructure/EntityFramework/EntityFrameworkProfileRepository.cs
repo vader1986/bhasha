@@ -1,3 +1,4 @@
+using Bhasha.Domain;
 using Bhasha.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Profile = Bhasha.Domain.Profile;
@@ -16,6 +17,20 @@ public class EntityFrameworkProfileRepository(AppDbContext context) : IProfileRe
 
         return Converter
             .Convert(result.Entity);
+    }
+
+    public async Task Delete(ProfileKey key, CancellationToken token = default)
+    {
+        var dto = await context.Profiles
+            .SingleAsync(x => x.UserId == key.UserId && 
+                              x.Native == key.Native &&
+                              x.Target == key.Target, token);
+
+        context.Profiles
+            .Remove(dto);
+        
+        await context
+            .SaveChangesAsync(token);
     }
 
     public async Task Update(Profile profile, CancellationToken token = default)

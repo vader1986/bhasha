@@ -5,8 +5,7 @@ namespace Bhasha.Services;
 
 public class ChapterSummariesProvider(
     IChapterRepository chapterRepository,
-    ITranslationProvider translationProvider)
-    : IChapterSummariesProvider
+    ITranslationProvider translationProvider) : IChapterSummariesProvider
 {
     private async IAsyncEnumerable<Summary> LoadSummaries(IEnumerable<Chapter> chapters, Language language)
     {

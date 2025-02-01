@@ -14,10 +14,15 @@ public partial record Profile(
     public static Profile Create(ProfileKey key)
     {
         return new Profile(
-            Id: default,
+            Id: 0,
             Key: key,
             Level: 1,
-            CompletedChapters: Array.Empty<int>(),
+            CompletedChapters: [],
             CurrentChapter: null);
+    }
+
+    public override string ToString()
+    {
+        return $"{Language.Parse(Key.Native).Pretty()} - {Language.Parse(Key.Target).Pretty()}";
     }
 }

@@ -1,19 +1,28 @@
 ﻿@inherits ComponentBase
 
+@if (_error != null)
+{
+    <MudAlert Severity="Severity.Error">@_error</MudAlert>
+}
+
 <MudCard>
     <MudCardContent Style="text-align: center">
 
         @if (Profiles.Any())
         {
-            <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" Vertical="true">
+            <MudChipSet T="Profile">
                 @foreach (var profile in Profiles)
                 {
-                    <MudButton OnClick="() => OnSelection(profile)">
-                        @Language.Parse(profile.Key.Native).Pretty() -
-                        @Language.Parse(profile.Key.Target).Pretty()
-                    </MudButton>
+                    <MudChip 
+                        Text="@profile.ToString()"
+                        CloseIcon="@Icons.Material.Filled.Delete"
+                        OnClick="@(() => OnSelection(profile))"
+                        OnClose="@OnDeleteProfile(profile)" 
+                        Value="@profile"/>
                 }
-            </MudButtonGroup>
+                
+            </MudChipSet>
+            
             <MudDivider DividerType="DividerType.Middle" Class="my-3" />
         }
 

@@ -6,38 +6,31 @@ using Expression = Bhasha.Domain.Expression;
 
 namespace Bhasha.Services;
 
-public class MultipleChoicePageFactory : IMultipleChoicePageFactory
+public class MultipleChoicePageFactory(ITranslationRepository translations) : IMultipleChoicePageFactory
 {
     private const int MaxNumberOfChoices = 4;
 
-    private readonly ITranslationRepository _translations;
-
-    public MultipleChoicePageFactory(ITranslationRepository translations)
-	{
-        _translations = translations;
-    }
-
     public async Task<DisplayedPage<MultipleChoice>> Create(Chapter chapter, Expression expression, ProfileKey languages)
     {
-        var translations = new List<Translation>();
+        var translations1 = new List<Translation>();
         
         foreach (var page in chapter.Pages)
         {
-            var translation = await _translations.Find(page.Id, languages.Target);
+            var translation = await translations.Find(page.Id, languages.Target);
 
             if (translation is null)
             {
                 throw new InvalidOperationException($"No translation for expression {page.Id} to {languages.Target}");
             }
             
-            translations.Add(translation);
+            translations1.Add(translation);
         }
 
-        var choices = translations
+        var choices = translations1
             .Where(x => x.Expression.Id != expression.Id)
             .OrderBy(_ => Guid.NewGuid())
-            .Take(Math.Min(MaxNumberOfChoices - 1, translations.Count))
-            .Append(translations
+            .Take(Math.Min(MaxNumberOfChoices - 1, translations1.Count))
+            .Append(translations1
                 .First(x => x.Expression.Id == expression.Id))
             .Select(x => x with
             {
@@ -48,7 +41,7 @@ public class MultipleChoicePageFactory : IMultipleChoicePageFactory
 
         Random.Shared.Shuffle(choices);
         
-        var word = await _translations
+        var word = await translations
             .Find(expression.Id, languages.Native);
         
         if (word is null)
@@ -57,7 +50,7 @@ public class MultipleChoicePageFactory : IMultipleChoicePageFactory
         return new DisplayedPage<MultipleChoice>(
             PageType.MultipleChoice,
             word,
-            Lead: default,
+            Lead: null,
             new MultipleChoice(choices));
     }
 }
