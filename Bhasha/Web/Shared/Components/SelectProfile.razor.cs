@@ -43,6 +43,8 @@ public partial class SelectProfile : ComponentBase
         {
             _disableCreateButton = true;
         }
+        
+        StateHasChanged();
     }
 
     private async Task OnCreate()
