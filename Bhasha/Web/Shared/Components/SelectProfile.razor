@@ -27,7 +27,7 @@
         }
 
         <MudText>Please select your native language</MudText>
-        <MudChipSet T="string">
+        <MudChipSet T="string" SelectedColor="Color.Warning">
             @foreach (var language in Language.Supported.Values)
             {
                 <MudChip OnClick="@(() => OnSelectedNative(language))">@language.Pretty()</MudChip>
@@ -36,7 +36,7 @@
 
         <MudDivider DividerType="DividerType.Middle" Class="my-3" />
         <MudText>... and select your target language</MudText>
-        <MudChipSet T="string">
+        <MudChipSet T="string" SelectedColor="Color.Warning">
             @foreach (var language in Language.Supported.Values)
             {
                 <MudChip OnClick="@(() => OnSelectedTarget(language))">@language.Pretty()</MudChip>

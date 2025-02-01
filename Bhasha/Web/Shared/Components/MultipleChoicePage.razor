@@ -5,7 +5,7 @@
 
 @if (_arguments != null)
 {
-    <MudChipSet @bind-SelectedValue="_selectedChoice">
+    <MudChipSet @bind-SelectedValue="_selectedChoice" SelectedColor="Color.Warning">
         @foreach (var choice in _arguments.Choices)
         {
             @if (string.IsNullOrWhiteSpace(choice.Spoken))
