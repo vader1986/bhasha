@@ -30,7 +30,11 @@
         <MudChipSet T="string" SelectedColor="Color.Warning">
             @foreach (var language in Language.Supported.Values)
             {
-                <MudChip OnClick="@(() => OnSelectedNative(language))">@language.Pretty()</MudChip>
+                <MudChip
+                    Selected="@(_selectedNative == language)"
+                    OnClick="@(() => OnSelectedNative(language))">
+                    @language.Pretty()
+                </MudChip>
             }
         </MudChipSet>
 
@@ -39,7 +43,11 @@
         <MudChipSet T="string" SelectedColor="Color.Warning">
             @foreach (var language in Language.Supported.Values)
             {
-                <MudChip OnClick="@(() => OnSelectedTarget(language))">@language.Pretty()</MudChip>
+                <MudChip
+                    Selected="@(_selectedTarget == language)"
+                    OnClick="@(() => OnSelectedTarget(language))">
+                    @language.Pretty()
+                </MudChip>
             }
         </MudChipSet>
 
