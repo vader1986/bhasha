@@ -9,7 +9,6 @@ using Bhasha.Infrastructure.BlazorSpeechSynthesis;
 using Bhasha.Infrastructure.EntityFramework;
 using Bhasha.Infrastructure.Toolbelt;
 using Bhasha.Services;
-using Bhasha.Shared.Identity;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -30,7 +29,7 @@ try
     var translationConfiguration = new TranslationConfiguration();
     
     builder.Configuration
-        .GetSection("Translation")
+        .GetSection(TranslationConfiguration.SectionName)
         .Bind(translationConfiguration);
     
     ////////////////////
