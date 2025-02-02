@@ -7,7 +7,7 @@
 {
     @if (!string.IsNullOrWhiteSpace(_arguments.ImageId))
     {
-        <MudImage Src="{@Resources.ImageBaseUrl}/{@_arguments.ImageId}" />
+        <MudImage Src="@GetImageSource(_arguments.ImageId)" />
     }
     
     <MudChipSet @bind-SelectedValue="_selectedChoice" SelectedColor="Color.Warning">

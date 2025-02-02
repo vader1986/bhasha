@@ -20,6 +20,11 @@ public partial class MultipleChoicePage : ComponentBase
     private Translation? _selectedChoice;
     private bool _playAudio;
 
+    private string GetImageSource(string image)
+    {
+        return $"{Resources.ImageBaseUrl}/{image}";
+    }
+    
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
