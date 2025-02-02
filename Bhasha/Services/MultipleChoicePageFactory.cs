@@ -51,6 +51,6 @@ public class MultipleChoicePageFactory(ITranslationRepository translations) : IM
             PageType.MultipleChoice,
             word,
             Lead: null,
-            new MultipleChoice(choices));
+            new MultipleChoice(choices, expression.ResourceId));
     }
 }

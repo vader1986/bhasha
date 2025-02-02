@@ -3,7 +3,7 @@ using Bhasha.Infrastructure.AzureTranslatorApi;
 
 namespace Bhasha;
 
-public class TranslationConfiguration
+public sealed class TranslationConfiguration
 {
     public const string SectionName = "Translation";
     

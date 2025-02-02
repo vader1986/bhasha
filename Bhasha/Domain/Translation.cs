@@ -10,6 +10,6 @@ public record Translation(
 {
 	public static Translation Create(Expression expression, Language language, string text)
 	{
-		return new Translation(default, language, text, default, default, expression);
+		return new Translation(0, language, text, null, null, expression);
 	}
 }

@@ -87,7 +87,16 @@ try
     services.AddScoped<IAuthoringService, AuthoringService>();
     services.AddScoped<IStudyingService, StudyingService>();
     services.AddSingleton<ITranslationProvider, CachingTranslationProvider>();
+    
+    var resources = new ResourcesSettings();
+    
+    builder.Configuration
+        .GetSection(ResourcesSettings.SectionName)
+        .Bind(resources);
 
+    //https://bhasha.blob.core.windows.net/images/images/dog.png
+    services.AddSingleton(resources);
+    
     if (translationConfiguration.AzureTranslatorApi is null)
     {
         services.AddSingleton<ITranslator, NoTranslator>();

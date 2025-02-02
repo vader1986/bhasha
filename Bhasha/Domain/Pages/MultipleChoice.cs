@@ -1,3 +1,3 @@
 ﻿namespace Bhasha.Domain.Pages;
 
-public record MultipleChoice(Translation[] Choices);
+public record MultipleChoice(Translation[] Choices, string? ImageId);

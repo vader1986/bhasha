@@ -5,6 +5,11 @@
 
 @if (_arguments != null)
 {
+    @if (!string.IsNullOrWhiteSpace(_arguments.ImageId))
+    {
+        <MudImage Src="{@Resources.ImageBaseUrl}/{@_arguments.ImageId}" />
+    }
+    
     <MudChipSet @bind-SelectedValue="_selectedChoice" SelectedColor="Color.Warning">
         @foreach (var choice in _arguments.Choices)
         {

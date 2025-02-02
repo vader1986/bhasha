@@ -9,6 +9,7 @@ public partial class MultipleChoicePage : ComponentBase
 {
     [Inject] public required ISpeaker Speaker { get; set; }
     [Inject] public required ILogger<MultipleChoicePage> Logger { get; set; }
+    [Inject] public required ResourcesSettings Resources { get; set; }
     [Parameter] public required DisplayedPage<MultipleChoice> Data { get; set; }
     [Parameter] public required Func<Translation, Task> Submit { get; set; }
 
