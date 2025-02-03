@@ -12,7 +12,7 @@ public partial class ExpressionEditDialog : ComponentBase
     [CascadingParameter] public required IMudDialogInstance MudDialog { get; set; }
 
     public string? Text { get; set; }
-    private string? _error;
+    private string? _error = "123";
     private Expression? _expression;
     
     private bool DisableSubmit => _expression is null;
@@ -21,19 +21,23 @@ public partial class ExpressionEditDialog : ComponentBase
     {
         if (string.IsNullOrWhiteSpace(Text))
             return;
-        
+
         try
         {
+            _error = Text;
+            
             var translation = await TranslationRepository
                 .Find(text: Text, Language.Reference);
 
             _expression = translation is null ? Expression.Create() : translation.Expression;
-
-            await InvokeAsync(StateHasChanged);
         }
         catch (Exception e)
         {
             _error = e.Message;
+        }
+        finally
+        {
+            await InvokeAsync(StateHasChanged);
         }
     }
 
