@@ -12,6 +12,82 @@ namespace Bhasha.Infrastructure.EntityFramework;
 
 public static class Converter
 {
+    public static Domain.ExpressionType ToDomain(this ExpressionType expressionType) => expressionType switch
+    {
+        ExpressionType.Word => Domain.ExpressionType.Word,
+        ExpressionType.Expression => Domain.ExpressionType.Expression,
+        ExpressionType.Phrase => Domain.ExpressionType.Phrase,
+        ExpressionType.Text => Domain.ExpressionType.Text,
+        ExpressionType.Punctuation => Domain.ExpressionType.Punctuation,
+        _ => throw new ArgumentOutOfRangeException(nameof(expressionType), expressionType, null)
+    };
+
+    public static ExpressionType ToEntityFramework(this Domain.ExpressionType expressionType) => expressionType switch
+    {
+        Domain.ExpressionType.Word => ExpressionType.Word,
+        Domain.ExpressionType.Expression => ExpressionType.Expression,
+        Domain.ExpressionType.Phrase => ExpressionType.Phrase,
+        Domain.ExpressionType.Text => ExpressionType.Text,
+        Domain.ExpressionType.Punctuation => ExpressionType.Punctuation,
+        _ => throw new ArgumentOutOfRangeException(nameof(expressionType), expressionType, null)
+    };
+
+    public static Domain.PartOfSpeech ToDomain(this PartOfSpeech partOfSpeech) => partOfSpeech switch
+    {
+        PartOfSpeech.Adjective => Domain.PartOfSpeech.Adjective,
+        PartOfSpeech.Adverb => Domain.PartOfSpeech.Adverb,
+        PartOfSpeech.AuxiliaryVerb => Domain.PartOfSpeech.AuxiliaryVerb,
+        PartOfSpeech.Determiner => Domain.PartOfSpeech.Determiner,
+        PartOfSpeech.Exclamation => Domain.PartOfSpeech.Exclamation,
+        PartOfSpeech.ModalVerb => Domain.PartOfSpeech.ModalVerb,
+        PartOfSpeech.Noun => Domain.PartOfSpeech.Noun,
+        PartOfSpeech.PhrasalVerb => Domain.PartOfSpeech.PhrasalVerb,
+        PartOfSpeech.Phrase => Domain.PartOfSpeech.Phrase,
+        PartOfSpeech.Preposition => Domain.PartOfSpeech.Preposition,
+        PartOfSpeech.Pronoun => Domain.PartOfSpeech.Pronoun,
+        PartOfSpeech.Verb => Domain.PartOfSpeech.Verb,
+        _ => throw new ArgumentOutOfRangeException(nameof(partOfSpeech), partOfSpeech, null)
+    };
+
+    public static PartOfSpeech ToEntityFramework(this Domain.PartOfSpeech partOfSpeech) => partOfSpeech switch
+    {
+        Domain.PartOfSpeech.Adjective => PartOfSpeech.Adjective,
+        Domain.PartOfSpeech.Adverb => PartOfSpeech.Adverb,
+        Domain.PartOfSpeech.AuxiliaryVerb => PartOfSpeech.AuxiliaryVerb,
+        Domain.PartOfSpeech.Determiner => PartOfSpeech.Determiner,
+        Domain.PartOfSpeech.Exclamation => PartOfSpeech.Exclamation,
+        Domain.PartOfSpeech.ModalVerb => PartOfSpeech.ModalVerb,
+        Domain.PartOfSpeech.Noun => PartOfSpeech.Noun,
+        Domain.PartOfSpeech.PhrasalVerb => PartOfSpeech.PhrasalVerb,
+        Domain.PartOfSpeech.Phrase => PartOfSpeech.Phrase,
+        Domain.PartOfSpeech.Preposition => PartOfSpeech.Preposition,
+        Domain.PartOfSpeech.Pronoun => PartOfSpeech.Pronoun,
+        Domain.PartOfSpeech.Verb => PartOfSpeech.Verb,
+        _ => throw new ArgumentOutOfRangeException(nameof(partOfSpeech), partOfSpeech, null)
+    };
+    
+    public static CEFR ToDomain(this Cefr cefr) => cefr switch
+    {
+        Cefr.A1 => CEFR.A1,
+        Cefr.A2 => CEFR.A2,
+        Cefr.B1 => CEFR.B1,
+        Cefr.B2 => CEFR.B2,
+        Cefr.C1 => CEFR.C1,
+        Cefr.C2 => CEFR.C2,
+        _ => throw new ArgumentOutOfRangeException(nameof(cefr), cefr, null)
+    };
+
+    public static Cefr ToEntityFramework(this CEFR cefr) => cefr switch
+    {
+        CEFR.A1 => Cefr.A1,
+        CEFR.A2 => Cefr.A2,
+        CEFR.B1 => Cefr.B1,
+        CEFR.B2 => Cefr.B2,
+        CEFR.C1 => Cefr.C1,
+        CEFR.C2 => Cefr.C2,
+        _ => throw new ArgumentOutOfRangeException(nameof(cefr), cefr, null)
+    };
+    
     public static ChapterDto Convert(Chapter chapter)
     {
         return new ChapterDto
@@ -46,41 +122,9 @@ public static class Converter
         return new ExpressionDto
         {
             Id = expression.Id,
-            ExpressionType = expression.ExpressionType switch
-            {
-                Domain.ExpressionType.Word => ExpressionType.Word,
-                Domain.ExpressionType.Expression => ExpressionType.Expression,
-                Domain.ExpressionType.Phrase => ExpressionType.Phrase,
-                Domain.ExpressionType.Text => ExpressionType.Text,
-                Domain.ExpressionType.Punctuation => ExpressionType.Punctuation,
-                _ => null
-            },
-            PartOfSpeech = expression.PartOfSpeech switch
-            {
-                Domain.PartOfSpeech.Adjective => PartOfSpeech.Adjective,
-                Domain.PartOfSpeech.Adverb => PartOfSpeech.Adverb,
-                Domain.PartOfSpeech.AuxiliaryVerb => PartOfSpeech.AuxiliaryVerb,
-                Domain.PartOfSpeech.Determiner => PartOfSpeech.Determiner,
-                Domain.PartOfSpeech.Exclamation => PartOfSpeech.Exclamation,
-                Domain.PartOfSpeech.ModalVerb => PartOfSpeech.ModalVerb,
-                Domain.PartOfSpeech.Noun => PartOfSpeech.Noun,
-                Domain.PartOfSpeech.PhrasalVerb => PartOfSpeech.PhrasalVerb,
-                Domain.PartOfSpeech.Phrase => PartOfSpeech.Phrase,
-                Domain.PartOfSpeech.Preposition => PartOfSpeech.Preposition,
-                Domain.PartOfSpeech.Pronoun => PartOfSpeech.Pronoun,
-                Domain.PartOfSpeech.Verb => PartOfSpeech.Verb,
-                _ => null
-            },
-            Cefr = expression.Cefr switch
-            {
-                CEFR.A1 => Cefr.A1,
-                CEFR.A2 => Cefr.A2,
-                CEFR.B1 => Cefr.B1,
-                CEFR.B2 => Cefr.B2,
-                CEFR.C1 => Cefr.C1,
-                CEFR.C2 => Cefr.C2,
-                _ => null
-            },
+            ExpressionType = expression.ExpressionType?.ToEntityFramework(),
+            PartOfSpeech = expression.PartOfSpeech?.ToEntityFramework(),
+            Cefr = expression.Cefr?.ToEntityFramework(),
             ResourceId = expression.ResourceId,
             Labels = expression.Labels,
             Synonyms = expression.Synonyms,
@@ -92,41 +136,9 @@ public static class Converter
     {
         return new Expression(
             dto.Id,
-            dto.ExpressionType switch
-            {
-                ExpressionType.Word => Domain.ExpressionType.Word,
-                ExpressionType.Expression => Domain.ExpressionType.Expression,
-                ExpressionType.Phrase => Domain.ExpressionType.Phrase,
-                ExpressionType.Text => Domain.ExpressionType.Text,
-                ExpressionType.Punctuation => Domain.ExpressionType.Punctuation,
-                _ => null
-            },
-            dto.PartOfSpeech switch
-            {
-                PartOfSpeech.Adjective => Domain.PartOfSpeech.Adjective,
-                PartOfSpeech.Adverb => Domain.PartOfSpeech.Adverb,
-                PartOfSpeech.AuxiliaryVerb => Domain.PartOfSpeech.AuxiliaryVerb,
-                PartOfSpeech.Determiner => Domain.PartOfSpeech.Determiner,
-                PartOfSpeech.Exclamation => Domain.PartOfSpeech.Exclamation,
-                PartOfSpeech.ModalVerb => Domain.PartOfSpeech.ModalVerb,
-                PartOfSpeech.Noun => Domain.PartOfSpeech.Noun,
-                PartOfSpeech.PhrasalVerb => Domain.PartOfSpeech.PhrasalVerb,
-                PartOfSpeech.Phrase => Domain.PartOfSpeech.Phrase,
-                PartOfSpeech.Preposition => Domain.PartOfSpeech.Preposition,
-                PartOfSpeech.Pronoun => Domain.PartOfSpeech.Pronoun,
-                PartOfSpeech.Verb => Domain.PartOfSpeech.Verb,
-                _ => null
-            },
-            dto.Cefr switch
-            {
-                Cefr.A1 => CEFR.A1,
-                Cefr.A2 => CEFR.A2,
-                Cefr.B1 => CEFR.B1,
-                Cefr.B2 => CEFR.B2,
-                Cefr.C1 => CEFR.C1,
-                Cefr.C2 => CEFR.C2,
-                _ => null
-            },
+            dto.ExpressionType?.ToDomain(),
+            dto.PartOfSpeech?.ToDomain(),
+            dto.Cefr?.ToDomain(),
             dto.ResourceId,
             dto.Labels,
             dto.Synonyms,

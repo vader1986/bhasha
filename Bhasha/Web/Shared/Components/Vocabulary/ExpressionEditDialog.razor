@@ -1,0 +1,24 @@
+﻿@inherits ComponentBase
+
+<MudDialog>
+    <DialogContent>
+        <MudPaper Width="100%">
+            <MudContainer MaxWidth="MaxWidth.Small">
+                
+                <MudTextField T="string" bind-Value="@_text" OnBlur="@OnBlurAsync" />
+                
+                @if (_expression is not null)
+                {
+                    <ExpressionEditView bind-Value="_expression" />
+                    <TranslationListEditView Expression="_expression" />
+                }
+                
+            </MudContainer>
+        </MudPaper>
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton OnClick="@OnCancel">Cancel</MudButton>
+        <MudButton Disabled="@DisableSubmit" Variant="Variant.Outlined" OnClick="@OnSaveAsync">Save</MudButton>
+    </DialogActions>
+</MudDialog>

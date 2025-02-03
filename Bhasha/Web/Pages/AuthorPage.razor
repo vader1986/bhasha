@@ -11,6 +11,8 @@
     
     @if (DisplayOverview)
     {
+        <MudButton FullWidth="true" OnClick="@OnExpressionsSelectedAsync">Expressions</MudButton>
+        <br/>
         <MudButton FullWidth="true" OnClick="@OnEditChapterClicked">Edit Chapter</MudButton>
         <br/>
         <MudButton FullWidth="true" OnClick="@OnCreateChapterClicked">Create Chapter</MudButton>

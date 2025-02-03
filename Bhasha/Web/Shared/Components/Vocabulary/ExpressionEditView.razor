@@ -5,4 +5,18 @@
     <MudSelect OnBlur="OnFocusLost" T="ExpressionType?" bind-Value="_expressionType" Label="Expression Type"/>
     <MudSelect OnBlur="OnFocusLost" T="PartOfSpeech?" bind-Value="_partOfSpeech" Label="Part of speech"/>
     <MudSelect OnBlur="OnFocusLost" T="CEFR?" bind-Value="_cefr" Label="CEFR"/>
+
+    @if (!string.IsNullOrWhiteSpace(_resourceId))
+    {
+        <MudImage Src="@GetImageSource()" />
+    }
+
+    <MudFileUpload T="IBrowserFile" MaximumFileCount="1" FilesChanged="@OnResourceChanged">
+        <ActivatorContent>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Image">
+                Upload Image
+            </MudButton>
+        </ActivatorContent>
+    </MudFileUpload>
+    
 </MudCardContent>

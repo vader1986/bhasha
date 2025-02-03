@@ -1,0 +1,18 @@
+﻿@inherits ComponentBase
+
+@if (!string.IsNullOrWhiteSpace(_error))
+{
+    <MudAlert Severity="Severity.Error">@_error</MudAlert>
+}
+
+@foreach (var translation in _translations)
+{
+    <MudTooltip Text="@translation.Origin.Language">
+        <MudTextField T="string" bind-Value="@translation.Text" />
+        <MudIconButton 
+            Icon="@Icons.Material.Filled.Delete" 
+            OnClick="@(async () => await OnDeleteAsync(translation))" />
+    </MudTooltip>
+}
+
+<MudIconButton OnClick="@OnAddAsync" Icon="@Icons.Material.Filled.Add" />

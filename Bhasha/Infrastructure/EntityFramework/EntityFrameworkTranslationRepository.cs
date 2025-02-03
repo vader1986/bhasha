@@ -19,6 +19,20 @@ public class EntityFrameworkTranslationRepository(AppDbContext context) : ITrans
             .Convert(row);
     }
 
+    public async Task<IEnumerable<Translation>> Find(int expressionId, CancellationToken token = default)
+    {
+        var rows = context.Translations
+            .Where(row => row.Expression.Id == expressionId);
+
+        await rows
+            .Include(row => row.Expression)
+            .LoadAsync(token);
+
+        return rows
+            .AsEnumerable()
+            .Select(Converter.Convert);
+    }
+
     public async Task<Translation?> Find(string text, string language, CancellationToken token = default)
     {
         var row = await context.Translations
@@ -79,5 +93,17 @@ public class EntityFrameworkTranslationRepository(AppDbContext context) : ITrans
             return Converter
                 .Convert(result.Entity);
         }
+    }
+
+    public async Task Delete(int translationId, CancellationToken token = default)
+    {
+        var dto = await context.Translations
+            .SingleAsync(x => x.Id == translationId, token);
+
+        context.Translations
+            .Remove(dto);
+        
+        await context
+            .SaveChangesAsync(token);
     }
 }

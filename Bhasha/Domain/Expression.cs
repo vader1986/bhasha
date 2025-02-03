@@ -17,6 +17,6 @@ public partial record Expression(
 {
 	public static Expression Create(int level = 1)
 	{
-		return new Expression(default, default, default, default, default, Array.Empty<string>(), Array.Empty<string>(), level);
+		return new Expression(0, null, null, null, null, [], [], level);
 	}
 }

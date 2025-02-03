@@ -1,0 +1,37 @@
+﻿@inherits ComponentBase
+
+<MudDialog>
+    <DialogContent>
+        <MudPaper Width="100%">
+            <MudContainer MaxWidth="MaxWidth.Small">
+                <MudCard Outlined="true">
+
+                    @if (!string.IsNullOrWhiteSpace(_error))
+                    {
+                        <MudAlert Severity="Severity.Error">@_error</MudAlert>
+                    }
+                    
+                    <MudCardContent Style="text-align: center">
+
+                        <MudChipSet T="Language"
+                                    SelectedColor="Color.Warning"
+                                    SelectedValueChanged="@OnLanguageChanged">
+                            @foreach (var language in _languages)
+                            {
+                                <MudChip Text="@language.Pretty()" Value="@language"/>
+                            }
+                        </MudChipSet>
+
+                        <MudTextField T="string" ValueChanged="@OnTextChanged"/>
+                        
+                    </MudCardContent>
+                </MudCard>
+            </MudContainer>
+        </MudPaper>
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton OnClick="@OnCancel">Cancel</MudButton>
+        <MudButton Disabled="@DisableAdd" Variant="Variant.Outlined" OnClick="@OnAddAsync">Add</MudButton>
+    </DialogActions>
+</MudDialog>

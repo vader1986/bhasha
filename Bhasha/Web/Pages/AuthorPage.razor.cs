@@ -2,6 +2,7 @@
 using Bhasha.Domain.Interfaces;
 using Bhasha.Services;
 using Bhasha.Web.Shared.Components;
+using Bhasha.Web.Shared.Components.Vocabulary;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
@@ -25,13 +26,18 @@ public partial class AuthorPage : UserPage
     private Mode _mode = Mode.Overview;
 
     private string? _error;
+
+    private async Task OnExpressionsSelectedAsync()
+    {
+        await DialogService.ShowAsync<ExpressionEditDialog>();
+    }
     
     private async Task OnEditChapterClicked()
     {
         _mode = Mode.List;
         await InvokeAsync(StateHasChanged);
     }
-
+    
     private async Task OnCreateChapterClicked()
     {
         try
