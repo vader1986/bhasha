@@ -11,22 +11,30 @@ public partial class ExpressionEditDialog : ComponentBase
     [Inject] public required ITranslationRepository TranslationRepository { get; set; }
     [CascadingParameter] public required IMudDialogInstance MudDialog { get; set; }
 
-    private string? _text;
+    public string? Text { get; set; }
+    private string? _error;
     private Expression? _expression;
     
     private bool DisableSubmit => _expression is null;
 
     private async Task OnBlurAsync()
     {
-        if (string.IsNullOrWhiteSpace(_text))
+        if (string.IsNullOrWhiteSpace(Text))
             return;
+        
+        try
+        {
+            var translation = await TranslationRepository
+                .Find(text: Text, Language.Reference);
 
-        var translation = await TranslationRepository
-            .Find(text: _text, Language.Reference);
+            _expression = translation is null ? Expression.Create() : translation.Expression;
 
-        _expression = translation is null ? Expression.Create() : translation.Expression;
-
-        await InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged);
+        }
+        catch (Exception e)
+        {
+            _error = e.Message;
+        }
     }
 
     private void OnCancel()
@@ -38,10 +46,17 @@ public partial class ExpressionEditDialog : ComponentBase
     {
         if (_expression is null)
             return;
+
+        try
+        {
+            await ExpressionRepository.AddOrUpdate(_expression);
         
-        await ExpressionRepository.AddOrUpdate(_expression);
-        
-        MudDialog.Close(DialogResult.Ok(_expression));
+            MudDialog.Close(DialogResult.Ok(_expression));
+        }
+        catch (Exception e)
+        {
+            _error = e.Message;
+        }
     }
 }
 
