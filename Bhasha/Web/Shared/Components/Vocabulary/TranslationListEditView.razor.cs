@@ -12,16 +12,29 @@ public partial class TranslationListEditView : ComponentBase
     
     [Parameter] public required Expression Expression { get; set; }
     
+    private List<Language> AvailableLanguages => Language.Supported.Values
+        .Except(_translations.Select(x => (Language)x.Origin.Language))
+        .ToList();
+    
+    private bool DisableAddTranslation => AvailableLanguages.Count == 0;
+    
     private List<TranslationEditViewModel> _translations = [];
     private string? _error;
 
     protected override async Task OnParametersSetAsync()
     {
-        var translations = await TranslationRepository.Find(Expression.Id);
+        try
+        {
+            var translations = await TranslationRepository.Find(Expression.Id);
         
-        _translations = translations
-            .Select(TranslationEditViewModel.Create)
-            .ToList();
+            _translations = translations
+                .Select(TranslationEditViewModel.Create)
+                .ToList();
+        }
+        catch (Exception e)
+        {
+            _error = e.Message;
+        }
         
         await base.OnParametersSetAsync();
     }

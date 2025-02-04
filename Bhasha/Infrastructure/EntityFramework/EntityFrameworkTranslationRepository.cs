@@ -21,13 +21,11 @@ public class EntityFrameworkTranslationRepository(AppDbContext context) : ITrans
 
     public async Task<IEnumerable<Translation>> Find(int expressionId, CancellationToken token = default)
     {
-        var rows = context.Translations
-            .Where(row => row.Expression.Id == expressionId);
-
-        await rows
+        var rows = await context.Translations
             .Include(row => row.Expression)
-            .LoadAsync(token);
-
+            .Where(row => row.Expression.Id == expressionId)
+            .ToListAsync(token);
+        
         return rows
             .AsEnumerable()
             .Select(Converter.Convert);
