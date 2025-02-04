@@ -11,23 +11,22 @@ public partial class ExpressionEditDialog : ComponentBase
     [Inject] public required ITranslationRepository TranslationRepository { get; set; }
     [CascadingParameter] public required IMudDialogInstance MudDialog { get; set; }
 
-    public string? Text { get; set; }
     private string? _error = "123";
     private Expression? _expression;
     
     private bool DisableSubmit => _expression is null;
 
-    private async Task OnBlurAsync()
+    private async Task OnTextChangedAsync(string text)
     {
-        if (string.IsNullOrWhiteSpace(Text))
+        if (string.IsNullOrWhiteSpace(text))
             return;
 
         try
         {
-            _error = Text;
+            _error = text;
             
             var translation = await TranslationRepository
-                .Find(text: Text, Language.Reference);
+                .Find(text: text, Language.Reference);
 
             _expression = translation is null ? Expression.Create() : translation.Expression;
         }

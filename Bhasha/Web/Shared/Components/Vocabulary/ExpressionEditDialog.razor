@@ -10,7 +10,7 @@
                     <MudAlert Severity="Severity.Error">@_error</MudAlert>
                 }
                 
-                <MudTextField T="string" bind-Value="@Text" OnBlur="@OnBlurAsync" />
+                <MudTextField T="string" ValueChanged="@OnTextChangedAsync" />
                 
                 @if (_expression is not null)
                 {
