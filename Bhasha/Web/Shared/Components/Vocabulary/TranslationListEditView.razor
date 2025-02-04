@@ -5,14 +5,18 @@
     <MudAlert Severity="Severity.Error">@_error</MudAlert>
 }
 
-@foreach (var translation in _translations)
-{
-    <MudTooltip Text="@translation.Origin.Language">
-        <MudTextField T="string" @bind-Value="@translation.Text" />
-        <MudIconButton 
-            Icon="@Icons.Material.Filled.Delete" 
-            OnClick="@(async () => await OnDeleteAsync(translation))" />
-    </MudTooltip>
-}
+<MudStack>
+    @foreach (var translation in _translations)
+    {
+        <MudTooltip Text="@translation.Origin.Language">
+            <MudStack Row="true">
+                <MudTextField T="string" @bind-Value="@translation.Text"/>
+                <MudIconButton
+                    Icon="@Icons.Material.Filled.Delete"
+                    OnClick="@(async () => await OnDeleteAsync(translation))"/>
+            </MudStack>
+        </MudTooltip>
+    }
+</MudStack>
 
 <MudIconButton OnClick="@OnAddAsync" Icon="@Icons.Material.Filled.Add" />
