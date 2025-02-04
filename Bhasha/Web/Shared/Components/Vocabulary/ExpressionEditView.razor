@@ -1,10 +1,32 @@
 ﻿@inherits ComponentBase
 
 <MudCardContent Style="text-align: center">
-    <MudTextField T="int" OnBlur="OnFocusLost" @bind-Value="_level" Label="Level (1 to 100)"/>
-    <MudSelect OnBlur="OnFocusLost" T="ExpressionType?" @bind-Value="_expressionType" Label="Expression Type"/>
-    <MudSelect OnBlur="OnFocusLost" T="PartOfSpeech?" @bind-Value="_partOfSpeech" Label="Part of speech"/>
-    <MudSelect OnBlur="OnFocusLost" T="CEFR?" @bind-Value="_cefr" Label="CEFR"/>
+    
+    <MudTextField T="int" OnBlur="@OnFocusLost" @bind-Value="_level" Label="Level (1 to 100)"/>
+    
+    <MudSelect OnBlur="@OnFocusLost" T="ExpressionType?" @bind-Value="_expressionType" Label="Expression Type">
+        @foreach(var expressionType in Enum.GetValues<ExpressionType>())
+        {
+            <MudSelectItem Value="@expressionType">@expressionType.ToString()</MudSelectItem>
+        }
+        <MudSelectItem T="ExpressionType?" Value="null">None</MudSelectItem>
+    </MudSelect>
+    
+    <MudSelect OnBlur="@OnFocusLost" T="PartOfSpeech?" @bind-Value="_partOfSpeech" Label="Part of speech">
+        @foreach(var partOfSpeech in Enum.GetValues<PartOfSpeech>())
+        {
+            <MudSelectItem Value="@partOfSpeech">@partOfSpeech.ToString()</MudSelectItem>
+        }
+        <MudSelectItem T="PartOfSpeech?" Value="null">None</MudSelectItem>
+    </MudSelect>
+    
+    <MudSelect OnBlur="@OnFocusLost" T="CEFR?" @bind-Value="_cefr" Label="CEFR">
+        @foreach(var cefr in Enum.GetValues<CEFR>())
+        {
+            <MudSelectItem Value="@cefr">@cefr.ToString()</MudSelectItem>
+        }
+        <MudSelectItem T="CEFR?" Value="null">None</MudSelectItem>
+    </MudSelect>
 
     @if (!string.IsNullOrWhiteSpace(_resourceId))
     {

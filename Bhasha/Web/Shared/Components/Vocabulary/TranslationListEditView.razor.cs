@@ -25,7 +25,8 @@ public partial class TranslationListEditView : ComponentBase
     {
         try
         {
-            var translations = await TranslationRepository.Find(Expression.Id);
+            var translations = await TranslationRepository
+                .Find(Expression.Id);
         
             _translations = translations
                 .Select(TranslationEditViewModel.Create)
