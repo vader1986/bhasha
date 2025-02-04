@@ -25,7 +25,7 @@ public partial class ExpressionEditDialog : ComponentBase
         {
             var translation = await TranslationRepository
                 .Find(text: text, Language.Reference);
-
+            
             _expression = translation is null ? Expression.Create() : translation.Expression;
         }
         catch (Exception e)

@@ -1,10 +1,10 @@
 ﻿@inherits ComponentBase
 
 <MudCardContent Style="text-align: center">
-    <MudTextField T="int" OnBlur="OnFocusLost" bind-Value="_level" Label="Level (1 to 100)"/>
-    <MudSelect OnBlur="OnFocusLost" T="ExpressionType?" bind-Value="_expressionType" Label="Expression Type"/>
-    <MudSelect OnBlur="OnFocusLost" T="PartOfSpeech?" bind-Value="_partOfSpeech" Label="Part of speech"/>
-    <MudSelect OnBlur="OnFocusLost" T="CEFR?" bind-Value="_cefr" Label="CEFR"/>
+    <MudTextField T="int" OnBlur="OnFocusLost" @bind-Value="_level" Label="Level (1 to 100)"/>
+    <MudSelect OnBlur="OnFocusLost" T="ExpressionType?" @bind-Value="_expressionType" Label="Expression Type"/>
+    <MudSelect OnBlur="OnFocusLost" T="PartOfSpeech?" @bind-Value="_partOfSpeech" Label="Part of speech"/>
+    <MudSelect OnBlur="OnFocusLost" T="CEFR?" @bind-Value="_cefr" Label="CEFR"/>
 
     @if (!string.IsNullOrWhiteSpace(_resourceId))
     {
