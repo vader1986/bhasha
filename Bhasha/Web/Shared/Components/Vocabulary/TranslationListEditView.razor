@@ -8,7 +8,7 @@
 @foreach (var translation in _translations)
 {
     <MudTooltip Text="@translation.Origin.Language">
-        <MudTextField T="string" bind-Value="@translation.Text" />
+        <MudTextField T="string" @bind-Value="@translation.Text" />
         <MudIconButton 
             Icon="@Icons.Material.Filled.Delete" 
             OnClick="@(async () => await OnDeleteAsync(translation))" />

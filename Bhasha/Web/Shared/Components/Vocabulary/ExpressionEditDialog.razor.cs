@@ -11,7 +11,7 @@ public partial class ExpressionEditDialog : ComponentBase
     [Inject] public required ITranslationRepository TranslationRepository { get; set; }
     [CascadingParameter] public required IMudDialogInstance MudDialog { get; set; }
 
-    private string? _error = "123";
+    private string? _error;
     private Expression? _expression;
     
     private bool DisableSubmit => _expression is null;
@@ -23,8 +23,6 @@ public partial class ExpressionEditDialog : ComponentBase
 
         try
         {
-            _error = text;
-            
             var translation = await TranslationRepository
                 .Find(text: text, Language.Reference);
 
