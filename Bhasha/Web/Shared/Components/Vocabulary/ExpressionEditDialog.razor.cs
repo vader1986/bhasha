@@ -65,6 +65,8 @@ public partial class ExpressionEditDialog : ComponentBase
             _hasChanged = false;
             
             MudDialog.Close(DialogResult.Ok(_expression));
+
+            _error = "Level: " + _expression.Level;
         }
         catch (Exception e)
         {
