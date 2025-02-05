@@ -51,36 +51,6 @@ public partial class ExpressionEditView : ComponentBase
         base.OnParametersSet();
     }
 
-    private async Task OnExpressionTypeChanged(ExpressionType? expressionType)
-    {
-        if (_expressionType == expressionType)
-            return;
-
-        _expressionType = expressionType;
-        
-        await OnValueChanged();
-    }
-    
-    private async Task OnPartOfSpeechChanged(PartOfSpeech? partOfSpeech)
-    {
-        if (_partOfSpeech == partOfSpeech)
-            return;
-
-        _partOfSpeech = partOfSpeech;
-        
-        await OnValueChanged();
-    }
-
-    private async Task OnCefrChanged(CEFR? cefr)
-    {
-        if (_cefr == cefr)
-            return;
-        
-        _cefr = cefr;
-        
-        await OnValueChanged();
-    }
-    
     private async Task OnValueChanged()
     {
         await ValueChanged.InvokeAsync(Value with
