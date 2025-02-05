@@ -1,9 +1,6 @@
 ﻿@typeparam T
 
-<MudSelect T="string"
-           Label="@Label"
-           Value="@_selectedValue"
-           ValueChanged="@OnValueChanged">
+<MudSelect T="string" Label="@Label" @bind-Value="_selectedValue" @bind-Value:after="@OnValueChanged">
     
     @foreach (var value in Values)
     {
