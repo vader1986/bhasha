@@ -4,6 +4,7 @@
     
     <MudTextField T="int" OnBlur="@OnValueChanged" @bind-Value="_level" Label="Level (1 to 100)"/>
 
+    <!-- 
     <MudSelect @bind-Value="_expressionType" Label="ExpressionType" HelperText="Enum" OnBlur="@OnValueChanged">
         @foreach (ExpressionType item in Enum.GetValues(typeof(ExpressionType))) {
             <MudSelectItem Value="@item">@item</MudSelectItem>
@@ -12,6 +13,7 @@
     
     <EnumEditView T="PartOfSpeech" Value="@_partOfSpeech" ValueChanged="@OnPartOfSpeechChanged" />
     <EnumEditView T="CEFR" Value="@_cefr" ValueChanged="@OnCefrChanged" />
+    -->
 
     @if (!string.IsNullOrWhiteSpace(_resourceId))
     {

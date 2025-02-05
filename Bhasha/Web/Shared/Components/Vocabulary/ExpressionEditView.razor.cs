@@ -14,7 +14,7 @@ public partial class ExpressionEditView : ComponentBase
 
     [Range(1, 100)]
     private int _level = 1;
-    private ExpressionType _expressionType;
+    private ExpressionType? _expressionType;
     private PartOfSpeech? _partOfSpeech;
     private CEFR? _cefr;
     private List<string> _labels = [];
@@ -41,7 +41,7 @@ public partial class ExpressionEditView : ComponentBase
     protected override void OnParametersSet()
     {
         _level = Value.Level;
-        _expressionType = Value.ExpressionType ?? ExpressionType.Word;
+        _expressionType = Value.ExpressionType;
         _partOfSpeech = Value.PartOfSpeech;
         _cefr = Value.Cefr;
         _labels = Value.Labels.ToList();
@@ -56,7 +56,7 @@ public partial class ExpressionEditView : ComponentBase
         if (_expressionType == expressionType)
             return;
 
-        _expressionType = expressionType ?? ExpressionType.Word;
+        _expressionType = expressionType;
         
         await OnValueChanged();
     }

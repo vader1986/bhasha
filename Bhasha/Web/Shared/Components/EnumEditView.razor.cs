@@ -4,19 +4,17 @@ namespace Bhasha.Web.Shared.Components;
 
 public partial class EnumEditView<T> : ComponentBase where T : struct, Enum
 {
-    private const string NoSelection = "None";
-    
     private static string Label => typeof(T).Name;
-    private static string[] Values => Enum.GetNames(typeof(T)).Append("None").ToArray();
+    private static string[] Values => Enum.GetNames<T>();
 
-    [Parameter] public required T? Value { get; set; }
-    [Parameter] public EventCallback<T?> ValueChanged { get; set; }
+    [Parameter] public required T Value { get; set; }
+    [Parameter] public EventCallback<T> ValueChanged { get; set; }
 
-    private string _selectedValue = NoSelection;
+    private string _selectedValue = "";
     
     protected override void OnParametersSet()
     {
-        _selectedValue = Value?.ToString() ?? NoSelection;
+        _selectedValue = Value.ToString();
 
         base.OnParametersSet();
     }
@@ -31,10 +29,6 @@ public partial class EnumEditView<T> : ComponentBase where T : struct, Enum
         if (Enum.TryParse<T>(value, out var actualValue))
         {
             await ValueChanged.InvokeAsync(actualValue);
-        }
-        else
-        {
-            await ValueChanged.InvokeAsync(null);
         }
     }
 }
