@@ -17,8 +17,15 @@ public partial class ExpressionEditDialog : ComponentBase
     private string _text = string.Empty;
     private Expression? _expression;
     
-    private bool DisableSubmit => _expression is null;
+    private bool DisableSubmit => _expression is null || !_hasChanged;
 
+    private bool _hasChanged;
+
+    private void OnExpressionChanged()
+    {
+        _hasChanged = true;
+    }
+    
     private async Task OnTextChangedAsync()
     {
         if (string.IsNullOrWhiteSpace(_text))
@@ -55,6 +62,8 @@ public partial class ExpressionEditDialog : ComponentBase
         {
             await ExpressionRepository.AddOrUpdate(_expression);
         
+            _hasChanged = false;
+            
             MudDialog.Close(DialogResult.Ok(_expression));
         }
         catch (Exception e)

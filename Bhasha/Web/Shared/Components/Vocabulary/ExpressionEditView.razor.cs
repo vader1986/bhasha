@@ -20,7 +20,7 @@ public partial class ExpressionEditView : ComponentBase
     private List<string> _labels = [];
     private List<string> _synonyms = [];
     private string? _resourceId;
-
+    
     private string GetImageSource()
     {
         return $"{Resources.ImageBaseUrl}/{_resourceId}";
