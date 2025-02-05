@@ -6,17 +6,19 @@ public partial class EnumEditView<T> : ComponentBase where T : struct, Enum
 {
     private const string NoSelection = "No selection";
     
+    private static string Label => typeof(T).Name;
+
     [Parameter] public required T? Value { get; set; }
     [Parameter] public EventCallback<T?> ValueChanged { get; set; }
-
-    private string _selectedValue = NoSelection;
     
-    private static string[] EnumValues => Enum.GetNames<T>();
-    private static string Label => typeof(T).Name;
+    private string _selectedValue = NoSelection;
+    private string[] _enumValues = [];
+    private string _label = Label;
     
     protected override void OnParametersSet()
     {
         _selectedValue = Value?.ToString() ?? NoSelection;
+        _enumValues = Enum.GetValues<T>().Select(x => x.ToString()).ToArray();
 
         base.OnParametersSet();
     }

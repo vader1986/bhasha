@@ -1,11 +1,15 @@
 ﻿@typeparam T
 
-<MudSelect T="string" Label="@Label" Value="@_selectedValue" ValueChanged="@OnValueChanged">
-    @foreach(var expressionType in EnumValues)
+<MudSelect T="string"
+           Label="@_label"
+           Value="@_selectedValue"
+           ValueChanged="@OnValueChanged">
+    
+    @foreach (var value in _enumValues)
     {
-        <MudSelectItem Value="@expressionType">
-            @expressionType
-        </MudSelectItem>
+        <MudSelectItem Value="@value">@value</MudSelectItem>
     }
+    
     <MudSelectItem T="string" Value="@NoSelection">None</MudSelectItem>
+
 </MudSelect>
