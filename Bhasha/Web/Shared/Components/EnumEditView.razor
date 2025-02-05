@@ -1,13 +1,13 @@
 ﻿@typeparam T
 
 <MudSelect T="string"
-           Label="@_label"
+           Label="@Label"
            Value="@_selectedValue"
            ValueChanged="@OnValueChanged">
     
-    @foreach (var value in _enumValues)
+    @foreach (var value in Values)
     {
-        <MudSelectItem Value="@value">@value</MudSelectItem>
+        <MudSelectItem Value="@value.ToString()">@value.ToString()</MudSelectItem>
     }
     
     <MudSelectItem T="string" Value="@NoSelection">None</MudSelectItem>

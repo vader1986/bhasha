@@ -9,6 +9,8 @@
                 {
                     <MudAlert Severity="Severity.Error">@_error</MudAlert>
                 }
+
+                <MudAlert Severity="Severity.Warning">@_text</MudAlert>
                 
                 <MudTextField T="string" Value="@_text" ValueChanged="@OnTextChangedAsync" />
                 
