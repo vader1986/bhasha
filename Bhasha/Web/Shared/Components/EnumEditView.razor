@@ -1,0 +1,10 @@
+﻿@typeparam T
+<MudSelect T="string" Label="@typeof(T).Name" ValueChanged="@OnValueChanged">
+    @foreach(var expressionType in Enum.GetNames<T>())
+    {
+        <MudSelectItem Value="@expressionType">
+            @expressionType
+        </MudSelectItem>
+    }
+    <MudSelectItem T="string" Value="@NoSelection">None</MudSelectItem>
+</MudSelect>
