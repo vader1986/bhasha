@@ -4,11 +4,11 @@ namespace Bhasha.Web.Shared.Components;
 
 public partial class EnumEditView<T> : ComponentBase where T : struct, Enum
 {
-    private const string NoSelection = "No selection";
+    private const string NoSelection = "None";
     
     private static string Label => typeof(T).Name;
+    private static string[] Values => Enum.GetNames(typeof(T)).Append("None").ToArray();
 
-    [Parameter] public required T[] Values { get; set; }
     [Parameter] public required T? Value { get; set; }
     [Parameter] public EventCallback<T?> ValueChanged { get; set; }
     

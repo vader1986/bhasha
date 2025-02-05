@@ -35,16 +35,7 @@ public partial class ExpressionEditView : ComponentBase
         
         _resourceId = imageFile.Name;
     
-        await ValueChanged.InvokeAsync(Value with
-        {
-            Level = _level,
-            ExpressionType = _expressionType,
-            PartOfSpeech = _partOfSpeech,
-            Cefr = _cefr,
-            Labels = _labels.ToArray(),
-            Synonyms = _synonyms.ToArray(),
-            ResourceId = _resourceId
-        });
+        await OnValueChanged();
     }
     
     protected override void OnParametersSet()
@@ -62,6 +53,9 @@ public partial class ExpressionEditView : ComponentBase
 
     private async Task OnExpressionTypeChanged(ExpressionType? expressionType)
     {
+        if (_expressionType == expressionType)
+            return;
+
         _expressionType = expressionType;
         
         await OnValueChanged();
@@ -69,6 +63,9 @@ public partial class ExpressionEditView : ComponentBase
     
     private async Task OnPartOfSpeechChanged(PartOfSpeech? partOfSpeech)
     {
+        if (_partOfSpeech == partOfSpeech)
+            return;
+
         _partOfSpeech = partOfSpeech;
         
         await OnValueChanged();
@@ -76,6 +73,9 @@ public partial class ExpressionEditView : ComponentBase
 
     private async Task OnCefrChanged(CEFR? cefr)
     {
+        if (_cefr == cefr)
+            return;
+        
         _cefr = cefr;
         
         await OnValueChanged();

@@ -4,9 +4,9 @@
     
     <MudTextField T="int" OnBlur="@OnValueChanged" @bind-Value="_level" Label="Level (1 to 100)"/>
     
-    <EnumEditView T="ExpressionType" Value="@_expressionType" ValueChanged="@OnExpressionTypeChanged" Values="[ExpressionType.Expression, ExpressionType.Phrase]" />
-    <EnumEditView T="PartOfSpeech" Value="@_partOfSpeech" ValueChanged="@OnPartOfSpeechChanged" Values="[PartOfSpeech.Adjective]" />
-    <EnumEditView T="CEFR" Value="@_cefr" ValueChanged="@OnCefrChanged" Values="[]" />
+    <EnumEditView T="ExpressionType" Value="@_expressionType" ValueChanged="@OnExpressionTypeChanged" />
+    <EnumEditView T="PartOfSpeech" Value="@_partOfSpeech" ValueChanged="@OnPartOfSpeechChanged" />
+    <EnumEditView T="CEFR" Value="@_cefr" ValueChanged="@OnCefrChanged" />
 
     @if (!string.IsNullOrWhiteSpace(_resourceId))
     {

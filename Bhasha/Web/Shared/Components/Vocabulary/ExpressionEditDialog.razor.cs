@@ -11,6 +11,8 @@ public partial class ExpressionEditDialog : ComponentBase
     [Inject] public required ITranslationRepository TranslationRepository { get; set; }
     [CascadingParameter] public required IMudDialogInstance MudDialog { get; set; }
 
+    private bool DisableExpressionTextField => _expression is not null;
+    
     private string? _error;
     private string _text = string.Empty;
     private Expression? _expression;
