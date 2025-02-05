@@ -12,12 +12,15 @@ public partial class ExpressionEditDialog : ComponentBase
     [CascadingParameter] public required IMudDialogInstance MudDialog { get; set; }
 
     private string? _error;
+    private string _text = string.Empty;
     private Expression? _expression;
     
     private bool DisableSubmit => _expression is null;
 
     private async Task OnTextChangedAsync(string text)
     {
+        _text = text;
+        
         if (string.IsNullOrWhiteSpace(text))
             return;
 

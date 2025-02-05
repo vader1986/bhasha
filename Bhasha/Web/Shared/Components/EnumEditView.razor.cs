@@ -10,7 +10,10 @@ public partial class EnumEditView<T> : ComponentBase where T : struct, Enum
     [Parameter] public EventCallback<T?> ValueChanged { get; set; }
 
     private string _selectedValue = NoSelection;
-
+    
+    private static string[] EnumValues => Enum.GetNames<T>();
+    private static string Label => typeof(T).Name;
+    
     protected override void OnParametersSet()
     {
         _selectedValue = Value?.ToString() ?? NoSelection;
@@ -18,7 +21,7 @@ public partial class EnumEditView<T> : ComponentBase where T : struct, Enum
         base.OnParametersSet();
     }
 
-    private void OnValueChanged(string value)
+    private async Task OnValueChanged(string value)
     {
         _selectedValue = value;
 
@@ -28,11 +31,11 @@ public partial class EnumEditView<T> : ComponentBase where T : struct, Enum
 
         if (Enum.TryParse<T>(selectedEnumName, out var actualValue))
         {
-            ValueChanged.InvokeAsync(actualValue);
+            await ValueChanged.InvokeAsync(actualValue);
         }
         else
         {
-            ValueChanged.InvokeAsync(null);
+            await ValueChanged.InvokeAsync(null);
         }
     }
 }
