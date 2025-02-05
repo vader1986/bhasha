@@ -19,17 +19,15 @@ public partial class ExpressionEditDialog : ComponentBase
     
     private bool DisableSubmit => _expression is null;
 
-    private async Task OnTextChangedAsync(string text)
+    private async Task OnTextChangedAsync()
     {
-        _text = text;
-        
-        if (string.IsNullOrWhiteSpace(text))
+        if (string.IsNullOrWhiteSpace(_text))
             return;
 
         try
         {
             var translation = await TranslationRepository
-                .Find(text: text, Language.Reference);
+                .Find(text: _text, Language.Reference);
             
             _expression = translation is null ? Expression.Create() : translation.Expression;
         }

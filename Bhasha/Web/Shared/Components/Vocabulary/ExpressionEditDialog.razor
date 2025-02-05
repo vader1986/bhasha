@@ -10,17 +10,16 @@
                     <MudAlert Severity="Severity.Error">@_error</MudAlert>
                 }
                 
-                <MudTextField T="string" 
-                              Disabled="@DisableExpressionTextField" 
-                              Value="@_text" 
-                              ValueChanged="@OnTextChangedAsync" />
+                <MudTextField @bind-Value="_text"
+                              OnBlur="@OnTextChangedAsync"
+                              Disabled="@DisableExpressionTextField" />
                 
                 @if (_expression is not null)
                 {
                     <!-- 
                     <ExpressionEditView @bind-Value="_expression" />
-                    -->
                     <TranslationListEditView Expression="_expression" />
+                    -->
                 }
                 
             </MudContainer>
