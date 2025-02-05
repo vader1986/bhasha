@@ -12,13 +12,10 @@ public partial class TranslationListEditView : ComponentBase
     
     [Parameter] public required Expression Expression { get; set; }
     
-    private List<Language> AvailableLanguages => Language.Supported.Values
-        .Except(_translations.Select(x => (Language)x.Origin.Language))
-        .ToList();
-    
-    private bool DisableAddTranslation => AvailableLanguages.Count == 0;
+    private bool DisableAddTranslation => _availableLanguages.Count == 0;
     
     private List<TranslationEditViewModel> _translations = [];
+    private List<Language> _availableLanguages = [];
     private string? _error;
 
     protected override async Task OnParametersSetAsync()
@@ -30,6 +27,11 @@ public partial class TranslationListEditView : ComponentBase
         
             _translations = translations
                 .Select(TranslationEditViewModel.Create)
+                .ToList();
+            
+            _availableLanguages = Language.Supported.Values
+                .Except(_translations
+                    .Select(x => (Language)x.Origin.Language))
                 .ToList();
         }
         catch (Exception e)
@@ -58,7 +60,8 @@ public partial class TranslationListEditView : ComponentBase
         if (result.Data is TranslationEditViewModel translation)
         {
             _translations.Add(translation);
-            
+            _availableLanguages.Remove(translation.Origin.Language);
+
             await InvokeAsync(StateHasChanged);
         }
     }
@@ -73,6 +76,7 @@ public partial class TranslationListEditView : ComponentBase
             }
 
             _translations.Remove(translation);
+            _availableLanguages.Add(translation.Origin.Language);
 
             await InvokeAsync(StateHasChanged);
         }
