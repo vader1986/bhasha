@@ -1,8 +1,11 @@
-﻿using Bhasha;
+﻿using Azure.Identity;
+using Azure.Storage.Blobs;
+using Bhasha;
 using Bhasha.Areas.Identity;
 using Bhasha.Domain.Interfaces;
 using Bhasha.Identity;
 using Bhasha.Identity.Extensions;
+using Bhasha.Infrastructure.AzureBlob;
 using Bhasha.Infrastructure.AzureSpeechApi;
 using Bhasha.Infrastructure.AzureTranslatorApi;
 using Bhasha.Infrastructure.BlazorSpeechSynthesis;
@@ -22,6 +25,10 @@ try
     var builder = WebApplication
         .CreateBuilder(args);
 
+    ////////////////////
+    // Service Configuration
+    ////////////////////
+    
     builder
         .Configuration
         .AddJsonFile("config/appsettings.json", optional: true, reloadOnChange: true);
@@ -31,6 +38,12 @@ try
     builder.Configuration
         .GetSection(TranslationConfiguration.SectionName)
         .Bind(translationConfiguration);
+    
+    var resources = new ResourcesSettings();
+    
+    builder.Configuration
+        .GetSection(ResourcesSettings.SectionName)
+        .Bind(resources);
     
     ////////////////////
     // DB & Identity
@@ -87,15 +100,14 @@ try
     services.AddScoped<IAuthoringService, AuthoringService>();
     services.AddScoped<IStudyingService, StudyingService>();
     services.AddSingleton<ITranslationProvider, CachingTranslationProvider>();
-    
-    var resources = new ResourcesSettings();
-    
-    builder.Configuration
-        .GetSection(ResourcesSettings.SectionName)
-        .Bind(resources);
 
-    //https://bhasha.blob.core.windows.net/images/images/dog.png
     services.AddSingleton(resources);
+
+    services.AddSingleton(new BlobServiceClient(
+        new Uri(resources.BaseUrl),
+        new DefaultAzureCredential()));
+
+    services.AddSingleton<IResourcesManager, AzureBlobResourcesManager>();
     
     if (translationConfiguration.AzureTranslatorApi is null)
     {

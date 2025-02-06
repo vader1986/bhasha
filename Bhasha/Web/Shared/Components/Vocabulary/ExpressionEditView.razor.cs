@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Bhasha.Domain;
+using Bhasha.Domain.Interfaces;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 
@@ -8,6 +9,7 @@ namespace Bhasha.Web.Shared.Components.Vocabulary;
 public partial class ExpressionEditView : ComponentBase
 {
     [Inject] public required ResourcesSettings Resources { get; set; }
+    [Inject] public required IResourcesManager ResourcesManager { get; set; }
 
     [Parameter] public required Expression Value { get; set; }
     [Parameter] public EventCallback<Expression> ValueChanged { get; set; }
@@ -20,18 +22,13 @@ public partial class ExpressionEditView : ComponentBase
     private List<string> _labels = [];
     private List<string> _synonyms = [];
     private string? _resourceId;
-    
-    private string GetImageSource()
-    {
-        return $"{Resources.ImageBaseUrl}/{_resourceId}";
-    }
 
     private async Task OnResourceChanged(IBrowserFile? imageFile)
     {
         if (imageFile is null)
             return;
-        
-        // ToDo - upload file
+
+        await ResourcesManager.UploadImage(imageFile.Name, imageFile.OpenReadStream());
         
         _resourceId = imageFile.Name;
     

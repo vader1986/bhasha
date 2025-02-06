@@ -7,7 +7,9 @@
 {
     @if (!string.IsNullOrWhiteSpace(_arguments.ImageId))
     {
-        <MudImage Src="@GetImageSource(_arguments.ImageId)" />
+        <MudImage 
+            Src="@Resources.GetImageUrl(_arguments.ImageId)"
+            Elevation="35" Class="rounded-lg" />
     }
     
     <MudChipSet @bind-SelectedValue="_selectedChoice" SelectedColor="Color.Warning">
