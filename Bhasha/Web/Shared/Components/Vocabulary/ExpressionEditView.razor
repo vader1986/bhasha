@@ -8,6 +8,11 @@
     <EnumEditView T="PartOfSpeech" @bind-Value="_partOfSpeech" @bind-Value:after="@OnValueChanged" />
     <EnumEditView T="CEFR" @bind-Value="_cefr" @bind-Value:after="@OnValueChanged" />
 
+    @if (!string.IsNullOrWhiteSpace(_error))
+    {
+        <MudAlert Severity="Severity.Error">@_error</MudAlert>
+    }
+    
     @if (!string.IsNullOrWhiteSpace(_resourceId))
     {
         <MudImage Src="@Resources.GetImageUrl(_resourceId)" />

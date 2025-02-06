@@ -23,16 +23,29 @@ public partial class ExpressionEditView : ComponentBase
     private List<string> _synonyms = [];
     private string? _resourceId;
 
+    private string? _error;
+    
     private async Task OnResourceChanged(IBrowserFile? imageFile)
     {
-        if (imageFile is null)
-            return;
+        try
+        {
+            if (imageFile is null)
+                return;
 
-        await ResourcesManager.UploadImage(imageFile.Name, imageFile.OpenReadStream());
-        
-        _resourceId = imageFile.Name;
-    
-        await OnValueChanged();
+            await ResourcesManager.UploadImage(imageFile.Name, imageFile.OpenReadStream());
+
+            _resourceId = imageFile.Name;
+
+            await OnValueChanged();
+        }
+        catch (Exception e)
+        {
+            _error = e.Message;
+        }
+        finally
+        {
+            await InvokeAsync(StateHasChanged);
+        }
     }
     
     protected override void OnParametersSet()
