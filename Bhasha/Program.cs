@@ -1,5 +1,4 @@
-﻿using Azure.Identity;
-using Azure.Storage.Blobs;
+﻿using Azure.Storage.Blobs;
 using Bhasha;
 using Bhasha.Areas.Identity;
 using Bhasha.Domain.Interfaces;
@@ -101,12 +100,10 @@ try
     services.AddScoped<IStudyingService, StudyingService>();
     services.AddSingleton<ITranslationProvider, CachingTranslationProvider>();
 
+    // resource management
+    var azureBlobConnectionString = Environment.GetEnvironmentVariable("AZURE_STORAGE_CONNECTION_STRING");
     services.AddSingleton(resources);
-
-    services.AddSingleton(new BlobServiceClient(
-        new Uri(resources.BaseUrl),
-        new DefaultAzureCredential()));
-
+    services.AddSingleton(new BlobServiceClient(connectionString: azureBlobConnectionString));
     services.AddSingleton<IResourcesManager, AzureBlobResourcesManager>();
     
     if (translationConfiguration.AzureTranslatorApi is null)
