@@ -11,12 +11,16 @@
         <MudTooltip Text="@translation.Origin.Language">
             <MudStack Row="true">
 
-                <MudTextField T="string" 
-                    @bind-Value="@translation.Text"
-                    @bind-Value:after="@(async () => await OnChangeAsync(translation))"/>
-                
-                <MudIconButton
-                    Icon="@Icons.Material.Filled.Delete"
+                <MudTextField T="string" Label="Translation"
+                              @bind-Value="@translation.Text"
+                              @bind-Value:after="@(async () => await OnChangeAsync(translation))"/>
+
+                <MudTextField T="string" Label="Spoken"
+                              @bind-Value="@translation.Spoken"
+                              @bind-Value:after="@(async () => await OnChangeAsync(translation))"/>
+
+                <MudIconButton 
+                    Icon="@Icons.Material.Filled.Delete" 
                     OnClick="@(async () => await OnDeleteAsync(translation))"/>
                 
             </MudStack>
