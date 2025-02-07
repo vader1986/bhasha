@@ -61,7 +61,9 @@ public class EntityFrameworkTranslationRepository(AppDbContext context) : ITrans
             var updatedTranslation = Converter
                 .Convert(translation);
 
-            row.Text = updatedTranslation.Text; 
+            row.Text = updatedTranslation.Text;
+            row.Spoken = updatedTranslation.Spoken;
+            row.AudioId = updatedTranslation.AudioId;
             
             var result = context.Translations
                 .Update(row);
