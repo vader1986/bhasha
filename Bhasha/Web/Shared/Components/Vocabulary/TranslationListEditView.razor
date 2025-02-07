@@ -10,10 +10,15 @@
     {
         <MudTooltip Text="@translation.Origin.Language">
             <MudStack Row="true">
-                <MudTextField T="string" @bind-Value="@translation.Text"/>
+
+                <MudTextField T="string" 
+                    @bind-Value="@translation.Text"
+                    @bind-Value:after="@(async () => await OnChangeAsync(translation))"/>
+                
                 <MudIconButton
                     Icon="@Icons.Material.Filled.Delete"
                     OnClick="@(async () => await OnDeleteAsync(translation))"/>
+                
             </MudStack>
         </MudTooltip>
     }

@@ -42,6 +42,18 @@ public partial class TranslationListEditView : ComponentBase
         await base.OnParametersSetAsync();
     }
 
+    private async Task OnChangeAsync(TranslationEditViewModel value)
+    {
+        try
+        {
+            await TranslationRepository.AddOrUpdate(value.ToTranslation());
+        }
+        catch (Exception e)
+        {
+            _error = e.Message;
+        }
+    }
+
     private async Task OnAddAsync()
     {
         var dialog = await DialogService.ShowAsync<TranslationCreateDialog>(
