@@ -70,7 +70,8 @@ public partial class ExpressionEditView : ComponentBase
             PartOfSpeech = _partOfSpeech,
             Cefr = _cefr,
             Labels = _labels.ToArray(),
-            Synonyms = _synonyms.ToArray()
+            Synonyms = _synonyms.ToArray(),
+            ResourceId = _resourceId
         });
     }
 }

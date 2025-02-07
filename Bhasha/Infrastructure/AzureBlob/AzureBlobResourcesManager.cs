@@ -10,6 +10,6 @@ public sealed class AzureBlobResourcesManager(BlobServiceClient blobServiceClien
         var container = blobServiceClient.GetBlobContainerClient("images");
         var client = container.GetBlobClient(resourceId);
         
-        await client.UploadAsync(image, cancellationToken: token);
+        await client.UploadAsync(image, overwrite: true, cancellationToken: token);
     }
 }
