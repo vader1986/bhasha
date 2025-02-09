@@ -9,9 +9,9 @@ public partial record Expression(
 	PartOfSpeech? PartOfSpeech,
 	CEFR? Cefr,
 	string? ResourceId,
-    [property: OrderedEquality]
+    [property: UnorderedEquality]
     string[] Labels,
-    [property: OrderedEquality]
+    [property: UnorderedEquality]
 	string[] Synonyms,
     int Level)
 {

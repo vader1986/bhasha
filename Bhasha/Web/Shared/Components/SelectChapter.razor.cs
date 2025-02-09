@@ -7,11 +7,11 @@ namespace Bhasha.Web.Shared.Components;
 public partial class SelectChapter : ComponentBase
 {
     [Inject] 
-    public IStudyingService StudyingService { get; set; } = default!;
+    public required IStudyingService StudyingService { get; set; }
 
-    [Parameter] public Func<DisplayedSummary, Task> OnSelection { get; set; } = default!;
-    [Parameter] public string UserId { get; set; } = default!;
-    [Parameter] public ProfileKey Languages { get; set; } = default!;
+    [Parameter] public required Func<DisplayedSummary, Task> OnSelection { get; set; }
+    [Parameter] public required string UserId { get; set; }
+    [Parameter] public required ProfileKey Languages { get; set; }
 
     private IList<DisplayedSummary> Chapters { get; } = new List<DisplayedSummary>();
 

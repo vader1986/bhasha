@@ -2,7 +2,7 @@ using Bhasha.Domain;
 
 namespace Bhasha.Web.Shared.Components.Vocabulary;
 
-public class TranslationEditViewModel
+public sealed class TranslationEditViewModel
 {
     private TranslationEditViewModel()
     {

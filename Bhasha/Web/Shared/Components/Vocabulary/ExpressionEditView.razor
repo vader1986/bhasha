@@ -2,20 +2,20 @@
 
 <MudCardContent Style="text-align: center">
     
-    <MudTextField T="int" OnBlur="@OnValueChanged" @bind-Value="_level" Label="Level (1 to 100)"/>
+    <MudTextField T="int" OnBlur="@OnValueChanged" @bind-Value="_viewModel.Level" Label="Level (1 to 100)"/>
 
-    <EnumEditView T="ExpressionType" @bind-Value="_expressionType" @bind-Value:after="@OnValueChanged" />
-    <EnumEditView T="PartOfSpeech" @bind-Value="_partOfSpeech" @bind-Value:after="@OnValueChanged" />
-    <EnumEditView T="CEFR" @bind-Value="_cefr" @bind-Value:after="@OnValueChanged" />
+    <EnumEditView T="ExpressionType" @bind-Value="_viewModel.Type" @bind-Value:after="@OnValueChanged" />
+    <EnumEditView T="PartOfSpeech" @bind-Value="_viewModel.PartOfSpeech" @bind-Value:after="@OnValueChanged" />
+    <EnumEditView T="CEFR" @bind-Value="_viewModel.Cefr" @bind-Value:after="@OnValueChanged" />
 
     @if (!string.IsNullOrWhiteSpace(_error))
     {
         <MudAlert Severity="Severity.Error">@_error</MudAlert>
     }
     
-    @if (!string.IsNullOrWhiteSpace(_resourceId))
+    @if (!string.IsNullOrWhiteSpace(_viewModel.ResourceId))
     {
-        <MudImage Src="@Resources.GetImageUrl(_resourceId)" />
+        <MudImage Src="@Resources.GetImageUrl(_viewModel.ResourceId)" />
     }
 
     <MudFileUpload T="IBrowserFile" MaximumFileCount="1" FilesChanged="@OnResourceChanged">

@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Bhasha.Domain;
+﻿using Bhasha.Domain;
 using Bhasha.Domain.Interfaces;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
@@ -14,14 +13,7 @@ public partial class ExpressionEditView : ComponentBase
     [Parameter] public required Expression Value { get; set; }
     [Parameter] public EventCallback<Expression> ValueChanged { get; set; }
 
-    [Range(1, 100)]
-    private int _level = 1;
-    private ExpressionType? _expressionType;
-    private PartOfSpeech? _partOfSpeech;
-    private CEFR? _cefr;
-    private List<string> _labels = [];
-    private List<string> _synonyms = [];
-    private string? _resourceId;
+    private ExpressionEditViewModel _viewModel = new();
 
     private string? _error;
     
@@ -34,7 +26,7 @@ public partial class ExpressionEditView : ComponentBase
 
             await ResourcesManager.UploadImage(imageFile.Name, imageFile.OpenReadStream());
 
-            _resourceId = imageFile.Name;
+            _viewModel.ResourceId = imageFile.Name;
 
             await OnValueChanged();
         }
@@ -50,29 +42,14 @@ public partial class ExpressionEditView : ComponentBase
     
     protected override void OnParametersSet()
     {
-        _level = Value.Level;
-        _expressionType = Value.ExpressionType;
-        _partOfSpeech = Value.PartOfSpeech;
-        _cefr = Value.Cefr;
-        _labels = Value.Labels.ToList();
-        _synonyms = Value.Synonyms.ToList();
-        _resourceId = Value.ResourceId;
+        _viewModel = ExpressionEditViewModel.Create(Value);
         
         base.OnParametersSet();
     }
 
     private async Task OnValueChanged()
     {
-        await ValueChanged.InvokeAsync(Value with
-        {
-            Level = _level,
-            ExpressionType = _expressionType,
-            PartOfSpeech = _partOfSpeech,
-            Cefr = _cefr,
-            Labels = _labels.ToArray(),
-            Synonyms = _synonyms.ToArray(),
-            ResourceId = _resourceId
-        });
+        await ValueChanged.InvokeAsync(_viewModel.ToExpression());
     }
 }
 
