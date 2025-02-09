@@ -100,7 +100,8 @@ public partial class ExpressionEditDialog : ComponentBase
         {
             if (_hasChanged)
             {
-                await ExpressionRepository.AddOrUpdate(_expression);
+                _expression = await ExpressionRepository
+                    .AddOrUpdate(_expression);
 
                 _hasChanged = false;
             }
@@ -135,7 +136,7 @@ public partial class ExpressionEditDialog : ComponentBase
         }
         catch (Exception e)
         {
-            _error = e.Message;
+            _error = e.Message + " " + e.StackTrace;
         }
     }
 }
