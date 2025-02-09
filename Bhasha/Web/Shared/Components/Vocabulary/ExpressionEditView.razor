@@ -2,8 +2,7 @@
 
 <MudCardContent Style="text-align: center">
     
-    <MudTextField T="int" OnBlur="@OnValueChanged" @bind-Value="_viewModel.Level" Label="Level (1 to 100)"/>
-
+    <MudTextField T="int" @bind-Value="_viewModel.Level" @bind-Value:after="@OnValueChanged" Label="Level (1 to 100)"/>
     <EnumEditView T="ExpressionType" @bind-Value="_viewModel.Type" @bind-Value:after="@OnValueChanged" />
     <EnumEditView T="PartOfSpeech" @bind-Value="_viewModel.PartOfSpeech" @bind-Value:after="@OnValueChanged" />
     <EnumEditView T="CEFR" @bind-Value="_viewModel.Cefr" @bind-Value:after="@OnValueChanged" />

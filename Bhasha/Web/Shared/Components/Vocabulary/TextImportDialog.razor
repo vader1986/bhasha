@@ -1,0 +1,28 @@
+﻿@inherits ComponentBase
+
+<MudDialog DefaultFocus="DefaultFocus.None">
+    <DialogContent>
+        <MudPaper Width="100%">
+            <MudContainer MaxWidth="MaxWidth.Small">
+
+                @if (!string.IsNullOrWhiteSpace(_error))
+                {
+                    <MudAlert Severity="Severity.Error">@_error</MudAlert>
+                }
+
+                <MudTextField T="int" @bind-Value="_viewModel.Level" Label="Level (1 to 100)" />
+                <EnumEditView T="ExpressionType" @bind-Value="_viewModel.Type" />
+                <EnumEditView T="PartOfSpeech" @bind-Value="_viewModel.PartOfSpeech" />
+                <EnumEditView T="CEFR" @bind-Value="_viewModel.Cefr" />
+
+                <MudTextField T="string" Label="Import Text" @bind-Value="_text" Variant="Variant.Outlined" Lines="5"/>
+                
+            </MudContainer>
+        </MudPaper>
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton OnClick="@OnCancel">Cancel</MudButton>
+        <MudButton Disabled="@DisableSave" Variant="Variant.Outlined" OnClick="@OnSaveAsync">Save</MudButton>
+    </DialogActions>
+</MudDialog>

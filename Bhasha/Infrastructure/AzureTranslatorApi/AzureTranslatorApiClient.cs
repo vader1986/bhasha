@@ -5,17 +5,10 @@ using Bhasha.Domain.Interfaces;
 
 namespace Bhasha.Infrastructure.AzureTranslatorApi;
 
-public class AzureTranslatorApiClient : ITranslator
+public class AzureTranslatorApiClient(
+    ILogger<AzureTranslatorApiClient> logger, 
+    AzureTranslatorApiSettings settings) : ITranslator
 {
-    private readonly ILogger<AzureTranslatorApiClient> _logger;
-    private readonly AzureTranslatorApiSettings _settings;
-
-    public AzureTranslatorApiClient(ILogger<AzureTranslatorApiClient> logger, AzureTranslatorApiSettings settings)
-    {
-        _logger = logger;
-        _settings = settings;
-    }
-    
     public async Task<(string Translation, string Spoken)> Translate(string text, string language)
     {
         try
@@ -29,11 +22,11 @@ public class AzureTranslatorApiClient : ITranslator
         
             // Build the request.
             request.Method = HttpMethod.Post;
-            request.RequestUri = new Uri(_settings.Endpoint + route);
+            request.RequestUri = new Uri(settings.Endpoint + route);
             request.Content = new StringContent(requestBody, Encoding.UTF8, "application/json");
-            request.Headers.Add("Ocp-Apim-Subscription-Key", _settings.Key);
+            request.Headers.Add("Ocp-Apim-Subscription-Key", settings.Key);
             // location required if you're using a multi-service or regional (not global) resource.
-            request.Headers.Add("Ocp-Apim-Subscription-Region", _settings.Region);
+            request.Headers.Add("Ocp-Apim-Subscription-Region", settings.Region);
 
             // Send the request and get response.
             var response = await client
@@ -53,7 +46,7 @@ public class AzureTranslatorApiClient : ITranslator
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "failed to fetch translation from Azure Translator API");
+            logger.LogError(e, "failed to fetch translation from Azure Translator API");
             return ("", "");
         }
     }

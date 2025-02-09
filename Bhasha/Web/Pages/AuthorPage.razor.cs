@@ -27,6 +27,11 @@ public partial class AuthorPage : UserPage
 
     private string? _error;
 
+    private async Task OnImportWordsSelectedAsync()
+    {
+        await DialogService.ShowAsync<TextImportDialog>();
+    }
+    
     private async Task OnExpressionsSelectedAsync()
     {
         await DialogService.ShowAsync<ExpressionEditDialog>();
