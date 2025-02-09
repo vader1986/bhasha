@@ -136,7 +136,7 @@ public partial class ExpressionEditDialog : ComponentBase
         }
         catch (Exception e)
         {
-            _error = e.Message + " " + e.StackTrace;
+            _error = e.Message;
         }
     }
 }

@@ -14,12 +14,18 @@ public partial class TranslationListEditView : ComponentBase
 
     private List<Language> MissingLanguages { get; set; } = [];
 
+    private string? _reference;
+    
     protected override void OnParametersSet()
     {
         MissingLanguages = Language.Supported.Values
             .Except(Values
                 .Select(x => (Language)x.Language))
             .ToList();
+
+        _reference = Values
+            .FirstOrDefault(x => x.Language == Language.Reference)?
+            .Text;
         
         base.OnParametersSet();
     }
@@ -30,7 +36,8 @@ public partial class TranslationListEditView : ComponentBase
             title: "Add Translation",
             new DialogParameters
             {
-                ["MissingLanguages"] = MissingLanguages.ToList()
+                ["MissingLanguages"] = MissingLanguages.ToList(),
+                ["ReferenceTranslation"] = _reference
             });
 
         var result = await dialog.Result;
