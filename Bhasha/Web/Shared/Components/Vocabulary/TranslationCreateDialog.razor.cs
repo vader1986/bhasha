@@ -19,8 +19,8 @@ public partial class TranslationCreateDialog : ComponentBase
     private string? _spoken;
     private string? _error;
     
-    private bool DisableAdd => !string.IsNullOrWhiteSpace(_error) || string.IsNullOrWhiteSpace(_text) || _language is null || !MissingLanguages.Contains(_language);
-
+    private bool DisableAdd => !string.IsNullOrWhiteSpace(_error) || string.IsNullOrWhiteSpace(_text) || _language is null;
+    
     protected override async Task OnParametersSetAsync()
     {
         _language = Language ?? MissingLanguages.FirstOrDefault();
@@ -36,26 +36,34 @@ public partial class TranslationCreateDialog : ComponentBase
         
         await base.OnParametersSetAsync();
     }
+    
+    private async Task OnTranslationChanged()
+    {
+        ValidateInputs();
+        await InvokeAsync(StateHasChanged);
+    }
 
-    private void OnLanguageChanged(Language? language)
+    private void ValidateInputs()
     {
-        _language = language;
+        if (string.IsNullOrWhiteSpace(_text))
+        {
+            _error = "Translation is required";
+            return;
+        }
+
+        if (_language is null)
+        {
+            _error = "Language is required";
+            return;
+        }
         
-        StateHasChanged();
-    }
-    
-    private void OnTextChanged(string? text)
-    {
-        _text = text;
+        if (_text.Length > 100)
+        {
+            _error = "Translation is too long";
+            return;
+        }
         
-        StateHasChanged();
-    }
-    
-    private void OnSpokenChanged(string? spoken)
-    {
-        _spoken = spoken;
-        
-        StateHasChanged();
+        _error = null;
     }
     
     private void OnAddAsync()

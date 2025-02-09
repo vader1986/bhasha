@@ -15,15 +15,27 @@
 
                         <MudChipSet T="Language"
                                     SelectedColor="Color.Warning"
-                                    SelectedValueChanged="@OnLanguageChanged">
+                                    @bind-SelectedValue="@_language" 
+                                    @bind-SelectedValue:after="@OnTranslationChanged" >
+                            
                             @foreach (var language in MissingLanguages)
                             {
                                 <MudChip Text="@language.Pretty()" Value="@language"/>
                             }
+                            
                         </MudChipSet>
 
-                        <MudTextField T="string" Label="Translation" ValueChanged="@OnTextChanged"/>
-                        <MudTextField T="string" Label="Transliteration" ValueChanged="@OnSpokenChanged"/>
+                        <MudTextField 
+                            T="string"
+                            @bind-Value="@_text"
+                            @bind-Value:after="@OnTranslationChanged"
+                            Label="Translation" />
+                        
+                        <MudTextField 
+                            T="string"
+                            @bind-Value="@_spoken"
+                            @bind-Value:after="@OnTranslationChanged"
+                            Label="Transliteration" />
 
                     </MudCardContent>
                 </MudCard>
