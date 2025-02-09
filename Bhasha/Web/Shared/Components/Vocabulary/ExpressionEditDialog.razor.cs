@@ -68,7 +68,7 @@ public partial class ExpressionEditDialog : ComponentBase
                 _translationEditViewModels
                     .Add(viewModel);
 
-                _hasChanged = true;
+                _translationsChanged = true;
             }
             
             _expression = translation is null ? Expression.Create() : translation.Expression;
@@ -98,13 +98,9 @@ public partial class ExpressionEditDialog : ComponentBase
 
         try
         {
-            _error = "";
-
             if (_hasChanged)
             {
                 await ExpressionRepository.AddOrUpdate(_expression);
-
-                _error += "Expression saved";
 
                 _hasChanged = false;
             }
@@ -130,14 +126,12 @@ public partial class ExpressionEditDialog : ComponentBase
                         case TranslationViewModelStatus.Initial:
                             break;
                     }
-                    
-                    _error += $"Translations {translationEditViewModel.Status} for {translation.Text}";
                 }
                 
                 _translationsChanged = false;   
             }
             
-            //MudDialog.Close(DialogResult.Ok(_expression));
+            MudDialog.Close(DialogResult.Ok(_expression));
         }
         catch (Exception e)
         {
