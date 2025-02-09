@@ -57,6 +57,19 @@ public partial class ExpressionEditDialog : ComponentBase
                 _translationEditViewModels = translations
                     .Select(TranslationEditViewModel.Create).ToList();
             }
+            else
+            {
+                var viewModel = TranslationEditViewModel
+                    .Create(Language.Reference);
+                
+                viewModel.Status = TranslationViewModelStatus.Created;
+                viewModel.Text = _text;
+                
+                _translationEditViewModels
+                    .Add(viewModel);
+
+                _hasChanged = true;
+            }
             
             _expression = translation is null ? Expression.Create() : translation.Expression;
         }
@@ -85,9 +98,13 @@ public partial class ExpressionEditDialog : ComponentBase
 
         try
         {
+            _error = "";
+
             if (_hasChanged)
             {
                 await ExpressionRepository.AddOrUpdate(_expression);
+
+                _error += "Expression saved";
 
                 _hasChanged = false;
             }
@@ -113,8 +130,10 @@ public partial class ExpressionEditDialog : ComponentBase
                         case TranslationViewModelStatus.Initial:
                             break;
                     }
+                    
+                    _error += $"Translations {translationEditViewModel.Status} for {translation.Text}";
                 }
-
+                
                 _translationsChanged = false;   
             }
             
