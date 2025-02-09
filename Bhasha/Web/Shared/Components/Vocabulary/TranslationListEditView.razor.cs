@@ -48,8 +48,7 @@ public partial class TranslationListEditView : ComponentBase
         if (result.Data is TranslationEditViewModel translation)
         {
             Values.Add(translation);
-            
-            await InvokeAsync(StateHasChanged);
+            await ValuesChanged.InvokeAsync();
         }
     }
 
