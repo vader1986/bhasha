@@ -34,7 +34,8 @@ public partial class ExpressionEditDialog : ComponentBase
 
     private void OnTranslationChanged()
     {
-        _translationsChanged = _translationEditViewModels.Any(x => x.Status is not TranslationViewModelStatus.Initial);
+        _translationsChanged = _translationEditViewModels
+            .Any(x => x.Status is not TranslationViewModelStatus.Initial);
         
         StateHasChanged();
     }
@@ -65,8 +66,7 @@ public partial class ExpressionEditDialog : ComponentBase
                 viewModel.Status = TranslationViewModelStatus.Created;
                 viewModel.Text = _text;
                 
-                _translationEditViewModels
-                    .Add(viewModel);
+                _translationEditViewModels = [viewModel];
 
                 _translationsChanged = true;
                 _hasChanged = true;
