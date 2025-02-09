@@ -69,6 +69,7 @@ public partial class ExpressionEditDialog : ComponentBase
                     .Add(viewModel);
 
                 _translationsChanged = true;
+                _hasChanged = true;
             }
             
             _expression = translation is null ? Expression.Create() : translation.Expression;
