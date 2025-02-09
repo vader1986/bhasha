@@ -13,6 +13,7 @@ public partial class TranslationListEditView : ComponentBase
     private bool DisableAdd => MissingLanguages.Count == 0;
 
     private List<Language> MissingLanguages { get; set; } = [];
+    private List<TranslationEditViewModel> _values = [];
 
     private string? _reference;
     
@@ -26,6 +27,9 @@ public partial class TranslationListEditView : ComponentBase
         _reference = Values
             .FirstOrDefault(x => x.Language == Language.Reference)?
             .Text;
+
+        _values = Values
+            .ToList();
         
         base.OnParametersSet();
     }
@@ -47,8 +51,8 @@ public partial class TranslationListEditView : ComponentBase
     
         if (result.Data is TranslationEditViewModel translation)
         {
-            Values.Add(translation);
-            await ValuesChanged.InvokeAsync();
+            _values.Add(translation);
+            await OnValuesChanged();
         }
     }
 
@@ -62,7 +66,7 @@ public partial class TranslationListEditView : ComponentBase
         {
             value.Status = newStatus;
             
-            await ValuesChanged.InvokeAsync();
+            await OnValuesChanged();
         }
         
         return;
@@ -79,9 +83,14 @@ public partial class TranslationListEditView : ComponentBase
             value.Status = TranslationViewModelStatus.Deleted;
 
             MissingLanguages.Remove(value.Language);
-            
-            await ValuesChanged.InvokeAsync();
+
+            await OnValuesChanged();
         }
+    }
+
+    private async Task OnValuesChanged()
+    {
+        await ValuesChanged.InvokeAsync(_values.ToList());
     }
 }
 

@@ -1,22 +1,22 @@
 ﻿@inherits ComponentBase
 
 <MudStack>
-    @foreach (var translation in Values)
+    @foreach (var value in _values)
     {
-        <MudTooltip Text="@translation.Language">
+        <MudTooltip Text="@value.Language">
             <MudStack Row="true">
 
                 <MudTextField T="string" Label="Translation"
-                              @bind-Value="@translation.Text"
-                              @bind-Value:after="@(async () => await OnChangeAsync(translation))"/>
+                              @bind-Value="@value.Text"
+                              @bind-Value:after="@(async () => await OnChangeAsync(value))"/>
 
                 <MudTextField T="string" Label="Spoken"
-                              @bind-Value="@translation.Spoken"
-                              @bind-Value:after="@(async () => await OnChangeAsync(translation))"/>
+                              @bind-Value="@value.Spoken"
+                              @bind-Value:after="@(async () => await OnChangeAsync(value))"/>
 
                 <MudIconButton 
                     Icon="@Icons.Material.Filled.Delete" 
-                    OnClick="@(async () => await OnDeleteAsync(translation))"/>
+                    OnClick="@(async () => await OnDeleteAsync(value))"/>
                 
             </MudStack>
         </MudTooltip>
