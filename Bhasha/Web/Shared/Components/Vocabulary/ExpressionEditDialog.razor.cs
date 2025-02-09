@@ -137,7 +137,7 @@ public partial class ExpressionEditDialog : ComponentBase
                 _translationsChanged = false;   
             }
             
-            MudDialog.Close(DialogResult.Ok(_expression));
+            //MudDialog.Close(DialogResult.Ok(_expression));
         }
         catch (Exception e)
         {
