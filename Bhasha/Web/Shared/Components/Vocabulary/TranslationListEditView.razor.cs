@@ -1,5 +1,4 @@
 ﻿using Bhasha.Domain;
-using Bhasha.Domain.Interfaces;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
@@ -8,50 +7,21 @@ namespace Bhasha.Web.Shared.Components.Vocabulary;
 public partial class TranslationListEditView : ComponentBase
 {
     [Inject] public required IDialogService DialogService { get; set; }
-    [Inject] public required ITranslationRepository TranslationRepository { get; set; }
+    [Parameter] public required List<TranslationEditViewModel> Values { get; set; }
+    [Parameter] public EventCallback<List<TranslationEditViewModel>> ValuesChanged { get; set; }
     
-    [Parameter] public required Expression Expression { get; set; }
-    
-    private bool DisableAddTranslation => _availableLanguages.Count == 0;
-    
-    private List<TranslationEditViewModel> _translations = [];
-    private List<Language> _availableLanguages = [];
-    private string? _error;
+    private bool DisableAdd => MissingLanguages.Count == 0;
 
-    protected override async Task OnParametersSetAsync()
-    {
-        try
-        {
-            var translations = await TranslationRepository
-                .Find(Expression.Id);
-        
-            _translations = translations
-                .Select(TranslationEditViewModel.Create)
-                .ToList();
-            
-            _availableLanguages = Language.Supported.Values
-                .Except(_translations
-                    .Select(x => (Language)x.Origin.Language))
-                .ToList();
-        }
-        catch (Exception e)
-        {
-            _error = e.Message;
-        }
-        
-        await base.OnParametersSetAsync();
-    }
+    private List<Language> MissingLanguages { get; set; } = [];
 
-    private async Task OnChangeAsync(TranslationEditViewModel value)
+    protected override void OnParametersSet()
     {
-        try
-        {
-            await TranslationRepository.AddOrUpdate(value.ToTranslation());
-        }
-        catch (Exception e)
-        {
-            _error = e.Message;
-        }
+        MissingLanguages = Language.Supported.Values
+            .Except(Values
+                .Select(x => (Language)x.Language))
+            .ToList();
+        
+        base.OnParametersSet();
     }
 
     private async Task OnAddAsync()
@@ -60,41 +30,51 @@ public partial class TranslationListEditView : ComponentBase
             title: "Add Translation",
             new DialogParameters
             {
-                ["Expression"] = Expression,
-                ["UsedLanguages"] = _translations.Select(x => x.Origin.Language).ToList()
+                ["MissingLanguages"] = MissingLanguages.ToList()
             });
 
         var result = await dialog.Result;
-        
+    
         if (result is null || result.Canceled)
             return;
-        
+    
         if (result.Data is TranslationEditViewModel translation)
         {
-            _translations.Add(translation);
-            _availableLanguages.Remove(translation.Origin.Language);
-
+            Values.Add(translation);
+            
             await InvokeAsync(StateHasChanged);
         }
     }
 
-    private async Task OnDeleteAsync(TranslationEditViewModel translation)
+    private async Task OnChangeAsync(TranslationEditViewModel value)
     {
-        try
+        var newStatus = HasNotChanged() 
+            ? TranslationViewModelStatus.Initial 
+            : TranslationViewModelStatus.Changed;
+
+        if (newStatus != value.Status)
         {
-            if (translation.Origin.Id > 0)
-            {
-                await TranslationRepository.Delete(translation.Origin.Id);
-            }
-
-            _translations.Remove(translation);
-            _availableLanguages.Add(translation.Origin.Language);
-
-            await InvokeAsync(StateHasChanged);
+            value.Status = newStatus;
+            
+            await ValuesChanged.InvokeAsync();
         }
-        catch (Exception e)
+        
+        return;
+
+        bool HasNotChanged() => value.Origin is not null &&
+                             value.Origin.Text == value.Text &&
+                             value.Origin.Spoken == value.Spoken;
+    }
+    
+    private async Task OnDeleteAsync(TranslationEditViewModel value)
+    {
+        if (value.Status != TranslationViewModelStatus.Deleted)
         {
-            _error = e.Message;
+            value.Status = TranslationViewModelStatus.Deleted;
+
+            MissingLanguages.Remove(value.Language);
+            
+            await ValuesChanged.InvokeAsync();
         }
     }
 }

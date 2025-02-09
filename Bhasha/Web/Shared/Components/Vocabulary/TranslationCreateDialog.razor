@@ -16,14 +16,15 @@
                         <MudChipSet T="Language"
                                     SelectedColor="Color.Warning"
                                     SelectedValueChanged="@OnLanguageChanged">
-                            @foreach (var language in _languages)
+                            @foreach (var language in MissingLanguages)
                             {
                                 <MudChip Text="@language.Pretty()" Value="@language"/>
                             }
                         </MudChipSet>
 
-                        <MudTextField T="string" ValueChanged="@OnTextChanged"/>
-                        
+                        <MudTextField T="string" Label="Translation" ValueChanged="@OnTextChanged"/>
+                        <MudTextField T="string" Label="Transliteration" ValueChanged="@OnSpokenChanged"/>
+
                     </MudCardContent>
                 </MudCard>
             </MudContainer>

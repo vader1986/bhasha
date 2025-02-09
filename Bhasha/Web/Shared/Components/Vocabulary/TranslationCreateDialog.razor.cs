@@ -7,27 +7,34 @@ namespace Bhasha.Web.Shared.Components.Vocabulary;
 
 public partial class TranslationCreateDialog : ComponentBase
 {
-    [Inject] public required ITranslationRepository TranslationRepository { get; set; }
-    [CascadingParameter] public required IMudDialogInstance MudDialog { get; set; }
-    [Parameter] public required Expression Expression { get; set; }
-    [Parameter] public IEnumerable<Language> UsedLanguages { get; set; } = [];
+    [Inject] public required ITranslator Translator { get; set; }
 
-    private Language[] _languages = [];
-    
+    [CascadingParameter] public required IMudDialogInstance MudDialog { get; set; }
+    [Parameter] public List<Language> MissingLanguages { get; set; } = [];
+    [Parameter] public Language? Language { get; set; }
+    [Parameter] public string? ReferenceTranslation { get; set; }
+
     private Language? _language;
     private string? _text;
+    private string? _spoken;
     private string? _error;
     
-    private bool DisableAdd => !string.IsNullOrWhiteSpace(_error) || string.IsNullOrWhiteSpace(_text) || _language is null || UsedLanguages.Contains(_language);
+    private bool DisableAdd => !string.IsNullOrWhiteSpace(_error) || string.IsNullOrWhiteSpace(_text) || _language is null || !MissingLanguages.Contains(_language);
 
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
-        base.OnParametersSet();
+        _language = Language ?? MissingLanguages.FirstOrDefault();
+
+        if (!string.IsNullOrWhiteSpace(ReferenceTranslation) &&
+            _language is not null)
+        {
+            var (translation, spoken) = await Translator.Translate(ReferenceTranslation, _language);
+
+            _text = translation;
+            _spoken = spoken;
+        }
         
-        _languages = Language
-            .Supported.Values
-            .Where(language => !UsedLanguages.Contains(language))
-            .ToArray();
+        await base.OnParametersSetAsync();
     }
 
     private void OnLanguageChanged(Language? language)
@@ -44,7 +51,14 @@ public partial class TranslationCreateDialog : ComponentBase
         StateHasChanged();
     }
     
-    private async Task OnAddAsync()
+    private void OnSpokenChanged(string? spoken)
+    {
+        _spoken = spoken;
+        
+        StateHasChanged();
+    }
+    
+    private void OnAddAsync()
     {
         if (_text is null)
             return;
@@ -54,11 +68,10 @@ public partial class TranslationCreateDialog : ComponentBase
         
         try
         {
-            var translation = Translation.Create(Expression, _language, _text);
+            var result = TranslationEditViewModel.Create(_language);
             
-            translation = await TranslationRepository.AddOrUpdate(translation);
-
-            var result = TranslationEditViewModel.Create(translation);
+            result.Text = _text;
+            result.Spoken = _spoken;
             
             MudDialog.Close(DialogResult.Ok(result));
         }

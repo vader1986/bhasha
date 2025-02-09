@@ -16,9 +16,13 @@
                 
                 @if (_expression is not null)
                 {
-                    <ExpressionEditView @bind-Value="_expression" @bind-Value:after="@OnExpressionChanged" />
-
-                    <TranslationListEditView Expression="_expression" />
+                    <ExpressionEditView 
+                        @bind-Value="_expression" 
+                        @bind-Value:after="@OnExpressionChanged" />
+                    
+                    <TranslationListEditView 
+                        @bind-Values="_translationEditViewModels"
+                        @bind-Values:after="@OnTranslationChanged"/>
                 }
                 
             </MudContainer>
