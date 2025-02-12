@@ -6,8 +6,8 @@ namespace Bhasha.Web.Pages
 {
 	public class UserPage : ComponentBase
 	{
-        [Inject]
-        public AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
+        [Inject] public AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
+        [Inject] public required NavigationManager Navigation { get; set; }
 
         protected string? UserId { get; private set; }
 
@@ -15,10 +15,17 @@ namespace Bhasha.Web.Pages
         {
             await base.OnInitializedAsync();
 
-            var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-            var userId = state.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier);
+            try
+            {
+                var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+                var userId = state.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier);
 
-            UserId = userId.Value;
+                UserId = userId.Value;
+            }
+            catch
+            {
+                Navigation.NavigateTo("/Identity/Account/Login");
+            }
         }
     }
 }

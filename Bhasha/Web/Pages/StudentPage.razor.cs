@@ -29,7 +29,9 @@ public partial class StudentPage : UserPage
         try
         {
             if (UserId == null)
-                throw new InvalidOperationException("user not logged in");
+            {
+                return;
+            }
             
             var profiles = await StudyingService.GetProfiles(UserId);
 
