@@ -23,4 +23,8 @@
         <ChapterPage Chapter="@_selectedChapter" Page="_selectedPage" Selection="_selectedProfile!.CurrentChapter" Submit="OnSubmit" />
     }
 
+    <NotAuthorized>
+        <ReditectTo Url="/Identity/Account/Login"/>
+    </NotAuthorized>
+    
 </AuthorizeView>
