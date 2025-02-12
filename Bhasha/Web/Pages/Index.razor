@@ -1,19 +1,19 @@
 ﻿@page "/"
 
 <AuthorizeView Roles="Author">
-    <ReditectTo Url="/author"/>
+    <RedirectTo Url="/author"/>
 </AuthorizeView>
 
 <AuthorizeView Roles="Student">
-    <ReditectTo Url="/student"/>
+    <RedirectTo Url="/student"/>
 </AuthorizeView>
 
 <AuthorizeView Roles="Admin">
-    <ReditectTo Url="/roles"/>
+    <RedirectTo Url="/roles"/>
 </AuthorizeView>
 
 <AuthorizeView Roles="Author,Student,Admin">
     <NotAuthorized>
-        <ReditectTo Url="/Identity/Account/Login"/>
+        <RedirectTo Url="/Identity/Account/Login"/>
     </NotAuthorized>
 </AuthorizeView>

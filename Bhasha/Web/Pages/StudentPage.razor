@@ -2,27 +2,32 @@
 @inherits Bhasha.Web.Pages.UserPage
 
 <AuthorizeView Roles="Admin, Student">
+    <Authorized>
+        <MudPaper Style="text-align: center" Class="mt-4 pt-4 pb-4">
+            @if (_error != null)
+            {
+                <MudAlert Severity="Severity.Error">@_error</MudAlert>
+            }
 
-    <MudPaper Style="text-align: center" Class="mt-4 pt-4 pb-4">
-        @if (_error != null)
-        {
-            <MudAlert Severity="Severity.Error">@_error</MudAlert>
-        }
+            @if (DisplayProfileSelection)
+            {
+                <SelectProfile UserId="@UserId" Profiles="@_profiles" OnSelection="OnSelectProfile" />
+            }
 
-        @if (DisplayProfileSelection)
-        {
-            <SelectProfile UserId="@UserId" Profiles="@_profiles" OnSelection="OnSelectProfile" />
-        }
+            @if (DisplayChapterSelection)
+            {
+                <SelectChapter UserId="@UserId" Languages="_selectedProfile!.Key" OnSelection="OnChapterSelected" />
+            }
 
-        @if (DisplayChapterSelection)
-        {
-            <SelectChapter UserId="@UserId" Languages="_selectedProfile!.Key" OnSelection="OnChapterSelected" />
-        }
-
-        @if (DisplayPage)
-        {
-            <ChapterPage Chapter="@_selectedChapter" Page="_selectedPage" Selection="_selectedProfile!.CurrentChapter" Submit="OnSubmit" />
-        }
-    </MudPaper>
+            @if (DisplayPage)
+            {
+                <ChapterPage Chapter="@_selectedChapter" Page="_selectedPage" Selection="_selectedProfile!.CurrentChapter" Submit="OnSubmit" />
+            }
+        </MudPaper>
+    </Authorized>
+    
+    <NotAuthorized>
+        <RedirectTo Url="/Identity/Account/Login"/>
+    </NotAuthorized>
     
 </AuthorizeView>

@@ -2,27 +2,33 @@
 @inherits Bhasha.Web.Pages.UserPage
 
 <AuthorizeView Roles="Admin, Author">
-    <PageTitle>Select or create chapter</PageTitle>
+    <Authorized>
+        <PageTitle>Select or create chapter</PageTitle>
 
-    @if (_error != null)
-    {
-        <MudText>@_error</MudText>
-    }
-    
-    @if (DisplayOverview)
-    {
-        <MudButton FullWidth="true" OnClick="@OnImportWordsSelectedAsync">Import Words</MudButton>
-        <br/>
-        <MudButton FullWidth="true" OnClick="@OnExpressionsSelectedAsync">Expressions</MudButton>
-        <br/>
-        <MudButton FullWidth="true" OnClick="@OnEditChapterClicked">Edit Chapter</MudButton>
-        <br/>
-        <MudButton FullWidth="true" OnClick="@OnCreateChapterClicked">Create Chapter</MudButton>
-    }
+        @if (_error != null)
+        {
+            <MudText>@_error</MudText>
+        }
 
-    @if (DisplayChapterList)
-    {
-        <ChapterSelection ChapterSelected="@OnChapterSelected" />
-    }
+        @if (DisplayOverview)
+        {
+            <MudButton FullWidth="true" OnClick="@OnImportWordsSelectedAsync">Import Words</MudButton>
+            <br/>
+            <MudButton FullWidth="true" OnClick="@OnExpressionsSelectedAsync">Expressions</MudButton>
+            <br/>
+            <MudButton FullWidth="true" OnClick="@OnEditChapterClicked">Edit Chapter</MudButton>
+            <br/>
+            <MudButton FullWidth="true" OnClick="@OnCreateChapterClicked">Create Chapter</MudButton>
+        }
+
+        @if (DisplayChapterList)
+        {
+            <ChapterSelection ChapterSelected="@OnChapterSelected"/>
+        }        
+    </Authorized>
+
+    <NotAuthorized>
+        <RedirectTo Url="/Identity/Account/Login"/>
+    </NotAuthorized>
 
 </AuthorizeView>
