@@ -14,8 +14,8 @@ public partial class ChapterPage : ComponentBase
     {
         get
         {
-            var totalPages = Chapter.Pages.Length;
-            var correctResults = Selection.Pages.Count(x => x == ValidationResult.Correct);
+            var totalPages = Chapter.Pages.Length * 3;
+            var correctResults = Selection.CorrectAnswers.Sum(x => Math.Min(3, (int)x));
             
             return (int)Math.Round(100 * (double)correctResults / totalPages);
         }

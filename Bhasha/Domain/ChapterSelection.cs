@@ -7,5 +7,5 @@ public partial record ChapterSelection(
     int ChapterId,
     int PageIndex,
     [property:OrderedEquality]
-    ValidationResult[] Pages);
+    byte[] CorrectAnswers);
 

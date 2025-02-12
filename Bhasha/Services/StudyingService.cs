@@ -1,5 +1,4 @@
 using Bhasha.Domain;
-using Bhasha.Domain.Extensions;
 using Bhasha.Domain.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
 using Profile = Bhasha.Domain.Profile;
@@ -124,7 +123,15 @@ public class StudyingService(
         return await RunWithProfile(key.ProfileKey, async profile =>
         {
             var chapter = await chapterProvider.Load(key);
-            var updatedProfile = profile.Select(chapter);
+            var updatedProfile = profile with
+            {
+                CurrentChapter = new ChapterSelection(
+                    ChapterId: chapter.Id, 
+                    PageIndex: 0, 
+                    CorrectAnswers: Enumerable
+                        .Range(0, chapter.Pages.Length)
+                        .Select(_ => (byte)0).ToArray())
+            };
 
             await repository.Update(updatedProfile);
 
@@ -139,13 +146,61 @@ public class StudyingService(
         return await RunWithProfile(input.Key, async profile =>
         {
             var validation = await validator.Validate(input);
-            var updatedProfile = profile.Submit(validation.Result);
 
-            await repository.Update(updatedProfile);
+            var chapter = profile.CurrentChapter;
+            
+            if (chapter is null)
+                return validation;
+            
+            if (validation.Result == ValidationResult.Correct)
+            {
+                chapter.CorrectAnswers[chapter.PageIndex]++;
+            }
+            
+            var nextPageIndex = GetNextPageIndex(chapter);
 
-            _cache.Set(updatedProfile.Key, updatedProfile);
+            if (nextPageIndex is null)
+            {
+                var completedChapters = profile.CompletedChapters
+                    .Append(chapter.ChapterId)
+                    .Distinct().ToArray();
+
+                profile = profile with
+                {
+                    CompletedChapters = completedChapters,
+                    CurrentChapter = null,
+                    Level = completedChapters.Length / 5 + 1
+                };
+            }
+            else
+            {
+                profile = profile with
+                {
+                    CurrentChapter = chapter with { PageIndex = nextPageIndex.Value }
+                };
+            }
+            
+            await repository.Update(profile);
+
+            _cache.Set(profile.Key, profile);
 
             return validation;
+            
+            int? GetNextPageIndex(ChapterSelection selection)
+            {
+                var pages = selection.CorrectAnswers.Length;
+
+                for (var i = 0; i < pages; i++)
+                {
+                    var index = (selection.PageIndex + 1 + i) % pages;
+                    if (selection.CorrectAnswers[index] < 3)
+                    {
+                        return index;
+                    }
+                }
+
+                return null;
+            }
         });
     }
 }

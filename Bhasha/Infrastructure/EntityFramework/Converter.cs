@@ -12,7 +12,7 @@ namespace Bhasha.Infrastructure.EntityFramework;
 
 public static class Converter
 {
-    public static Domain.ExpressionType ToDomain(this ExpressionType expressionType) => expressionType switch
+    private static Domain.ExpressionType ToDomain(this ExpressionType expressionType) => expressionType switch
     {
         ExpressionType.Word => Domain.ExpressionType.Word,
         ExpressionType.Expression => Domain.ExpressionType.Expression,
@@ -32,7 +32,7 @@ public static class Converter
         _ => throw new ArgumentOutOfRangeException(nameof(expressionType), expressionType, null)
     };
 
-    public static Domain.PartOfSpeech ToDomain(this PartOfSpeech partOfSpeech) => partOfSpeech switch
+    private static Domain.PartOfSpeech ToDomain(this PartOfSpeech partOfSpeech) => partOfSpeech switch
     {
         PartOfSpeech.Adjective => Domain.PartOfSpeech.Adjective,
         PartOfSpeech.Adverb => Domain.PartOfSpeech.Adverb,
@@ -66,7 +66,7 @@ public static class Converter
         _ => throw new ArgumentOutOfRangeException(nameof(partOfSpeech), partOfSpeech, null)
     };
     
-    public static CEFR ToDomain(this Cefr cefr) => cefr switch
+    private static CEFR ToDomain(this Cefr cefr) => cefr switch
     {
         Cefr.A1 => CEFR.A1,
         Cefr.A2 => CEFR.A2,
@@ -105,16 +105,16 @@ public static class Converter
     public static Chapter Convert(ChapterDto dto)
     {
         return new Chapter(
-            dto.Id,
-            dto.RequiredLevel,
-            Convert(dto.Name),
-            Convert(dto.Description),
-            dto.Expressions
+            Id: dto.Id,
+            RequiredLevel: dto.RequiredLevel,
+            Name: Convert(dto.Name),
+            Description: Convert(dto.Description),
+            Pages: dto.Expressions
                 .Select(Convert)
                 .OrderBy(x => x.Id)
                 .ToArray(),
-            dto.ResourceId,
-            dto.AuthorId);
+            ResourceId: dto.ResourceId,
+            AuthorId: dto.AuthorId);
     }
     
     public static ExpressionDto Convert(Expression expression)
@@ -135,14 +135,14 @@ public static class Converter
     public static Expression Convert(ExpressionDto dto)
     {
         return new Expression(
-            dto.Id,
-            dto.ExpressionType?.ToDomain(),
-            dto.PartOfSpeech?.ToDomain(),
-            dto.Cefr?.ToDomain(),
-            dto.ResourceId,
-            dto.Labels,
-            dto.Synonyms,
-            dto.Level);
+            Id: dto.Id,
+            ExpressionType: dto.ExpressionType?.ToDomain(),
+            PartOfSpeech: dto.PartOfSpeech?.ToDomain(),
+            Cefr: dto.Cefr?.ToDomain(),
+            ResourceId: dto.ResourceId,
+            Labels: dto.Labels,
+            Synonyms: dto.Synonyms,
+            Level: dto.Level);
     }
     
     public static ProfileDto Convert(Profile profile)
@@ -156,7 +156,7 @@ public static class Converter
             Level = profile.Level,
             CurrentChapterId = profile.CurrentChapter?.ChapterId,
             CurrentPageIndex = profile.CurrentChapter?.PageIndex,
-            ValidationResults = profile.CurrentChapter?.Pages.Compactify() ?? string.Empty,
+            ValidationResults = profile.CurrentChapter?.CorrectAnswers.Compactify() ?? string.Empty,
             CompletedChapters = profile.CompletedChapters
         };
     }
@@ -164,18 +164,18 @@ public static class Converter
     public static Profile Convert(ProfileDto dto)
     {
         return new Profile(
-            dto.Id,
-            new ProfileKey(
-                dto.UserId,
-                dto.Native,
-                dto.Target),
-            dto.Level,
-            dto.CompletedChapters,
-            dto.CurrentChapterId is not null
+            Id: dto.Id,
+            Key: new ProfileKey(
+                UserId: dto.UserId,
+                Native: dto.Native,
+                Target: dto.Target),
+            Level: dto.Level,
+            CompletedChapters: dto.CompletedChapters,
+            CurrentChapter: dto.CurrentChapterId is not null
                 ? new ChapterSelection(
-                    dto.CurrentChapterId.Value,
-                    dto.CurrentPageIndex ?? default,
-                    dto.ValidationResults.Decompactify(b => (ValidationResult)b))
+                    ChapterId: dto.CurrentChapterId.Value,
+                    PageIndex: dto.CurrentPageIndex ?? 0,
+                    CorrectAnswers: dto.ValidationResults.Decompactify(b => b))
                 : null);
     }
     
@@ -195,11 +195,11 @@ public static class Converter
     public static Translation Convert(TranslationDto dto)
     {
         return new Translation(
-            dto.Id,
-            dto.Language,
-            dto.Text,
-            dto.Spoken,
-            dto.AudioId,
-            Convert(dto.Expression));
+            Id: dto.Id,
+            Language: dto.Language,
+            Text: dto.Text,
+            Spoken: dto.Spoken,
+            AudioId: dto.AudioId,
+            Expression: Convert(dto.Expression));
     }
 }
