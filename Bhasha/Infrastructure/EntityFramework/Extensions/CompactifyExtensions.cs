@@ -8,7 +8,7 @@ public static class CompactifyExtensions
     {
         return Encoding.UTF8
             .GetString(source
-                .Select(x => x.ToByte(formatProvider))
+                .Select(x => (byte)(x.ToByte(formatProvider) + 1))
                 .ToArray());
     }
     
@@ -16,6 +16,7 @@ public static class CompactifyExtensions
     {
         return Encoding.UTF8
             .GetBytes(source)
+            .Select(b => (byte)(b - 1))
             .Select(converter)
             .ToArray();
     }
