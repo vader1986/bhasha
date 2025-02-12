@@ -124,7 +124,10 @@ public partial class StudentPage : UserPage
         }
         catch (Exception error)
         {
-            _error = error.Message;
+            _error = error.Message 
+                     + Environment.NewLine + error.StackTrace
+                     + Environment.NewLine + error.InnerException?.Message 
+                     + Environment.NewLine + error.InnerException?.StackTrace;
         }
         finally
         {
