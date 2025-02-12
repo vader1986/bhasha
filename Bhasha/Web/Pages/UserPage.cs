@@ -9,7 +9,7 @@ namespace Bhasha.Web.Pages
         [Inject] public AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
         [Inject] public required NavigationManager Navigation { get; set; }
 
-        protected string? UserId { get; private set; }
+        protected string UserId { get; private set; } = null!;
 
         protected override async Task OnInitializedAsync()
         {
@@ -23,6 +23,11 @@ namespace Bhasha.Web.Pages
                 UserId = userId.Value;
             }
             catch
+            {
+                Navigation.NavigateTo("/Identity/Account/Login");
+            }
+
+            if (string.IsNullOrWhiteSpace(UserId))
             {
                 Navigation.NavigateTo("/Identity/Account/Login");
             }

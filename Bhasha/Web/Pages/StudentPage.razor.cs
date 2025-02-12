@@ -28,11 +28,6 @@ public partial class StudentPage : UserPage
 
         try
         {
-            if (UserId == null)
-            {
-                return;
-            }
-            
             var profiles = await StudyingService.GetProfiles(UserId);
 
             foreach (var profile in profiles)
