@@ -1,21 +1,19 @@
 ﻿@inherits ComponentBase
 
-<MudPaper Style="text-align: center">
-    <MudList T="string">
-        @foreach (var chapter in Chapters)
+<MudList T="string">
+    @foreach (var chapter in Chapters)
+    {
+        @if (chapter.Completed)
         {
-            @if (chapter.Completed)
-            {
-                <MudListItem Icon="@Icons.Material.Filled.Image" OnClick="async () => await OnSelection(chapter)">
-                    @chapter.Name
-                </MudListItem>
-            }
-            else
-            {
-                <MudListItem Icon="@Icons.Material.Outlined.Image" OnClick="async () => await OnSelection(chapter)">
-                    @chapter.Name
-                </MudListItem>
-            }
+            <MudListItem Icon="@Icons.Material.Filled.Image" OnClick="async () => await OnSelection(chapter)">
+                @chapter.Name
+            </MudListItem>
         }
-    </MudList>
-</MudPaper>
+        else
+        {
+            <MudListItem Icon="@Icons.Material.Outlined.Image" OnClick="async () => await OnSelection(chapter)">
+                @chapter.Name
+            </MudListItem>
+        }
+    }
+</MudList>

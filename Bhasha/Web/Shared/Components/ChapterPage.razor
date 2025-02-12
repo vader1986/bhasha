@@ -1,20 +1,18 @@
 ﻿@using Bhasha.Domain.Pages
 @inherits ComponentBase
 
-<MudPaper Style="text-align: center" Class="mt-4 pt-4 pb-4">
-    <MudText Typo="Typo.h6">@Chapter.Name</MudText>
-    <MudText Typo="Typo.body2">@Chapter.Description</MudText>
-    <MudDivider Class="mt-3"/>
-    <MudProgressLinear Color="Color.Primary" Value="ChapterProgress" Class="my-7" />
+<MudText Typo="Typo.h6">@Chapter.Name</MudText>
+<MudText Typo="Typo.body2">@Chapter.Description</MudText>
+<MudDivider Class="mt-3"/>
+<MudProgressLinear Color="Color.Primary" Value="ChapterProgress" Class="my-7" />
 
-    @switch (Page.PageType)
-    {
-        case PageType.MultipleChoice:
+@switch (Page.PageType)
+{
+    case PageType.MultipleChoice:
         <MultipleChoicePage Data="GetPage<MultipleChoice>()" Submit="Submit" />
         break;
 
-        default:
+    default:
         <MudText>@Page.PageType is not supported</MudText>
         break;
-    }
-</MudPaper>
+}
