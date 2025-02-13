@@ -3,7 +3,7 @@
 
 <AuthorizeView Roles="Admin, Student">
     <Authorized>
-        <MudPaper Style="text-align: center; height: 90%;" Class="mt-4 pt-4 pb-4">
+        <MudPaper Style="text-align: center;" Class="mt-4 pt-4 pb-4">
             @if (_error != null)
             {
                 <MudAlert Severity="Severity.Error">@_error</MudAlert>
