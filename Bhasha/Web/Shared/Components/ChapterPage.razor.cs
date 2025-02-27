@@ -40,7 +40,11 @@ public partial class ChapterPage : ComponentBase
 
         if (Value != profile)
         {
+            _selection = null;
+            
             await ValueChanged.InvokeAsync(profile);
+            
+            await InvokeAsync(StateHasChanged);
         }
     }
 }
