@@ -9,15 +9,20 @@ namespace Bhasha.Web.Shared.Components;
 public partial class SelectProfile : ComponentBase
 {
     [Inject] public required IStudyingService StudyingService { get; set; }
-    [Parameter] public required Action<Profile> OnSelection { get; set; }
+    [Parameter] public required IEnumerable<Profile> Values { get; set; }
+    [Parameter] public required EventCallback<Profile> ValueChanged { get; set; }
     [Parameter] public required string UserId { get; set; }
-    [Parameter] public required IEnumerable<Profile> Profiles { get; set; }
 
     private bool _disableCreateButton = true;
     private Language? _selectedNative;
     private Language? _selectedTarget;
     private string? _error;
 
+    private void OnProfileSelected(Profile profile)
+    {
+        ValueChanged.InvokeAsync(profile);
+    }
+    
     private void OnSelectedNative(Language selectedNative)
     {
         _selectedNative = selectedNative;
@@ -50,7 +55,7 @@ public partial class SelectProfile : ComponentBase
     {
         if (_selectedNative != null && _selectedTarget != null)
         {
-            var alreadyExists = Profiles.Any(x => x.Key.Native == _selectedNative && x.Key.Target == _selectedTarget);
+            var alreadyExists = Values.Any(x => x.Key.Native == _selectedNative && x.Key.Target == _selectedTarget);
             var invalidSelection = _selectedNative == _selectedTarget;
 
             _disableCreateButton = alreadyExists || invalidSelection;
@@ -74,7 +79,7 @@ public partial class SelectProfile : ComponentBase
 
         _disableCreateButton = true;
 
-        OnSelection(profile);
+        await ValueChanged.InvokeAsync(profile);
     }
 
 
@@ -88,7 +93,7 @@ public partial class SelectProfile : ComponentBase
         try
         {
             await StudyingService.DeleteProfile(profile.Key);
-            Profiles = Profiles.Where(x => x.Id != profile.Id);
+            Values = Values.Where(x => x.Id != profile.Id);
         }
         catch (Exception e)
         {

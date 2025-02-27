@@ -6,13 +6,27 @@
 <MudDivider Class="mt-3"/>
 <MudProgressLinear Color="Color.Primary" Value="ChapterProgress" Class="my-7" />
 
-@switch (Page.PageType)
+<br/>
+<MudText>@Page.Word.Text</MudText>
+<MudText Typo="Typo.body2">(@Page.Word.Language)</MudText>
+<br/>
+
+@switch (Page)
 {
-    case PageType.MultipleChoice:
-        <MultipleChoicePage Data="GetPage<MultipleChoice>()" Submit="Submit" />
+    case DisplayedPage<MultipleChoice> page:
+        <MultipleChoicePage 
+            MultipleChoice="page.Arguments"
+            @bind-Value="_selection" 
+            @bind-Value:after="OnValueChanged" />
         break;
 
     default:
         <MudText>@Page.PageType is not supported</MudText>
         break;
 }
+
+<ChapterPageBar 
+    ProfileKey="Value.Key"
+    ExpressionId="@Page.Word.Expression.Id"
+    Selection="@_selection"
+    OnSubmit="@UpdateProfileAsync"/>

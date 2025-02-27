@@ -1,7 +1,6 @@
 ﻿using Bhasha.Domain;
 using Bhasha.Services;
 using Microsoft.AspNetCore.Components;
-using MudBlazor;
 using Profile = Bhasha.Domain.Profile;
 
 namespace Bhasha.Web.Pages;
@@ -9,17 +8,12 @@ namespace Bhasha.Web.Pages;
 public partial class StudentPage : UserPage
 {
     [Inject] public required IStudyingService StudyingService { get; set; }
-    [Inject] public required ISnackbar Snackbar { get; set; }
     
     private Profile? _selectedProfile;
     private DisplayedChapter? _selectedChapter;
     private DisplayedPage? _selectedPage;
     private string? _error;
-
-    private bool DisplayProfileSelection => _selectedProfile == null;
-    private bool DisplayChapterSelection => !DisplayProfileSelection && _selectedChapter == null;
-    private bool DisplayPage => _selectedProfile != null && _selectedChapter != null && _selectedPage != null;
-
+    
     private readonly IList<Profile> _profiles = new List<Profile>();
     
     protected override async Task OnInitializedAsync()
@@ -41,62 +35,18 @@ public partial class StudentPage : UserPage
         }
         finally
         {
-            StateHasChanged();
-        }
-    }
-
-    internal void OnSelectProfile(Profile profile)
-    {
-        _selectedProfile = profile;
-
-        StateHasChanged();
-    }
-
-    internal async Task OnSubmit(Translation translation)
-    {
-        try
-        {
-            var key = _selectedProfile?.Key;
-
-            if (key == null)
-                throw new InvalidOperationException("no profile selected");
-
-            if (_selectedPage == null)
-                throw new InvalidOperationException("no page selected");
-
-            var expression = _selectedPage.Word.Expression;
-            var userInput = new ValidationInput(key, expression.Id, translation);
-
-            var validation = await StudyingService.Submit(userInput);
-
-            switch (validation.Result)
-            {
-                case ValidationResult.Correct:
-                    Snackbar.Add("Correct!", Severity.Success);
-                    break;
-                
-                case ValidationResult.PartiallyCorrect:
-                    Snackbar.Add("Almost correct!", Severity.Success);
-                    break;
-                
-                case ValidationResult.Wrong:
-                    Snackbar.Add("Wrong!", Severity.Error);
-                    break;
-            }
-            
-            OnProfileUpdated(await StudyingService.GetProfile(key));
-        }
-        catch (Exception error)
-        {
-            _error = error.Message;
-        }
-        finally
-        {
             await InvokeAsync(StateHasChanged);
         }
     }
 
-    internal async Task OnChapterSelected(DisplayedSummary summary)
+    private async Task SelectProfileAsync(Profile profile)
+    {
+        _selectedProfile = profile;
+
+        await InvokeAsync(StateHasChanged);
+    }
+    
+    private async Task SelectChapterAsync(DisplayedSummary summary)
     {
         try
         {
@@ -132,26 +82,22 @@ public partial class StudentPage : UserPage
         }
     }
 
-    private void OnProfileUpdated(Profile profile)
+    private async Task UpdateChapterAndPageAsync()
     {
-        if (_selectedChapter is null)
+        if (_selectedProfile is null)
             return;
-
-        if (_selectedProfile is null || _selectedProfile.Id != profile.Id)
-            return;
-
-        var selection = profile.CurrentChapter;
-
-        if (selection == null)
+        
+        if (_selectedProfile.CurrentChapter is null)
         {
             _selectedChapter = null;
             _selectedPage = null;
         }
-        else
+        else if (_selectedChapter is not null)
         {
-            _selectedProfile = profile;
-            _selectedPage = _selectedChapter.Pages[selection.PageIndex];
+            _selectedPage = _selectedChapter.Pages[_selectedProfile.CurrentChapter.PageIndex];
         }
+        
+        await InvokeAsync(StateHasChanged);
     }
 }
 

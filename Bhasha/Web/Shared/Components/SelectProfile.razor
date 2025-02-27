@@ -5,15 +5,15 @@
     <MudAlert Severity="Severity.Error">@_error</MudAlert>
 }
 
-@if (Profiles.Any())
+@if (Values.Any())
 {
     <MudChipSet T="Profile">
-        @foreach (var profile in Profiles)
+        @foreach (var profile in Values)
         {
             <MudChip
                 Text="@profile.ToString()"
                 CloseIcon="@Icons.Material.Filled.Delete"
-                OnClick="@(() => OnSelection(profile))"
+                OnClick="@(() => OnProfileSelected(profile))"
                 OnClose="@OnDeleteProfile(profile)"
                 Value="@profile"/>
         }
