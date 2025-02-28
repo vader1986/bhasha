@@ -17,14 +17,14 @@
     }
 </MudChipSet>
 
-<MudChipSet T="string">
-    @foreach (var token in _openTokens)
+<MudChipSet T="int">
+    @foreach (var index in _openTokens)
     {
         <MudChip
-            T="string"
-            Value="@token"
+            T="int"
+            Value="@index"
             CloseIcon="@Icons.Material.Filled.Add"
-            Text="@token"
+            Text="@_tokens[index]"
             OnClose="@ChooseAsync"/>
     }
 </MudChipSet>
