@@ -102,7 +102,7 @@ public partial class ClozePage : ComponentBase, IDisplayPage
             .First(IsOpenChoice);
         
         _choices.Add(index, _tokens[chip.Value]);
-        _openTokens.Remove(index);
+        _openTokens.Remove(chip.Value);
 
         await UpdateValueAsync();
     }
