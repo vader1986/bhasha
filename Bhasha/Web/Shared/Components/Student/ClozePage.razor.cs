@@ -19,7 +19,7 @@ public partial class ClozePage : ComponentBase, IDisplayPage
     private int[] _gaps = [];
     private SortedDictionary<int, string> _choices = [];
     private SortedDictionary<int, string> _tokens = [];
-    private IEnumerable<string> _openTokens = [];
+    private List<int> _openTokens = [];
     
     private bool IsOpenChoice(int index) 
         => !_choices.ContainsKey(index) && _gaps.Contains(index);
@@ -52,7 +52,7 @@ public partial class ClozePage : ComponentBase, IDisplayPage
             
             _openTokens = _gaps
                 .Where(IsOpenChoice)
-                .Select(index => _tokens[index]);
+                .ToList();
         }
         catch (Exception e)
         {
@@ -72,48 +72,51 @@ public partial class ClozePage : ComponentBase, IDisplayPage
         }
     }
 
-    private async Task ValidateAsync()
+    private async Task UpdateValueAsync()
     {
-        if (_tokens.Count == 0 || _tokens.Count != _choices.Count)
+        if (_tokens.Count == 0)
             return;
-        
-        var userInput = _choices.OrderBy(x => x.Key).Select(x => x.Value);
 
-        var value = string.Join(string.Empty, userInput);
+        if (_tokens.Count != _choices.Count)
+        {
+            if (_openTokens.Count == 1)
+            {
+                await ValueChanged.InvokeAsync(null);
+            }
+        }
+        else
+        {
+            var userInput = _choices.OrderBy(x => x.Key).Select(x => x.Value);
+
+            var value = string.Join(string.Empty, userInput);
         
-        await ValueChanged.InvokeAsync(value);
-    }
-    
-    private async Task UpdateOpenChoicesAsync()
-    {
-        _openTokens = _gaps
-            .Where(IsOpenChoice)
-            .Select(index => _tokens[index]);
+            await ValueChanged.InvokeAsync(value);
+        }
         
         await InvokeAsync(StateHasChanged);
     }
     
-    private async Task ChooseAsync(MudChip<string> chip)
+    private async Task ChooseAsync(MudChip<int> chip)
     {
-        if (chip.Value is null)
-            return;
-        
         var index = _tokens.Keys
-            .OrderBy(x => x)
-            .FirstOrDefault(IsOpenChoice);
+            .First(IsOpenChoice);
         
-        _choices[index] = chip.Value;
+        _choices.Add(index, _tokens[chip.Value]);
+        _openTokens.Remove(index);
 
-        await UpdateOpenChoicesAsync();
-        await ValidateAsync();
+        await UpdateValueAsync();
     }
     
     private async Task UnChooseAsync(MudChip<int> chip)
     {
+        var index = _tokens
+            .First(x => x.Value == _choices[chip.Value])
+            .Key;
+        
         _choices.Remove(chip.Value);
+        _openTokens.Add(index);
 
-        await UpdateOpenChoicesAsync();
-        await ValueChanged.InvokeAsync(null);
+        await UpdateValueAsync();
     }
     
     private static (string[] Tokens, int[] Gaps) CreateClozeFrom(string word)
