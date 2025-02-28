@@ -49,6 +49,10 @@ public partial class ClozePage : ComponentBase, IDisplayPage
                 .Select((token, index) => (Index: index, Token: token))
                 .Where(x => !_gaps.Contains(x.Index))
                 .ToDictionary(x => x.Index, x => x.Token));
+            
+            _openTokens = _gaps
+                .Where(IsOpenChoice)
+                .Select(index => _tokens[index]);
         }
         catch (Exception e)
         {
