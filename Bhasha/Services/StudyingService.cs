@@ -17,7 +17,7 @@ public interface IStudyingService
     Task<Validation> Submit(ValidationInput input);
 }
 
-public class StudyingService(
+public sealed class StudyingService(
     IProfileRepository repository,
     IValidator validator,
     IChapterSummariesProvider summariesProvider,

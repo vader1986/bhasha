@@ -1,0 +1,32 @@
+﻿@inherits ComponentBase
+
+<MudText Typo="Typo.h6">@_title</MudText>
+<MudText Typo="Typo.body2">@_description</MudText>
+<MudDivider Class="mt-3"/>
+<MudProgressLinear Color="Color.Primary" Value="@_progress" Class="my-7" />
+
+<br/>
+<MudText>@_word</MudText>
+<br/>
+
+@if (_viewModel is not null)
+{
+    @switch (_currentPage)
+    {
+        case PageType.MultipleChoice:
+            <MultipleChoicePage ViewModel="@_viewModel" @bind-Value="_userInput" @bind-Value:after="OnValueChanged" />
+            break;
+        
+        case PageType.Cloze:
+            <ClozePage ViewModel="@_viewModel" @bind-Value="_userInput" @bind-Value:after="OnValueChanged" />
+            break;
+    }
+}
+
+<MudDivider 
+    Class="mt-3 my-3"/>
+
+<ChapterPageBar 
+    ViewModel="@_chapterPageBarViewModel"
+    OnSubmit="@UpdateProfileAsync"
+    OnError="@DisplayError"/>

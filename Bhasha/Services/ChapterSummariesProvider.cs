@@ -3,7 +3,7 @@ using Bhasha.Domain.Interfaces;
 
 namespace Bhasha.Services;
 
-public class ChapterSummariesProvider(
+public sealed class ChapterSummariesProvider(
     IChapterRepository chapterRepository,
     ITranslationProvider translationProvider) : IChapterSummariesProvider
 {

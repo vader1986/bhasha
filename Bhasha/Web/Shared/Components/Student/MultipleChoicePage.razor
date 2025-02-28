@@ -1,0 +1,25 @@
+﻿@if (!string.IsNullOrWhiteSpace(_resourceId))
+{
+    <MudImage
+        Src="@Resources.GetImageUrl(_resourceId)"
+        Elevation="35" 
+        Class="rounded-lg" />
+}
+
+<MudChipSet SelectedColor="Color.Warning"
+    @bind-SelectedValue="_selectedChoice"
+    @bind-SelectedValue:after="@OnValueChanged">
+    
+    @foreach (var choice in _choices)
+    {
+        @if (string.IsNullOrWhiteSpace(choice.Spoken))
+        {
+            <MudChip OnClick="@StateHasChanged" Value="@choice.Text" Text="grey">@choice.Text</MudChip>
+        }
+        else
+        {
+            <MudChip OnClick="@StateHasChanged" Value="@choice.Text" Text="grey">@choice.Text (@choice.Spoken)</MudChip>
+        }
+    }
+    
+</MudChipSet>

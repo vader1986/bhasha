@@ -1,5 +1,4 @@
-﻿using Bhasha.Domain;
-using Bhasha.Domain.Interfaces;
+﻿using Bhasha.Domain.Interfaces;
 using Microsoft.AspNetCore.Components;
 
 namespace Bhasha.Web.Shared.Components;
@@ -7,11 +6,14 @@ namespace Bhasha.Web.Shared.Components;
 public partial class AudioButton : ComponentBase
 {
     [Inject] public required ISpeaker Speaker { get; set; }
-    [Inject] public required ILogger<MultipleChoicePage> Logger { get; set; }
+    [Inject] public required ILogger<AudioButton> Logger { get; set; }
+    [Inject] public required ITranslationProvider TranslationProvider { get; set; }
 
-    [Parameter] public Translation? Translation { get; set; }
+    [Parameter] public required string Language { get; set; }
+    [Parameter] public required string? Text { get; set; }
+    [Parameter] public required int ExpressionId { get; set; }
 
-    private bool Disabled => Translation == null;
+    private bool Disabled => Text == null;
 
     private bool _playAudio;
     
@@ -22,25 +24,31 @@ public partial class AudioButton : ComponentBase
         if (!_playAudio)
             return;
         
-        if (Translation is null)
+        if (Text is null)
             return;
         
-        var languageSupported = await Speaker.IsLanguageSupported(Translation.Language);
+        var languageSupported = await Speaker.IsLanguageSupported(Language);
 
         try
         {
-            if (string.IsNullOrWhiteSpace(Translation.Spoken) || languageSupported)
+            if (languageSupported)
             {
-                await Speaker.SpeakAsync(Translation.Text, Translation.Language);
+                await Speaker.SpeakAsync(Text, Language);
             }
             else
             {
-                await Speaker.SpeakAsync(Translation.Spoken, Translation.Language);
+                var translation = await TranslationProvider.Find(expressionId: ExpressionId, language: Language);
+                if (translation?.Spoken is not null)
+                {
+                    await Speaker.SpeakAsync(
+                        text: translation.Spoken,
+                        language: Domain.Language.Reference);
+                }
             }
         }
         catch (Exception e)
         {
-            Logger.LogError(e, "Failed to play audio for {Translation}", Translation.Text);
+            Logger.LogError(e, "Failed to play audio for {Text} in {Language}", Text, Language);
         }
         finally
         {

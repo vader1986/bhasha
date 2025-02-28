@@ -12,7 +12,7 @@ public interface IAuthoringService
     Task AddOrUpdateChapter(Chapter chapter, CancellationToken token = default);
 }
 
-public class AuthoringService(
+public sealed class AuthoringService(
     IChapterRepository chapterRepository,
     ITranslationRepository translationRepository,
     IExpressionRepository expressionRepository) : IAuthoringService

@@ -8,10 +8,9 @@ public interface IChapterProvider
     Task<DisplayedChapter> Load(ChapterKey key, CancellationToken token = default);
 }
 
-public class ChapterProvider(
+public sealed class ChapterProvider(
     IChapterRepository chapterRepository,
-    ITranslationProvider translationProvider,
-    IPageFactory pageFactory) : IChapterProvider
+    ITranslationProvider translationProvider) : IChapterProvider
 {
     public async Task<DisplayedChapter> Load(ChapterKey key, CancellationToken token)
     {
@@ -21,7 +20,11 @@ public class ChapterProvider(
         var displayedPages = new List<DisplayedPage>(capacity: chapter.Pages.Length);
         foreach (var page in chapter.Pages)
         {
-            displayedPages.Add(await pageFactory.Create(chapter, page, key.ProfileKey));
+            var word = await translationProvider.Find(page.Id, key.ProfileKey.Native, token)
+                ?? throw new InvalidOperationException($"Translation for {page.Id} to {key.ProfileKey.Native} not found");
+            
+            displayedPages
+                .Add(new DisplayedPage(Word: word, Lead: null));
         }
         
         var name = await translationProvider.Find(chapter.Name.Id, key.ProfileKey.Native, token)

@@ -1,0 +1,19 @@
+﻿<MudStack Row="true" 
+          Justify="Justify.Center"
+          AlignItems="AlignItems.Center">
+    
+    <AudioButton
+        ExpressionId="@ViewModel.ExpressionId"
+        Language="@ViewModel.ProfileKey.Target"
+        Text="@ViewModel.UserInput" />
+
+    <SubmitButton
+        UserInput="@ViewModel.UserInput"
+        ExpressionId="@ViewModel.ExpressionId"
+        ProfileKey="@ViewModel.ProfileKey"
+        OnClick="@OnSubmit"
+        OnError="@OnError"/>
+    
+</MudStack>
+
+

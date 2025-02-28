@@ -1,4 +1,5 @@
 ﻿@page "/student"
+@using Bhasha.Web.Shared.Components.Student
 @inherits Bhasha.Web.Pages.UserPage
 
 <AuthorizeView Roles="Admin, Student">
@@ -27,12 +28,12 @@
             }
 
             @if (_selectedProfile != null && 
-                 _selectedChapter != null && 
+                 _selectedChapter != null &&
                  _selectedPage != null)
             {
                 <ChapterPage 
-                    Chapter="@_selectedChapter" 
-                    Page="@_selectedPage" 
+                    Chapter="@_selectedChapter"
+                    Page="@_selectedPage"
                     @bind-Value="_selectedProfile"
                     @bind-Value:after="@UpdateChapterAndPageAsync"/>
             }

@@ -1,5 +1,6 @@
 ﻿using Bhasha.Domain;
 using Bhasha.Services;
+using Bhasha.Web.Shared.Components.Student;
 using Microsoft.AspNetCore.Components;
 using Profile = Bhasha.Domain.Profile;
 
@@ -9,10 +10,10 @@ public partial class StudentPage : UserPage
 {
     [Inject] public required IStudyingService StudyingService { get; set; }
     
+    private string? _error;
     private Profile? _selectedProfile;
     private DisplayedChapter? _selectedChapter;
     private DisplayedPage? _selectedPage;
-    private string? _error;
     
     private readonly IList<Profile> _profiles = new List<Profile>();
     

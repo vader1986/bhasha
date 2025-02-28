@@ -14,15 +14,15 @@ public partial class SubmitButton : ComponentBase
     [Parameter] public EventCallback OnClick { get; set; }
     
     [Parameter] public required int ExpressionId { get; set; }
-    [Parameter] public Translation? Selection { get; set; }
+    [Parameter] public string? UserInput { get; set; }
     
     [Parameter] public EventCallback<Exception>? OnError { get; set; }
 
-    private bool Disabled => Selection is null;
+    private bool Disabled => UserInput is null;
     
     private async Task SubmitAsync()
     {
-        if (Selection is null)
+        if (UserInput is null)
             return;
         
         try
@@ -30,7 +30,7 @@ public partial class SubmitButton : ComponentBase
             var userInput = new ValidationInput(
                 Key: ProfileKey,
                 ExpressionId: ExpressionId, 
-                Translation: Selection);
+                UserInput: UserInput);
 
             var validation = await StudyingService
                 .Submit(userInput);

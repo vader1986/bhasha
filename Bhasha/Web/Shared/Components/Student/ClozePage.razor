@@ -1,0 +1,30 @@
+﻿<MudChipSet T="int">
+    @foreach (var index in _tokens.Keys)
+    {
+        if (_choices.TryGetValue(index, out var tokenValue))
+        {
+            <MudChip
+                T="int"
+                Value="@index"
+                CloseIcon="@Icons.Material.Filled.Close"
+                Text="@tokenValue"
+                OnClose="@UnChooseAsync"/>
+        }
+        else
+        {
+            <MudChip Value="@index">___</MudChip>
+        }
+    }
+</MudChipSet>
+
+<MudChipSet T="string">
+    @foreach (var token in _openTokens)
+    {
+        <MudChip
+            T="string"
+            Value="@token"
+            CloseIcon="@Icons.Material.Filled.Add"
+            Text="@token"
+            OnClose="@ChooseAsync"/>
+    }
+</MudChipSet>

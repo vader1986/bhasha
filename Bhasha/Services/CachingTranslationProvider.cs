@@ -4,7 +4,7 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace Bhasha.Services;
 
-public class CachingTranslationProvider(IServiceProvider serviceProvider) : ITranslationProvider
+public sealed class CachingTranslationProvider(IServiceProvider serviceProvider) : ITranslationProvider
 {
     private readonly MemoryCache _cache = new(new MemoryCacheOptions
     {

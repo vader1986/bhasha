@@ -3,5 +3,5 @@
 public record ValidationInput(
 	ProfileKey Key,
 	int ExpressionId,
-	Translation Translation);
+	string UserInput);
 

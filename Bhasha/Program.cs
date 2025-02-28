@@ -92,8 +92,6 @@ try
 
     services.AddHealthChecks();
     services.AddScoped<IValidator, Validator>();
-    services.AddScoped<IPageFactory, PageFactory>();
-    services.AddScoped<IMultipleChoicePageFactory, MultipleChoicePageFactory>();
     services.AddScoped<IChapterSummariesProvider, ChapterSummariesProvider>();
     services.AddScoped<IChapterProvider, ChapterProvider>();
     services.AddScoped<IAuthoringService, AuthoringService>();
