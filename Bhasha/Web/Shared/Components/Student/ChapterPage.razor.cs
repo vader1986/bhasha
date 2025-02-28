@@ -29,7 +29,18 @@ public partial class ChapterPage : ComponentBase
     protected override void OnParametersSet()
     {
         _viewModel = new ChapterPageViewModel(Value.Key, Chapter, Page);
-        _currentPage = (PageType)(_index % Enum.GetValues<PageType>().Length);
+
+        var suggestedPageType = (PageType)(_index % Enum.GetValues<PageType>().Length);
+        
+        _currentPage = suggestedPageType switch
+        {
+            PageType.MultipleChoice 
+                => PageType.MultipleChoice,
+            PageType.Cloze when Page.Word.Text.Split(" ").Length >= 3
+                => PageType.Cloze,
+            _ 
+                => PageType.MultipleChoice
+        };
         
         _title = _viewModel.Chapter.Name;
         _description = _viewModel.Chapter.Description;
