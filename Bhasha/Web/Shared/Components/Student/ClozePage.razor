@@ -1,14 +1,24 @@
 ﻿<MudChipSet T="int">
     @foreach (var index in _tokens.Keys)
     {
+        if (string.IsNullOrWhiteSpace(_tokens[index]))
+            continue;
+        
         if (_choices.TryGetValue(index, out var tokenValue))
         {
-            <MudChip
-                T="int"
-                Value="@index"
-                CloseIcon="@Icons.Material.Filled.Close"
-                Text="@tokenValue"
-                OnClose="@UnChooseAsync"/>
+            if (_gaps.Contains(index))
+            {
+                <MudChip
+                    T="int"
+                    Value="@index"
+                    CloseIcon="@Icons.Material.Filled.Close"
+                    Text="@tokenValue"
+                    OnClose="@UnChooseAsync"/>
+            }
+            else
+            {
+                <MudChip Value="@index">@tokenValue</MudChip>
+            }
         }
         else
         {
