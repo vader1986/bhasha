@@ -1,33 +1,4 @@
-﻿<MudStack Row="true">
-    @foreach (var index in _tokens.Keys)
-    {
-        if (string.IsNullOrWhiteSpace(_tokens[index]))
-            continue;
-
-        if (_choices.TryGetValue(index, out var tokenValue))
-        {
-            if (_gaps.Contains(index))
-            {
-                <MudChip
-                    T="int"
-                    Value="@index"
-                    CloseIcon="@Icons.Material.Filled.Close"
-                    Text="@tokenValue"
-                    OnClose="@UnChooseAsync"/>
-            }
-            else
-            {
-                <MudText>@tokenValue</MudText>
-            }
-        }
-        else
-        {
-            <MudChip Value="@index" Text=" "/> 
-        }
-    }
-</MudStack>
-
-<MudChipSet T="int">
+﻿<MudChipSet T="int" Color="Color.Default" SelectedColor="Color.Default">
     @foreach (var index in _tokens.Keys)
     {
         if (string.IsNullOrWhiteSpace(_tokens[index]))
@@ -40,8 +11,8 @@
                 <MudChip
                     T="int"
                     Value="@index"
-                    CloseIcon="@Icons.Material.Filled.Close"
                     Text="@tokenValue"
+                    CloseIcon="@Icons.Material.Filled.Close"
                     OnClose="@UnChooseAsync"/>
             }
             else
@@ -58,15 +29,14 @@
 
 <MudDivider Class="mt-3 my-3"/>
 
-<MudChipSet T="int">
+<MudChipSet T="int" Color="Color.Default" SelectedColor="Color.Default">
     @foreach (var index in _openTokens)
     {
-        <MudChip
-            T="int"
-            Color="Color.Info"
-            CloseIcon="@Icons.Material.Filled.Add"
+        <MudChip T="int"
             Value="@index"
             Text="@_tokens[index]"
+            Color="Color.Info"
+            CloseIcon="@Icons.Material.Filled.Add"
             OnClose="@ChooseAsync"/>
     }
 </MudChipSet>
