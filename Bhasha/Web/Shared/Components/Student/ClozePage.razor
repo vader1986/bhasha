@@ -11,7 +11,6 @@
                 <MudChip
                     T="int"
                     Label="true"
-                    Class="mx-n1"
                     Value="@index"
                     Text="@tokenValue"
                     CloseIcon="@Icons.Material.Filled.Close"
@@ -19,22 +18,23 @@
             }
             else
             {
-                <MudChip Label="true" Class="mx-n1" Value="@index">@tokenValue</MudChip>
+                <MudChip Label="true" Value="@index">@tokenValue</MudChip>
             }
         }
         else
         {
-            <MudChip Label="true" Class="mx-n1" Value="@index">___</MudChip>
+            <MudChip Label="true" Value="@index">___</MudChip>
         }
     }
 </MudChipSet>
 
 <MudDivider Class="mt-3 my-3"/>
 
-<MudChipSet T="int">
+<MudChipSet T="int" Label="true">
     @foreach (var index in _openTokens)
     {
         <MudChip T="int"
+            Class="mx-1"
             Value="@index"
             Text="@_tokens[index]"
             Color="Color.Warning"
