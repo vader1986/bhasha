@@ -12,12 +12,17 @@
             <MudTextField @bind-Value="_model.Password"
                           For="@(() => _model.Password)"
                           Immediate="true"
+                          InputType="InputType.Password"
                           Label="Password"/>
 
         </MudCardContent>
     </MudForm>
 
     <MudCardActions>
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" OnClick="@(async () => await LoginAsync())">Login</MudButton>
+        <MudButton 
+            Variant="Variant.Filled" 
+            Color="Color.Primary" 
+            Class="ml-auto" 
+            OnClick="@(async () => await LoginAsync())">Login</MudButton>
     </MudCardActions>
 </MudCard>
