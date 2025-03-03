@@ -41,9 +41,8 @@ public partial class Login : ComponentBase
                         userName: _model.Email, 
                         password: _model.Password, 
                         isPersistent: false, 
-                        lockoutOnFailure: false);
-                
-                NavigationManager.NavigateTo("/");
+                        lockoutOnFailure: false)
+                    .ContinueWith(_ => NavigationManager.NavigateTo("/"));
             }
             else
             {
