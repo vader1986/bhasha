@@ -42,7 +42,13 @@ public partial class Login : ComponentBase
                         password: _model.Password, 
                         isPersistent: false, 
                         lockoutOnFailure: false)
-                    .ContinueWith(_ => NavigationManager.NavigateTo("/"));
+                    .ContinueWith(task =>
+                    {
+                        if (task.Result.Succeeded)
+                            NavigationManager.NavigateTo("/");
+                        else
+                            Snackbar.Add(LoginFailedMessage, Severity.Error);
+                    });
             }
             else
             {
