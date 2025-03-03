@@ -7,8 +7,11 @@ namespace Bhasha.Web.Pages;
 
 public partial class Login : ComponentBase
 {
+    private const string LoginFailedMessage = "Invalid username or password!";
+    
     [Inject] public required ISnackbar Snackbar { get; set; }
     [Inject] public required SignInManager<AppUser> SignInManager { get; set; }
+    [Inject] public required UserManager<AppUser> UserManager { get; set; }
     [Inject] public required NavigationManager NavigationManager { get; set; }
     
     private readonly LoginModel _model = new()
@@ -19,10 +22,15 @@ public partial class Login : ComponentBase
 
     private async Task LoginAsync()
     {
-        var result = await SignInManager.CheckPasswordSignInAsync(new AppUser
+        var user = await UserManager.FindByNameAsync(_model.Username);
+        
+        if (user is null)
         {
-            UserName = _model.Username
-        }, _model.Password, false);
+            Snackbar.Add(LoginFailedMessage, Severity.Error);
+            return;
+        }
+        
+        var result = await SignInManager.CheckPasswordSignInAsync(user, _model.Password, false);
 
         if (result.Succeeded)
         {
@@ -39,7 +47,7 @@ public partial class Login : ComponentBase
         }
         else
         {
-            Snackbar.Add("Invalid username or password!", Severity.Error);
+            Snackbar.Add(LoginFailedMessage, Severity.Error);
         }
     }
     
