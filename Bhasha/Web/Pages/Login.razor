@@ -1,28 +1,3 @@
 ﻿@page "/login"
 
-<MudCard>
-    <MudForm Model="@_model" data-enhanced>
-        <MudCardContent>
-            
-            <MudTextField @bind-Value="_model.Email"
-                          For="@(() => _model.Email)"
-                          Immediate="true"
-                          Label="Email"/>
 
-            <MudTextField @bind-Value="_model.Password"
-                          For="@(() => _model.Password)"
-                          Immediate="true"
-                          InputType="InputType.Password"
-                          Label="Password"/>
-
-        </MudCardContent>
-    </MudForm>
-
-    <MudCardActions>
-        <MudButton 
-            Variant="Variant.Filled" 
-            Color="Color.Primary" 
-            Class="ml-auto" 
-            OnClick="@(async () => await LoginAsync())">Login</MudButton>
-    </MudCardActions>
-</MudCard>
