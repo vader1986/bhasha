@@ -28,21 +28,19 @@ public partial class Login : ComponentBase
         
             if (user is null)
             {
-                Snackbar.Add(LoginFailedMessage + " where is my user? :(( ", Severity.Error);
+                Snackbar.Add(LoginFailedMessage, Severity.Error);
                 return;
             }
-        
+            
             var result = await SignInManager.CheckPasswordSignInAsync(user, _model.Password, false);
 
             if (result.Succeeded)
             {
-                Snackbar.Add("Successful login!", Severity.Success);
-
                 await SignInManager
                     .PasswordSignInAsync(
                         userName: _model.Email, 
                         password: _model.Password, 
-                        isPersistent: true, 
+                        isPersistent: false, 
                         lockoutOnFailure: false);
                 
                 NavigationManager.NavigateTo("/");
