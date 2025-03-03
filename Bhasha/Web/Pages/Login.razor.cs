@@ -22,32 +22,39 @@ public partial class Login : ComponentBase
 
     private async Task LoginAsync()
     {
-        var user = await UserManager.FindByEmailAsync(_model.Email);
+        try
+        {
+            var user = await UserManager.FindByEmailAsync(_model.Email);
         
-        if (user is null)
-        {
-            Snackbar.Add(LoginFailedMessage + " where is my user? :(( ", Severity.Error);
-            return;
-        }
+            if (user is null)
+            {
+                Snackbar.Add(LoginFailedMessage + " where is my user? :(( ", Severity.Error);
+                return;
+            }
         
-        var result = await SignInManager.CheckPasswordSignInAsync(user, _model.Password, false);
+            var result = await SignInManager.CheckPasswordSignInAsync(user, _model.Password, false);
 
-        if (result.Succeeded)
-        {
-            await SignInManager
-                .PasswordSignInAsync(
-                    userName: _model.Email, 
-                    password: _model.Password, 
-                    isPersistent: true, 
-                    lockoutOnFailure: false);
-            
-            Snackbar.Add("Successful login!", Severity.Success);
+            if (result.Succeeded)
+            {
+                Snackbar.Add("Successful login!", Severity.Success);
 
-            NavigationManager.NavigateTo("/");
+                await SignInManager
+                    .PasswordSignInAsync(
+                        userName: _model.Email, 
+                        password: _model.Password, 
+                        isPersistent: true, 
+                        lockoutOnFailure: false);
+                
+                NavigationManager.NavigateTo("/");
+            }
+            else
+            {
+                Snackbar.Add(LoginFailedMessage, Severity.Error);
+            }
         }
-        else
+        catch (Exception e)
         {
-            Snackbar.Add(LoginFailedMessage, Severity.Error);
+            Snackbar.Add(e.Message + ": " + e.StackTrace, Severity.Error);
         }
     }
     
