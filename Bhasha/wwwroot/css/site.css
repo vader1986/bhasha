@@ -62,16 +62,3 @@ a, .btn-link {
 .blazor-error-boundary::after {
     content: "An error has occurred."
 }
-
-.mud-appbar {
-    width: 100%;
-    display: flex;
-    z-index: 1300;
-    position: relative;
-    box-sizing: border-box;
-    flex-shrink: 0;
-    flex-direction: column;
-    color: white;
-    background-color: rgba(89,74,226,1);
-    transition: margin 225ms cubic-bezier(0, 0, 0.2, 1) 0ms, width 225ms cubic-bezier(0, 0, 0.2, 1) 0ms;
-}
