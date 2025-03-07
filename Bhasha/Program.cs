@@ -1,4 +1,4 @@
-﻿using Azure.Storage.Blobs;
+using Azure.Storage.Blobs;
 using Bhasha;
 using Bhasha.Areas.Identity;
 using Bhasha.Domain.Interfaces;
@@ -176,4 +176,3 @@ catch (Exception e)
 {
     Console.WriteLine(e.Message);
 }
-
