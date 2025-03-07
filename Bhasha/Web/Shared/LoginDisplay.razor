@@ -1,6 +1,7 @@
 ﻿<AuthorizeView>
     <Authorized>
         <MudIconButton Icon="@Icons.Material.Outlined.ManageAccounts" Href="Identity/Account/Manage">@context.User.Identity?.Name</MudIconButton>
+        <MudIconButton Icon="@Icons.Material.Outlined.Logout" Href="Identity/Account/Logout"/>
     </Authorized>
     <NotAuthorized>
         <MudIconButton Icon="@Icons.Material.Outlined.AppRegistration" Disabled="true" Href="Identity/Account/Register">Register</MudIconButton>
