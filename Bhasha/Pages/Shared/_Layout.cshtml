@@ -37,6 +37,7 @@
 
 <header class="mud-appbar mud-appbar-fixed-top mud-elevation-4">
     <div role="toolbar" class="mud-toolbar mud-toolbar-gutters mud-toolbar-appbar">
+        
         <a type="button" href="/" class="mud-button-root mud-icon-button mud-ripple mud-ripple-icon" _bl_d79f0b97-eae8-4244-ac66-1812ed26f6a8="">
             <span class="mud-icon-button-label">
                 <svg class="mud-icon-root mud-svg-icon mud-icon-size-medium" focusable="false" viewBox="0 0 24 24" aria-hidden="true" role="img">
@@ -45,9 +46,10 @@
                 </svg>
             </span>
         </a>
+        
         @if (SignInManager.IsSignedIn(User))
         {
-            <a type="button" href="Identity/Account/Manage" class="mud-button-root mud-icon-button mud-ripple mud-ripple-icon" _bl_7056c56c-2a70-49e2-81cb-5e2047a8c914="">
+            <a type="button" href="/Identity/Account/Manage" class="mud-button-root mud-icon-button mud-ripple mud-ripple-icon" _bl_7056c56c-2a70-49e2-81cb-5e2047a8c914="">
                 <span class="mud-icon-button-label">
                     <svg class="mud-icon-root mud-svg-icon mud-icon-size-medium" focusable="false" viewBox="0 0 24 24" aria-hidden="true" role="img">
                         <g>
@@ -61,7 +63,7 @@
                     </svg>
                 </span>
             </a>
-            <a type="button" href="Identity/Account/Logout" class="mud-button-root mud-icon-button mud-ripple mud-ripple-icon" _bl_9ba3db69-0db0-4ab5-be7c-25ef8d5cf481="">
+            <a type="button" href="/Identity/Account/Logout" class="mud-button-root mud-icon-button mud-ripple mud-ripple-icon" _bl_9ba3db69-0db0-4ab5-be7c-25ef8d5cf481="">
                 <span class="mud-icon-button-label">
                     <svg class="mud-icon-root mud-svg-icon mud-icon-size-medium" focusable="false" viewBox="0 0 24 24" aria-hidden="true" role="img">
                         <g>
@@ -76,7 +78,7 @@
         }
         else
         {
-            <a type="button" href="Identity/Account/Login" class="mud-button-root mud-icon-button mud-ripple mud-ripple-icon" _bl_7056c56c-2a70-49e2-81cb-5e2047a8c914="">
+            <a type="button" href="/Identity/Account/Login" class="mud-button-root mud-icon-button mud-ripple mud-ripple-icon" _bl_7056c56c-2a70-49e2-81cb-5e2047a8c914="">
                 <span class="mud-icon-button-label">
                     <svg class="mud-icon-root mud-svg-icon mud-icon-size-medium" focusable="false" viewBox="0 0 24 24" aria-hidden="true" role="img">
                         <g>
@@ -93,12 +95,24 @@
     </div>
 </header>
 
-<div class="container mud-main-content centered-content">
+<div class="mud-main-content" style="height: 95vh">
+    <div class="mud-container mud-container-maxwidth-lg mud-container--gutters" style="height: 100%">
+        <div class="mud-container mud-container-maxwidth-sm mud-container--gutters" style="height: 100%">
+            <div class="mud-paper mud-elevation-1 mt-4 pt-4 pb-4" style="text-align: center">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--
+<div class="mud-main-content">
     <partial name="_CookieConsentPartial" optional/>
     <main role="main" class="pb-1">
         @RenderBody()
     </main>
 </div>
+
 <footer class="footer border-top pl-3 text-muted">
     <div class="container">
         &copy; 2025 - Bhasha
@@ -111,7 +125,7 @@
         }
     </div>
 </footer>
-
+-->
 <environment include="Development">
     <script src="~/Identity/lib/jquery/dist/jquery.js"></script>
     <script src="~/Identity/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
