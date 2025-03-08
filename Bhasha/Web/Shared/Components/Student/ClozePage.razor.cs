@@ -19,6 +19,7 @@ public partial class ClozePage : ComponentBase, IDisplayPage
     private int[] _gaps = [];
     private SortedDictionary<int, string> _choices = [];
     private SortedDictionary<int, string> _tokens = [];
+    private string? _spoken;
     private List<int> _openTokens = [];
     
     private bool IsOpenChoice(int index) 
@@ -33,7 +34,12 @@ public partial class ClozePage : ComponentBase, IDisplayPage
                     ViewModel.Page.Word.Expression.Id, 
                     ViewModel.ProfileKey.Target);
             
-            var words = translation!.Text.Split(" ");
+            if (translation is null)
+                return;
+
+            _spoken = translation.Spoken;
+            
+            var words = translation.Text.Split(" ");
 
             var (tokens, gaps) = words.Length >= 3 
                 ? CreateClozeFrom(words) 
