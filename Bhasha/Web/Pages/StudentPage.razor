@@ -5,8 +5,8 @@
 <AuthorizeView Roles="Admin, Student">
     <Authorized>
         
-        <MudOverlay @bind-Visible="_showChapterCompletedOverlay" AutoClose="true">
-            <MudPaper>
+        <MudOverlay @bind-Visible="_showChapterCompletedOverlay" DarkBackground AutoClose>
+            <MudPaper Elevation="5">
                 <MudImage Src="@Resources.GetImageUrl("bhasha/chapter-completed.jpeg")"></MudImage>
             </MudPaper>
         </MudOverlay>
