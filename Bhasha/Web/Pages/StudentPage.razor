@@ -4,6 +4,11 @@
 
 <AuthorizeView Roles="Admin, Student">
     <Authorized>
+        
+        <MudOverlay @bind-Visible="_showChapterCompletedOverlay" DarkBackground AutoClose="true">
+            <MudImage Src="@Resources.GetImageUrl("chapter-completed.jpeg")"></MudImage>
+        </MudOverlay>
+
         <MudPaper Style="text-align: center;" Class="mt-4 pt-4 pb-4">
             @if (_error != null)
             {
@@ -12,26 +17,26 @@
 
             @if (_selectedProfile == null)
             {
-                <SelectProfile 
-                    UserId="@UserId" 
-                    Values="@_profiles" 
-                    ValueChanged="@SelectProfileAsync" />
-            }
-            
-            @if (_selectedProfile != null && 
-                 _selectedChapter == null)
-            {
-                <SelectChapter 
-                    UserId="@UserId" 
-                    Languages="@_selectedProfile.Key" 
-                    OnSelection="@SelectChapterAsync" />
+                <SelectProfile
+                    UserId="@UserId"
+                    Values="@_profiles"
+                    ValueChanged="@SelectProfileAsync"/>
             }
 
-            @if (_selectedProfile != null && 
+            @if (_selectedProfile != null &&
+                 _selectedChapter == null)
+            {
+                <SelectChapter
+                    UserId="@UserId"
+                    Languages="@_selectedProfile.Key"
+                    OnSelection="@SelectChapterAsync"/>
+            }
+
+            @if (_selectedProfile != null &&
                  _selectedChapter != null &&
                  _selectedPage != null)
             {
-                <ChapterPage 
+                <ChapterPage
                     Chapter="@_selectedChapter"
                     Page="@_selectedPage"
                     @bind-Value="_selectedProfile"

@@ -8,13 +8,15 @@ namespace Bhasha.Web.Pages;
 public partial class StudentPage : UserPage
 {
     [Inject] public required IStudyingService StudyingService { get; set; }
-    
+    [Inject] public required ResourcesSettings Resources { get; set; }
+
     private string? _error;
     private Profile? _selectedProfile;
     private DisplayedChapter? _selectedChapter;
     private DisplayedPage? _selectedPage;
     
     private readonly IList<Profile> _profiles = new List<Profile>();
+    private bool _showChapterCompletedOverlay;
     
     protected override async Task OnInitializedAsync()
     {
@@ -91,6 +93,7 @@ public partial class StudentPage : UserPage
         {
             _selectedChapter = null;
             _selectedPage = null;
+            _showChapterCompletedOverlay = true;
         }
         else if (_selectedChapter is not null)
         {
