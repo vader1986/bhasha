@@ -10,7 +10,11 @@
     {
         @foreach (var choice in _choices)
         {
-            <MudChip OnClick="@StateHasChanged" Size="Size.Large" Label Value="@choice.Target">
+            <MudChip OnClick="@StateHasChanged" 
+                     Size="Size.Large" 
+                     Label="true" 
+                     Text="@choice.Native" 
+                     Value="@choice.Target">
                 <ChildContent>
                     <MudImage Src="@Resources.GetImageUrl(choice.ResourceId!)"/>
                 </ChildContent>
