@@ -1,4 +1,8 @@
-﻿@if (!string.IsNullOrWhiteSpace(_resourceId))
+﻿<br/>
+<MudText>@_word</MudText>
+<br/>
+
+@if (!string.IsNullOrWhiteSpace(_resourceId))
 {
     <MudImage
         Src="@Resources.GetImageUrl(_resourceId)"

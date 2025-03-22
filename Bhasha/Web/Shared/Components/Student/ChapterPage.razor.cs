@@ -24,7 +24,7 @@ public partial class ChapterPage : ComponentBase
     private string? _userInput;
     private ChapterPageBarViewModel? _chapterPageBarViewModel;
     private ChapterPageViewModel? _viewModel;
-    private PageType _currentPage = PageType.MultipleChoice;
+    private PageType _pageType = PageType.MultipleChoice;
     
     protected override void OnParametersSet()
     {
@@ -32,12 +32,14 @@ public partial class ChapterPage : ComponentBase
 
         var suggestedPageType = (PageType)(_index % Enum.GetValues<PageType>().Length);
         
-        _currentPage = suggestedPageType switch
+        _pageType = suggestedPageType switch
         {
             PageType.MultipleChoice 
                 => PageType.MultipleChoice,
             PageType.Cloze when Page.Word.Text.Split(" ").Length >= 3
                 => PageType.Cloze,
+            PageType.ChooseNative
+                => PageType.ChooseNative,
             _ 
                 => PageType.MultipleChoice
         };
@@ -108,7 +110,8 @@ public partial class ChapterPage : ComponentBase
     private enum PageType
     {
         MultipleChoice = 0,
-        Cloze = 1
+        Cloze = 1,
+        ChooseNative = 2
     }
 }
 

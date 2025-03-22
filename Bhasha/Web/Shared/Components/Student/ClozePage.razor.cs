@@ -19,6 +19,7 @@ public partial class ClozePage : ComponentBase, IDisplayPage
     private int[] _gaps = [];
     private SortedDictionary<int, string> _choices = [];
     private SortedDictionary<int, string> _tokens = [];
+    private string _word = string.Empty;
     private string? _spoken;
     private List<int> _openTokens = [];
     
@@ -70,6 +71,8 @@ public partial class ClozePage : ComponentBase, IDisplayPage
     {
         await base.OnParametersSetAsync();
 
+        _word = ViewModel.Page.Word.Text;
+        
         if (_page != ViewModel.Page)
         {
             _page = ViewModel.Page;

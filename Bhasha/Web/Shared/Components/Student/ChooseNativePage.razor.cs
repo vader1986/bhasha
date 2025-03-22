@@ -4,8 +4,10 @@ using Microsoft.AspNetCore.Components;
 
 namespace Bhasha.Web.Shared.Components.Student;
 
-public partial class MultipleChoicePage : ComponentBase, IDisplayPage
+public partial class ChooseNativePage : ComponentBase, IDisplayPage
 {
+    private sealed record Choice(string Native, string Target, string? ResourceId);
+
     private const int MaxNumberOfChoices = 4;
 
     [Inject] public required ResourcesSettings Resources { get; set; }
@@ -16,21 +18,28 @@ public partial class MultipleChoicePage : ComponentBase, IDisplayPage
     [Parameter] public required EventCallback<Exception> OnError { get; set; }
 
     private string? _selectedChoice;
-    private Translation[] _choices = [];
+    private Choice[] _choices = [];
     private string _word = string.Empty;
-    private string? _resourceId;
     private DisplayedPage? _page;
+    
+    private bool DisplayImages => _choices
+        .All(choice => choice.ResourceId is not null);
 
     private async Task CreateChoicesAsync()
     {
         var translations = new List<Translation>();
+
+        var targetWord = await Translations
+            .Find(ViewModel.Page.Word.Expression.Id, ViewModel.ProfileKey.Target);
+
+        _word = targetWord?.Text ?? string.Empty;
 
         try
         {
             foreach (var page in ViewModel.Chapter.Pages)
             {
                 var translation = await Translations
-                    .Find(page.Word.Expression.Id, ViewModel.ProfileKey.Target);
+                    .Find(page.Word.Expression.Id, ViewModel.ProfileKey.Native);
 
                 if (translation != null)
                     translations.Add(translation);
@@ -42,13 +51,15 @@ public partial class MultipleChoicePage : ComponentBase, IDisplayPage
                 .OrderBy(Randomness)
                 .Take(NumberOfWrongChoices(count))
                 .Append(CorrectTranslation())
-                .Select(TranslationWithHiddenExpression)
+                .Select(translation => new Choice(
+                    Native: translation.Text,
+                    Target: targetWord?.Text ?? string.Empty,
+                    ResourceId: translation.Expression.ResourceId))
                 .ToArray();
 
             Random.Shared.Shuffle(choices);
             
             _choices = choices;
-            _resourceId = ViewModel.Page.Word.Expression.ResourceId;
         }
         catch (Exception e)
         {
@@ -68,9 +79,6 @@ public partial class MultipleChoicePage : ComponentBase, IDisplayPage
         
         Translation CorrectTranslation()
             => translations.First(x => x.Expression.Id == ViewModel.Page.Word.Expression.Id);
-        
-        Translation TranslationWithHiddenExpression(Translation translation)
-            => translation with { Expression = Expression.Create(translation.Expression.Level) };
     }
     
     protected override async Task OnParametersSetAsync()
@@ -78,7 +86,6 @@ public partial class MultipleChoicePage : ComponentBase, IDisplayPage
         await base.OnParametersSetAsync();
         
         _selectedChoice = Value;
-        _word = ViewModel.Page.Word.Text;
         
         if (_page != ViewModel.Page)
         {

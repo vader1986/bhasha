@@ -1,4 +1,8 @@
-﻿@foreach (var index in _tokens.Keys)
+﻿<br/>
+<MudText>@_word</MudText>
+<br/>
+
+@foreach (var index in _tokens.Keys)
 {
     if (string.IsNullOrWhiteSpace(_tokens[index]))
         continue;

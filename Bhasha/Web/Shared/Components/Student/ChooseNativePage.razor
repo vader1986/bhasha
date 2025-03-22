@@ -1,0 +1,21 @@
+﻿<br/>
+<MudText>@_word</MudText>
+<br/>
+
+<MudChipSet SelectedColor="Color.Warning"
+    @bind-SelectedValue="_selectedChoice"
+    @bind-SelectedValue:after="@OnValueChanged">
+    
+    @foreach (var choice in _choices)
+    {
+        @if (DisplayImages)
+        {
+            <MudChip OnClick="@StateHasChanged" Href="@Resources.GetImageUrl(choice.ResourceId!)" Value="@choice.Target" />
+        }
+        else
+        {
+            <MudChip OnClick="@StateHasChanged" Text="@choice.Native" Value="@choice.Target" />
+        }
+    }
+    
+</MudChipSet>

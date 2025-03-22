@@ -5,13 +5,9 @@
 <MudDivider Class="mt-3"/>
 <MudProgressLinear Color="Color.Primary" Value="@_progress" Class="my-7" />
 
-<br/>
-<MudText>@_word</MudText>
-<br/>
-
 @if (_viewModel is not null)
 {
-    @switch (_currentPage)
+    @switch (_pageType)
     {
         case PageType.MultipleChoice:
             <MultipleChoicePage ViewModel="@_viewModel" @bind-Value="_userInput" @bind-Value:after="OnValueChanged" />
@@ -19,6 +15,10 @@
         
         case PageType.Cloze:
             <ClozePage ViewModel="@_viewModel" @bind-Value="_userInput" @bind-Value:after="OnValueChanged" />
+            break;
+            
+        case PageType.ChooseNative:
+            <ChooseNativePage ViewModel="@_viewModel" @bind-Value="_userInput" @bind-Value:after="OnValueChanged" />
             break;
     }
 }
