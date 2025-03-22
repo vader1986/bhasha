@@ -27,7 +27,8 @@ public partial class ChooseNativePage : ComponentBase, IDisplayPage
 
     private async Task CreateChoicesAsync()
     {
-        var translations = new List<Translation>();
+        var nativeTranslations = new List<Translation>();
+        var targetTranslations = new List<Translation>();
 
         var targetWord = await Translations
             .Find(ViewModel.Page.Word.Expression.Id, ViewModel.ProfileKey.Target);
@@ -38,22 +39,30 @@ public partial class ChooseNativePage : ComponentBase, IDisplayPage
         {
             foreach (var page in ViewModel.Chapter.Pages)
             {
-                var translation = await Translations
+                var nativeTranslation = await Translations
                     .Find(page.Word.Expression.Id, ViewModel.ProfileKey.Native);
 
-                if (translation != null)
-                    translations.Add(translation);
+                if (nativeTranslation != null)
+                    nativeTranslations.Add(nativeTranslation);
+                
+                var targetTranslation = await Translations
+                    .Find(page.Word.Expression.Id, ViewModel.ProfileKey.Target);
+
+                if (targetTranslation != null)
+                    targetTranslations.Add(targetTranslation);
             }
 
-            var count = translations.Count;
-            var choices = translations
+            var count = nativeTranslations.Count;
+            var choices = nativeTranslations
                 .Where(TranslationIsWrong)
                 .OrderBy(Randomness)
                 .Take(NumberOfWrongChoices(count))
                 .Append(CorrectTranslation())
                 .Select(translation => new Choice(
                     Native: translation.Text,
-                    Target: targetWord?.Text ?? string.Empty,
+                    Target: targetTranslations
+                        .First(x => x.Expression.Id == translation.Expression.Id)
+                        .Text,
                     ResourceId: translation.Expression.ResourceId))
                 .ToArray();
 
@@ -78,7 +87,7 @@ public partial class ChooseNativePage : ComponentBase, IDisplayPage
             => Math.Min(MaxNumberOfChoices - 1, totalCount);
         
         Translation CorrectTranslation()
-            => translations.First(x => x.Expression.Id == ViewModel.Page.Word.Expression.Id);
+            => nativeTranslations.First(x => x.Expression.Id == ViewModel.Page.Word.Expression.Id);
     }
     
     protected override async Task OnParametersSetAsync()
