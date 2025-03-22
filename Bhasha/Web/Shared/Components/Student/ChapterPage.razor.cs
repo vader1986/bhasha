@@ -36,8 +36,13 @@ public partial class ChapterPage : ComponentBase
         {
             PageType.MultipleChoice 
                 => PageType.MultipleChoice,
-            PageType.Cloze when Page.Word.Text.Split(" ").Length >= 3
+            PageType.Cloze 
+                when Page.Word.Text.Split(" ").Length >= 3
                 => PageType.Cloze,
+            PageType.ChooseImage 
+                when Chapter.Pages.Count(x => x.Word.Expression.ResourceId is not null) > 2 && 
+                     Page.Word.Expression.ResourceId is not null
+                => PageType.ChooseImage,
             PageType.ChooseNative
                 => PageType.ChooseNative,
             _ 
@@ -110,8 +115,9 @@ public partial class ChapterPage : ComponentBase
     private enum PageType
     {
         MultipleChoice = 0,
-        Cloze = 1,
-        ChooseNative = 2
+        ChooseNative = 1,
+        Cloze = 2,
+        ChooseImage = 3
     }
 }
 

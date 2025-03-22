@@ -2,37 +2,14 @@
 <MudText>@_word</MudText>
 <br/>
 
-@if (DisplayImages)
-{
-    <MudToggleGroup SelectionMode="SelectionMode.SingleSelection"
-                    @bind-Value="_selectedChoice"
-                    @bind-Value:after="@OnValueChanged">
-
-        @foreach (var choice in _choices)
-        {
-            <MudToggleItem Value="@choice.Target">
-                <MudImage Src="@Resources.GetImageUrl(choice.ResourceId!)" 
-                          Width="100"
-                          Height="100"
-                          Elevation="25"
-                          ObjectFit="ObjectFit.Fill" 
-                          Class="rounded-lg"/>
-            </MudToggleItem>
-        }
+<MudChipSet
+    SelectedColor="Color.Warning"
+    @bind-SelectedValue="_selectedChoice"
+    @bind-SelectedValue:after="@OnValueChanged">
     
-    </MudToggleGroup>
-}
-else
-{
-    <MudChipSet
-        SelectedColor="Color.Warning"
-        @bind-SelectedValue="_selectedChoice"
-        @bind-SelectedValue:after="@OnValueChanged">
-        
-        @foreach (var choice in _choices)
-        {
-            <MudChip OnClick="@StateHasChanged" Text="@choice.Native" Value="@choice.Target"/>
-        }
-        
-    </MudChipSet>
-}
+    @foreach (var choice in _choices)
+    {
+        <MudChip OnClick="@StateHasChanged" Text="@choice.Native" Value="@choice.Target"/>
+    }
+    
+</MudChipSet>

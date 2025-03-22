@@ -1,0 +1,28 @@
+﻿<br/>
+<MudText>@_word</MudText>
+<br/>
+
+<MudToggleGroup SelectionMode="SelectionMode.SingleSelection"
+                @bind-Value="_selectedChoice"
+                @bind-Value:after="@OnValueChanged">
+
+    @foreach (var choice in _choices)
+    {
+        <MudToggleItem Value="@choice.Target">
+            @if (choice.ResourceId is not null)
+            {
+                <MudImage Src="@Resources.GetImageUrl(choice.ResourceId!)"
+                          Width="100"
+                          Height="100"
+                          Elevation="25"
+                          ObjectFit="ObjectFit.Fill"
+                          Class="rounded-lg"/>
+            }
+            else
+            {
+                <MudText>@choice.Native</MudText>
+            }
+        </MudToggleItem>
+    }
+    
+</MudToggleGroup>

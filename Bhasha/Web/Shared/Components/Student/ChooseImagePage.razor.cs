@@ -4,12 +4,13 @@ using Microsoft.AspNetCore.Components;
 
 namespace Bhasha.Web.Shared.Components.Student;
 
-public partial class ChooseNativePage : ComponentBase, IDisplayPage
+public partial class ChooseImagePage : ComponentBase, IDisplayPage
 {
-    private sealed record Choice(string Native, string Target, bool IsCorrect);
+    private sealed record Choice(string Native, string Target, string ResourceId, bool IsCorrect);
 
     private const int MaxNumberOfChoices = 4;
 
+    [Inject] public required ResourcesSettings Resources { get; set; }
     [Inject] public required ITranslationProvider Translations { get; set; }
     [Parameter] public required ChapterPageViewModel ViewModel { get; set; }
     [Parameter] public required string? Value { get; set; }
@@ -29,49 +30,53 @@ public partial class ChooseNativePage : ComponentBase, IDisplayPage
         return new Choice(
             Native: native.Text,
             Target: target?.Text ?? string.Empty,
+            ResourceId: native.Expression.ResourceId ?? string.Empty,
             IsCorrect: native.Expression.Id == ViewModel.Page.Word.Expression.Id);
     }
-    
+
     private async Task CreateChoicesAsync()
     {
         var availableChoices = new List<Choice>();
 
         var targetWord = await Translations
-            .Find(expressionId: ViewModel.Page.Word.Expression.Id, language: ViewModel.ProfileKey.Target);
+            .Find(ViewModel.Page.Word.Expression.Id, ViewModel.ProfileKey.Target);
 
         _word = targetWord?.Text ?? string.Empty;
 
         try
         {
-            foreach (var page in ViewModel.Chapter.Pages)
+            var pagesWithImages = ViewModel.Chapter.Pages
+                .Where(x => x.Word.Expression.ResourceId is not null);
+            
+            foreach (var page in pagesWithImages)
             {
-                availableChoices.Add(item: await CreateChoiceAsync(native: page.Word));
+                availableChoices.Add(await CreateChoiceAsync(page.Word));
             }
 
             var numberOfWrongChoices = Math
-                .Min(val1: MaxNumberOfChoices - 1, val2: availableChoices.Count - 1);
+                .Min(MaxNumberOfChoices - 1, availableChoices.Count - 1);
 
             var choices = availableChoices
                 .Where(choice => !choice.IsCorrect)
-                .OrderBy(Random)
+                .OrderBy(Randomness)
                 .Take(numberOfWrongChoices)
                 .Append(availableChoices
                     .First(choice => choice.IsCorrect))
                 .ToArray();
 
-            System.Random.Shared.Shuffle(choices);
+            Random.Shared.Shuffle(choices);
             
             _choices = choices;
         }
         catch (Exception e)
         {
-            await OnError.InvokeAsync(arg: e);
+            await OnError.InvokeAsync(e);
         }
         
         return;
         
-        int Random(Choice _)
-            => System.Random.Shared.Next();
+        int Randomness(Choice _)
+            => Random.Shared.Next();
     }
     
     protected override async Task OnParametersSetAsync()
