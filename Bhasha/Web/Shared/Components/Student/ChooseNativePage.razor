@@ -11,7 +11,12 @@
         @foreach (var choice in _choices)
         {
             <MudToggleItem Value="@choice.Target">
-                <MudImage Src="@Resources.GetImageUrl(choice.ResourceId!)"/>
+                <MudImage Src="@Resources.GetImageUrl(choice.ResourceId!)" 
+                          Width="100"
+                          Height="100"
+                          Elevation="25"
+                          ObjectFit="ObjectFit.Fill" 
+                          Class="rounded-lg"/>
             </MudToggleItem>
         }
     
