@@ -23,8 +23,21 @@ public sealed class CachingTranslationProvider(IServiceProvider serviceProvider)
 
         var translation = await repository.Find(expressionId, language, token);
 
-        _cache.Set((expressionId, language), translation, DateTimeOffset.UtcNow.AddDays(1));
+        _cache.Set(
+            key: (expressionId, language), 
+            value: translation,
+            absoluteExpiration: DateTimeOffset.UtcNow.AddDays(1));
 
         return translation;
+    }
+
+    public async Task AddOrUpdate(Translation translation, CancellationToken token = default)
+    {
+        var key = (translation.Expression.Id, translation.Language);
+        
+        _cache.Set(
+            key: key, 
+            value: translation,
+            absoluteExpiration: DateTimeOffset.UtcNow.AddDays(1));
     }
 }

@@ -15,6 +15,7 @@ public interface IAuthoringService
 public sealed class AuthoringService(
     IChapterRepository chapterRepository,
     ITranslationRepository translationRepository,
+    ITranslationProvider translationProvider,
     IExpressionRepository expressionRepository) : IAuthoringService
 {
     public async Task<Expression> GetOrCreateExpression(string text, int level, CancellationToken token = default)
@@ -32,15 +33,22 @@ public sealed class AuthoringService(
                 Labels = [text]
             }, token);
         
-        await translationRepository
+        var translation = await translationRepository
             .AddOrUpdate(Translation.Create(expression, Language.Reference, text), token);
 
+        await translationProvider
+            .AddOrUpdate(translation, token);
+        
         return expression;
     }
 
     public async Task AddOrUpdateTranslation(Translation translation, CancellationToken token = default)
     {
-        await translationRepository.AddOrUpdate(translation, token);
+        var updatedTranslation = await translationRepository
+            .AddOrUpdate(translation, token);
+        
+        await translationProvider
+            .AddOrUpdate(updatedTranslation, token);
     }
 
     public async Task AddOrUpdateChapter(Chapter chapter, CancellationToken token = default)

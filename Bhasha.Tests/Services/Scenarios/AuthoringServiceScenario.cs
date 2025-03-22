@@ -11,12 +11,13 @@ public class AuthoringServiceScenario
     
     public IChapterRepository ChapterRepository { get; } = Substitute.For<IChapterRepository>();
     public ITranslationRepository TranslationRepository { get; } = Substitute.For<ITranslationRepository>();
+    public ITranslationProvider TranslationProvider { get; } = Substitute.For<ITranslationProvider>();
     public IExpressionRepository ExpressionRepository { get; } = Substitute.For<IExpressionRepository>();
     
     public AuthoringService Sut { get; }
 
     public AuthoringServiceScenario()
     {
-        Sut = new AuthoringService(ChapterRepository, TranslationRepository, ExpressionRepository);
+        Sut = new AuthoringService(ChapterRepository, TranslationRepository, TranslationProvider, ExpressionRepository);
     }
 }
