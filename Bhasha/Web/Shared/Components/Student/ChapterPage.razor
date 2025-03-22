@@ -16,6 +16,10 @@
         case PageType.Cloze:
             <ClozePage ViewModel="@_viewModel" @bind-Value="_userInput" @bind-Value:after="OnValueChanged" />
             break;
+
+        case PageType.ChooseImage:
+            <ChooseImagePage ViewModel="@_viewModel" @bind-Value="_userInput" @bind-Value:after="OnValueChanged" />
+            break;
             
         case PageType.ChooseNative:
             <ChooseNativePage ViewModel="@_viewModel" @bind-Value="_userInput" @bind-Value:after="OnValueChanged" />
