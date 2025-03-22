@@ -10,7 +10,11 @@
     {
         @if (DisplayImages)
         {
-            <MudChip OnClick="@StateHasChanged" Href="@Resources.GetImageUrl(choice.ResourceId!)" Value="@choice.Target" />
+            <MudChip OnClick="@StateHasChanged" Value="@choice.Target">
+                <ChildContent>
+                    <MudImage Src="@Resources.GetImageUrl(choice.ResourceId!)"/>
+                </ChildContent>
+            </MudChip>
         }
         else
         {
