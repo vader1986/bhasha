@@ -5,10 +5,10 @@
 <MudChipSet SelectedColor="Color.Warning"
     @bind-SelectedValue="_selectedChoice"
     @bind-SelectedValue:after="@OnValueChanged">
-    
-    @foreach (var choice in _choices)
+
+    @if (DisplayImages)
     {
-        @if (DisplayImages)
+        @foreach (var choice in _choices)
         {
             <MudChip OnClick="@StateHasChanged" Value="@choice.Target">
                 <ChildContent>
@@ -16,7 +16,10 @@
                 </ChildContent>
             </MudChip>
         }
-        else
+    }
+    else
+    {
+        @foreach (var choice in _choices)
         {
             <MudChip OnClick="@StateHasChanged" Text="@choice.Native" Value="@choice.Target" />
         }
