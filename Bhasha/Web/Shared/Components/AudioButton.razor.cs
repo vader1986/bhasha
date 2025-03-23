@@ -1,5 +1,6 @@
 ﻿using Bhasha.Domain.Interfaces;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 
 namespace Bhasha.Web.Shared.Components;
 
@@ -8,6 +9,7 @@ public partial class AudioButton : ComponentBase
     [Inject] public required ResourcesSettings Resources { get; set; }
     [Inject] public required ISpeaker Speaker { get; set; }
     [Inject] public required ITranslationProvider TranslationProvider { get; set; }
+    [Inject] public required IJSRuntime JsRuntime { get; set; }
     [Inject] public required ILogger<AudioButton> Logger { get; set; }
 
     [Parameter] public required string Language { get; set; }
@@ -18,8 +20,6 @@ public partial class AudioButton : ComponentBase
     
     private bool _playAudio;
     private string? _audioFileName;
-
-    private string? _debug;
     
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -44,11 +44,17 @@ public partial class AudioButton : ComponentBase
                         language: Language,
                         transliteration: translation?.Spoken);
 
-                _debug = $"{Speaker.GetType().Name} - {Language}: {Text} [{translation?.Spoken}]";
+                var debug = $"{Speaker.GetType().Name} - {Language}: {Text} [{translation?.Spoken}]";
+                
+                await JsRuntime
+                    .InvokeAsync<string>($"alert({debug});");
             }
             else
             {
                 _audioFileName = Resources.GetAudioFile(translation.AudioId);
+
+                await JsRuntime
+                    .InvokeAsync<string>("document.getElementById('sound').play();");
             }
         }
         catch (Exception e)
