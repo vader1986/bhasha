@@ -13,13 +13,8 @@ public class AzureSpeaker(ILogger<AzureSpeaker> logger, AzureSpeechApiSettings s
             _ => language
         };
     }
-
-    public ValueTask<bool> IsLanguageSupported(string language)
-    {
-        return new ValueTask<bool>(true);
-    }
-
-    public async Task SpeakAsync(string text, string language)
+    
+    public async Task SpeakAsync(string text, string language, string? transliteration)
     {
         try
         {

@@ -1,3 +1,4 @@
+using Bhasha.Domain;
 using Bhasha.Domain.Interfaces;
 using Microsoft.JSInterop;
 
@@ -7,7 +8,7 @@ public class BlazorSpeaker(ISpeechSynthesisService speechSynthesisService) : ISp
 {
     private readonly List<SpeechSynthesisVoice> _voices = new();
     
-    public async ValueTask<bool> IsLanguageSupported(string language)
+    private async ValueTask<bool> IsLanguageSupported(string language)
     {
         if (_voices.Count == 0)
             _voices.AddRange(await speechSynthesisService.GetVoicesAsync());
@@ -15,8 +16,15 @@ public class BlazorSpeaker(ISpeechSynthesisService speechSynthesisService) : ISp
         return _voices.Any(x => x.Lang.StartsWith(language));
     }
 
-    public async Task SpeakAsync(string text, string language)
+    public async Task SpeakAsync(string text, string language, string? transliteration)
     {
+        if (!await IsLanguageSupported(language) && 
+            !string.IsNullOrWhiteSpace(transliteration))
+        {
+            text = transliteration;
+            language = Language.Reference.ToString();
+        }
+        
         var voice = _voices.FirstOrDefault(x => x.Lang.StartsWith(language)) ??
                     _voices.FirstOrDefault(x => x.Default);
         

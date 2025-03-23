@@ -31,7 +31,7 @@ public sealed class CachingTranslationProvider(IServiceProvider serviceProvider)
         return translation;
     }
 
-    public async Task AddOrUpdate(Translation translation, CancellationToken token = default)
+    public Task AddOrUpdate(Translation translation, CancellationToken token = default)
     {
         var key = (translation.Expression.Id, translation.Language);
         
@@ -39,5 +39,7 @@ public sealed class CachingTranslationProvider(IServiceProvider serviceProvider)
             key: key, 
             value: translation,
             absoluteExpiration: DateTimeOffset.UtcNow.AddDays(1));
+
+        return Task.CompletedTask;
     }
 }

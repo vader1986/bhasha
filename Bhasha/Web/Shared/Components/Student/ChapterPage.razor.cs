@@ -1,4 +1,5 @@
 ﻿using Bhasha.Domain;
+using Bhasha.Domain.Interfaces;
 using Bhasha.Services;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -8,6 +9,7 @@ namespace Bhasha.Web.Shared.Components.Student;
 public partial class ChapterPage : ComponentBase
 {
     [Inject] public required IStudyingService StudyingService { get; set; }
+    [Inject] public required ISpeaker Speaker { get; set; }
     [Inject] public required ISnackbar Snackbar { get; set; }
     
     [Parameter] public required DisplayedChapter Chapter { get; set; }
@@ -91,10 +93,14 @@ public partial class ChapterPage : ComponentBase
         await InvokeAsync(StateHasChanged);
     }
 
-    private async Task UpdateProfileAsync()
+    private async Task UpdateProgressAsync()
     {
-        var profile = await StudyingService.GetProfile(Value.Key);
+        await Speaker
+            .SpeakAsync(Page.Word.Text, Value.Key.Target, Page.Word.Spoken);
 
+        var profile = await StudyingService
+            .GetProfile(Value.Key);
+        
         if (Value != profile)
         {
             _userInput = null;

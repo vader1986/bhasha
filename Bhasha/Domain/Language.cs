@@ -2,7 +2,7 @@
 
 using LanguageSet = Dictionary<string, Language>;
 
-public class Language : IEquatable<Language>
+public class Language(string id, string name, string? region = null) : IEquatable<Language>
 {
     public static readonly Language Unknown = new (string.Empty, string.Empty);
     public static readonly Language English = new ("en", "English", "UK");
@@ -15,16 +15,9 @@ public class Language : IEquatable<Language>
         [Bengali.ToString()] = Bengali
     };
 
-    public string Id { get; }
-    public string Name { get; }
-    public string? Region { get; }
-
-    public Language(string id, string name, string? region = default)
-    {
-        Id = id;
-        Name = name;
-        Region = region;
-    }
+    public string Id { get; } = id;
+    public string Name { get; } = name;
+    public string? Region { get; } = region;
 
     public static Language Parse(string? tag)
     {
@@ -34,11 +27,6 @@ public class Language : IEquatable<Language>
         }
 
         return Unknown;
-    }
-
-    public bool IsSupported()
-    {
-        return Supported.ContainsKey(this.ToString());
     }
 
     public override bool Equals(object? obj)
@@ -69,12 +57,12 @@ public class Language : IEquatable<Language>
 
     public override string ToString()
     {
-        return Region != default ? $"{Id}_{Region}" : Id;
+        return Region != null ? $"{Id}_{Region}" : Id;
     }
 
     public string Pretty()
     {
-        return Region != default ? $"{Name} ({Region})" : Name;
+        return Region != null ? $"{Name} ({Region})" : Name;
     }
 
     public static implicit operator string(Language language)

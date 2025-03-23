@@ -6,15 +6,15 @@ namespace Bhasha.Web.Shared.Components;
 public partial class AudioButton : ComponentBase
 {
     [Inject] public required ISpeaker Speaker { get; set; }
-    [Inject] public required ILogger<AudioButton> Logger { get; set; }
     [Inject] public required ITranslationProvider TranslationProvider { get; set; }
+    [Inject] public required ILogger<AudioButton> Logger { get; set; }
 
     [Parameter] public required string Language { get; set; }
     [Parameter] public required string? Text { get; set; }
     [Parameter] public required int ExpressionId { get; set; }
 
     private bool Disabled => Text == null;
-
+    
     private bool _playAudio;
     
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -26,25 +26,14 @@ public partial class AudioButton : ComponentBase
         
         if (Text is null)
             return;
-        
-        var languageSupported = await Speaker.IsLanguageSupported(Language);
 
         try
         {
-            if (languageSupported)
-            {
-                await Speaker.SpeakAsync(Text, Language);
-            }
-            else
-            {
-                var translation = await TranslationProvider.Find(expressionId: ExpressionId, language: Language);
-                if (translation?.Spoken is not null)
-                {
-                    await Speaker.SpeakAsync(
-                        text: translation.Spoken,
-                        language: Domain.Language.Reference);
-                }
-            }
+            var translation = await TranslationProvider
+                .Find(ExpressionId, Language);
+            
+            await Speaker
+                .SpeakAsync(Text, Language, translation?.Spoken);
         }
         catch (Exception e)
         {
