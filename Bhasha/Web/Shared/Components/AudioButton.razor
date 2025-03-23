@@ -4,4 +4,14 @@
     Disabled="@Disabled"
     Variant="Variant.Filled"/>
 
+@if (_audioFileName is not null)
+{
+    <audio id="sound" src="@_audioFileName">
+        Your browser does not support the audio element.
+    </audio>
+}
 
+@if (_debug is not null)
+{
+    <MudText>@_debug</MudText>
+}
