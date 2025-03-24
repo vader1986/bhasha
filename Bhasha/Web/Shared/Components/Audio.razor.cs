@@ -13,12 +13,19 @@ public partial class Audio : ComponentBase
     [Parameter] public required string Id { get; set; }
     [Parameter] public required Translation Translation { get; set; }
 
-    private bool _playAudio;
+    private string _id = string.Empty;
+    private bool _startPlaying;
     private string? _audioFileName;
 
+    private string? _debug;
+    
     protected override void OnParametersSet()
     {
-        _playAudio = false;
+        if (_id != Id)
+        {
+            _startPlaying = true;
+            _id = Id;
+        }
         
         base.OnParametersSet();
     }
@@ -27,7 +34,7 @@ public partial class Audio : ComponentBase
     {
         await base.OnAfterRenderAsync(firstRender);
         
-        if (_playAudio)
+        if (!_startPlaying)
             return;
 
         try
@@ -36,21 +43,28 @@ public partial class Audio : ComponentBase
             {
                 await Speaker
                     .SpeakAsync(
-                        text: Translation.Text, 
+                        text: Translation.Text,
                         language: Translation.Language,
                         transliteration: Translation.Spoken);
+                
+                _debug = "Speaker: " + Translation.Text + " " + Translation.Language + " " + Translation.Spoken;
             }
             else
             {
                 _audioFileName = Resources
                     .GetAudioFile(Translation.AudioId);
-            }
 
-            _playAudio = true;
+                _debug = _audioFileName;
+            }
         }
         catch (Exception e)
         {
+            _debug = e.Message + " " + e.StackTrace;
             Logger.LogError(e, "Failed to play audio for {Text} in {Language}", Translation.Text, Translation.Language);
+        }
+        finally
+        {
+            _startPlaying = false;
         }
     }
 }

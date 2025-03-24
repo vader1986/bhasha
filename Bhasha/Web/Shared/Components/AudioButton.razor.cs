@@ -12,7 +12,7 @@ public partial class AudioButton : ComponentBase
     [Parameter] public required string? Text { get; set; }
     [Parameter] public required int ExpressionId { get; set; }
     
-    private bool Disabled => Text == null || _isPlaying;
+    private bool Disabled => Text == null;
     
     private Translation? _translation;
     private bool _isPlaying;
