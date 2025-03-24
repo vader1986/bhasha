@@ -18,7 +18,6 @@ public class ToolbeltSpeaker(SpeechSynthesis speechSynthesis) : ISpeaker
         
         return suitableVoices.Count switch
         {
-            0 => voices.FirstOrDefault(x => x.Default),
             1 => suitableVoices.First(),
             > 1 => suitableVoices[Random.Shared.Next(0, suitableVoices.Count - 1)],
             _ => null
