@@ -43,18 +43,13 @@ public partial class AudioButton : ComponentBase
                         text: Text, 
                         language: Language,
                         transliteration: translation?.Spoken);
-
-                var debug = $"{Speaker.GetType().Name} - {Language}: {Text} [{translation?.Spoken}]";
-                
-                await JsRuntime
-                    .InvokeVoidAsync("alert", debug);
             }
             else
             {
                 _audioFileName = Resources.GetAudioFile(translation.AudioId);
 
                 await JsRuntime
-                    .InvokeVoidAsync("PlaySound");
+                    .InvokeVoidAsync("PlaySound", "sound");
             }
         }
         catch (Exception e)

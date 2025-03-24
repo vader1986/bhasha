@@ -1,3 +1,3 @@
-window.PlaySound = function() {
-    document.getElementById('sound').play();
+window.PlaySound = function(id) {
+    document.getElementById(id).play();
 }
