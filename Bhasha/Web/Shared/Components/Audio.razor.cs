@@ -14,29 +14,22 @@ public partial class Audio : ComponentBase
     [Parameter] public required Translation Translation { get; set; }
 
     private string _id = string.Empty;
-    private bool _startPlaying;
     private string? _audioFileName;
 
     private string? _debug;
-    
-    protected override void OnParametersSet()
+
+    protected override async Task OnParametersSetAsync()
     {
-        if (_id != Id)
+        await base.OnParametersSetAsync();
+
+        if (_id == Id)
         {
-            _startPlaying = true;
-            _id = Id;
+            return;
         }
         
-        base.OnParametersSet();
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        await base.OnAfterRenderAsync(firstRender);
+        _id = Id;
         
-        if (!_startPlaying)
-            return;
-
+        
         try
         {
             if (string.IsNullOrWhiteSpace(Translation.AudioId))
@@ -61,10 +54,6 @@ public partial class Audio : ComponentBase
         {
             _debug = e.Message + " " + e.StackTrace;
             Logger.LogError(e, "Failed to play audio for {Text} in {Language}", Translation.Text, Translation.Language);
-        }
-        finally
-        {
-            _startPlaying = false;
         }
     }
 }
