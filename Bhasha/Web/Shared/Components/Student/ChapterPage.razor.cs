@@ -24,7 +24,6 @@ public partial class ChapterPage : ComponentBase
     private int _progress;
     private int _index;
     private string? _userInput;
-    private string? _audioFileName;
     private ChapterPageBarViewModel? _chapterPageBarViewModel;
     private ChapterPageViewModel? _viewModel;
     private PageType _pageType = PageType.MultipleChoice;
