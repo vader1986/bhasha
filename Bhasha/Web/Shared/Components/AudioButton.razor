@@ -4,9 +4,7 @@
     Disabled="@Disabled"
     Variant="Variant.Filled"/>
 
-@if (_audioFileName is not null)
+@if (_translation is not null)
 {
-    <audio id="sound" src="@_audioFileName">
-        Your browser does not support the audio element.
-    </audio>
+    <Bhasha.Web.Shared.Components.Audio Translation="@_translation" />
 }

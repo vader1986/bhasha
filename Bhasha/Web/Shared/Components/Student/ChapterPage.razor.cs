@@ -2,18 +2,14 @@
 using Bhasha.Domain.Interfaces;
 using Bhasha.Services;
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 using MudBlazor;
 
 namespace Bhasha.Web.Shared.Components.Student;
 
 public partial class ChapterPage : ComponentBase
 {
-    [Inject] public required IJSRuntime JsRuntime { get; set; }
-    [Inject] public required ResourcesSettings Resources { get; set; }
     [Inject] public required IStudyingService StudyingService { get; set; }
     [Inject] public required ITranslationProvider TranslationProvider { get; set; }
-    [Inject] public required ISpeaker Speaker { get; set; }
     [Inject] public required ISnackbar Snackbar { get; set; }
     
     [Parameter] public required DisplayedChapter Chapter { get; set; }
@@ -32,6 +28,8 @@ public partial class ChapterPage : ComponentBase
     private ChapterPageBarViewModel? _chapterPageBarViewModel;
     private ChapterPageViewModel? _viewModel;
     private PageType _pageType = PageType.MultipleChoice;
+    
+    private Translation? _audioTranslation;
     
     protected override void OnParametersSet()
     {
@@ -100,24 +98,11 @@ public partial class ChapterPage : ComponentBase
 
     private async Task PlayAudioAsync()
     {
-        var translation = await TranslationProvider
+        _audioTranslation = await TranslationProvider
             .Find(Page.Word.Expression.Id, Value.Key.Target);
-
-        if (translation is null)
-            return;
-
-        if (translation.AudioId is not null)
-        {
-            _audioFileName = Resources.GetAudioFile(translation.AudioId);
-            
-            await JsRuntime
-                .InvokeVoidAsync("PlaySound", "submit-sound");
-        }
-        else
-        {
-            await Speaker
-                .SpeakAsync(translation.Text, translation.Language, translation.Spoken);
-        }
+        
+        if (_audioTranslation is not null)
+            await InvokeAsync(StateHasChanged);
     }
 
     private async Task UpdateProgressAsync()
