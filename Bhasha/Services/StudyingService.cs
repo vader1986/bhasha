@@ -156,6 +156,11 @@ public sealed class StudyingService(
             {
                 chapter.CorrectAnswers[chapter.PageIndex]++;
             }
+            else if (validation.Result == ValidationResult.Wrong)
+            {
+                chapter.CorrectAnswers[chapter.PageIndex] = (byte)Math
+                    .Max(0, chapter.CorrectAnswers[chapter.PageIndex] - 1);
+            }
             
             var nextPageIndex = GetNextPageIndex(chapter);
 
@@ -194,7 +199,7 @@ public sealed class StudyingService(
         
         var pageIndicesWithoutCurrent = Enumerable
             .Range(0, selection.CorrectAnswers.Length)
-            .Where(i => i != currentIndex)
+            .Where(i => i != currentIndex && selection.CorrectAnswers[i] < 4)
             .ToArray();
 
         if (pageIndicesWithoutCurrent.Length == 0)
