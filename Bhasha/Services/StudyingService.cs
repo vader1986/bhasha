@@ -185,22 +185,30 @@ public sealed class StudyingService(
             _cache.Set(profile.Key, profile);
 
             return validation;
-            
-            int? GetNextPageIndex(ChapterSelection selection)
-            {
-                var pages = selection.CorrectAnswers.Length;
-
-                for (var i = 0; i < pages; i++)
-                {
-                    var index = (selection.PageIndex + 1 + i) % pages;
-                    if (selection.CorrectAnswers[index] < 3)
-                    {
-                        return index;
-                    }
-                }
-
-                return null;
-            }
         });
+    }
+
+    private static int? GetNextPageIndex(ChapterSelection selection)
+    {
+        var currentIndex = selection.PageIndex;
+        
+        var pageIndicesWithoutCurrent = Enumerable
+            .Range(0, selection.CorrectAnswers.Length)
+            .Where(i => i != currentIndex)
+            .ToArray();
+
+        if (pageIndicesWithoutCurrent.Length == 0)
+        {
+            if (selection.CorrectAnswers[currentIndex] < 3)
+            {
+                return currentIndex;
+            }
+
+            return null;
+        }
+        
+        Random.Shared.Shuffle(pageIndicesWithoutCurrent);
+
+        return pageIndicesWithoutCurrent.First();
     }
 }
