@@ -41,16 +41,17 @@ public partial class ChapterPage : ComponentBase
         {
             PageType.MultipleChoice 
                 => PageType.MultipleChoice,
-            PageType.Cloze 
-                when Page.Word.Text.Split(" ").Length >= 3
+            PageType.Cloze when HasMultipleWords(min: 3)
                 => PageType.Cloze,
-            PageType.ChooseImage 
-                when Chapter.Pages.Count(x => x.Word.Expression.ResourceId is not null) > 2 && 
-                     Page.Word.Expression.ResourceId is not null
+            PageType.ChooseImage when HasImages(min: 3)
                 => PageType.ChooseImage,
             PageType.ChooseNative
                 => PageType.ChooseNative,
-            _ 
+            _ when HasMultipleWords(min: 3) 
+                => PageType.Cloze,
+            _ when HasImages(min: 3) 
+                => PageType.ChooseImage,
+            _
                 => PageType.MultipleChoice
         };
         
@@ -68,6 +69,15 @@ public partial class ChapterPage : ComponentBase
         UpdateProgress();
         
         base.OnParametersSet();
+        
+        return;
+        
+        bool HasMultipleWords(int min)
+            => Page.Word.Text.Split(" ").Length >= min;
+
+        bool HasImages(int min)
+            => Chapter.Pages.Count(x => x.Word.Expression.ResourceId is not null) >= min &&
+               Page.Word.Expression.ResourceId is not null;
     }
 
     private void UpdateProgress()
