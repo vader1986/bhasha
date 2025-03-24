@@ -30,6 +30,7 @@ public partial class ChapterPage : ComponentBase
     private PageType _pageType = PageType.MultipleChoice;
     
     private Translation? _audioTranslation;
+    private string _audioId = Guid.NewGuid().ToString();
     
     protected override void OnParametersSet()
     {
@@ -100,9 +101,13 @@ public partial class ChapterPage : ComponentBase
     {
         _audioTranslation = await TranslationProvider
             .Find(Page.Word.Expression.Id, Value.Key.Target);
-        
+
         if (_audioTranslation is not null)
+        {
+            _audioId = Guid.NewGuid().ToString();
+
             await InvokeAsync(StateHasChanged);
+        }
     }
 
     private async Task UpdateProgressAsync()

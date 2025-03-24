@@ -34,9 +34,9 @@
     OnSubmit="@UpdateProgressAsync"
     OnError="@DisplayError"/>
     
-@if (_audioFileName is not null)
+@if (_audioTranslation is not null)
 {
-    <audio id="submit-sound" src="@_audioFileName">
-        Your browser does not support the audio element.
-    </audio>
+    <Bhasha.Web.Shared.Components.Audio 
+        Id="@_audioId" 
+        Translation="@_audioTranslation" />
 }

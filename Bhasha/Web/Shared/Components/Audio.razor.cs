@@ -10,15 +10,14 @@ public partial class Audio : ComponentBase
     [Inject] public required ISpeaker Speaker { get; set; }
     [Inject] public required ILogger<AudioButton> Logger { get; set; }
     
+    [Parameter] public required string Id { get; set; }
     [Parameter] public required Translation Translation { get; set; }
 
-    private string _id = Guid.NewGuid().ToString();
     private bool _playAudio;
     private string? _audioFileName;
 
     protected override void OnParametersSet()
     {
-        _id = Guid.NewGuid().ToString();
         _playAudio = false;
         
         base.OnParametersSet();

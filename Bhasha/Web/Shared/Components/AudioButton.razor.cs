@@ -12,16 +12,17 @@ public partial class AudioButton : ComponentBase
     [Parameter] public required string? Text { get; set; }
     [Parameter] public required int ExpressionId { get; set; }
     
-    private bool Disabled => Text == null;
+    private bool Disabled => Text == null || _isPlaying;
     
     private Translation? _translation;
-    private bool _playAudio;
+    private bool _isPlaying;
+    private string _audioId = Guid.NewGuid().ToString();
     
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await base.OnAfterRenderAsync(firstRender);
         
-        if (!_playAudio)
+        if (!_isPlaying)
             return;
         
         if (Text is null)
@@ -30,12 +31,13 @@ public partial class AudioButton : ComponentBase
         _translation = await TranslationProvider
             .Find(ExpressionId, Language);
         
-        _playAudio = false;
+        _isPlaying = false;
     }
 
     private async Task PlayAudioAsync()
     {
-        _playAudio = true;
+        _isPlaying = true;
+        _audioId = Guid.NewGuid().ToString();
         
         await InvokeAsync(StateHasChanged);
     }
