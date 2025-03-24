@@ -6,11 +6,10 @@ namespace Bhasha.Web.Shared.Components;
 
 public partial class AudioButton : ComponentBase
 {
-    [Inject] public required ITranslationProvider TranslationProvider { get; set; }
+    [Inject] public required ITranslationRepository TranslationRepository { get; set; }
 
     [Parameter] public required string Language { get; set; }
     [Parameter] public required string? Text { get; set; }
-    [Parameter] public required int ExpressionId { get; set; }
     
     private bool Disabled => Text == null;
     
@@ -27,9 +26,9 @@ public partial class AudioButton : ComponentBase
         
         if (Text is null)
             return;
-
-        _translation = await TranslationProvider
-            .Find(ExpressionId, Language);
+        
+        _translation = await TranslationRepository
+            .Find(text: Text, language: Language);
         
         _isPlaying = false;
     }
