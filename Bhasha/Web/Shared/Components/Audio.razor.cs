@@ -16,8 +16,6 @@ public partial class Audio : ComponentBase
     private string _id = string.Empty;
     private string? _audioFileName;
 
-    private string? _debug;
-
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
@@ -39,20 +37,15 @@ public partial class Audio : ComponentBase
                         text: Translation.Text,
                         language: Translation.Language,
                         transliteration: Translation.Spoken);
-                
-                _debug = "Speaker: " + Translation.Text + " " + Translation.Language + " " + Translation.Spoken;
             }
             else
             {
                 _audioFileName = Resources
                     .GetAudioFile(Translation.AudioId);
-
-                _debug = _audioFileName;
             }
         }
         catch (Exception e)
         {
-            _debug = e.Message + " " + e.StackTrace;
             Logger.LogError(e, "Failed to play audio for {Text} in {Language}", Translation.Text, Translation.Language);
         }
     }
