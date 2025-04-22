@@ -11,6 +11,15 @@
         }
     </MudSelect>
     
+    <MudSelect T="Language" @bind-Value="_studyLanguage" @bind-Value:after="LoadStudyCardsAsync" >
+        @foreach (var language in Language.Supported.Values)
+        {
+            <MudSelectItem T="Language" Value="@language">
+                @language.Name
+            </MudSelectItem>
+        }
+    </MudSelect>
+    
     @foreach (var studyCard in _studyCards)
     {
         <MudButton OnClick="@(() => OpenEditViewAsync(studyCard))">@studyCard.Name</MudButton>
