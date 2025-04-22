@@ -15,12 +15,18 @@ public partial class StudyCardList : ComponentBase
 
     protected override async Task OnParametersSetAsync()
     {
+        await LoadStudyCardsAsync();
+        await base.OnParametersSetAsync();
+    }
+
+    private async Task LoadStudyCardsAsync()
+    {
         var studyCards = await StudyCardRepository
             .FindByLanguage(_language);
 
         _studyCards = studyCards.ToArray();
         
-        await base.OnParametersSetAsync();
+        await InvokeAsync(StateHasChanged);
     }
     
     private async Task OpenEditViewAsync(StudyCard studyCard)
@@ -32,6 +38,8 @@ public partial class StudyCardList : ComponentBase
         
         await DialogService
             .ShowAsync<StudyCardDialog>("Study Card", parameters);
+        
+        await LoadStudyCardsAsync();
     }
 
     private async Task OpenCreateViewAsync()
@@ -48,5 +56,7 @@ public partial class StudyCardList : ComponentBase
         
         await DialogService
             .ShowAsync<StudyCardDialog>("Study Card", parameters);
+
+        await LoadStudyCardsAsync();
     }
 }

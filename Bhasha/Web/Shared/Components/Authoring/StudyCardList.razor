@@ -2,7 +2,7 @@
 
 <MudPaper Style="text-align: center">
     
-    <MudSelect T="Language" @bind-Value="_language" >
+    <MudSelect T="Language" @bind-Value="_language" @bind-Value:after="LoadStudyCardsAsync" >
         @foreach (var language in Language.Supported.Values)
         {
             <MudSelectItem T="Language" Value="@language">
