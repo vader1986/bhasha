@@ -23,6 +23,14 @@ public sealed class EntityFrameworkChapterRepository(AppDbContext context) : ICh
         }
         
         dto.Expressions = pages;
+        
+        var studyCards = new List<StudyCardDto>();
+        foreach (var studyCard in chapter.StudyCards)
+        {
+            studyCards.Add(await context.StudyCards.SingleAsync(x => x.Id == studyCard.Id, token));
+        }
+        
+        dto.StudyCards = studyCards;
     }
     
     public async Task<Chapter> AddOrUpdate(Chapter chapter, CancellationToken token)
@@ -63,6 +71,7 @@ public sealed class EntityFrameworkChapterRepository(AppDbContext context) : ICh
             .Include(x => x.Name)
             .Include(x => x.Description)
             .Include(x => x.Expressions)
+            .Include(x => x.StudyCards)
             .FirstOrDefaultAsync(x => x.Id == chapterId, token);
 
         return row?.ToDomain();
@@ -74,6 +83,7 @@ public sealed class EntityFrameworkChapterRepository(AppDbContext context) : ICh
             .Include(x => x.Name)
             .Include(x => x.Description)
             .Include(x => x.Expressions)
+            .Include(x => x.StudyCards)
             .Where(x => x.RequiredLevel == level)
             .Select(x => x.ToDomain())
             .ToListAsync(token);
@@ -87,6 +97,7 @@ public sealed class EntityFrameworkChapterRepository(AppDbContext context) : ICh
             .Include(x => x.Name)
             .Include(x => x.Description)
             .Include(x => x.Expressions)
+            .Include(x => x.StudyCards)
             .Select(x => x.ToDomain())
             .ToListAsync(token);
     }
