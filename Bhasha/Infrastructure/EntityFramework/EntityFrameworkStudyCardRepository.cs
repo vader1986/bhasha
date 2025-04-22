@@ -39,6 +39,7 @@ public sealed class EntityFrameworkStudyCardRepository(AppDbContext context) : I
         dto.Name = studyCard.Name;
         dto.Content = studyCard.Content;
         dto.Language = studyCard.Language;
+        dto.StudyLanguage = studyCard.StudyLanguage;
         dto.AudioId = studyCard.AudioId;
         
         context.StudyCards.Update(dto);
