@@ -11,7 +11,10 @@ public sealed class StudyCardDto
     
     [MaxLength(20)]
     public string Language { get; set; } = string.Empty;
- 
+
+    [MaxLength(20)]
+    public string StudyLanguage { get; set; } = string.Empty;
+
     [MaxLength(50)]
     public string Name { get; set; } = string.Empty;
     

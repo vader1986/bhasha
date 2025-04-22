@@ -120,6 +120,7 @@ public static class EntityFrameworkMapper
     public static StudyCard ToDomain(this StudyCardDto dto) => new(
         Id: dto.Id,
         Language: dto.Language,
+        StudyLanguage: dto.StudyLanguage,
         Name: dto.Name,
         Content: dto.Content,
         AudioId: dto.AudioId);

@@ -48,12 +48,11 @@ public sealed class EntityFrameworkStudyCardRepository(AppDbContext context) : I
         return dto.ToDomain();
     }
 
-    public async Task<IEnumerable<StudyCard>> FindByLanguage(Language language, CancellationToken token = default)
+    public async Task<IEnumerable<StudyCard>> FindByLanguage(string language, string studyLanguage, CancellationToken token = default)
     {
-        var targetLanguage = (string)language;
-        
         return await context.StudyCards
-            .Where(x => x.Language == targetLanguage)
+            .Where(x => x.Language == language &&
+                        x.StudyLanguage == studyLanguage)
             .Select(x => x.ToDomain())
             .ToListAsync(token);
     }

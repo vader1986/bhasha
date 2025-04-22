@@ -18,6 +18,7 @@ namespace Bhasha.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Language = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    StudyLanguage = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
                     Name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     Content = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: false),
                     AudioId = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),

@@ -11,6 +11,7 @@ public partial class StudyCardList : ComponentBase
     [Inject] public required IDialogService DialogService { get; set; }
 
     private Language _language = Language.Reference;
+    private Language _studyLanguage = Language.Bengali;
     private StudyCard[] _studyCards = [];
 
     protected override async Task OnParametersSetAsync()
@@ -22,7 +23,7 @@ public partial class StudyCardList : ComponentBase
     private async Task LoadStudyCardsAsync()
     {
         var studyCards = await StudyCardRepository
-            .FindByLanguage(_language);
+            .FindByLanguage(_language, _studyLanguage);
 
         _studyCards = studyCards.ToArray();
         
@@ -49,6 +50,7 @@ public partial class StudyCardList : ComponentBase
             { "StudyCard", new StudyCard(
                 Id: 0,
                 Language: _language,
+                StudyLanguage: _studyLanguage,
                 Name: "New study card",
                 Content: "",
                 AudioId: null) }
