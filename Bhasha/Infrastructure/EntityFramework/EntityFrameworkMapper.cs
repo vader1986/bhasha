@@ -1,3 +1,5 @@
+// ReSharper disable ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
+
 using Bhasha.Domain;
 using Bhasha.Infrastructure.EntityFramework.Dtos;
 using Bhasha.Infrastructure.EntityFramework.Extensions;
@@ -10,7 +12,7 @@ using Profile = Bhasha.Domain.Profile;
 
 namespace Bhasha.Infrastructure.EntityFramework;
 
-public static class Converter
+public static class EntityFrameworkMapper
 {
     private static Domain.ExpressionType ToDomain(this ExpressionType expressionType) => expressionType switch
     {
@@ -88,118 +90,115 @@ public static class Converter
         _ => throw new ArgumentOutOfRangeException(nameof(cefr), cefr, null)
     };
     
-    public static ChapterDto Convert(Chapter chapter)
+    public static ChapterDto ToEntityFramework(this Chapter chapter) => new()
     {
-        return new ChapterDto
-        {
-            Id = chapter.Id,
-            RequiredLevel = chapter.RequiredLevel,
-            ResourceId = chapter.ResourceId,
-            AuthorId = chapter.AuthorId,
-            Name = Convert(chapter.Name),
-            Description = Convert(chapter.Description),
-            Expressions = chapter.Pages.Select(Convert).ToList()
-        };
-    }
+        Id = chapter.Id,
+        RequiredLevel = chapter.RequiredLevel,
+        ResourceId = chapter.ResourceId,
+        AuthorId = chapter.AuthorId,
+        Name = ToEntityFramework(chapter.Name),
+        Description = ToEntityFramework(chapter.Description),
+        Expressions = chapter.Pages.Select(ToEntityFramework).ToList(),
+        StudyCards = chapter.StudyCards.Select(ToEntityFramework).ToList()
+    };
 
-    public static Chapter Convert(ChapterDto dto)
-    {
-        return new Chapter(
-            Id: dto.Id,
-            RequiredLevel: dto.RequiredLevel,
-            Name: Convert(dto.Name),
-            Description: Convert(dto.Description),
-            Pages: dto.Expressions
-                .Select(Convert)
-                .OrderBy(x => x.Id)
-                .ToArray(),
-            ResourceId: dto.ResourceId,
-            AuthorId: dto.AuthorId);
-    }
+    public static Chapter ToDomain(this ChapterDto dto) => new(
+        Id: dto.Id,
+        RequiredLevel: dto.RequiredLevel,
+        Name: ToDomain(dto.Name),
+        Description: ToDomain(dto.Description),
+        Pages: dto.Expressions?
+            .Select(ToDomain)
+            .OrderBy(x => x.Id)
+            .ToArray() ?? [],
+        ResourceId: dto.ResourceId,
+        AuthorId: dto.AuthorId,
+        StudyCards: dto.StudyCards?
+            .Select(ToDomain)
+            .ToArray() ?? []);
+
+    public static StudyCard ToDomain(this StudyCardDto dto) => new(
+        Id: dto.Id,
+        Language: dto.Language,
+        Name: dto.Name,
+        Content: dto.Content,
+        AudioId: dto.AudioId);
     
-    public static ExpressionDto Convert(Expression expression)
+    public static StudyCardDto ToEntityFramework(this StudyCard studyCard) => new()
     {
-        return new ExpressionDto
-        {
-            Id = expression.Id,
-            ExpressionType = expression.ExpressionType?.ToEntityFramework(),
-            PartOfSpeech = expression.PartOfSpeech?.ToEntityFramework(),
-            Cefr = expression.Cefr?.ToEntityFramework(),
-            ResourceId = expression.ResourceId,
-            Labels = expression.Labels,
-            Synonyms = expression.Synonyms,
-            Level = expression.Level
-        };
-    }
-
-    public static Expression Convert(ExpressionDto dto)
-    {
-        return new Expression(
-            Id: dto.Id,
-            ExpressionType: dto.ExpressionType?.ToDomain(),
-            PartOfSpeech: dto.PartOfSpeech?.ToDomain(),
-            Cefr: dto.Cefr?.ToDomain(),
-            ResourceId: dto.ResourceId,
-            Labels: dto.Labels,
-            Synonyms: dto.Synonyms,
-            Level: dto.Level);
-    }
+        Id = studyCard.Id,
+        Language = studyCard.Language,
+        Name = studyCard.Name,
+        Content = studyCard.Content,
+        AudioId = studyCard.AudioId
+    };
     
-    public static ProfileDto Convert(Profile profile)
+    public static ExpressionDto ToEntityFramework(this Expression expression) => new()
     {
-        return new ProfileDto
-        {
-            Id = profile.Id,
-            UserId = profile.Key.UserId,
-            Native = profile.Key.Native,
-            Target = profile.Key.Target,
-            Level = profile.Level,
-            CurrentChapterId = profile.CurrentChapter?.ChapterId,
-            CurrentPageIndex = profile.CurrentChapter?.PageIndex,
-            ValidationResults = profile.CurrentChapter?.CorrectAnswers.Compactify() ?? string.Empty,
-            CompletedChapters = profile.CompletedChapters
-        };
-    }
+        Id = expression.Id,
+        ExpressionType = expression.ExpressionType?.ToEntityFramework(),
+        PartOfSpeech = expression.PartOfSpeech?.ToEntityFramework(),
+        Cefr = expression.Cefr?.ToEntityFramework(),
+        ResourceId = expression.ResourceId,
+        Labels = expression.Labels,
+        Synonyms = expression.Synonyms,
+        Level = expression.Level
+    };
 
-    public static Profile Convert(ProfileDto dto)
-    {
-        return new Profile(
-            Id: dto.Id,
-            Key: new ProfileKey(
-                UserId: dto.UserId,
-                Native: dto.Native,
-                Target: dto.Target),
-            Level: dto.Level,
-            CompletedChapters: dto.CompletedChapters,
-            CurrentChapter: dto.CurrentChapterId is not null
-                ? new ChapterSelection(
-                    ChapterId: dto.CurrentChapterId.Value,
-                    PageIndex: dto.CurrentPageIndex ?? 0,
-                    CorrectAnswers: dto.ValidationResults.Decompactify(b => b))
-                : null);
-    }
+
+    public static Expression ToDomain(this ExpressionDto dto) => new(
+        Id: dto.Id,
+        ExpressionType: dto.ExpressionType?.ToDomain(),
+        PartOfSpeech: dto.PartOfSpeech?.ToDomain(),
+        Cefr: dto.Cefr?.ToDomain(),
+        ResourceId: dto.ResourceId,
+        Labels: dto.Labels,
+        Synonyms: dto.Synonyms,
+        Level: dto.Level);
     
-    public static TranslationDto Convert(Translation translation)
+    public static ProfileDto ToEntityFramework(this Profile profile) => new()
     {
-        return new TranslationDto
-        {
-            Id = translation.Id,
-            Expression = Convert(translation.Expression),
-            Language = translation.Language,
-            Text = translation.Text,
-            Spoken = translation.Spoken,
-            AudioId = translation.AudioId
-        };
-    }
+        Id = profile.Id,
+        UserId = profile.Key.UserId,
+        Native = profile.Key.Native,
+        Target = profile.Key.Target,
+        Level = profile.Level,
+        CurrentChapterId = profile.CurrentChapter?.ChapterId,
+        CurrentPageIndex = profile.CurrentChapter?.PageIndex,
+        ValidationResults = profile.CurrentChapter?.CorrectAnswers.Compactify() ?? string.Empty,
+        CompletedChapters = profile.CompletedChapters
+    };
+    
+    public static Profile ToDomain(this ProfileDto dto) => new(
+        Id: dto.Id,
+        Key: new ProfileKey(
+            UserId: dto.UserId,
+            Native: dto.Native,
+            Target: dto.Target),
+        Level: dto.Level,
+        CompletedChapters: dto.CompletedChapters,
+        CurrentChapter: dto.CurrentChapterId is not null
+            ? new ChapterSelection(
+                ChapterId: dto.CurrentChapterId.Value,
+                PageIndex: dto.CurrentPageIndex ?? 0,
+                CorrectAnswers: dto.ValidationResults.Decompactify(b => b))
+            : null);
+    
+    public static TranslationDto ToEntityFramework(this Translation translation) => new()
+    {
+        Id = translation.Id,
+        Expression = translation.Expression.ToEntityFramework(),
+        Language = translation.Language,
+        Text = translation.Text,
+        Spoken = translation.Spoken,
+        AudioId = translation.AudioId
+    };
 
-    public static Translation Convert(TranslationDto dto)
-    {
-        return new Translation(
-            Id: dto.Id,
-            Language: dto.Language,
-            Text: dto.Text,
-            Spoken: dto.Spoken,
-            AudioId: dto.AudioId,
-            Expression: Convert(dto.Expression));
-    }
+    public static Translation ToDomain(this TranslationDto dto) => new(
+        Id: dto.Id,
+        Language: dto.Language,
+        Text: dto.Text,
+        Spoken: dto.Spoken,
+        AudioId: dto.AudioId,
+        Expression: dto.Expression.ToDomain());
 }

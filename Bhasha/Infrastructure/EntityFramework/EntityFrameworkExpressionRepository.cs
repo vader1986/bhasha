@@ -4,18 +4,16 @@ using Expression = Bhasha.Domain.Expression;
 
 namespace Bhasha.Infrastructure.EntityFramework;
 
-public class EntityFrameworkExpressionRepository(AppDbContext context) : IExpressionRepository
+public sealed class EntityFrameworkExpressionRepository(AppDbContext context) : IExpressionRepository
 {
     public async Task<Expression> Add(Expression expression, CancellationToken token = default)
     {
         var result = await context.Expressions
-            .AddAsync(Converter.Convert(expression), token);
+            .AddAsync(expression.ToEntityFramework(), token);
         
-        await context
-            .SaveChangesAsync(token);
+        await context.SaveChangesAsync(token);
         
-        return Converter
-            .Convert(result.Entity);
+        return result.Entity.ToDomain();
     }
 
     public async Task<Expression> AddOrUpdate(Expression expression, CancellationToken token = default)
@@ -38,17 +36,15 @@ public class EntityFrameworkExpressionRepository(AppDbContext context) : IExpres
 
         context.Expressions.Update(dto);
         
-        await context
-            .SaveChangesAsync(token);
+        await context.SaveChangesAsync(token);
         
-        return Converter
-            .Convert(dto);
+        return dto.ToDomain();
     }
 
     public async Task<Expression> Get(int expressionId, CancellationToken token = default)
     {
-        return Converter
-            .Convert(await context.Expressions
-            .FirstAsync(x => x.Id == expressionId, token));
+        return (await context.Expressions
+            .FirstAsync(x => x.Id == expressionId, token))
+            .ToDomain();
     }
 }

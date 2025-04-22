@@ -24,7 +24,10 @@ public sealed class ChapterProvider(
                 ?? throw new InvalidOperationException($"Translation for {page.Id} to {key.ProfileKey.Native} not found");
             
             displayedPages
-                .Add(new DisplayedPage(Word: word, Lead: null));
+                .Add(new DisplayedPage(
+                    Word: word, 
+                    Lead: null,
+                    StudyCard: null));
         }
         
         var name = await translationProvider.Find(chapter.Name.Id, key.ProfileKey.Native, token)
@@ -33,6 +36,14 @@ public sealed class ChapterProvider(
         var description = await translationProvider.Find(chapter.Description.Id, key.ProfileKey.Native, token)
             ?? throw new InvalidOperationException($"Translation for {chapter.Description.Id} to {key.ProfileKey.Native} not found");
 
-        return new DisplayedChapter(key.ChapterId, name.Text, description.Text, displayedPages.ToArray(), chapter.ResourceId);
+        return new DisplayedChapter(
+            Id: key.ChapterId, 
+            Name: name.Text, 
+            Description: description.Text,
+            Pages: displayedPages.ToArray(), 
+            ResourceId: chapter.ResourceId,
+            StudyCards: chapter.StudyCards
+                .Where(studyCard => studyCard.Language == key.ProfileKey.Target)
+                .ToArray());
     }
 }

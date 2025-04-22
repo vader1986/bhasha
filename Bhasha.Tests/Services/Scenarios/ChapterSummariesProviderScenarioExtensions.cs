@@ -12,21 +12,22 @@ public static class ChapterSummariesProviderScenarioExtensions
     {
         scenario
             .ChapterRepository
-            .FindByLevel(Arg.Any<int>(), Arg.Any<CancellationToken>())
+            .FindByLevel(level: Arg.Any<int>(), token: Arg.Any<CancellationToken>())
             .Returns(
-                chapterIds
-                    .Select(chapterId => new Chapter(
+                returnThis: chapterIds
+                    .Select(selector: chapterId => new Chapter(
                         Id: chapterId,
                         RequiredLevel: level,
-                        Name: Expression.Create() with { Id = scenario.ExpressionIds["Name"] },
-                        Description: Expression.Create() with { Id = scenario.ExpressionIds["Description"] },
-                        Pages: new []
-                        {
-                            Expression.Create() with { Id = scenario.ExpressionIds["FirstPage"] },
-                            Expression.Create() with { Id = scenario.ExpressionIds["SecondPage"] },
-                        },
+                        Name: Expression.Create() with { Id = scenario.ExpressionIds[key: "Name"] },
+                        Description: Expression.Create() with { Id = scenario.ExpressionIds[key: "Description"] },
+                        Pages:
+                        [
+                            Expression.Create() with { Id = scenario.ExpressionIds[key: "FirstPage"] },
+                            Expression.Create() with { Id = scenario.ExpressionIds[key: "SecondPage"] }
+                        ],
                         ResourceId: default,
-                        AuthorId: "UUID-125632-2415-3453"))
+                        AuthorId: "UUID-125632-2415-3453",
+                        StudyCards: []))
                     .ToList());
         
         return scenario;
@@ -44,8 +45,8 @@ public static class ChapterSummariesProviderScenarioExtensions
                     Expression: Expression.Create() with { Id = expressionId },
                     Language: language,
                     Text: expression,
-                    Spoken: default,
-                    AudioId: default
+                    Spoken: null,
+                    AudioId: null
                 ));
         }
         

@@ -11,4 +11,6 @@ public partial record Chapter(
 	[property: OrderedEquality]
 	Expression[] Pages,
 	string? ResourceId,
-	string AuthorId);
+	string AuthorId,
+	[property: OrderedEquality]
+	StudyCard[] StudyCards);

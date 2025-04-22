@@ -1,0 +1,24 @@
+﻿@inherits ComponentBase
+
+<MudPaper Style="text-align: center">
+    
+    <MudSelect T="Language" @bind-Value="_language" >
+        @foreach (var language in Language.Supported.Values)
+        {
+            <MudSelectItem T="Language" Value="@language">
+                @language.Name
+            </MudSelectItem>
+        }
+    </MudSelect>
+    
+    @foreach (var studyCard in _studyCards)
+    {
+        <MudButton OnClick="@(() => OpenEditViewAsync(studyCard))">@studyCard.Name</MudButton>
+        <br/>
+    }
+    
+    <MudIconButton 
+        Icon="@Icons.Material.Filled.Add"
+        OnClick="@OpenCreateViewAsync" />
+    
+</MudPaper>

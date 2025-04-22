@@ -5,18 +5,16 @@ using Profile = Bhasha.Domain.Profile;
 
 namespace Bhasha.Infrastructure.EntityFramework;
 
-public class EntityFrameworkProfileRepository(AppDbContext context) : IProfileRepository
+public sealed class EntityFrameworkProfileRepository(AppDbContext context) : IProfileRepository
 {
     public async Task<Profile> Add(Profile profile, CancellationToken token = default)
     {
         var result = await context.Profiles
-            .AddAsync(Converter.Convert(profile), token);
+            .AddAsync(profile.ToEntityFramework(), token);
 
-        await context
-            .SaveChangesAsync(token);
+        await context.SaveChangesAsync(token);
 
-        return Converter
-            .Convert(result.Entity);
+        return result.Entity.ToDomain();
     }
 
     public async Task Delete(ProfileKey key, CancellationToken token = default)
@@ -26,11 +24,9 @@ public class EntityFrameworkProfileRepository(AppDbContext context) : IProfileRe
                               x.Native == key.Native &&
                               x.Target == key.Target, token);
 
-        context.Profiles
-            .Remove(dto);
+        context.Profiles.Remove(dto);
         
-        await context
-            .SaveChangesAsync(token);
+        await context.SaveChangesAsync(token);
     }
 
     public async Task Update(Profile profile, CancellationToken token = default)
@@ -38,7 +34,7 @@ public class EntityFrameworkProfileRepository(AppDbContext context) : IProfileRe
         var dto = await context.Profiles
             .SingleAsync(x => x.Id == profile.Id, token);
 
-        var updated = Converter.Convert(profile);
+        var updated = profile.ToEntityFramework();
         
         dto.Level = updated.Level;
         dto.CompletedChapters = updated.CompletedChapters;
@@ -57,7 +53,7 @@ public class EntityFrameworkProfileRepository(AppDbContext context) : IProfileRe
     {
         return await context.Profiles
             .Where(x => x.UserId == userId)
-            .Select(x => Converter.Convert(x))
+            .Select(x => x.ToDomain())
             .ToListAsync(token);
     }
 }

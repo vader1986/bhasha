@@ -10,23 +10,24 @@ namespace Bhasha.Web.Pages;
 
 public partial class AuthorPage : UserPage
 {
-    private enum Mode
+    private enum DisplayMode
     {
-        Overview,
-        List
+        DisplayOptions,
+        DisplayChapterList,
+        DisplayStudyCards
     }
     
     [Inject] public required IDialogService DialogService { get; set; }
     [Inject] public required IChapterRepository ChapterRepository { get; set; }
     [Inject] public required IAuthoringService AuthoringService { get; set; }
 
-    private bool DisplayOverview => _mode == Mode.Overview;
-    private bool DisplayChapterList => _mode == Mode.List;
-    
-    private Mode _mode = Mode.Overview;
+    private DisplayMode _displayMode = DisplayMode.DisplayOptions;
 
     private string? _error;
 
+    private void SwitchToDisplayStudyCards() 
+        => _displayMode = DisplayMode.DisplayStudyCards;
+    
     private async Task OnImportWordsSelectedAsync()
     {
         await DialogService.ShowAsync<TextImportDialog>();
@@ -39,7 +40,7 @@ public partial class AuthorPage : UserPage
     
     private async Task OnEditChapterClicked()
     {
-        _mode = Mode.List;
+        _displayMode = DisplayMode.DisplayChapterList;
         await InvokeAsync(StateHasChanged);
     }
     
@@ -57,11 +58,11 @@ public partial class AuthorPage : UserPage
             if (result?.Data is Chapter chapter)
             {
                 await AuthoringService.AddOrUpdateChapter(chapter);
-                _mode = Mode.Overview;
+                _displayMode = DisplayMode.DisplayOptions;
             }
             else
             {
-                _mode = Mode.List;
+                _displayMode = DisplayMode.DisplayChapterList;
             }
         }
         catch (Exception e)
@@ -97,7 +98,7 @@ public partial class AuthorPage : UserPage
             _error = e.Message;
         }
 
-        _mode = Mode.Overview;
+        _displayMode = DisplayMode.DisplayOptions;
         await InvokeAsync(StateHasChanged);
     }
 }

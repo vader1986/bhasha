@@ -5,5 +5,6 @@ public record DisplayedChapter(
     string Name,
     string Description,
     DisplayedPage[] Pages,
-    string? ResourceId);
+    string? ResourceId,
+    StudyCard[] StudyCards);
 

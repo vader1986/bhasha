@@ -1,4 +1,5 @@
 ﻿@page "/author"
+@using Bhasha.Web.Shared.Components.Authoring
 @inherits Bhasha.Web.Pages.UserPage
 
 <AuthorizeView Roles="Admin, Author">
@@ -9,22 +10,29 @@
         {
             <MudText>@_error</MudText>
         }
-
-        @if (DisplayOverview)
+        
+        @switch (_displayMode)
         {
-            <MudButton FullWidth="true" OnClick="@OnImportWordsSelectedAsync">Import Words</MudButton>
-            <br/>
-            <MudButton FullWidth="true" OnClick="@OnExpressionsSelectedAsync">Expressions</MudButton>
-            <br/>
-            <MudButton FullWidth="true" OnClick="@OnEditChapterClicked">Edit Chapter</MudButton>
-            <br/>
-            <MudButton FullWidth="true" OnClick="@OnCreateChapterClicked">Create Chapter</MudButton>
+            case DisplayMode.DisplayOptions:
+                <MudButton FullWidth="true" OnClick="@OnImportWordsSelectedAsync">Import Words</MudButton>
+                <br/>
+                <MudButton FullWidth="true" OnClick="@OnExpressionsSelectedAsync">Expressions</MudButton>
+                <br/>
+                <MudButton FullWidth="true" OnClick="@OnEditChapterClicked">Edit Chapter</MudButton>
+                <br/>
+                <MudButton FullWidth="true" OnClick="@OnCreateChapterClicked">Create Chapter</MudButton>
+                <br/>
+                <MudButton FullWidth="true" OnClick="@SwitchToDisplayStudyCards">Study Cards</MudButton>
+                break;
+                
+            case DisplayMode.DisplayChapterList:
+                <ChapterSelection ChapterSelected="@OnChapterSelected"/>
+                break;
+                
+            case DisplayMode.DisplayStudyCards:
+                <StudyCardList />
+                break;
         }
-
-        @if (DisplayChapterList)
-        {
-            <ChapterSelection ChapterSelected="@OnChapterSelected"/>
-        }        
     </Authorized>
 
     <NotAuthorized>

@@ -1,0 +1,23 @@
+﻿<MudDialog>
+    <DialogContent>
+        @if (_error != null)
+        {
+            <MudText Color="Color.Error">@_error.Message</MudText>
+        }
+        
+        <MudTextField 
+            T="string" 
+            @bind-Value="_name" 
+            @bind-Value:after="ValueChanged" />
+        
+        <MudExRichTextEdit 
+            @ref="@_editor"
+            @bind-Value="_content"
+            Placeholder="Study card content"/>
+        
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="@OnCancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" Disabled="@DisableSubmit" OnClick="@OnSubmit">Submit</MudButton>
+    </DialogActions>
+</MudDialog>

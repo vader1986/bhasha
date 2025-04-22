@@ -9,6 +9,7 @@ using Bhasha.Infrastructure.AzureSpeechApi;
 using Bhasha.Infrastructure.AzureTranslatorApi;
 using Bhasha.Infrastructure.BlazorSpeechSynthesis;
 using Bhasha.Infrastructure.EntityFramework;
+using Bhasha.Infrastructure.FileSystem;
 using Bhasha.Infrastructure.Toolbelt;
 using Bhasha.Services;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -59,6 +60,7 @@ try
     services.AddScoped<IExpressionRepository, EntityFrameworkExpressionRepository>();
     services.AddScoped<IProfileRepository, EntityFrameworkProfileRepository>();
     services.AddScoped<ITranslationRepository, EntityFrameworkTranslationRepository>();
+    services.AddScoped<IStudyCardRepository, EntityFrameworkStudyCardRepository>();
     
     services
         .AddIdentity<AppUser, AppRole>()
@@ -99,10 +101,19 @@ try
     services.AddSingleton<ITranslationProvider, CachingTranslationProvider>();
 
     // resource management
-    var azureBlobConnectionString = Environment.GetEnvironmentVariable("AZURE_STORAGE_CONNECTION_STRING");
     services.AddSingleton(resources);
-    services.AddSingleton(new BlobServiceClient(connectionString: azureBlobConnectionString));
-    services.AddSingleton<IResourcesManager, AzureBlobResourcesManager>();
+
+    var azureBlobConnectionString = Environment.GetEnvironmentVariable("AZURE_STORAGE_CONNECTION_STRING");
+
+    if (string.IsNullOrWhiteSpace(azureBlobConnectionString))
+    {
+        services.AddSingleton<IResourcesManager, FileSystemResourcesManager>();
+    }
+    else
+    {
+        services.AddSingleton(new BlobServiceClient(connectionString: azureBlobConnectionString));
+        services.AddSingleton<IResourcesManager, AzureBlobResourcesManager>();
+    }
     
     if (translationConfiguration.AzureTranslatorApi is null)
     {

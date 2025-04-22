@@ -5,7 +5,7 @@ using Chapter = Bhasha.Domain.Chapter;
 
 namespace Bhasha.Infrastructure.EntityFramework;
 
-public class EntityFrameworkChapterRepository(AppDbContext context) : IChapterRepository
+public sealed class EntityFrameworkChapterRepository(AppDbContext context) : IChapterRepository
 {
     private async Task LoadDependencies(ChapterDto dto, Chapter chapter, CancellationToken token)
     {
@@ -34,26 +34,21 @@ public class EntityFrameworkChapterRepository(AppDbContext context) : IChapterRe
         {
             await LoadDependencies(row, chapter, token);
             
-            var result = context.Chapters
-                .Update(row);
+            var result = context.Chapters.Update(row);
 
-            await context
-                .SaveChangesAsync(token);
+            await context.SaveChangesAsync(token);
 
-            return Converter
-                .Convert(result.Entity);
+            return result.Entity.ToDomain();
         }
         else
         {
-            var newChapter = Converter.Convert(chapter);
+            var newChapter = chapter.ToEntityFramework();
 
             await LoadDependencies(newChapter, chapter, token);
             
-            var result = await context.Chapters
-                .AddAsync(newChapter, token);
+            var result = await context.Chapters.AddAsync(newChapter, token);
 
-            await context
-                .SaveChangesAsync(token);
+            await context.SaveChangesAsync(token);
         
             return chapter with
             {
@@ -70,7 +65,7 @@ public class EntityFrameworkChapterRepository(AppDbContext context) : IChapterRe
             .Include(x => x.Expressions)
             .FirstOrDefaultAsync(x => x.Id == chapterId, token);
 
-        return row is null ? null : Converter.Convert(row);
+        return row?.ToDomain();
     }
 
     public async Task<IEnumerable<Chapter>> FindByLevel(int level, CancellationToken token)
@@ -80,7 +75,7 @@ public class EntityFrameworkChapterRepository(AppDbContext context) : IChapterRe
             .Include(x => x.Description)
             .Include(x => x.Expressions)
             .Where(x => x.RequiredLevel == level)
-            .Select(x => Converter.Convert(x))
+            .Select(x => x.ToDomain())
             .ToListAsync(token);
     }
 
@@ -92,7 +87,7 @@ public class EntityFrameworkChapterRepository(AppDbContext context) : IChapterRe
             .Include(x => x.Name)
             .Include(x => x.Description)
             .Include(x => x.Expressions)
-            .Select(x => Converter.Convert(x))
+            .Select(x => x.ToDomain())
             .ToListAsync(token);
     }
 

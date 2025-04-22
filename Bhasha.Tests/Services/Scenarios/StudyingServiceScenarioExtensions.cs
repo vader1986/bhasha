@@ -17,8 +17,8 @@ public static class StudyingServiceScenarioExtensions
                     Id: Random.Shared.Next(),
                     Key: key,
                     Level: 1,
-                    CompletedChapters: Array.Empty<int>(),
-                    CurrentChapter: default))
+                    CompletedChapters: [],
+                    CurrentChapter: null))
                 .ToList());
 
         return scenario;
@@ -35,7 +35,7 @@ public static class StudyingServiceScenarioExtensions
                         Id: Random.Shared.Next(),
                         Key: key,
                         Level: 1,
-                        CompletedChapters: Array.Empty<int>(),
+                        CompletedChapters: [],
                         CurrentChapter: currentChapter)
                 }
                 .ToList());
@@ -47,8 +47,9 @@ public static class StudyingServiceScenarioExtensions
                 Id: currentChapter.ChapterId,
                 Name: "Name",
                 Description: "Description",
-                Pages: Array.Empty<DisplayedPage>(),
-                ResourceId: default));
+                Pages: [],
+                ResourceId: null,
+                StudyCards: []));
         
         return scenario;
     }
@@ -65,7 +66,7 @@ public static class StudyingServiceScenarioExtensions
                         Key: key,
                         Level: 1,
                         CompletedChapters: completedChapters,
-                        CurrentChapter: default)
+                        CurrentChapter: null)
                 }
                 .ToList());
         

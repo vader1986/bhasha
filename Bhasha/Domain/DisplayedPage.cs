@@ -2,5 +2,6 @@
 
 public sealed record DisplayedPage(
 	Translation Word, 
-	string? Lead);
+	string? Lead,
+	string? StudyCard);
 

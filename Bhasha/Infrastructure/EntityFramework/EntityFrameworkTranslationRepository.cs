@@ -4,19 +4,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Bhasha.Infrastructure.EntityFramework;
 
-public class EntityFrameworkTranslationRepository(AppDbContext context) : ITranslationRepository
+public sealed class EntityFrameworkTranslationRepository(AppDbContext context) : ITranslationRepository
 {
     public async Task<Translation?> Find(int expressionId, string language, CancellationToken token = default)
     {
         var row = await context.Translations
             .Include(x => x.Expression)
-            .FirstOrDefaultAsync(x => x.Language == language && x.Expression.Id == expressionId, token);
+            .FirstOrDefaultAsync(x => 
+                x.Language == language &&
+                x.Expression.Id == expressionId, token);
 
-        if (row is null)
-            return null;
-
-        return Converter
-            .Convert(row);
+        return row?.ToDomain();
     }
 
     public async Task<IEnumerable<Translation>> Find(int expressionId, CancellationToken token = default)
@@ -28,7 +26,7 @@ public class EntityFrameworkTranslationRepository(AppDbContext context) : ITrans
         
         return rows
             .AsEnumerable()
-            .Select(Converter.Convert);
+            .Select(x => x.ToDomain());
     }
 
     public async Task<Translation?> Find(string text, string language, CancellationToken token = default)
@@ -44,8 +42,7 @@ public class EntityFrameworkTranslationRepository(AppDbContext context) : ITrans
             .Reference(x => x.Expression)
             .LoadAsync(token);
         
-        return Converter
-            .Convert(row);
+        return row.ToDomain();
     }
 
     public async Task<Translation> AddOrUpdate(Translation translation, CancellationToken token = default)
@@ -58,26 +55,21 @@ public class EntityFrameworkTranslationRepository(AppDbContext context) : ITrans
 
         if (row is not null)
         {
-            var updatedTranslation = Converter
-                .Convert(translation);
+            var updatedTranslation = translation.ToEntityFramework();
 
             row.Text = updatedTranslation.Text;
             row.Spoken = updatedTranslation.Spoken;
             row.AudioId = updatedTranslation.AudioId;
             
-            var result = context.Translations
-                .Update(row);
+            var result = context.Translations.Update(row);
             
-            await context
-                .SaveChangesAsync(token);
+            await context.SaveChangesAsync(token);
 
-            return Converter
-                .Convert(result.Entity);
+            return result.Entity.ToDomain();
         }
         else
         {
-            var newTranslation = Converter
-                .Convert(translation);
+            var newTranslation = translation.ToEntityFramework();
 
             var expression = await context.Expressions
                 .FirstAsync(x => x.Id == translation.Expression.Id, token);
@@ -87,11 +79,9 @@ public class EntityFrameworkTranslationRepository(AppDbContext context) : ITrans
             var result = await context.Translations
                 .AddAsync(newTranslation, token);
             
-            await context
-                .SaveChangesAsync(token);
+            await context.SaveChangesAsync(token);
 
-            return Converter
-                .Convert(result.Entity);
+            return result.Entity.ToDomain();
         }
     }
 
@@ -100,10 +90,8 @@ public class EntityFrameworkTranslationRepository(AppDbContext context) : ITrans
         var dto = await context.Translations
             .SingleAsync(x => x.Id == translationId, token);
 
-        context.Translations
-            .Remove(dto);
+        context.Translations.Remove(dto);
         
-        await context
-            .SaveChangesAsync(token);
+        await context.SaveChangesAsync(token);
     }
 }

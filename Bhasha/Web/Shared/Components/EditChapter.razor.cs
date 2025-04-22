@@ -94,7 +94,7 @@ public partial class EditChapter : ComponentBase
             { "ReferenceTranslation", reference }
         };
         
-        var dialog = await DialogService.ShowAsync<TranslationDialog>(title, args);
+        var dialog = await DialogService.ShowAsync<Authoring.StudyCardDialog>(title, args);
         var result = await dialog.Result;
         
         return result is not null && !result.Canceled;
@@ -146,8 +146,24 @@ public partial class EditChapter : ComponentBase
             }
 
             var chapter = Chapter is null 
-                    ? new Chapter(default, RequiredLevel, name, description, pages.ToArray(), default, UserId) 
-                    : new Chapter(Chapter.Id, RequiredLevel, name, description, pages.ToArray(), Chapter.ResourceId, UserId);
+                    ? new Chapter(
+                        Id: 0, 
+                        RequiredLevel: RequiredLevel,
+                        Name: name, 
+                        Description: description, 
+                        Pages: pages.ToArray(), 
+                        ResourceId: null, 
+                        AuthorId: UserId,
+                        StudyCards: []) 
+                    : new Chapter(
+                        Id: Chapter.Id, 
+                        RequiredLevel: RequiredLevel, 
+                        Name: name, 
+                        Description: description, 
+                        Pages: pages.ToArray(), 
+                        ResourceId: Chapter.ResourceId, 
+                        AuthorId: UserId,
+                        StudyCards: []);
 
             Chapter = chapter;
             
