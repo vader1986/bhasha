@@ -19,7 +19,6 @@ public partial class ChapterPage : ComponentBase
 
     private string _title = string.Empty;
     private string _description = string.Empty;
-    private string _word = string.Empty;
     
     private int _progress;
     private int _index;
@@ -57,7 +56,6 @@ public partial class ChapterPage : ComponentBase
         
         _title = _viewModel.Chapter.Name;
         _description = _viewModel.Chapter.Description;
-        _word = _viewModel.Page.Word.Text;
         
         _chapterPageBarViewModel = new ChapterPageBarViewModel(
             ProfileKey: Value.Key,

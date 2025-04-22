@@ -38,11 +38,20 @@
                  _selectedChapter != null &&
                  _selectedPage != null)
             {
-                <ChapterPage
-                    Chapter="@_selectedChapter"
-                    Page="@_selectedPage"
-                    @bind-Value="_selectedProfile"
-                    @bind-Value:after="@UpdateChapterAndPageAsync"/>
+                if (_studyCardIndex == -1)
+                {
+                    <ChapterPage
+                        Chapter="@_selectedChapter"
+                        Page="@_selectedPage"
+                        @bind-Value="_selectedProfile"
+                        @bind-Value:after="@UpdateChapterAndPageAsync"/>
+                }
+                else
+                {
+                    <StudyCardView
+                        OnClick="@ContinueChapter"
+                        StudyCard="@_selectedChapter.StudyCards[_studyCardIndex]"/>
+                }
             }
         </MudPaper>
     </Authorized>

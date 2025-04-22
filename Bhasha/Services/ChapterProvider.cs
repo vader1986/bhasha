@@ -43,7 +43,8 @@ public sealed class ChapterProvider(
             Pages: displayedPages.ToArray(), 
             ResourceId: chapter.ResourceId,
             StudyCards: chapter.StudyCards
-                .Where(studyCard => studyCard.Language == key.ProfileKey.Target)
+                .Where(studyCard => studyCard.Language == key.ProfileKey.Native &&
+                                    studyCard.StudyLanguage == key.ProfileKey.Target)
                 .ToArray());
     }
 }

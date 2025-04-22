@@ -14,6 +14,7 @@ public partial class StudentPage : UserPage
     private Profile? _selectedProfile;
     private DisplayedChapter? _selectedChapter;
     private DisplayedPage? _selectedPage;
+    private int _studyCardIndex = -1;
     
     private readonly IList<Profile> _profiles = new List<Profile>();
     private bool _showChapterCompletedOverlay;
@@ -41,6 +42,23 @@ public partial class StudentPage : UserPage
         }
     }
 
+    private void ContinueChapter()
+    {
+        if (_selectedChapter is null)
+            return;
+        
+        if (_studyCardIndex < _selectedChapter.StudyCards.Length - 1)
+        {
+            _studyCardIndex++;
+        }
+        else
+        {
+            _studyCardIndex = -1;
+        }
+        
+        StateHasChanged();
+    }
+    
     private async Task SelectProfileAsync(Profile profile)
     {
         _selectedProfile = profile;
@@ -70,6 +88,7 @@ public partial class StudentPage : UserPage
             _selectedProfile = profile;
             _selectedChapter = chapter;
             _selectedPage = chapter.Pages[selection.PageIndex];
+            _studyCardIndex = chapter.StudyCards.Length > 0 ? 0 : -1;
         }
         catch (Exception error)
         {
