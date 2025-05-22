@@ -1,6 +1,7 @@
 ﻿using Bhasha.Domain;
 using Bhasha.Domain.Interfaces;
 using Bhasha.Services;
+using Bhasha.Web.Shared.Components.Authoring;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using Chapter = Bhasha.Domain.Chapter;
@@ -25,6 +26,7 @@ public partial class EditChapter : ComponentBase
     private string Description { get; set; } = string.Empty;
     private int RequiredLevel { get; set; } = 1;
     private List<string> Pages { get; } = new();
+    private List<StudyCard> StudyCards { get; set; } = new();
 
     private string? Error { get; set; }
 
@@ -46,6 +48,7 @@ public partial class EditChapter : ComponentBase
         Name = name?.Text ?? "";
         Description = description?.Text ?? "";
         RequiredLevel = Chapter.RequiredLevel;
+        StudyCards = Chapter.StudyCards.ToList();
         Pages.Clear();
 
         foreach (var page in Chapter.Pages)
@@ -62,7 +65,7 @@ public partial class EditChapter : ComponentBase
         }
     }
     
-    private async Task OnAddPage()
+    private async Task OpenAddPageDialog()
     {
         try
         {
@@ -72,6 +75,28 @@ public partial class EditChapter : ComponentBase
             if (result is { Canceled: false, Data: not null })
             {
                 Pages.Add((string)result.Data);
+            }
+        }
+        catch (Exception e)
+        {
+            Error = e.Message;
+        }
+    }
+
+    private async Task OpenStudyCardSelectDialogAsync()
+    {
+        try
+        {
+            var dialog = await DialogService.ShowAsync<StudyCardSelectDialog>("Add Study Card", new DialogParameters
+            {
+                { "Language", Language.Reference },
+                { "StudyLanguage", TargetLanguage }
+            });
+            var value = await dialog.GetReturnValueAsync<StudyCard>();
+
+            if (value is not null)
+            {
+                StudyCards.Add(value);
             }
         }
         catch (Exception e)
@@ -154,7 +179,7 @@ public partial class EditChapter : ComponentBase
                         Pages: pages.ToArray(), 
                         ResourceId: null, 
                         AuthorId: UserId,
-                        StudyCards: []) 
+                        StudyCards: StudyCards.ToArray()) 
                     : new Chapter(
                         Id: Chapter.Id, 
                         RequiredLevel: RequiredLevel, 
@@ -163,7 +188,7 @@ public partial class EditChapter : ComponentBase
                         Pages: pages.ToArray(), 
                         ResourceId: Chapter.ResourceId, 
                         AuthorId: UserId,
-                        StudyCards: []);
+                        StudyCards: StudyCards.ToArray());
 
             Chapter = chapter;
             

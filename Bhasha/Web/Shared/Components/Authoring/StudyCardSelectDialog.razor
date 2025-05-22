@@ -1,0 +1,26 @@
+﻿@inherits ComponentBase
+
+<MudDialog>
+    
+    <DialogContent>
+        
+        <MudSelect T="StudyCard" 
+                   @bind-Value="@SelectedStudyCard" 
+                   @bind-Value:after="@UpdateViewAsync"
+                   Label="Select a study card">
+            
+            @foreach (var studyCard in StudyCards)
+            {
+                <MudSelectItem T="StudyCard" Value="@studyCard">@studyCard.Name</MudSelectItem>
+            }
+            
+        </MudSelect>
+        
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton OnClick="@MudDialog.Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" Disabled="@DisableSubmit" OnClick="@Submit">Select</MudButton>
+    </DialogActions>
+    
+</MudDialog>

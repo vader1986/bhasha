@@ -11,7 +11,18 @@
                         <MudDivider DividerType="DividerType.Middle" Class="my-3" />
                         <MudNumericField Label="Required Level" @bind-Value="@RequiredLevel" Variant="Variant.Text" Min="1" Max="100" />
         
-                        <MudButton OnClick="@OnAddPage" Variant="Variant.Outlined" Color="Color.Primary">
+                        <MudButton OnClick="@OpenStudyCardSelectDialogAsync" Variant="Variant.Outlined" Color="Color.Primary">
+                            Add Study Card
+                        </MudButton>
+        
+                        <MudChipSet T="string">
+                            @foreach (var studyCard in StudyCards)
+                            {
+                                <MudChip Value="studyCard">@studyCard.Name</MudChip>
+                            }
+                        </MudChipSet>
+                        
+                        <MudButton OnClick="@OpenAddPageDialog" Variant="Variant.Outlined" Color="Color.Primary">
                             Add Page
                         </MudButton>
         
@@ -21,7 +32,7 @@
                                 <MudChip Value="addedPage">@addedPage</MudChip>
                             }
                         </MudChipSet>
-        
+                        
                         @if (!string.IsNullOrWhiteSpace(Error))
                         {
                             <MudDivider DividerType="DividerType.Middle" Class="my-3" />
