@@ -10,8 +10,8 @@ public partial class StudyCardSelectDialog : ComponentBase
     [Inject] public required IStudyCardRepository StudyCardRepository { get; set; }
     [CascadingParameter] public required IMudDialogInstance MudDialog { get; set; }
     
-    [Parameter] public required Language Language { get; set; }
-    [Parameter] public required Language StudyLanguage { get; set; }
+    [Parameter] public required string Language { get; set; }
+    [Parameter] public required string StudyLanguage { get; set; }
     
     private StudyCard[] StudyCards { get; set; } = [];
     private StudyCard? SelectedStudyCard { get; set; }
