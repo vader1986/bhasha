@@ -89,7 +89,7 @@ public partial class EditChapter : ComponentBase
         {
             var dialog = await DialogService.ShowAsync<StudyCardSelectDialog>("Add Study Card", new DialogParameters
             {
-                { "Language", Language.Reference },
+                { "Language", Language.Reference.ToString() },
                 { "StudyLanguage", TargetLanguage }
             });
             var value = await dialog.GetReturnValueAsync<StudyCard>();
