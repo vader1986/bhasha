@@ -3,3 +3,10 @@
 @((MarkupString)StudyCard.Content)
 
 <MudButton OnClick="@OnClick">Continue</MudButton>
+
+@if (_audio != null)
+{
+    <Bhasha.Web.Shared.Components.Audio 
+        Id="@_audioId" 
+        Translation="@_audio" />
+}

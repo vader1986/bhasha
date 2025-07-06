@@ -10,7 +10,7 @@ public partial class Audio : ComponentBase
     [Inject] public required ResourcesSettings Resources { get; set; }
     [Inject] public required IJSRuntime JsRuntime { get; set; }
     [Inject] public required ISpeaker Speaker { get; set; }
-    [Inject] public required ILogger<AudioButton> Logger { get; set; }
+    [Inject] public required ILogger<Audio> Logger { get; set; }
     
     [Parameter] public required string Id { get; set; }
     [Parameter] public required Translation Translation { get; set; }
