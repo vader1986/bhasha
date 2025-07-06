@@ -9,9 +9,9 @@
     @foreach (var choice in _choices)
     {
         <MudToggleItem Value="@choice.Target">
-            @if (choice.ResourceId is not null)
+            @if (!string.IsNullOrWhiteSpace(choice.ResourceId))
             {
-                <MudImage Src="@Resources.GetImageFile(choice.ResourceId!)"
+                <MudImage Src="@Resources.GetImageFile(choice.ResourceId)"
                           Width="100"
                           Height="100"
                           Elevation="25"

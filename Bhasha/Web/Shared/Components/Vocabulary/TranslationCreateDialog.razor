@@ -36,6 +36,14 @@
                             @bind-Value="@_spoken"
                             @bind-Value:after="@OnTranslationChanged"
                             Label="Transliteration" />
+                        
+                        <MudFileUpload T="IBrowserFile" MaximumFileCount="1" FilesChanged="@OnResourceChanged">
+                            <ActivatorContent>
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.AudioFile">
+                                    Upload Audio File
+                                </MudButton>
+                            </ActivatorContent>
+                        </MudFileUpload>
 
                     </MudCardContent>
                 </MudCard>

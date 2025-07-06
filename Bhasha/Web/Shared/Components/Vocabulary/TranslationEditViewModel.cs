@@ -12,8 +12,9 @@ public sealed class TranslationEditViewModel
     public Translation? Origin { get; init; }
     
     public string Text { get; set; } = string.Empty;
-    public string? Spoken { get; set; } = string.Empty;
-    public required string Language { get; set; }
+    public string? Spoken { get; set; }
+    public string? AudioId { get; set; }
+    public required string Language { get; init; }
 
     public TranslationViewModelStatus Status { get; set; } = TranslationViewModelStatus.Initial;
     

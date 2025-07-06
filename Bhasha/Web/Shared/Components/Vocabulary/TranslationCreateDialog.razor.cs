@@ -1,6 +1,7 @@
 ﻿using Bhasha.Domain;
 using Bhasha.Domain.Interfaces;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor;
 
 namespace Bhasha.Web.Shared.Components.Vocabulary;
@@ -8,6 +9,7 @@ namespace Bhasha.Web.Shared.Components.Vocabulary;
 public partial class TranslationCreateDialog : ComponentBase
 {
     [Inject] public required ITranslator Translator { get; set; }
+    [Inject] public required IResourcesManager ResourcesManager { get; set; }
 
     [CascadingParameter] public required IMudDialogInstance MudDialog { get; set; }
     [Parameter] public List<Language> MissingLanguages { get; set; } = [];
@@ -17,6 +19,7 @@ public partial class TranslationCreateDialog : ComponentBase
     private Language? _language;
     private string? _text;
     private string? _spoken;
+    private string? _audioId;
     private string? _error;
     
     private bool DisableAdd => !string.IsNullOrWhiteSpace(_error) || string.IsNullOrWhiteSpace(_text) || _language is null;
@@ -80,12 +83,34 @@ public partial class TranslationCreateDialog : ComponentBase
             
             result.Text = _text;
             result.Spoken = _spoken;
+            result.AudioId = _audioId;
             
             MudDialog.Close(DialogResult.Ok(result));
         }
         catch (Exception e)
         {
             _error = e.Message;
+        }
+    }
+    
+    private async Task OnResourceChanged(IBrowserFile? audioFile)
+    {
+        try
+        {
+            if (audioFile is null)
+                return;
+
+            await ResourcesManager.UploadAudio(audioFile.Name, audioFile.OpenReadStream());
+
+            _audioId = audioFile.Name;
+        }
+        catch (Exception e)
+        {
+            _error = e.Message;
+        }
+        finally
+        {
+            await InvokeAsync(StateHasChanged);
         }
     }
 

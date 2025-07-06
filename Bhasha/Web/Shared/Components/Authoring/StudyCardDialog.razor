@@ -15,6 +15,14 @@
             @bind-Value="_content"
             Placeholder="Study card content"/>
         
+        <MudFileUpload T="IBrowserFile" MaximumFileCount="1" FilesChanged="@OnResourceChanged">
+            <ActivatorContent>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.AudioFile">
+                    Upload Audio File
+                </MudButton>
+            </ActivatorContent>
+        </MudFileUpload>
+        
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="@OnCancel">Cancel</MudButton>

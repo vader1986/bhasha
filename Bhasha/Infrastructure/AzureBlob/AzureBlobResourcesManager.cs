@@ -12,4 +12,12 @@ public sealed class AzureBlobResourcesManager(BlobServiceClient blobServiceClien
         
         await client.UploadAsync(image, overwrite: true, cancellationToken: token);
     }
+
+    public async Task UploadAudio(string resourceId, Stream audio, CancellationToken token = default)
+    {
+        var container = blobServiceClient.GetBlobContainerClient("audio");
+        var client = container.GetBlobClient(resourceId);
+        
+        await client.UploadAsync(audio, overwrite: true, cancellationToken: token);
+    }
 }

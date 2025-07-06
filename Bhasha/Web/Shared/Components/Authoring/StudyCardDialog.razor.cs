@@ -1,6 +1,7 @@
 ﻿using Bhasha.Domain;
 using Bhasha.Domain.Interfaces;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor;
 using MudExRichTextEditor;
 
@@ -10,6 +11,7 @@ public partial class StudyCardDialog : ComponentBase
 {
     [Inject] public required ILogger<StudyCardDialog> Logger { get; set; }
     [Inject] public required IStudyCardRepository StudyCardRepository { get; set; }
+    [Inject] public required IResourcesManager ResourcesManager { get; set; }
     [CascadingParameter] public required IMudDialogInstance MudDialog { get; set; }
     
     [Parameter] public required string Language { get; set; }
@@ -19,7 +21,11 @@ public partial class StudyCardDialog : ComponentBase
     private string _content = string.Empty;
     private string? _audioId;
     private Exception? _error;
+    
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+    // ReSharper disable once NotAccessedField.Local
     private MudExRichTextEdit _editor;
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     
     private bool DisableSubmit => string.IsNullOrWhiteSpace(_name) || string.IsNullOrWhiteSpace(_content);
 
@@ -35,6 +41,27 @@ public partial class StudyCardDialog : ComponentBase
     private async Task ValueChanged()
     {
         await InvokeAsync(StateHasChanged);
+    }
+    
+    private async Task OnResourceChanged(IBrowserFile? audioFile)
+    {
+        try
+        {
+            if (audioFile is null)
+                return;
+
+            await ResourcesManager.UploadAudio(audioFile.Name, audioFile.OpenReadStream());
+
+            _audioId = audioFile.Name;
+        }
+        catch (Exception e)
+        {
+            _error = e;
+        }
+        finally
+        {
+            await InvokeAsync(StateHasChanged);
+        }
     }
     
     private async Task OnSubmit()
